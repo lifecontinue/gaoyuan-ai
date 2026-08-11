@@ -22,8 +22,8 @@ const CHAPTERS = [
   },
   {
     title: "生产力与身心健康",
-    note: "PM 成长 · 正念陪伴",
-    ids: ["pm-growth-os", "breathe"],
+    note: "PM 成长 · 白板协作 · 正念陪伴",
+    ids: ["pm-growth-os", "collab-whiteboard", "breathe"],
     colorA: [0.063, 0.227, 0.212], colorB: [0.690, 0.478, 0.165]
   }
 ];

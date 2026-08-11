@@ -213,5 +213,28 @@ export const apps = [
     url: "/practice/",
     tags: ["音乐", "实时反馈", "AI 陪练"],
     status: "live"
+  },
+  {
+    id: "collab-whiteboard",
+    name: "素白板",
+    en: "CollabBoard",
+    desc: "一个单文件、零依赖的网页白板（类 Miro）：原生 Canvas 2D + DOM，支持便签、画笔、连线、图形、多选组合、撤销重做、PNG/JSON 导入导出，并内置可配置的 Supabase 云端同步与多画布管理——留空即用本地存储，填 key 即走云端。",
+    tagline: "无限画布 · 云端同步 · 零依赖",
+    icon: null,
+    screenshot: null,
+    url: "/collab-whiteboard.html",
+    tags: ["生产力", "白板", "协作"],
+    status: "live",
+    placements: [{
+      room: "study",
+      x: 27, y: 17,
+      lx: 27, ly: 17,
+      label: "素白板",
+      anchor: "bottom",
+      shape: [
+        { x: 20, y: 12 }, { x: 34, y: 12 },
+        { x: 34, y: 22 }, { x: 20, y: 22 }
+      ]
+    }]
   }
 ];
