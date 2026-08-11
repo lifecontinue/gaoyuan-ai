@@ -260,10 +260,10 @@ async function run() {
   const recommended = featured.length ? featured : posts.slice(0, 6);
 
   /* 1. 打招呼 */
-  await agentTyped('嗨，我是高源的 AI 助手。下面我用一条时间线，把关于他、他做的产品与写作，按你最可能想知道的顺序讲给你听。');
+  await agentTyped('嗨，我是gaoyuan的 AI 助手。下面我用一条时间线，把关于他、他做的产品与写作，按你最可能想知道的顺序讲给你听。');
 
   /* 2. 个人简介 */
-  await agentTyped('先说人：高源（Yuan Gao），一名 AI 产品经理，专注把大模型能力做成产品——覆盖 LLM 产品化、RAG、多模态 AI、RPA+LLM 自动化与 human-in-the-loop 系统，并构建育儿、教育与游戏方向的消费级应用。');
+  await agentTyped('先说人：gaoyuan（Yuan Gao），一名 AI 产品经理，专注把大模型能力做成产品——覆盖 LLM 产品化、RAG、多模态 AI、RPA+LLM 自动化与 human-in-the-loop 系统，并构建育儿、教育与游戏方向的消费级应用。');
 
   /* 3. 过渡到写作推荐 */
   await agentTyped('他常写两类东西：AI 产品方法论，以及把 AI 能力产品化的底层思考。下面几篇是他反复写、也最有把握的主题。');

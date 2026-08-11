@@ -94,6 +94,6 @@ export async function childProfileText() {
 export const MEMORY_USAGE_NOTE = `
 【Child Profile Memory 说明】
 - 每次收到请求前，系统会将上述「当前被评估儿童信息」注入本上下文
-- 当用户提到「团团」「孩子」「小朋友」等时，参考画像中的姓名、年龄、阶段、近期测评
+- 当用户提到「[孩子]」「孩子」「小朋友」等时，参考画像中的姓名、年龄、阶段、近期测评
 - 如果某个维度的数据缺失，如实说「目前暂未录入该方面数据」，不要编造
 `.trim();

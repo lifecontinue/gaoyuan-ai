@@ -34,7 +34,7 @@
       "date": "2026-08-01",
       "timestamp": 1785580290,
       "summary": "本文记录了我陪女儿用 Vibe Coding 做游戏的全过程。我没有先教她任何编程工具，而是先帮她建立\\x26quot;准确说出看到的 → 表达想要的 → 看到变化\\x26quot;这一闭环习惯——这恰恰是 Vibe Coding 真正的元能力。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -56,7 +56,7 @@
       "date": "2026-07-31",
       "timestamp": 1785461400,
       "summary": "一个automation项目的失败，通常不发生在技术环节。我把最近半年的项目实践经验完整呈现给你看。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -78,7 +78,7 @@
       "date": "2026-07-25",
       "timestamp": 1784952000,
       "summary": "从realtime到voiceai，语音不是一种新的交互方式，而是agent跨越发展，代表着GUI之后下个时代",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -100,7 +100,7 @@
       "date": "2026-07-24",
       "timestamp": 1784865600,
       "summary": "纯AI领域的探索陷入瓶颈后，关于 Human-in-the-Loop 产品到底该怎么做，也许我的经验能够给你带来一些参考。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -124,7 +124,7 @@
       "date": "2026-07-23",
       "timestamp": 1784788149,
       "summary": "今天介绍我去年8月做的一款产品——pre-session notes。通过对整个开发流程的介绍，希望为大家提供一些借鉴。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -147,7 +147,7 @@
       "date": "2026-07-20",
       "timestamp": 1784539800,
       "summary": "AI 消灭中间层虽提升效率，但会导致信息压缩、上下文缺失、重复建设、组织记忆流失、责任模糊、创新被扼杀——这些问题在 2015-2016 年\\x26quot;互联网+\\x26quot;浪潮中已出现。太阳底下无新事。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -170,7 +170,7 @@
       "date": "2026-07-18",
       "timestamp": 1784365306,
       "summary": "有朋友邀，欣然顶着38度的太阳同游寒山寺。没有佛教的信仰基础，所以两人更多是带着新奇和散漫心态打卡式溜达。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -192,7 +192,7 @@
       "date": "2026-07-13",
       "timestamp": 1783937669,
       "summary": "一、我们要改变世界处在现在这个时间节点，无论是市场驱动，还是因为整个行业的AI浪潮，都会推动公司内部启动了AI",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -215,7 +215,7 @@
       "date": "2026-03-30",
       "timestamp": 1774871595,
       "summary": "AI时代，开发团队组织架构的精简化趋势思考。在这个“速度不代表正确”的时代，我们该如何重新定义人的价值？",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -238,7 +238,7 @@
       "date": "2026-03-25",
       "timestamp": 1774436400,
       "summary": "我从去年8年开始负责一款app的从0到1，核心目标是从传统人力咨询模式，转向以多Agent系统驱动的标准化、规模化服务生态。产品通过AI构建画像，结合动态时间轴与任务拆解，持续优化学生的申请路径与竞争力指数。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -261,7 +261,7 @@
       "date": "2026-02-09",
       "timestamp": 1770628377,
       "summary": "Complete four rounds of product architecture iteration within a two-month timeframe.",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -284,7 +284,7 @@
       "date": "2026-01-09",
       "timestamp": 1767946595,
       "summary": "结构负责确定性，AI 负责可能性，用户始终有“可点的东西”。AI 是“操作系统级入口”，而不是聊天工具，可以通过结构化的内容作为trigger，能够突破chatbox，成为用户探索世界的引擎。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -306,7 +306,7 @@
       "date": "2026-01-06",
       "timestamp": 1767695718,
       "summary": "通过为期两个月的vibe coding，我们团队已经积攒了大量的feature，在过程中也总结经验和改进的方案。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -328,7 +328,7 @@
       "date": "2025-11-17",
       "timestamp": 1763375772,
       "summary": "今天从10点到12点，我用两个小时体验了 mine context。无论从产品前景还是费用上来说都很具有吸引力，相比智谱一堆虎头蛇尾的demo产品，我更看好字节的产品体系。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -348,7 +348,7 @@
       "date": "2025-11-11",
       "timestamp": 1762842617,
       "summary": "App设计过度强调固定场景，限制了用户的泛目的性。AI应主动通过意图识别、情绪感知和记忆检索拼接模糊意图，避免工具化导致体验空洞化、情感负担和现实脱节。建议将交互选择权交给用户，由Agent配合优化UX。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -371,7 +371,7 @@
       "date": "2025-10-11",
       "timestamp": 1760182843,
       "summary": "所以LLM时代的PM应该怎么做？LLM出来后，其实做PM的逻辑发生了根本性的变化，因为这是一种全新对信息的处理方式，而是完全可以绕过软硬件先天缺陷导致增加的大量冗余交互、流程和学习成本。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -394,7 +394,7 @@
       "date": "2025-08-01",
       "timestamp": 1754018965,
       "summary": "参观完2025世界人工智能大会（WAIC 2025），感慨AI已经深刻融入到各行各业，都说2025是agent元年，但实际上到年中时，但凡有能力的企业都已经在日常办公中广泛使用各类agent。时不我待~",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -417,7 +417,7 @@
       "date": "2025-06-29",
       "timestamp": 1751183398,
       "summary": "Kira Learning是由吴恩达担任董事长的教育科技公司，其产品定位为教师管理平台结合AI工具。亮点功能包括Standards Mapping、自动聚合学情数据可视化评估，以及通过prompt参数设置实现个性化作业生成和评分。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -440,7 +440,7 @@
       "date": "2025-06-14",
       "timestamp": 1749892093,
       "summary": "回顾一下最近一个月做的事情，提醒自己别忘了持续输出，也将最近对agent的学习和实践做下分享。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -463,7 +463,7 @@
       "date": "2025-05-14",
       "timestamp": 1747206484,
       "summary": "“ AI领域当前发展聚焦生产与整合两大趋势：生产端以AIGC为核心覆盖多模态技术，整合端通过Agent平台、RRPA工具等推动B/G端市场应用，底层云计算及API平台降低AI成本。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -485,7 +485,7 @@
       "date": "2025-05-12",
       "timestamp": 1747046972,
       "summary": "智慧教育动态管理系统（EDMS）结合管理科学理论（如F.Taylor标准化理念）与AI技术（XGBoost、LSTM等算法），建立包含人员画像、环境感知、过程追踪的四维架构，提供动态监测、策略优化及自适应实施功能。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -508,7 +508,7 @@
       "date": "2025-04-25",
       "timestamp": 1745564078,
       "summary": "面试评分系统的核心需求为确保系统稳定性和兼容各地个性化考务流程，需整合数字基座、表单配置、分布式数据同步及快速部署等功能。系统需覆盖硬件部署、网络调试、应急处理等复杂供应链服务，并满足严苛的考场环境要求。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -530,7 +530,7 @@
       "date": "2025-04-16",
       "timestamp": 1744799400,
       "summary": "设计了一套智能作业优化系统，价反馈等功能，通过分享从需求分析到原型落地的全流程，为教育信息化类企业提供了可复制的实践案例。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -553,7 +553,7 @@
       "date": "2025-04-14",
       "timestamp": 1744607907,
       "summary": "通过QQ群作业功能整理女儿语文作业数据，利用NotebookLM和deepseek-V3进行结构化处理并对比模型差异，AutoGLM和R1对作业进行多维度统计分析。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -575,7 +575,7 @@
       "date": "2025-04-01",
       "timestamp": 1743502233,
       "summary": "针对新媒体内容生产瓶颈，IT部门推出三级策略：灌水级（AI批量生成）、信息流级（人机协同优化）、宣传片级（人工精品）。结合AGI技术，采用Flowith等工具实现任务拆解与流程可视化，验证“AI提效-人力创新”协同模式。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -597,7 +597,7 @@
       "date": "2025-03-27",
       "timestamp": 1743074119,
       "summary": "从工作到生活，其实取得balance的方法不只是做切割，还可以做跷跷板，两边各放置一些投入，动态调整自己的注意力权重。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -620,7 +620,7 @@
       "date": "2025-03-21",
       "timestamp": 1742549742,
       "summary": "开发基础薄弱的人使用Trae，首轮对话最为关键，目前也只能实现一些1000行代码以内的功能，太长或多轮对话还是会存在不少问题。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -642,7 +642,7 @@
       "date": "2025-03-14",
       "timestamp": 1741927370,
       "summary": "任何的变化都孕育着新的机遇，对于能持续学习并不断发觉机遇的人来说，卖铲子永远是更好的选择。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -664,7 +664,7 @@
       "date": "2025-03-07",
       "timestamp": 1741330871,
       "summary": "在其他平台还是通过标签页或分类显示文生图、文生视频、图生视频等不同业务形态的入口，将AI工具化，专注提升垂直能力的时候，manus以产品的理念进行了整合，打造爆款。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -687,7 +687,7 @@
       "date": "2025-03-02",
       "timestamp": 1740923209,
       "summary": "基于五大指标优化提问策略，显著提升AI应答质量。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -710,7 +710,7 @@
       "date": "2025-03-01",
       "timestamp": 1740839279,
       "summary": "以前一直以为霸凌行为潜伏很深，难以发觉和判断，但实际上有大量研究结果，如果能投入精力学习掌握，锻炼一双火眼金睛，就会见微知著，防范于未然。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -732,7 +732,7 @@
       "date": "2025-02-24",
       "timestamp": 1740365642,
       "summary": "女孩之间的霸凌，就像一座漂浮在水面上的巨大冰山，能够被外界看到的行为表现或应对方式，只是露在水面上很小的一部分，而暗涌在水面之下更大的山体，长期被忽略。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -754,7 +754,7 @@
       "date": "2025-02-22",
       "timestamp": 1740200572,
       "summary": "最近有一些朋友询问个人想要深入学习AI可以​从哪方面着手？其实脱离学校环境后最好的学习方式就是“做中学”，通过练习去摸索大模型的特性。换言之，盲人摸象未尝不可，只要把手接触到最近的知识​学以致用就可以了。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -776,7 +776,7 @@
       "date": "2025-02-15",
       "timestamp": 1739603298,
       "summary": "人不必时刻保持正确，要重新翻阅课本，拾起一种叫革命乐观主义的精神，在一次次成功或失败中竹杖芒鞋轻胜马，一往无前。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -799,7 +799,7 @@
       "date": "2025-02-14",
       "timestamp": 1739528839,
       "summary": "焦虑来源于对新事物的不了解，而不是对新事物本身的威胁，通过主动学习和心态调整，从容面对，并且抓住​机遇去做新的尝试。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],
@@ -821,7 +821,7 @@
       "date": "2025-02-07",
       "timestamp": 1738900938,
       "summary": "利用循证教育评价平台，通过统一接口采集孩子学校与家庭数据，借助AI代理过滤整合信息，提供客观评价与建议，辅助家长主动决策、调整关注策略，实现家校协同成长。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "静夜思"
       ],
@@ -843,7 +843,7 @@
       "date": "2025-01-26",
       "timestamp": 1737879657,
       "summary": "在AI信息泛滥的环境中，我们可以尝试建立最小可行工具包（MVK）来有效应对信息过载。首先，确定工作中反复出现的任务，选择合适的AI工具解决问题，并不断评估优化使用效果。通过积累提示词和工作流程，并将其固化为日常习惯，提高效率。",
-      "author": "高源",
+      "author": "gaoyuan",
       "categories": [
         "AI产品"
       ],

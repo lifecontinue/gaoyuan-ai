@@ -18,8 +18,8 @@ export const RuleProvider = {
   welcome(snap) {
     const { cur, curAvg, diff, weak, strong, chronicCount, hasSubjects, subjects, stageLabel } = snap;
     if (!cur) {
-      if (hasSubjects) return `Hi，我是团团成长顾问。当前<b>小学</b>阶段还没有结构化测评数据，但团团已进入<b>三年级（第二学段）</b>。我已备好 <b>${subjects.length}</b> 门学科的「学科评价维度」：数学融合了教育知识图谱的真实学习路径，其余学科依据 2022 课标梳理。<br><br>在右侧抽屉「学科维度」可查看主题与可评指标；在「家长记录」里添加观察，我会随时帮你分析。`;
-      return `Hi，我是团团成长顾问。当前<b>${stageLabel}</b>阶段还没有结构化测评数据。你可以在「家长记录」里添加观察，我会随时帮你分析。`;
+      if (hasSubjects) return `Hi，我是[孩子]成长顾问。当前<b>小学</b>阶段还没有结构化测评数据，但[孩子]已进入<b>三年级（第二学段）</b>。我已备好 <b>${subjects.length}</b> 门学科的「学科评价维度」：数学融合了教育知识图谱的真实学习路径，其余学科依据 2022 课标梳理。<br><br>在右侧抽屉「学科维度」可查看主题与可评指标；在「家长记录」里添加观察，我会随时帮你分析。`;
+      return `Hi，我是[孩子]成长顾问。当前<b>${stageLabel}</b>阶段还没有结构化测评数据。你可以在「家长记录」里添加观察，我会随时帮你分析。`;
     }
     let html = `Hi，${childFullName()}的<b>${stageLabel}</b>数据已就绪。<br><br>最新一期 <b>${esc(cur.name)}</b> 综合得分率 <b>${pct(curAvg)}</b>`;
     if (diff != null) html += `，较上期${diff >= 0 ? '提升' : '下降'} <b class="${diff >= 0 ? 'up' : 'down'}">${Math.abs(diff * 100).toFixed(1)}pt</b>`;

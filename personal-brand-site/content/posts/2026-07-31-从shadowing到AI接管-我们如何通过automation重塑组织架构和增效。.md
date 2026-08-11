@@ -2,7 +2,7 @@
 title: '从shadowing到AI接管: 我们如何通过automation重塑组织架构和增效。'
 slug: 2026-07-31-从shadowing到AI接管-我们如何通过automation重塑组织架构和增效。
 date: '2026-07-31T09:30:00'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: 一个automation项目的失败，通常不发生在技术环节。我把最近半年的项目实践经验完整呈现给你看。
 categories:

@@ -2,7 +2,7 @@
 title: Vibe coding的阶段性反思
 slug: 2026-01-06-Vibe-coding的阶段性反思
 date: '2026-01-06T18:35:18'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: 通过为期两个月的vibe coding，我们团队已经积攒了大量的feature，在过程中也总结经验和改进的方案。
 categories:

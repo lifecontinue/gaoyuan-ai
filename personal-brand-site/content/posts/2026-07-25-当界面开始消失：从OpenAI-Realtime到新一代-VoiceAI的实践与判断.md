@@ -2,7 +2,7 @@
 title: 当界面开始消失：从OpenAI Realtime到新一代 VoiceAI的实践与判断
 slug: 2026-07-25-当界面开始消失：从OpenAI-Realtime到新一代-VoiceAI的实践与判断
 date: '2026-07-25T12:00:00'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: 从realtime到voiceai，语音不是一种新的交互方式，而是agent跨越发展，代表着GUI之后下个时代
 categories:

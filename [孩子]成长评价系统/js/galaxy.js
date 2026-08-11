@@ -1,4 +1,4 @@
-/* 团团成长评价系统 — 星空总览（Constellation View）
+/* [孩子]成长评价系统 — 星空总览（Constellation View）
  * 灵感来自 https://xiaoercamera.xyz/me 的 3D 星座图交互：
  * 中心 = 学生，臂 = 领域/学科，叶 = 子领域/主题/指标，拖拽旋转、滚轮缩放、悬停高亮、点击下钻。
  * 纯 Canvas，无外部依赖，离线可用。
@@ -116,10 +116,10 @@
     buildNodes(stage) {
       this.nodes = []; this.links = [];
       const D = window.TT_DATA || {};
-      const child = D.child || { name: '林悠然', nickname: '团团' };
+      const child = D.child || { name: '林悠然', nickname: '[孩子]' };
       const center = {
         id: 'child', kind: 'center',
-        label: child.nickname || child.name || '团团',
+        label: child.nickname || child.name || '[孩子]',
         en: (child.name || 'TUANTUAN').toUpperCase(),
         sub: [child.grade, child.kindergarten, child.school].filter(Boolean).join(' · ').slice(0, 60),
         score: null, trend: null, desc: child.address || '',

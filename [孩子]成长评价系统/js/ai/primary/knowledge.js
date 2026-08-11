@@ -45,7 +45,7 @@ export function activityWhitelistText() {
    ========================================================= */
 export const DATA_SOURCE_REF = `
 【数据源位置】
-· 小学学科指标：D:/forster children/团团成长评价系统/js/data/subjects_p3.js → SUBJECTS_P3.subjects
+· 小学学科指标：D:/forster children/[孩子]成长评价系统/js/data/subjects_p3.js → SUBJECTS_P3.subjects
 · 学科定义：../../domain/subjects.js → SUBJS（name/id/core_competencies/themes/learning_paths）
 · 学科颜色：../../core/config.js → subjectColorHex()
 · 家长记录：../../data/store.js → Store.parentPeriods

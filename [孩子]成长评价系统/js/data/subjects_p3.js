@@ -1,8 +1,8 @@
 /* 小学三年级(第二学段)学科评价维度 v2 — 由 reference/学科评价维度_三年级.json 生成，离线全局可用 */
 export const SUBJECTS_P3 = {
  "meta": {
-  "title": "团团(高臻希) 小学三年级 学科评价维度",
-  "student": "高臻希（团团）",
+  "title": "[孩子]([孩子姓名]) 小学三年级 学科评价维度",
+  "student": "[孩子姓名]（[孩子]）",
   "stage": "第二学段(3~4年级)",
   "entered_primary": "2024.09",
   "current_grade": "二年级升三年级 (2026.08)",

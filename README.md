@@ -1,4 +1,4 @@
-# gaoyuan-ai · 高源的个人品牌与 AI 应用集
+# gaoyuan-ai · gaoyuan的个人品牌与 AI 应用集
 
 本仓库是 **gaoyuan-ai.xyz** 个人品牌站及其相关 AI 应用源代码的统一归档（monorepo）。
 
@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | `personal-brand-site/` | 个人品牌站 | 静态站点（Vercel 部署根）。含 `practice/`（FRET FLOW 构建产物） |
 | `AI Music Practice Interface/` | **FRET FLOW** 吉他/钢琴 AI 陪练 | React 19 + Vite + TS。实时音高/和弦/节奏检测 + AI 教练反馈 |
-| `团团成长评价系统/` | 儿童成长评估（Child Growth Assessment） | 幼儿园/小学阶段成长评估系统（ES Modules 分层架构） |
+| `[孩子]成长评价系统/` | 儿童成长评估（Child Growth Assessment） | 幼儿园/小学阶段成长评估系统（ES Modules 分层架构） |
 | `neck-project/` | 颈部足球（Neck Soccer） | 基于 MediaPipe FaceMesh 的体感小游戏 |
 | `handdrawn-travel-map/` | 旅行故事地图（Trails） | 手绘风旅行故事地图 |
 | `breathe/` | 呼吸（Breathe） | 引导式呼吸放松单页应用 |

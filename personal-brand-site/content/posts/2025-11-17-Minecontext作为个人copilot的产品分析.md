@@ -2,7 +2,7 @@
 title: Minecontext作为个人copilot的产品分析
 slug: 2025-11-17-Minecontext作为个人copilot的产品分析
 date: '2025-11-17T18:36:12'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: 今天从10点到12点，我用两个小时体验了 mine context。无论从产品前景还是费用上来说都很具有吸引力，相比智谱一堆虎头蛇尾的demo产品，我更看好字节的产品体系。
 categories:

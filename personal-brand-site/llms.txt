@@ -1,11 +1,11 @@
 # Yuan Gao · AI Product Manager
 
-> Yuan Gao（高源）是一位 AI 产品经理，专注于把大模型能力产品化：从 LLM 产品化、RAG、多模态 AI，到 RPA+LLM 自动化与 human-in-the-loop（人在回路）系统；同时构建覆盖育儿、教育与游戏的消费级应用。个人网站：https://www.gaoyuan-ai.xyz/
+> Yuan Gao（gaoyuan）是一位 AI 产品经理，专注于把大模型能力产品化：从 LLM 产品化、RAG、多模态 AI，到 RPA+LLM 自动化与 human-in-the-loop（人在回路）系统；同时构建覆盖育儿、教育与游戏的消费级应用。个人网站：https://www.gaoyuan-ai.xyz/
 
 ## About
-- 关于高源（个人简介、产品目录、常见问题）：<https://www.gaoyuan-ai.xyz/about.html>
+- 关于gaoyuan（个人简介、产品目录、常见问题）：<https://www.gaoyuan-ai.xyz/about.html>
 
-## Products & Apps（高源构建的产品）
+## Products & Apps（gaoyuan构建的产品）
 - 坦克大战 — 更大的地图、分层 3D 地形与 QWER 技能战斗，搭配可交互的商店系统。三种坦克——均衡、重装、迅猛——靠近建筑即可触发商店、加油站与银行。 标签：游戏、实时对战、3D 地形。打开：<https://0eab4a97014d401f9f8adca41bbbc0ff.gz3.agentos-app.net>
 - 旅行故事地图 — 把一次旅行变成可漫游的故事地图：从杭州西湖的日落，到北海道的雪国——四个站点、手绘路线与沉浸式风景。 标签：旅行、故事地图、手绘。打开：<https://trails-vert.vercel.app>
 - 成长星图 — 面向幼儿园阶段的六维成长记录，把评估变成一片可以点亮的星空——每一次小小的进步，都是一颗亮起的星。 标签：育儿、成长记录、数据可视化。打开：<https://2e6b524c74de4e0c91f79662efb2745f.bj8.agentos-app.net>

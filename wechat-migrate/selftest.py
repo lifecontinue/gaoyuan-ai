@@ -30,7 +30,7 @@ FAKE_PAGE = """<!DOCTYPE html><html><head>
 <script>
   var msg_title = 'AI 产品经理的第一性原理';
   var ct = "1722931200";
-  var author = "高源";
+  var author = "gaoyuan";
   var nickname = "Yuan Gao 的 AI 书房";
   var msg_source_url = 'https://gaoyuan-ai.xyz/writing';
   var msg_cdn_url = "https://mmbiz.qpic.cn/cover_abc/640?wx_fmt=jpeg";
@@ -106,7 +106,7 @@ def main() -> int:
     art = parser.parse(FAKE_PAGE, stub)
     check("标题", art.title == "AI 产品经理的第一性原理", art.title)
     check("发布时间戳", art.publish_ts == 1722931200, str(art.publish_ts))
-    check("作者", art.author == "高源", art.author)
+    check("作者", art.author == "gaoyuan", art.author)
     check("公众号名", art.account == "Yuan Gao 的 AI 书房", art.account)
     check("原文外链", art.source_url == "https://gaoyuan-ai.xyz/writing", art.source_url)
     check("摘要", art.digest.startswith("这是文章摘要"), art.digest[:20])

@@ -1,5 +1,5 @@
 /* =========================================================
-   团团成长星空 · 控制器
+   [孩子]成长星空 · 控制器
    以全屏星空为核心，所有功能整合进右侧抽屉（SidePanel）与全局菜单。
    数据：TT_DATA / Store / Charts / TT_SUBJECTS_P3
    ========================================================= */
@@ -134,14 +134,14 @@
     welcome() {
       const ps = withData(); const cur = ps[ps.length - 1], prev = ps[ps.length - 2];
       if (!cur) {
-        if (state.stage === 'p' && SUBJS.length) return `Hi，我是团团成长顾问。当前<b>小学</b>阶段还没有结构化测评数据，但团团已进入<b>三年级（第二学段）</b>。我已备好 <b>${SUBJS.length}</b> 门学科的「学科评价维度」：数学融合了教育知识图谱的真实学习路径，其余学科依据 2022 课标梳理。<br><br>在右侧抽屉「学科维度」可查看主题与可评指标；在「家长记录」里添加观察，我会随时帮你分析。`;
-        return `Hi，我是团团成长顾问。当前<b>${STAGES[state.stage].label}</b>阶段还没有结构化测评数据。你可以在「家长记录」里添加观察，我会随时帮你分析。`;
+        if (state.stage === 'p' && SUBJS.length) return `Hi，我是[孩子]成长顾问。当前<b>小学</b>阶段还没有结构化测评数据，但[孩子]已进入<b>三年级（第二学段）</b>。我已备好 <b>${SUBJS.length}</b> 门学科的「学科评价维度」：数学融合了教育知识图谱的真实学习路径，其余学科依据 2022 课标梳理。<br><br>在右侧抽屉「学科维度」可查看主题与可评指标；在「家长记录」里添加观察，我会随时帮你分析。`;
+        return `Hi，我是[孩子]成长顾问。当前<b>${STAGES[state.stage].label}</b>阶段还没有结构化测评数据。你可以在「家长记录」里添加观察，我会随时帮你分析。`;
       }
       const curAvg = avgOfPeriod(cur), prevAvg = prev ? avgOfPeriod(prev) : null;
       const diff = (curAvg != null && prevAvg != null) ? curAvg - prevAvg : null;
       const weak = this.weakestDomain(cur), strong = this.strongestDomain(cur);
       const { reg } = registry(); const chronic = Object.values(reg).filter(e => e.tag === 'chronic').length;
-      let html = `Hi，林悠然（团团）的<b>${STAGES[state.stage].label}</b>数据已就绪。<br><br>最新一期 <b>${esc(cur.name)}</b> 综合得分率 <b>${pct(curAvg)}</b>`;
+      let html = `Hi，林悠然（[孩子]）的<b>${STAGES[state.stage].label}</b>数据已就绪。<br><br>最新一期 <b>${esc(cur.name)}</b> 综合得分率 <b>${pct(curAvg)}</b>`;
       if (diff != null) html += `，较上期${diff >= 0 ? '提升' : '下降'} <b class="${diff >= 0 ? 'up' : 'down'}">${Math.abs(diff * 100).toFixed(1)}pt</b>`;
       html += `。<br><br>优势领域：<b style="color:${domMeta(strong.key).color}">${strong.key}</b>（${pct(cur.domainScores[strong.key])}）；相对薄弱：<b style="color:${domMeta(weak.key).color}">${weak.key}</b>（${pct(cur.domainScores[weak.key])}）。`;
       if (chronic) html += `<br>目前长期待突破指标共 <b>${chronic}</b> 项。`;
@@ -231,7 +231,7 @@
     const child = D.child || {};
     const radar = cur ? C.radar({ axes: DOMS.map(d => ({ label: d })), series: [{ name: '最新', color: '#ff7c3a', values: DOMS.map(d => cur.domainScores[d]) }], min: 0.5 }) : '';
     let html = `<div class="card">
-      <div class="dc-title"><h3 style="font-family:var(--serif)">${esc(child.nickname || child.name || '团团')} 的成长星空</h3>
+      <div class="dc-title"><h3 style="font-family:var(--serif)">${esc(child.nickname || child.name || '[孩子]')} 的成长星空</h3>
       <span class="sub">${esc((child.grade || '') + ' · ' + (child.kindergarten || child.school || ''))}</span></div>
       <div class="grid g-3" style="margin:10px 0">
         ${kpi('综合得分率', pct(curAvg), '', cur ? esc(cur.name) : '暂无测评')}
@@ -347,7 +347,7 @@
     if (!s) return '';
     const lps = s.learning_paths || [];
     if (!lps.length) {
-      return `<div class="card"><div class="card-h"><h3>学习路径说明</h3></div><div class="card-b hint">本学科依据 2022 义务教育课程标准梳理主题与可评指标；具体进阶路径以上级教研要求为准，可在「家长记录」中按主题追踪团团的实际学习进展。</div></div>`;
+      return `<div class="card"><div class="card-h"><h3>学习路径说明</h3></div><div class="card-b hint">本学科依据 2022 义务教育课程标准梳理主题与可评指标；具体进阶路径以上级教研要求为准，可在「家长记录」中按主题追踪[孩子]的实际学习进展。</div></div>`;
     }
     const kg = lps.filter(l => l.source === 'kg').length, curr = lps.length - kg;
     let h = `<div class="card"><div class="card-h"><h3>学习路径</h3><span class="sub">${lps.length} 条${kg ? ' · 教育知识图谱 ' + kg : ''}${curr ? ' · 课标进阶 ' + curr : ''}</span></div><div class="card-b">`;
@@ -514,10 +514,10 @@
   }
   function openSummaryForm() {
     const ps = withData();
-    modal('生成综合评价', `<div class="field mb"><label>报告标题</label><input type="text" id="sf-title" value="林悠然（团团）${STAGES[state.stage].label}成长综合评价报告"></div>
+    modal('生成综合评价', `<div class="field mb"><label>报告标题</label><input type="text" id="sf-title" value="林悠然（[孩子]）${STAGES[state.stage].label}成长综合评价报告"></div>
       <div class="grid g-2 mb"><div class="field"><label>起始期次</label><select id="sf-from">${ps.map((p, i) => `<option value="${p.id}" ${i === 0 ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
       <div class="field"><label>截止期次</label><select id="sf-to">${ps.map((p, i) => `<option value="${p.id}" ${i === ps.length - 1 ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div></div>
-      <div class="field mb"><label>家长寄语</label><textarea id="sf-msg" placeholder="想对团团说的话……"></textarea></div>
+      <div class="field mb"><label>家长寄语</label><textarea id="sf-msg" placeholder="想对[孩子]说的话……"></textarea></div>
       <div class="field mb"><label>下阶段目标（每行一条）</label><textarea id="sf-goal" placeholder="每天跳绳 5 分钟&#10;睡前自己整理书包&#10;每周承担 2 次家务"></textarea></div>
       <div class="field"><label>撰写人</label><input type="text" id="sf-author" value="爸爸 林建国"></div>`,
       `<button class="btn" onclick="TT.closeModal()">取消</button><button class="btn primary" id="sf-ok">生成</button>`);
@@ -631,12 +631,12 @@
     openPeriod(id) { const p = allPeriods().concat(D.periods).find(x => x.id === id) || D.periods.find(x => x.id === id); if (!p) return; modal(esc(p.name), `<div class="doc">${summaryPeriodHtml(p)}</div>`); },
     openNoteModal(domain, indicator) { openNoteModal(domain, indicator); },
     delNote(id) { if (confirm('删除这条观察记录？')) { S.delNote(id); refreshSide(); Side.refresh(); toast('已删除'); } },
-    exportNotes() { const notes = S.s.notes; const md = ['# 团团观察记录\n'].concat(notes.map(n => `## ${n.date} · ${n.domain}${n.indicator ? ' · ' + n.indicator : ''}\n\n${'★'.repeat(n.stars || 0)}　${n.by}\n\n${n.text}\n`)).join('\n'); download('团团观察记录.md', md, 'text/markdown'); toast('已导出'); },
+    exportNotes() { const notes = S.s.notes; const md = ['# [孩子]观察记录\n'].concat(notes.map(n => `## ${n.date} · ${n.domain}${n.indicator ? ' · ' + n.indicator : ''}\n\n${'★'.repeat(n.stars || 0)}　${n.by}\n\n${n.text}\n`)).join('\n'); download('[孩子]观察记录.md', md, 'text/markdown'); toast('已导出'); },
     tapHabit(id, day) { S.toggleHabit(habitMonth, id, day); Side.refresh(); },
     editHabits() { editHabitsModal(); },
     openSummaryForm, printSummary() { window.print(); }, exportSummaryMD(id) { const x = S.s.summaries.find(v => v.id === id) || S.s.summaries[0]; if (x) { download(x.title + '.md', summaryMarkdown(x), 'text/markdown'); toast('已导出'); } },
     delSummary(id) { if (confirm('删除这份综合评价？')) { S.delSummary(id); renderSummaryList(); } },
-    exportData() { download(`团团成长评价_备份_${today()}.json`, S.exportJSON(), 'application/json'); toast('已导出备份'); },
+    exportData() { download(`[孩子]成长评价_备份_${today()}.json`, S.exportJSON(), 'application/json'); toast('已导出备份'); },
     importData() { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json'; inp.onchange = () => { const f = inp.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { try { S.importJSON(rd.result); toast('恢复成功'); refreshSide(); buildSearchIndex(); renderData(); } catch (e) { toast('文件格式有误'); } }; rd.readAsText(f); }; inp.click(); },
     resetData() { if (confirm('将清空所有家长记录、打卡与评价报告，且不可恢复。确定？')) { S.reset(); refreshSide(); buildSearchIndex(); renderData(); toast('已清空'); } },
     toggleAI() { $('#aiPanel').classList.toggle('collapsed'); }

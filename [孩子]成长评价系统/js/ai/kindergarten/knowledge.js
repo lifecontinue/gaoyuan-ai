@@ -86,7 +86,7 @@ export function activityWhitelistText() {
    ========================================================= */
 export const DATA_SOURCE_REF = `
 【数据源位置】
-· 幼儿园测评指标：D:/forster children/团团成长评价系统/js/data/data.js → D.indicators
+· 幼儿园测评指标：D:/forster children/[孩子]成长评价系统/js/data/data.js → D.indicators
 · 六大领域定义：同上文件 → D.domains（key/name/desc）
 · 领域显示标签：../../domain/growth.js → domLabel()
 · 家长记录与测评历史：../../data/store.js → Store.periods / Store.parentPeriods

@@ -1,7 +1,7 @@
 {
   "name": "tuantuan-ai-server",
   "version": "1.0.0",
-  "description": "团团成长评价系统 · 服务端 AI 代理（静态托管 + DeepSeek 转发，Key 存服务端）",
+  "description": "[孩子]成长评价系统 · 服务端 AI 代理（静态托管 + DeepSeek 转发，Key 存服务端）",
   "private": true,
   "scripts": {
     "start": "node index.js"

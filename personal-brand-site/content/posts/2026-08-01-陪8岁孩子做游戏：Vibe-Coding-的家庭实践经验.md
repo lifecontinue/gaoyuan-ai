@@ -2,7 +2,7 @@
 title: 陪8岁孩子做游戏：Vibe Coding 的家庭实践经验
 slug: 2026-08-01-陪8岁孩子做游戏：Vibe-Coding-的家庭实践经验
 date: '2026-08-01T18:31:30'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: 本文记录了我陪女儿用 Vibe Coding 做游戏的全过程。我没有先教她任何编程工具，而是先帮她建立\x26quot;准确说出看到的 → 表达想要的 → 看到变化\x26quot;这一闭环习惯——这恰恰是 Vibe Coding 真正的元能力。
 categories:

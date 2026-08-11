@@ -33,7 +33,7 @@ DEMO_HTML = """<html><head>
 <script>
   var msg_title = '从公众号到个人站点：一条内容管线是怎么跑通的';
   var ct = "1754524800";
-  var author = "高源";
+  var author = "gaoyuan";
   var nickname = "Yuan Gao 的 AI 书房";
   var msg_source_url = 'https://gaoyuan-ai.xyz';
   var appmsg_album_infos = [{"album_id":"1","title":"AI 产品方法论"}];

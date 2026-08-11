@@ -2,7 +2,7 @@
 title: Human-in-the-Loop 产品的构建复盘
 slug: 2026-07-24-Human-in-the-Loop-产品的构建复盘
 date: '2026-07-24T12:00:00'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: 纯AI领域的探索陷入瓶颈后，关于 Human-in-the-Loop 产品到底该怎么做，也许我的经验能够给你带来一些参考。
 categories:

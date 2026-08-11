@@ -2,7 +2,7 @@
 title: kira learning的产品分析
 slug: 2025-06-29-kira-learning的产品分析
 date: '2025-06-29T15:49:58'
-author: 高源
+author: gaoyuan
 account: AI Prodlab
 summary: Kira Learning是由吴恩达担任董事长的教育科技公司，其产品定位为教师管理平台结合AI工具。亮点功能包括Standards Mapping、自动聚合学情数据可视化评估，以及通过prompt参数设置实现个性化作业生成和评分。
 categories:

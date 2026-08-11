@@ -7,7 +7,7 @@ AI 产品经理，具备大模型 / LLM 产品从 0→1 到上线与商业化的
 方向，负责 Enterprise AI Platform 和 AI-native 产品建设。
 工作经历
 Crimson Education — AI 产品经
-高源 (Yuan Gao) · AI Product Manager Resume
+gaoyuan (Yuan Gao) · AI Product Manager Resume
 haidagy@gmail.com · 13585840034
 [https://www.linkedin.com/in/gaoyuan93/]   [https://gaoyuan-ai.xyz]
 理
@@ -32,7 +32,7 @@ Brief，提升服务准备效率和信息一致性。
  端到端负责 2 款无线信号屏蔽器与 1 款网络时钟的硬件研发（参数确认、供应商管理、量产），降本 15%，年
 营收超 3,000 万元，时钟出货 5,000+ 台。贡献 3 项实用新型专利
 
-高源 (Yuan Gao) · AI Product Manager Resume
+gaoyuan (Yuan Gao) · AI Product Manager Resume
 Page 2 Confidential · 保密
  优化供应链与跨职能交付，提升硬件 / 软件产品组合的交付速度与成本效益。参与国家教育考试无线屏蔽标准的
 制定。
@@ -63,7 +63,7 @@ App。
 / Scrum
  技术： SQL、产品数据分析、Jira / Figma / Confluence
 
-高源 (Yuan Gao) · AI Product Manager Resume
+gaoyuan (Yuan Gao) · AI Product Manager Resume
 Page 3 Confidential · 保密
 Professional Summary
 AI Product Manager with end-to-end expertise taking LLM / large-model products from 0→1 through
@@ -98,7 +98,7 @@ line.
  Delivered a standardized public-safety smart street-patrol solution, simplifying deployment and
 integration complexity.
 
-高源 (Yuan Gao) · AI Product Manager Resume
+gaoyuan (Yuan Gao) · AI Product Manager Resume
 Page 4 Confidential · 保密
 Suzhou Jinruiyang Information Technology Co., Ltd. (苏州金瑞阳) — Product Manager
 2022.09 – 2024.06
@@ -130,7 +130,7 @@ quality inspection, new-media operations, AIGC, corporate training, and public-o
 delivered an actionable transformation roadmap with priorities, improving information accuracy and
 reducing operating costs.
 
-高源 (Yuan Gao) · AI Product Manager Resume
+gaoyuan (Yuan Gao) · AI Product Manager Resume
 Page 5 Confidential · 保密
 Education
 Ocean University of China (中国海洋大学) — B.S. in Educational Technology
