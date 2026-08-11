@@ -17,7 +17,7 @@ export const apps = [
     tagline: "立体战场 · 实时技能对战",
     icon: null,
     screenshot: "assets/img/screenshots/tank-wars.png",
-    url: "https://tank-wars.gaoyuan-ai.xyz",
+    url: "/tank-wars/",
     tags: ["游戏", "实时对战", "3D 地形"],
     status: "live",
     placements: [{
@@ -116,7 +116,7 @@ export const apps = [
     tagline: "把育儿的小瞬间变成数据",
     icon: null,
     screenshot: "assets/img/screenshots/poop-tracker-three.png",
-    url: "https://poop-tracker.gaoyuan-ai.xyz",
+    url: "/poop-tracker/",
     tags: ["育儿", "健康记录", "小工具"],
     status: "live",
     placements: [{
@@ -139,7 +139,7 @@ export const apps = [
     tagline: "产品经理的自进化系统",
     icon: null,
     screenshot: "assets/img/screenshots/pm-growth-os.png",
-    url: "https://pm-growth-os.gaoyuan-ai.xyz",
+    url: "/pm-growth-os/",
     tags: ["产品管理", "成长", "方法论"],
     status: "live",
     placements: [{
