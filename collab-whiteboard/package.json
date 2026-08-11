@@ -1,0 +1,12 @@
+{
+  "name": "collab-whiteboard",
+  "version": "1.0.0",
+  "description": "一个**单文件、零依赖**的网页白板原型（类 Miro），原生 Canvas 2D + DOM 实现，支持便签、画笔、连线、图形、多选组合、撤销重做、PNG/JSON 导入导出，并内置**可配置的 Supabase 云端同步 + 多画布管理**。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

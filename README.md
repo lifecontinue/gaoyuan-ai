@@ -18,12 +18,13 @@
 | `wechat-migrate/` | 公众号文章迁移工具 | 将公众号历史文章导出为 Markdown + 本地化图片 + JSON 索引 |
 | `satir_family_communication_system/` | 萨提亚家庭沟通系统 | 家庭沟通模式相关系统 |
 | `Vibe Coding 课件/` | Vibe Coding 课件 | 课程资料 |
+| `collab-whiteboard/` | 协作白板（Collab Whiteboard） | Miro 类单文件 HTML 协作白板，可配置 Supabase 后端 + localStorage 回退 |
 
 ## 品牌站中的应用映射（apps.js）
 
 `personal-brand-site/assets/js/data/apps.js` 是应用目录的唯一数据源。本仓库收录了其中在本地有源码的应用：
 `fret-flow`、`child-assessment`、`neck-soccer`、`travel-map`、`breathe`。
-`tank-wars`、`growth-stars`、`poop-tracker`、`pm-growth-os` 等应用在其它仓库/部署环境中，未纳入本仓库。
+`tank-wars`、`growth-stars`、`poop-tracker`、`pm-growth-os` 等应用在本 CodeSpace 中**无本地源码**（可能在其它仓库/部署环境中），未纳入本仓库。
 
 ## 部署
 
