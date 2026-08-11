@@ -25,7 +25,7 @@ export const profile = {
     // 二维码区下方的引导文案（可选）
     qrHint: "Scan to add me as a friend or follow my writing.",
     // Email 仅保留一种联系方式
-    email: "haidagy@gmail.com"
+    email: "[邮箱]"
     // ⚠️ Phone 与 LinkedIn 已按用户要求移除
   },
   // Ambient audio removed (no Sound button requested)
