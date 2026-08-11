@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>坦克大战</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="toast-container"></div>
+    <div id="game-shell">
+        <div id="game-container">
+            <canvas id="gameCanvas" width="960" height="640"></canvas>
+
+            <div id="ui-layer" class="hidden">
+                <div class="hud-column hud-left">
+                    <div class="hud-card compact">
+                        <span class="hud-label">⛽ 燃料</span>
+                        <div class="meter meter-fuel">
+                            <div id="fuel-fill" class="meter-fill"></div>
+                        </div>
+                        <span id="fuel-text" class="hud-value">100 / 100</span>
+                    </div>
+                    <div class="hud-card compact">
+                        <span class="hud-label">🪙 金币</span>
+                        <span id="money-text" class="hud-value">0</span>
+                    </div>
+                    <div class="hud-card compact">
+                        <span class="hud-label">🏦 银行</span>
+                        <span id="bank-text" class="hud-value">0</span>
+                    </div>
+                </div>
+
+                <div class="hud-column hud-right">
+                    <div class="hud-card health-card">
+                        <div class="health-head">
+                            <span class="hud-label">❤️ 生命值</span>
+                            <span id="health-text" class="hud-value">100 / 100</span>
+                        </div>
+                        <div class="meter meter-health">
+                            <div id="health-fill" class="meter-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hud-bottom">
+                    <div class="ability-row">
+                        <div class="ability-chip" data-ability="KeyQ">
+                            <span>Q</span>
+                            <strong>🔫 连发</strong>
+                            <em id="cooldown-KeyQ">就绪</em>
+                        </div>
+                        <div class="ability-chip" data-ability="KeyW">
+                            <span>W</span>
+                            <strong>💥 散射</strong>
+                            <em id="cooldown-KeyW">就绪</em>
+                        </div>
+                        <div class="ability-chip" data-ability="KeyE">
+                            <span>E</span>
+                            <strong>🛡️ 护盾</strong>
+                            <em id="cooldown-KeyE">就绪</em>
+                        </div>
+                        <div class="ability-chip" data-ability="KeyR">
+                            <span>R</span>
+                            <strong>⚡ 穿甲炮</strong>
+                            <em id="cooldown-KeyR">就绪</em>
+                        </div>
+                    </div>
+                    <div id="status-text" class="status-text">
+                        方向键移动，空格普通攻击，靠近建筑后点击图标互动。
+                    </div>
+                </div>
+            </div>
+
+            <div id="start-screen" class="screen">
+                <div class="panel start-panel">
+                    <h1>🎮 坦克大战</h1>
+                    <p class="subtitle">更大的地图、立体化地形、QWER 技能战斗，以及带交互点的门店系统。</p>
+                    <div id="tank-selection">
+                        <button class="tank-card selected" data-type="balanced" type="button">
+                            <span class="tank-color" style="background:#4ade80;"></span>
+                            <strong>⚖️ 均衡型</strong>
+                            <small>HP 130 · 机动中等 · 火力稳定 · 万金油</small>
+                        </button>
+                        <button class="tank-card" data-type="heavy" type="button">
+                            <span class="tank-color" style="background:#3b82f6;"></span>
+                            <strong>🛡️ 重装型</strong>
+                            <small>HP 220 · 极慢 · 一炮超高伤 · 肉盾</small>
+                        </button>
+                        <button class="tank-card" data-type="speed" type="button">
+                            <span class="tank-color" style="background:#ef4444;"></span>
+                            <strong>⚡ 极速型</strong>
+                            <small>HP 70 · 超快 · 射速飞快 · 玻璃大炮</small>
+                        </button>
+                    </div>
+                    <div class="tips-block">
+                        <p>🛒 粉色牌子是商店 · ⛽ 黄色牌子是加油站 · 🏦 蓝色牌子是银行</p>
+                        <p>靠近建筑会出现交互点，点击即可进入或开始加油</p>
+                    </div>
+                    <button id="start-btn" class="primary-btn" type="button">⚔️ 进入战场</button>
+                </div>
+            </div>
+
+            <div id="shop-screen" class="screen hidden">
+                <div class="panel modal-panel">
+                    <h2>🛒 商店</h2>
+                    <p>当前金币：<span id="shop-money">0</span></p>
+                    <div class="shop-items">
+                        <button class="shop-btn" data-item="heal" type="button">❤️ 修理坦克（30 金币）</button>
+                        <button class="shop-btn" data-item="attack" type="button">⚔️ 提升攻击（45 金币）</button>
+                        <button class="shop-btn" data-item="speed" type="button">💨 提升移速（40 金币）</button>
+                        <button class="shop-btn" data-item="fuel" type="button">⛽ 扩充油箱（35 金币）</button>
+                    </div>
+                    <button id="close-shop-btn" class="secondary-btn" type="button">🚪 离开商店</button>
+                </div>
+            </div>
+
+            <div id="bank-screen" class="screen hidden">
+                <div class="panel modal-panel bank-panel">
+                    <h2>🏦 银行</h2>
+                    <p>随身金币：<span id="bank-money">0</span></p>
+                    <p>银行存款：<span id="bank-balance">0</span></p>
+                    <div class="bank-actions">
+                        <button id="deposit-btn" class="bank-btn" type="button">📥 存入 50</button>
+                        <button id="withdraw-btn" class="bank-btn" type="button">📤 取出 50</button>
+                    </div>
+                    <button id="close-bank-btn" class="secondary-btn" type="button">🚪 离开银行</button>
+                </div>
+            </div>
+
+            <div id="game-over-screen" class="screen hidden">
+                <div class="panel modal-panel">
+                    <h2>💥 战斗结束</h2>
+                    <p id="game-over-reason">你的坦克已经被击毁。</p>
+                    <button id="restart-btn" class="primary-btn" type="button">🔄 重新开始</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>

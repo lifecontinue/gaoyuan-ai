@@ -1,0 +1,3467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一起拉屎 - 记录你的健康时刻</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        :root {
+            --poop-color: #8B6F47;
+            --poop-light: #A68B5F;
+            --poop-dark: #6B5633;
+            --accent-yellow: #FFD700;
+            --accent-yellow-light: #FFF8DC;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #F5E6D3 0%, #E8D5B7 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .phone-container {
+            max-width: 414px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .status-bar {
+            background: var(--poop-color);
+            color: white;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            background: white;
+            border-top: 1px solid #E5E5E5;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #999;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .nav-item.active {
+            color: var(--poop-color);
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+        }
+        
+        .nav-item-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            margin: -20px 0;
+        }
+        
+        .nav-item-center .center-button {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(139, 111, 71, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .nav-item-center.active .center-button {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(139, 111, 71, 0.4);
+        }
+        
+        .nav-item-center .center-label {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--poop-color);
+            font-weight: 600;
+        }
+        
+        .page {
+            display: none;
+            padding-bottom: 100px;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .btn-primary {
+            background: var(--poop-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--poop-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-yellow {
+            background: var(--accent-yellow);
+            color: var(--poop-dark);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .poop-type {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--poop-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--accent-yellow-light);
+            color: var(--poop-dark);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px;
+        }
+        
+        .chart-bar {
+            height: 8px;
+            background: var(--accent-yellow);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--poop-dark);
+            margin: 20px 16px 12px;
+        }
+        
+        .record-item {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .record-item:active {
+            transform: scale(0.98);
+        }
+        
+        .poop-type-selector {
+            text-align: center;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .poop-type-selector.selected {
+            border-color: var(--poop-color);
+            background: var(--accent-yellow-light);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--poop-color);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--poop-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 80%;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* 沉浸式记录页面 */
+        .page-add {
+            background: linear-gradient(180deg, #F5E6D3 0%, #E8D5B7 50%, #fff 100%);
+            min-height: 100vh;
+        }
+        
+        .page-add .header-gradient {
+            background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 50%, var(--accent-yellow) 100%);
+            background-size: 200% 200%;
+            padding: 40px 24px 60px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .page-add .header-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .page-add .header-gradient::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%);
+            animation: pulse 5s ease-in-out infinite reverse;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.4; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+        }
+        
+        .magic-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 0 6px rgba(255,255,255,0.8), 0 0 12px rgba(255,215,0,0.5);
+        }
+        
+        .particle-dynamic {
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,215,0,0.8) 100%);
+            box-shadow: 0 0 8px rgba(255,255,255,1), 0 0 16px rgba(255,215,0,0.8);
+        }
+        
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 5s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; animation-duration: 6s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; animation-duration: 7s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 0.5s; animation-duration: 5.5s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 1.5s; animation-duration: 6.5s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 2.5s; animation-duration: 7.5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0.8s; animation-duration: 5.8s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 1.8s; animation-duration: 6.8s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 2.8s; animation-duration: 7.8s; }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100px) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .magic-sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--accent-yellow), 0 0 20px var(--accent-yellow);
+        }
+        
+        .magic-sparkle:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+        .magic-sparkle:nth-child(2) { top: 30%; left: 45%; animation-delay: 0.5s; }
+        .magic-sparkle:nth-child(3) { top: 25%; left: 75%; animation-delay: 1s; }
+        .magic-sparkle:nth-child(4) { top: 50%; left: 25%; animation-delay: 1.5s; }
+        .magic-sparkle:nth-child(5) { top: 55%; left: 65%; animation-delay: 0.3s; }
+        
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+        }
+        
+        .magic-title {
+            position: relative;
+            z-index: 2;
+            animation: titleGlow 3s ease-in-out infinite, titleEntrance 1s ease-out;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,215,0,0.3);
+        }
+        
+        @keyframes titleEntrance {
+            0% {
+                transform: translateY(-20px) scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,215,0,0.3);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 60px rgba(255,215,0,0.6), 0 0 80px rgba(255,215,0,0.4);
+            }
+        }
+        
+        .magic-subtitle {
+            position: relative;
+            z-index: 2;
+            animation: subtitleFloat 4s ease-in-out infinite, subtitleEntrance 1.2s ease-out 0.2s both;
+        }
+        
+        @keyframes subtitleEntrance {
+            0% {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 0.95;
+            }
+        }
+        
+        @keyframes subtitleFloat {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 0.95;
+            }
+            50% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
+        }
+        
+        /* 滚动寄语样式 */
+        .weather-message {
+            position: relative;
+            z-index: 2;
+            margin-top: 16px;
+            height: 32px;
+            overflow: hidden;
+            opacity: 0.95;
+        }
+        
+        .message-scroll {
+            display: flex;
+            flex-direction: column;
+            animation: scrollMessage 20s linear infinite;
+        }
+        
+        .message-item {
+            font-size: 16px;
+            line-height: 32px;
+            white-space: nowrap;
+            text-align: center;
+            padding: 0 12px;
+            flex-shrink: 0;
+            height: 32px;
+            font-weight: 500;
+        }
+        
+        @keyframes scrollMessage {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(calc(-100% / 3));
+            }
+        }
+        
+        .message-scroll.paused {
+            animation-play-state: paused;
+        }
+        
+        .magic-orb {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+            animation: orbFloat 8s ease-in-out infinite;
+            filter: blur(20px);
+        }
+        
+        .magic-orb:nth-child(1) {
+            top: -30px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .magic-orb:nth-child(2) {
+            top: -20px;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        @keyframes orbFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            33% {
+                transform: translate(20px, 30px) scale(1.2);
+                opacity: 0.5;
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.8);
+                opacity: 0.4;
+            }
+        }
+        
+        .immersive-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            margin: -40px 16px 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .duration-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-yellow) 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .duration-circle:active {
+            transform: scale(0.95);
+        }
+        
+        .poop-type-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .poop-type-card {
+            text-align: center;
+            padding: 16px 8px;
+            border: 2px solid #eee;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .poop-type-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .poop-type-card.selected {
+            border-color: var(--poop-color);
+            background: var(--accent-yellow-light);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(139, 111, 71, 0.2);
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--poop-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1);
+        }
+        
+        .save-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(139, 111, 71, 0.3);
+            margin-top: 8px;
+        }
+        
+        .save-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 111, 71, 0.2);
+        }
+        
+        .knowledge-section {
+            margin-bottom: 24px;
+        }
+        
+        .knowledge-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .knowledge-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--poop-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .knowledge-card h3 i {
+            color: var(--poop-color);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 12px;
+        }
+        
+        .stat-mini-card {
+            background: white;
+            border-radius: 12px;
+            padding: 10px 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-mini-card .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--poop-color);
+            margin: 4px 0;
+            line-height: 1.2;
+        }
+        
+        .stat-mini-card .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        /* 条形图样式 */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 8px;
+            height: 120px;
+            padding: 0 4px;
+        }
+        
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+        }
+        
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, var(--poop-color) 0%, var(--poop-light) 100%);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+        }
+        
+        .bar-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 6px;
+            text-align: center;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--poop-dark);
+            white-space: nowrap;
+        }
+        
+        .bar-item.today .bar {
+            background: linear-gradient(180deg, var(--accent-yellow) 0%, #FFA500 100%);
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+        
+        .bar-item.today .bar-label {
+            color: var(--poop-color);
+            font-weight: 600;
+        }
+        
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+        }
+        
+        .badge-item {
+            text-align: center;
+            padding: 16px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .badge-item:active {
+            transform: scale(0.95);
+        }
+        
+        .badge-item.earned {
+            background: linear-gradient(135deg, var(--accent-yellow-light) 0%, white 100%);
+        }
+        
+        .badge-item.unearned {
+            opacity: 0.5;
+            background: #f5f5f5;
+        }
+        
+        /* 拖拽游戏样式 */
+        .poop-game-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(180deg, #E8F4F8 0%, #D4E8F0 50%, #C0DCE8 100%);
+            border-radius: 24px;
+            overflow: hidden;
+            margin: 20px 0;
+            touch-action: none;
+        }
+        
+        .toilet {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 120px;
+            background: white;
+            border-radius: 100px 100px 0 0;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            animation: toiletMove 4s ease-in-out infinite;
+        }
+        
+        @keyframes toiletMove {
+            0%, 100% {
+                transform: translateX(-50%) translateX(0);
+            }
+            25% {
+                transform: translateX(-50%) translateX(-60px);
+            }
+            50% {
+                transform: translateX(-50%) translateX(0);
+            }
+            75% {
+                transform: translateX(-50%) translateX(60px);
+            }
+        }
+        
+        .toilet::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 80px;
+            background: #E8F4F8;
+            border-radius: 70px 70px 0 0;
+        }
+        
+        .toilet::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: #C0DCE8;
+        }
+        
+        .poop-item {
+            position: absolute;
+            width: 60px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-dark) 100%);
+            border-radius: 10px 10px 10px 5px;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.2);
+            transition: transform 0.2s;
+            z-index: 10;
+            transform: rotate(-15deg);
+        }
+        
+        .poop-item:active {
+            cursor: grabbing;
+            transform: rotate(-15deg) scale(1.1);
+            z-index: 20;
+        }
+        
+        .poop-item.dropped {
+            animation: dropDown 0.5s ease-out forwards;
+        }
+        
+        @keyframes dropDown {
+            to {
+                transform: translateY(200px) rotate(-15deg) scale(0.8);
+                opacity: 0.5;
+            }
+        }
+        
+        /* 水花动画 */
+        .splash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 15;
+        }
+        
+        .splash-drop {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(200, 230, 255, 1) 0%, rgba(150, 200, 255, 0.6) 100%);
+            border-radius: 50%;
+            animation: splashAnimation 0.8s ease-out forwards;
+            box-shadow: 0 0 4px rgba(200, 230, 255, 0.8);
+        }
+        
+        @keyframes splashAnimation {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            30% {
+                opacity: 1;
+                transform: translate(calc(var(--splash-x) * 0.3), calc(var(--splash-y) * 0.3)) scale(1);
+            }
+            100% {
+                transform: translate(var(--splash-x), var(--splash-y)) scale(0.3);
+                opacity: 0;
+            }
+        }
+        
+        /* 返回按钮 */
+        .back-button {
+            position: fixed;
+            top: 60px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--poop-color);
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 200;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+        
+        .back-button:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .nav-bottom.hidden {
+            display: none !important;
+        }
+        
+        .poop-spawn-area {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.3);
+            border: 2px dashed var(--poop-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--poop-color);
+        }
+        
+        .poop-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent-yellow);
+            color: var(--poop-dark);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        
+        /* 快速助填样式 */
+        .quick-fill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .quick-fill-tag {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-fill-tag:hover {
+            background: var(--accent-yellow-light);
+            border-color: var(--poop-color);
+            color: var(--poop-dark);
+        }
+        
+        .quick-fill-tag:active {
+            transform: scale(0.95);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 32px 0 20px;
+            padding: 0 16px;
+        }
+        
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s;
+        }
+        
+        .step-dot.active {
+            background: var(--poop-color);
+            width: 24px;
+            border-radius: 4px;
+        }
+        
+        .game-instruction {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 12px;
+            padding: 0 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机容器 -->
+    <div class="phone-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span id="current-time">9:41</span>
+            <span>
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-three-quarters"></i>
+            </span>
+        </div>
+        
+        <!-- 页面1: 统计页面（合并成就） -->
+        <div class="page active" id="page-home">
+            <div style="background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%); padding: 24px 16px; color: white;">
+                <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">数据统计</h1>
+                <p style="opacity: 0.9;">全面了解你的健康数据</p>
+            </div>
+            
+            <!-- 今日统计 -->
+            <div class="stat-card" id="today-stats">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 14px; opacity: 0.9;">今日记录</div>
+                        <div style="font-size: 32px; font-weight: 700;" id="today-count">0次</div>
+                    </div>
+                    <div class="poop-type">
+                        <i class="fas fa-poo"></i>
+                    </div>
+                </div>
+                <div style="font-size: 12px; opacity: 0.9; margin-top: 12px;" id="today-suggestion">
+                    <i class="fas fa-lightbulb"></i> 开始记录你的第一次拉屎吧！
+                </div>
+            </div>
+            
+            <!-- 数据概览 -->
+            <div class="stats-grid" id="stats-overview">
+                <!-- 动态生成 -->
+            </div>
+            
+            <!-- 本周统计 -->
+            <div class="card">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--poop-dark);">
+                    <i class="fas fa-chart-line"></i> 本周统计
+                </h3>
+                <div id="week-stats">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 成就徽章 -->
+            <h2 class="section-title">
+                <i class="fas fa-trophy"></i> 我的成就
+            </h2>
+            <div class="stat-card" style="margin: 12px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">已获得徽章</div>
+                    <div style="font-size: 48px; font-weight: 700;" id="badge-count">0/20</div>
+                </div>
+            </div>
+            <div class="badge-grid" id="home-badges">
+                <!-- 动态生成 -->
+            </div>
+            <div style="padding: 16px;">
+                <button class="btn-primary btn-yellow" style="width: 100%; padding: 16px; font-size: 16px;" onclick="switchPage('page-badges'); setTimeout(() => { const nav = document.querySelectorAll('.nav-item'); nav.forEach(n => n.classList.remove('active')); document.querySelectorAll('.nav-item')[4].classList.add('active'); }, 100);">
+                    <i class="fas fa-share-alt"></i> 查看全部成就
+                </button>
+            </div>
+            
+            <!-- 最近记录 -->
+            <h2 class="section-title">
+                <i class="fas fa-history"></i> 最近记录
+            </h2>
+            <div id="records-list">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 页面2: 新增记录（沉浸式设计） -->
+        <div class="page page-add" id="page-add">
+            <button class="back-button" onclick="goBackFromRecord()" title="返回">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="header-gradient">
+                <!-- 魔法光球 -->
+                <div class="magic-orb"></div>
+                <div class="magic-orb"></div>
+                
+                <!-- 魔法粒子 -->
+                <div class="magic-particles">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+                
+                <!-- 闪烁星星 -->
+                <div class="magic-sparkle"></div>
+                <div class="magic-sparkle"></div>
+                <div class="magic-sparkle"></div>
+                <div class="magic-sparkle"></div>
+                <div class="magic-sparkle"></div>
+                
+                <!-- 标题内容 -->
+                <div class="weather-message" id="weather-message">
+                    <div class="message-scroll" id="message-scroll">
+                        <!-- 动态生成寄语 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 步骤指示器 -->
+            <div class="step-indicator">
+                <div class="step-dot active" id="step-1"></div>
+                <div class="step-dot" id="step-2"></div>
+                <div class="step-dot" id="step-3"></div>
+                <div class="step-dot" id="step-4"></div>
+            </div>
+            
+            <!-- 步骤1: 开始时间 -->
+            <div class="immersive-card" id="step1-card">
+                <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--poop-dark); font-size: 16px;">
+                    <i class="fas fa-clock"></i> 开始时间
+                </label>
+                <input type="datetime-local" id="record-time" class="input-field">
+                <div style="margin-top: 16px; text-align: center;">
+                    <button class="btn-primary" style="width: 100%;" onclick="nextStep(2)">
+                        下一步 <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 步骤2: 拖拽游戏 -->
+            <div class="immersive-card" id="step2-card" style="display: none;">
+                <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--poop-dark); font-size: 16px; text-align: center;">
+                    <i class="fas fa-gamepad"></i> 拖动便便到马桶
+                </label>
+                <div class="poop-game-container" id="poop-game">
+                    <div class="poop-spawn-area">
+                        <i class="fas fa-poo"></i>
+                    </div>
+                    <div class="toilet" id="toilet-target"></div>
+                    <div class="poop-count" id="poop-count">0次</div>
+                </div>
+                <div class="game-instruction">
+                    <i class="fas fa-info-circle"></i> 拖动便便到移动的马桶中，掉入后会自动出现新的
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                    <button class="btn-primary" style="flex: 1; background: #999;" onclick="prevStep(1)">
+                        <i class="fas fa-arrow-left"></i> 上一步
+                    </button>
+                    <button class="btn-primary" style="flex: 1;" onclick="nextStep(3)">
+                        下一步 <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 步骤3: 记录拉屎体会 -->
+            <div class="immersive-card" id="step3-card" style="display: none;">
+                <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--poop-dark); font-size: 16px;">
+                    <i class="fas fa-smile"></i> 拉屎体会
+                </label>
+                <textarea id="record-feeling" class="input-field" style="min-height: 100px; resize: none;" placeholder="描述一下这次拉屎的感受..."></textarea>
+                <div class="quick-fill-container" id="feeling-quick-fill">
+                    <!-- 动态生成 -->
+                </div>
+                
+                <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--poop-dark); font-size: 16px; margin-top: 20px;">
+                    <i class="fas fa-poo"></i> 便便类型（布里斯托分类）
+                </label>
+                <div class="poop-type-grid" id="poop-type-selector">
+                    <!-- 动态生成 -->
+                </div>
+                <div style="margin-top: 16px; padding: 12px; background: #f9f9f9; border-radius: 12px; font-size: 13px; color: #666; text-align: center; min-height: 40px; display: flex; align-items: center; justify-content: center;" id="poop-type-desc">
+                    请选择便便类型
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                    <button class="btn-primary" style="flex: 1; background: #999;" onclick="prevStep(2)">
+                        <i class="fas fa-arrow-left"></i> 上一步
+                    </button>
+                    <button class="btn-primary" style="flex: 1;" onclick="nextStep(4)">
+                        下一步 <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 步骤4: 其他信息 -->
+            <div class="immersive-card" id="step4-card" style="display: none;">
+                <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--poop-dark); font-size: 16px;">
+                    <i class="fas fa-utensils"></i> 之前吃的食物
+                </label>
+                <input type="text" id="record-food" class="input-field" placeholder="例如：麻辣烫、米饭">
+                <div class="quick-fill-container" id="food-quick-fill">
+                    <!-- 动态生成 -->
+                </div>
+                
+                <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--poop-dark); font-size: 16px; margin-top: 20px;">
+                    <i class="fas fa-clock"></i> 持续时间（分钟）
+                </label>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 20px;">
+                    <button onclick="adjustDuration(-1)" style="width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--poop-color); background: white; font-size: 28px; color: var(--poop-color); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <div class="duration-circle">
+                        <div style="text-align: center; color: white;">
+                            <div id="duration-value" style="font-size: 36px; font-weight: 700; line-height: 1;">5</div>
+                            <div style="font-size: 14px; opacity: 0.9;">分钟</div>
+                        </div>
+                    </div>
+                    <button onclick="adjustDuration(1)" style="width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--poop-color); background: white; font-size: 28px; color: var(--poop-color); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                    <button class="btn-primary" style="flex: 1; background: #999;" onclick="prevStep(3)">
+                        <i class="fas fa-arrow-left"></i> 上一步
+                    </button>
+                    <button class="save-button" style="flex: 1;" onclick="saveRecord()">
+                        <i class="fas fa-save"></i> 保存记录
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页面3: 科普内容 -->
+        <div class="page" id="page-knowledge">
+            <div style="background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%); padding: 24px 16px; color: white;">
+                <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">便便科普</h1>
+                <p style="opacity: 0.9;">了解你的健康信号</p>
+            </div>
+            
+            <div class="knowledge-card" style="margin-top: 20px;">
+                <h3>
+                    <i class="fas fa-book-medical"></i> 布里斯托大便分类法
+                </h3>
+                <p style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 16px;">
+                    布里斯托大便分类法（Bristol Stool Scale）是1997年由英国布里斯托大学的Heaton和Lewis医生开发的一种医学分类法，将人类的大便分为七类，用于评估消化系统的健康状况和肠道功能。
+                </p>
+                
+                <div style="margin-bottom: 16px;" id="poop-types-info">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            
+            <div class="knowledge-card">
+                <h3>
+                    <i class="fas fa-lightbulb"></i> 健康小贴士
+                </h3>
+                <div style="font-size: 14px; color: #666; line-height: 1.8;">
+                    <p style="margin-bottom: 12px;">
+                        <strong>• 正常频率：</strong>每天1-3次或每2-3天1次都属于正常范围。重要的是保持规律，而不是绝对次数。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>• 理想类型：</strong>类型3和类型4是最理想的状态，表明消化系统工作正常，水分和纤维摄入充足。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>• 持续时间：</strong>正常排便时间应在5-10分钟之间。如果超过15分钟，可能需要调整饮食或就医。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>• 饮食建议：</strong>多摄入纤维（蔬菜、水果、全谷物）、多喝水（每天至少1.5-2升），有助于保持健康的排便习惯。
+                    </p>
+                    <p>
+                        <strong>• 运动建议：</strong>适量运动可以促进肠道蠕动，改善便秘问题。建议每天至少30分钟中等强度运动。
+                    </p>
+                </div>
+            </div>
+            
+            <div class="knowledge-card">
+                <h3>
+                    <i class="fas fa-heartbeat"></i> 便便与健康的关系
+                </h3>
+                <div style="font-size: 14px; color: #666; line-height: 1.8;">
+                    <p style="margin-bottom: 12px;">
+                        <strong>颜色：</strong>正常便便颜色为棕色，这是胆红素分解产生的。如果出现黑色、红色、白色或绿色，需要引起注意。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>气味：</strong>正常便便有轻微气味。如果气味异常强烈，可能是消化不良或肠道菌群失衡。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>浮沉：</strong>正常便便应该沉入水中。如果总是浮在水面，可能是脂肪吸收不良。
+                    </p>
+                    <p>
+                        <strong>频率变化：</strong>突然的频率变化（如从每天1次变为每天3次以上）可能是疾病的信号，需要关注。
+                    </p>
+                </div>
+            </div>
+            
+            <div class="knowledge-card">
+                <h3>
+                    <i class="fas fa-utensils"></i> 饮食与排便
+                </h3>
+                <div style="font-size: 14px; color: #666; line-height: 1.8;">
+                    <p style="margin-bottom: 12px;">
+                        <strong>促进排便的食物：</strong>富含纤维的食物如燕麦、苹果、香蕉、绿叶蔬菜、豆类等。益生菌食物如酸奶、发酵食品也有助于肠道健康。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>可能导致便秘的食物：</strong>精制食品、高脂肪食物、加工肉类、乳制品（对某些人）等。缺乏水分也会导致便秘。
+                    </p>
+                    <p>
+                        <strong>可能导致腹泻的食物：</strong>辛辣食物、高糖食物、咖啡因、酒精等。食物不耐受或过敏也可能导致腹泻。
+                    </p>
+                </div>
+            </div>
+            
+            <div class="knowledge-card">
+                <h3>
+                    <i class="fas fa-exclamation-triangle"></i> 何时需要就医
+                </h3>
+                <div style="font-size: 14px; color: #666; line-height: 1.8;">
+                    <p style="margin-bottom: 12px;">
+                        <strong>持续便秘：</strong>超过3天没有排便，或排便困难持续一周以上。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>持续腹泻：</strong>腹泻超过3天，或伴有发热、脱水症状。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>便血：</strong>便便中带血，无论是鲜红色还是暗红色，都需要立即就医。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>颜色异常：</strong>黑色（可能是上消化道出血）、白色（可能是胆道问题）、绿色持续出现。
+                    </p>
+                    <p>
+                        <strong>其他症状：</strong>伴有剧烈腹痛、体重突然下降、持续疲劳等症状时，应及时就医检查。
+                    </p>
+                </div>
+            </div>
+            
+            <div class="knowledge-card">
+                <h3>
+                    <i class="fas fa-clock"></i> 建立健康的排便习惯
+                </h3>
+                <div style="font-size: 14px; color: #666; line-height: 1.8;">
+                    <p style="margin-bottom: 12px;">
+                        <strong>固定时间：</strong>尝试每天在同一时间排便，最好是在早餐后，利用胃结肠反射。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>充足时间：</strong>给自己足够的时间，不要匆忙。但也不要过度用力或坐太久。
+                    </p>
+                    <p style="margin-bottom: 12px;">
+                        <strong>正确姿势：</strong>使用脚凳抬高双脚，使膝盖高于臀部，这种姿势更有利于排便。
+                    </p>
+                    <p>
+                        <strong>记录习惯：</strong>记录你的排便情况，包括时间、类型、持续时间等，有助于发现规律和问题。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页面4: 徽章成就 -->
+        <div class="page" id="page-badges">
+            <div style="background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%); padding: 24px 16px; color: white;">
+                <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">我的成就</h1>
+                <p style="opacity: 0.9;">收集你的拉屎徽章</p>
+            </div>
+            
+            <div class="stat-card" style="margin-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">已获得徽章</div>
+                    <div style="font-size: 48px; font-weight: 700;" id="badge-count">0/20</div>
+                </div>
+            </div>
+            
+            <h2 class="section-title">已获得徽章</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 16px;" id="earned-badges">
+                <!-- 动态生成 -->
+            </div>
+            
+            <h2 class="section-title">未获得徽章</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 16px; margin-bottom: 20px;" id="unearned-badges">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div style="padding: 16px;">
+                <button class="btn-primary btn-yellow" style="width: 100%; padding: 16px; font-size: 16px;" onclick="shareBadgeImage()">
+                    <i class="fas fa-share-alt"></i> 分享我的成就
+                </button>
+            </div>
+        </div>
+        
+        <!-- 页面5: 好友比赛 -->
+        <div class="page" id="page-competition">
+            <div style="background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%); padding: 24px 16px; color: white;">
+                <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">好友比赛</h1>
+                <p style="opacity: 0.9;">和好友一起挑战</p>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--poop-dark);">
+                    <i class="fas fa-trophy"></i> 进行中的挑战
+                </h3>
+                <div id="active-challenges">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--poop-dark);">
+                    <i class="fas fa-users"></i> 排行榜
+                </h3>
+                <div id="leaderboard">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            
+            <div style="padding: 16px;">
+                <button class="btn-primary" style="width: 100%; padding: 16px; font-size: 16px;" onclick="showCreateChallengeModal()">
+                    <i class="fas fa-plus"></i> 创建新挑战
+                </button>
+            </div>
+        </div>
+        
+        <!-- 页面6: 设置 -->
+        <div class="page" id="page-settings">
+            <div style="background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%); padding: 24px 16px; color: white;">
+                <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">设置</h1>
+                <p style="opacity: 0.9;">个性化你的体验</p>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--poop-dark);">
+                    <i class="fas fa-bell"></i> 提醒设置
+                </h3>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--poop-dark);">每日提醒</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;">每天提醒你记录</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="daily-reminder" onchange="updateReminderSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer;" onclick="showTimePicker()">
+                    <div>
+                        <div style="font-weight: 600; color: var(--poop-dark);">提醒时间</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;" id="reminder-time-display">08:00</div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #ccc;"></i>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--poop-dark);">智能提醒</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;">根据你的习惯智能提醒</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="smart-reminder" onchange="updateReminderSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--poop-dark);">
+                    <i class="fas fa-user-friends"></i> 好友管理
+                </h3>
+                <div id="friends-list">
+                    <!-- 动态生成 -->
+                </div>
+                <div style="padding: 12px 0; border-top: 1px solid #eee; cursor: pointer;" onclick="showAddFriendModal()">
+                    <div style="font-weight: 600; color: var(--poop-color); text-align: center;">
+                        <i class="fas fa-plus"></i> 添加好友
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--poop-dark);">
+                    <i class="fas fa-cog"></i> 其他设置
+                </h3>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer;" onclick="exportData()">
+                    <div style="font-weight: 600; color: var(--poop-dark);">数据备份</div>
+                    <i class="fas fa-chevron-right" style="color: #ccc;"></i>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer;" onclick="importData()">
+                    <div style="font-weight: 600; color: var(--poop-dark);">数据恢复</div>
+                    <i class="fas fa-chevron-right" style="color: #ccc;"></i>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer;" onclick="clearAllData()">
+                    <div style="font-weight: 600; color: #e74c3c;">清除所有数据</div>
+                    <i class="fas fa-chevron-right" style="color: #ccc;"></i>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer;">
+                    <div style="font-weight: 600; color: var(--poop-dark);">关于我们</div>
+                    <i class="fas fa-chevron-right" style="color: #ccc;"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航 -->
+        <div class="nav-bottom">
+            <div class="nav-item active" onclick="switchPage('page-home')">
+                <i class="fas fa-chart-bar"></i>
+                <span>统计</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('page-knowledge')">
+                <i class="fas fa-book"></i>
+                <span>科普</span>
+            </div>
+            <div class="nav-item-center" onclick="switchPage('page-add')">
+                <div class="center-button">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span class="center-label">记录</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('page-competition')">
+                <i class="fas fa-users"></i>
+                <span>比赛</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('page-settings')">
+                <i class="fas fa-cog"></i>
+                <span>设置</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- 模态框 -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+    
+    <!-- 隐藏的文件输入 -->
+    <input type="file" id="file-input" style="display: none;" accept=".json" onchange="handleFileImport(event)">
+    
+    <script>
+        // ==================== 数据管理 ====================
+        const STORAGE_KEYS = {
+            RECORDS: 'poop_records',
+            SETTINGS: 'poop_settings',
+            FRIENDS: 'poop_friends',
+            CHALLENGES: 'poop_challenges',
+            BADGES: 'poop_badges'
+        };
+        
+        let currentDuration = 5;
+        let selectedPoopType = null;
+        let editingRecordId = null;
+        let currentStep = 1;
+        let poopCount = 0;
+        let poopItems = [];
+        let draggedElement = null;
+        
+        // 快速助填关键词
+        const QUICK_FILL_FEELING = [
+            '很顺畅', '很舒服', '正常', '有点困难', '很困难', 
+            '很轻松', '有点痛', '很痛', '很爽', '一般般',
+            '很顺畅很舒服', '有点便秘', '拉得很爽', '很顺畅很爽'
+        ];
+        
+        const QUICK_FILL_FOOD = [
+            '麻辣烫', '米饭', '面条', '包子', '豆浆', '油条',
+            '火锅', '烧烤', '炸鸡', '汉堡', '披萨', '寿司',
+            '粥', '鸡蛋', '牛奶', '面包', '水果', '蔬菜',
+            '麻辣香锅', '酸辣粉', '米线', '饺子', '馄饨'
+        ];
+        
+        // 便便类型信息
+        const POOP_TYPES = [
+            { id: 1, name: '类型1', desc: '分离的硬块', detail: '像坚果一样，难以排出，可能表示便秘' },
+            { id: 2, name: '类型2', desc: '块状但分离', detail: '像香肠一样，但表面有裂纹，可能表示轻微便秘' },
+            { id: 3, name: '类型3', desc: '表面有裂纹的条状', detail: '像香肠一样，表面有裂纹，正常状态' },
+            { id: 4, name: '类型4', desc: '表面光滑的软条状', detail: '像香肠或蛇一样，表面光滑，理想状态' },
+            { id: 5, name: '类型5', desc: '软块，边缘清晰', detail: '容易排出，可能缺少纤维' },
+            { id: 6, name: '类型6', desc: '糊状，边缘不清晰', detail: '软糊状，可能表示轻微腹泻' },
+            { id: 7, name: '类型7', desc: '完全液体', detail: '水样，无固体，表示腹泻' }
+        ];
+        
+        // 徽章定义
+        const BADGES = [
+            { id: 'streak_7', name: '连续7天', desc: '坚持记录', icon: 'trophy', requirement: (data) => getMaxStreak(data) >= 7 },
+            { id: 'perfect_10', name: '完美形状', desc: '10次类型4', icon: 'star', requirement: (data) => getTypeCount(data, 4) >= 10 },
+            { id: 'speed_king', name: '速度之王', desc: '5分钟内', icon: 'fire', requirement: (data) => data.some(r => r.duration <= 5) },
+            { id: 'monthly', name: '月度记录', desc: '30天记录', icon: 'calendar-check', requirement: (data) => getUniqueDays(data) >= 30 },
+            { id: 'century', name: '健康达人', desc: '100次记录', icon: 'heart', requirement: (data) => data.length >= 100 },
+            { id: 'social', name: '社交之星', desc: '分享10次', icon: 'users', requirement: () => getSetting('shareCount', 0) >= 10 },
+            { id: 'yearly', name: '年度记录', desc: '365天记录', icon: 'crown', requirement: (data) => getUniqueDays(data) >= 365 },
+            { id: 'marathon', name: '马拉松', desc: '30分钟+', icon: 'infinity', requirement: (data) => data.some(r => r.duration >= 30) },
+            { id: 'perfectionist', name: '完美主义者', desc: '50次类型4', icon: 'gem', requirement: (data) => getTypeCount(data, 4) >= 50 },
+            { id: 'streak_30', name: '坚持之星', desc: '连续30天', icon: 'calendar-alt', requirement: (data) => getMaxStreak(data) >= 30 },
+            { id: 'early_bird', name: '早起鸟', desc: '连续7天早上记录', icon: 'sun', requirement: (data) => getMorningStreak(data) >= 7 },
+            { id: 'night_owl', name: '夜猫子', desc: '连续7天晚上记录', icon: 'moon', requirement: (data) => getNightStreak(data) >= 7 },
+            { id: 'consistency', name: '规律生活', desc: '连续14天同一时间', icon: 'clock', requirement: (data) => getConsistentTime(data) >= 14 },
+            { id: 'variety', name: '多样化', desc: '体验所有类型', icon: 'th', requirement: (data) => new Set(data.map(r => r.type)).size >= 7 },
+            { id: 'quick', name: '闪电侠', desc: '10次3分钟内', icon: 'bolt', requirement: (data) => data.filter(r => r.duration <= 3).length >= 10 },
+            { id: 'patient', name: '耐心大师', desc: '10次15分钟+', icon: 'hourglass-half', requirement: (data) => data.filter(r => r.duration >= 15).length >= 10 },
+            { id: 'healthy', name: '健康专家', desc: '50次类型3或4', icon: 'stethoscope', requirement: (data) => data.filter(r => r.type === 3 || r.type === 4).length >= 50 },
+            { id: 'explorer', name: '探索者', desc: '记录所有类型', icon: 'compass', requirement: (data) => new Set(data.map(r => r.type)).size >= 7 },
+            { id: 'master', name: '拉屎大师', desc: '500次记录', icon: 'medal', requirement: (data) => data.length >= 500 }
+        ];
+        
+        // ==================== 初始化 ====================
+        function init() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            initPoopTypeSelector();
+            initKnowledgePage();
+            initQuickFill();
+            loadSettings();
+            loadHomePage();
+            loadBadgesPage();
+            loadCompetitionPage();
+            loadFriendsList();
+            
+            // 设置默认时间
+            const now = new Date();
+            const timeString = now.toISOString().slice(0, 16);
+            const timeInput = document.getElementById('record-time');
+            if (timeInput) {
+                timeInput.value = timeString;
+            }
+            
+            // 初始化提醒
+            initReminders();
+        }
+        
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('current-time').textContent = timeStr;
+        }
+        
+        // ==================== 数据存储 ====================
+        function getRecords() {
+            const data = localStorage.getItem(STORAGE_KEYS.RECORDS);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveRecords(records) {
+            localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(records));
+        }
+        
+        function getSettings() {
+            const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+            return data ? JSON.parse(data) : {};
+        }
+        
+        function saveSettings(settings) {
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({ ...getSettings(), ...settings }));
+        }
+        
+        function getSetting(key, defaultValue) {
+            const settings = getSettings();
+            return settings[key] !== undefined ? settings[key] : defaultValue;
+        }
+        
+        function getFriends() {
+            const data = localStorage.getItem(STORAGE_KEYS.FRIENDS);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveFriends(friends) {
+            localStorage.setItem(STORAGE_KEYS.FRIENDS, JSON.stringify(friends));
+        }
+        
+        function getChallenges() {
+            const data = localStorage.getItem(STORAGE_KEYS.CHALLENGES);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveChallenges(challenges) {
+            localStorage.setItem(STORAGE_KEYS.CHALLENGES, JSON.stringify(challenges));
+        }
+        
+        function getEarnedBadges() {
+            const data = localStorage.getItem(STORAGE_KEYS.BADGES);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveEarnedBadges(badges) {
+            localStorage.setItem(STORAGE_KEYS.BADGES, JSON.stringify(badges));
+        }
+        
+        // ==================== 记录管理 ====================
+        function saveRecord() {
+            const time = document.getElementById('record-time').value;
+            const duration = currentDuration;
+            const type = selectedPoopType;
+            const feeling = document.getElementById('record-feeling').value.trim();
+            const food = document.getElementById('record-food').value.trim();
+            
+            if (!time) {
+                showToast('请选择时间');
+                nextStep(1);
+                return;
+            }
+            
+            if (poopCount === 0) {
+                showToast('请至少拖动一次便便到马桶');
+                nextStep(2);
+                return;
+            }
+            
+            if (!type) {
+                showToast('请选择便便类型');
+                nextStep(3);
+                return;
+            }
+            
+            const records = getRecords();
+            const record = {
+                id: editingRecordId || Date.now().toString(),
+                time: new Date(time).toISOString(),
+                duration: duration,
+                type: type,
+                feeling: feeling,
+                food: food,
+                poopCount: poopCount
+            };
+            
+            if (editingRecordId) {
+                const index = records.findIndex(r => r.id === editingRecordId);
+                if (index !== -1) {
+                    records[index] = record;
+                }
+            } else {
+                records.unshift(record);
+            }
+            
+            saveRecords(records);
+            
+            // 检查徽章
+            checkBadges(records);
+            
+            // 重置表单
+            resetAddForm();
+            
+            showToast(editingRecordId ? '记录已更新' : '记录已保存');
+            
+            // 返回首页并刷新
+            switchPage('page-home');
+            setTimeout(() => {
+                loadHomePage();
+                loadBadgesPage();
+            }, 300);
+        }
+        
+        function deleteRecord(id) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            
+            const records = getRecords().filter(r => r.id !== id);
+            saveRecords(records);
+            loadHomePage();
+            loadBadgesPage();
+            showToast('记录已删除');
+        }
+        
+        function editRecord(id) {
+            const records = getRecords();
+            const record = records.find(r => r.id === id);
+            if (!record) return;
+            
+            editingRecordId = id;
+            document.getElementById('record-time').value = new Date(record.time).toISOString().slice(0, 16);
+            currentDuration = record.duration;
+            document.getElementById('duration-value').textContent = currentDuration;
+            selectedPoopType = record.type;
+            document.getElementById('record-feeling').value = record.feeling || '';
+            document.getElementById('record-food').value = record.food || '';
+            poopCount = record.poopCount || 0;
+            updatePoopCount();
+            
+            // 更新选择器
+            updatePoopTypeSelector();
+            
+            // 重置步骤到第一步
+            resetSteps();
+            
+            switchPage('page-add');
+        }
+        
+        function resetAddForm() {
+            editingRecordId = null;
+            currentStep = 1;
+            poopCount = 0;
+            poopItems = [];
+            const now = new Date();
+            document.getElementById('record-time').value = now.toISOString().slice(0, 16);
+            currentDuration = 5;
+            document.getElementById('duration-value').textContent = currentDuration;
+            selectedPoopType = null;
+            document.getElementById('record-feeling').value = '';
+            document.getElementById('record-food').value = '';
+            updatePoopTypeSelector();
+            initQuickFill();
+            resetSteps();
+            clearPoopGame();
+        }
+        
+        function adjustDuration(delta) {
+            currentDuration = Math.max(1, Math.min(60, currentDuration + delta));
+            document.getElementById('duration-value').textContent = currentDuration;
+        }
+        
+        // ==================== 步骤切换 ====================
+        function nextStep(step) {
+            if (step <= currentStep) return;
+            
+            // 验证当前步骤是否完成
+            if (!validateCurrentStep()) {
+                return; // 验证失败，不切换步骤
+            }
+            
+            // 验证通过，切换到下一步
+            currentStep = step;
+            updateSteps();
+        }
+        
+        function validateCurrentStep() {
+            switch (currentStep) {
+                case 1:
+                    // 验证步骤1：检查时间是否选择
+                    const timeInput = document.getElementById('record-time');
+                    if (!timeInput || !timeInput.value) {
+                        showToast('请选择开始时间');
+                        return false;
+                    }
+                    return true;
+                    
+                case 2:
+                    // 验证步骤2：检查是否至少拖动了一次便便
+                    if (poopCount === 0) {
+                        showToast('请至少拖动一次便便到马桶中');
+                        return false;
+                    }
+                    return true;
+                    
+                case 3:
+                    // 验证步骤3：检查是否选择了便便类型
+                    if (!selectedPoopType) {
+                        showToast('请选择便便类型');
+                        return false;
+                    }
+                    return true;
+                    
+                case 4:
+                    // 步骤4是最后一步，不需要验证
+                    return true;
+                    
+                default:
+                    return true;
+            }
+        }
+        
+        function prevStep(step) {
+            if (step < currentStep) {
+                currentStep = step;
+                updateSteps();
+            }
+        }
+        
+        function resetSteps() {
+            currentStep = 1;
+            updateSteps();
+        }
+        
+        function updateSteps() {
+            // 更新步骤指示器
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`step-${i}`);
+                const card = document.getElementById(`step${i}-card`);
+                if (dot) {
+                    if (i === currentStep) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                }
+                if (card) {
+                    card.style.display = i === currentStep ? 'block' : 'none';
+                }
+            }
+            
+            // 当切换到步骤2时，自动创建便便
+            if (currentStep === 2) {
+                setTimeout(() => {
+                    addPoopItem();
+                }, 300);
+            }
+        }
+        
+        // ==================== 拖拽游戏 ====================
+        function addPoopItem() {
+            const gameContainer = document.getElementById('poop-game');
+            if (!gameContainer) return;
+            
+            // 如果已经有便便，不重复创建
+            if (poopItems.length > 0) return;
+            
+            const poop = document.createElement('div');
+            poop.className = 'poop-item';
+            poop.id = `poop-${Date.now()}`;
+            
+            // 位置（在生成区域中心）
+            const spawnArea = gameContainer.querySelector('.poop-spawn-area');
+            const spawnRect = spawnArea.getBoundingClientRect();
+            const containerRect = gameContainer.getBoundingClientRect();
+            
+            const x = spawnRect.left - containerRect.left + (spawnRect.width / 2) - 30;
+            const y = spawnRect.top - containerRect.top + (spawnRect.height / 2) - 10;
+            
+            poop.style.left = x + 'px';
+            poop.style.top = y + 'px';
+            
+            // 添加拖拽事件
+            initPoopDrag(poop);
+            
+            gameContainer.appendChild(poop);
+            poopItems.push(poop);
+        }
+        
+        function initPoopDrag(poop) {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+            
+            // 鼠标事件
+            poop.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                draggedElement = poop;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = poop.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                poop.style.zIndex = '100';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || draggedElement !== poop) return;
+                
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                
+                const gameContainer = document.getElementById('poop-game');
+                const containerRect = gameContainer.getBoundingClientRect();
+                
+                let newX = initialX + dx - containerRect.left;
+                let newY = initialY + dy - containerRect.top;
+                
+                // 限制在容器内（便便是60x20的长条形）
+                newX = Math.max(0, Math.min(newX, containerRect.width - 60));
+                newY = Math.max(0, Math.min(newY, containerRect.height - 20));
+                
+                poop.style.left = newX + 'px';
+                poop.style.top = newY + 'px';
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging && draggedElement === poop) {
+                    checkDropInToilet(poop);
+                    isDragging = false;
+                    draggedElement = null;
+                    poop.style.zIndex = '10';
+                }
+            });
+            
+            // 触摸事件（移动端）
+            poop.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                draggedElement = poop;
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                const rect = poop.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                poop.style.zIndex = '100';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging || draggedElement !== poop) return;
+                const touch = e.touches[0];
+                const dx = touch.clientX - startX;
+                const dy = touch.clientY - startY;
+                
+                const gameContainer = document.getElementById('poop-game');
+                const containerRect = gameContainer.getBoundingClientRect();
+                
+                let newX = initialX + dx - containerRect.left;
+                let newY = initialY + dy - containerRect.top;
+                
+                newX = Math.max(0, Math.min(newX, containerRect.width - 50));
+                newY = Math.max(0, Math.min(newY, containerRect.height - 50));
+                
+                poop.style.left = newX + 'px';
+                poop.style.top = newY + 'px';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchend', () => {
+                if (isDragging && draggedElement === poop) {
+                    checkDropInToilet(poop);
+                    isDragging = false;
+                    draggedElement = null;
+                    poop.style.zIndex = '10';
+                }
+            });
+        }
+        
+        function checkDropInToilet(poop) {
+            const gameContainer = document.getElementById('poop-game');
+            const toilet = document.getElementById('toilet-target');
+            const toiletRect = toilet.getBoundingClientRect();
+            const containerRect = gameContainer.getBoundingClientRect();
+            const poopRect = poop.getBoundingClientRect();
+            
+            // 检查是否在马桶范围内
+            const toiletLeft = toiletRect.left - containerRect.left;
+            const toiletRight = toiletLeft + toiletRect.width;
+            const toiletTop = toiletRect.top - containerRect.top;
+            const toiletBottom = toiletTop + toiletRect.height;
+            
+            const poopLeft = poopRect.left - containerRect.left;
+            const poopRight = poopLeft + poopRect.width;
+            const poopTop = poopRect.top - containerRect.top;
+            const poopBottom = poopTop + poopRect.height;
+            
+            // 检查重叠
+            if (poopLeft < toiletRight && poopRight > toiletLeft && 
+                poopTop < toiletBottom && poopBottom > toiletTop) {
+                // 掉入马桶
+                poop.classList.add('dropped');
+                poopCount++;
+                updatePoopCount();
+                
+                // 创建水花效果
+                createSplashEffect(gameContainer, toiletRect, containerRect);
+                
+                setTimeout(() => {
+                    poop.remove();
+                    const index = poopItems.indexOf(poop);
+                    if (index > -1) {
+                        poopItems.splice(index, 1);
+                    }
+                    
+                    // 自动创建新的便便
+                    setTimeout(() => {
+                        addPoopItem();
+                    }, 300);
+                }, 500);
+            }
+        }
+        
+        function createSplashEffect(gameContainer, toiletRect, containerRect) {
+            // 创建水花容器
+            const splash = document.createElement('div');
+            splash.className = 'splash';
+            gameContainer.appendChild(splash);
+            
+            // 马桶中心位置（相对于容器）
+            const centerX = (toiletRect.left + toiletRect.width / 2) - containerRect.left;
+            const centerY = (toiletRect.top + toiletRect.height / 2) - containerRect.top;
+            
+            // 创建多个水花粒子
+            const splashCount = 16;
+            for (let i = 0; i < splashCount; i++) {
+                const angle = (i / splashCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+                const distance = 25 + Math.random() * 25;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                const drop = document.createElement('div');
+                drop.className = 'splash-drop';
+                drop.style.left = centerX + 'px';
+                drop.style.top = centerY + 'px';
+                drop.style.setProperty('--splash-x', x + 'px');
+                drop.style.setProperty('--splash-y', y + 'px');
+                drop.style.animationDelay = (Math.random() * 0.15) + 's';
+                
+                // 随机大小变化
+                const size = 4 + Math.random() * 4;
+                drop.style.width = size + 'px';
+                drop.style.height = size + 'px';
+                
+                splash.appendChild(drop);
+            }
+            
+            // 动画结束后移除水花
+            setTimeout(() => {
+                splash.remove();
+            }, 900);
+        }
+        
+        function updatePoopCount() {
+            const countElement = document.getElementById('poop-count');
+            if (countElement) {
+                countElement.textContent = `${poopCount}次`;
+            }
+        }
+        
+        function clearPoopGame() {
+            poopItems.forEach(poop => poop.remove());
+            poopItems = [];
+            poopCount = 0;
+            updatePoopCount();
+        }
+        
+        // ==================== 快速助填 ====================
+        function initQuickFill() {
+            initFeelingQuickFill();
+            initFoodQuickFill();
+        }
+        
+        function initFeelingQuickFill() {
+            const container = document.getElementById('feeling-quick-fill');
+            if (!container) return;
+            
+            container.innerHTML = QUICK_FILL_FEELING.map(text => `
+                <span class="quick-fill-tag" onclick="quickFillFeeling('${text}')">${text}</span>
+            `).join('');
+        }
+        
+        function initFoodQuickFill() {
+            const container = document.getElementById('food-quick-fill');
+            if (!container) return;
+            
+            container.innerHTML = QUICK_FILL_FOOD.map(text => `
+                <span class="quick-fill-tag" onclick="quickFillFood('${text}')">${text}</span>
+            `).join('');
+        }
+        
+        function quickFillFeeling(text) {
+            const feelingInput = document.getElementById('record-feeling');
+            if (feelingInput) {
+                const current = feelingInput.value.trim();
+                if (current) {
+                    feelingInput.value = current + '，' + text;
+                } else {
+                    feelingInput.value = text;
+                }
+                // 触发输入事件
+                feelingInput.focus();
+            }
+        }
+        
+        function quickFillFood(text) {
+            const foodInput = document.getElementById('record-food');
+            if (foodInput) {
+                const current = foodInput.value.trim();
+                if (current) {
+                    foodInput.value = current + '、' + text;
+                } else {
+                    foodInput.value = text;
+                }
+                // 触发输入事件
+                foodInput.focus();
+            }
+        }
+        
+        // ==================== 魔法效果 ====================
+        function initMagicEffects() {
+            // 动态添加更多粒子
+            const particlesContainer = document.querySelector('.magic-particles');
+            if (particlesContainer) {
+                // 清理旧的动态粒子
+                const existingDynamic = particlesContainer.querySelectorAll('.particle-dynamic');
+                existingDynamic.forEach(p => p.remove());
+                
+                // 添加新的动态粒子
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'particle particle-dynamic';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.animationDelay = Math.random() * 2 + 's';
+                        particle.style.animationDuration = (4 + Math.random() * 3) + 's';
+                        particlesContainer.appendChild(particle);
+                        
+                        // 动画结束后移除
+                        setTimeout(() => {
+                            if (particle.parentNode) {
+                                particle.remove();
+                            }
+                        }, 8000);
+                    }, i * 500);
+                }
+            }
+            
+            // 添加额外的闪烁效果
+            const header = document.querySelector('.page-add .header-gradient');
+            if (header) {
+                // 创建临时闪烁星星
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('div');
+                        sparkle.className = 'magic-sparkle';
+                        sparkle.style.top = (20 + Math.random() * 40) + '%';
+                        sparkle.style.left = (10 + Math.random() * 80) + '%';
+                        sparkle.style.animationDelay = Math.random() * 1 + 's';
+                        header.appendChild(sparkle);
+                        
+                        setTimeout(() => {
+                            if (sparkle.parentNode) {
+                                sparkle.remove();
+                            }
+                        }, 3000);
+                    }, i * 800);
+                }
+            }
+        }
+        
+        // ==================== 天气寄语 ====================
+        let currentWeather = null;
+        let currentLocation = null;
+        
+        // 拉屎寄语库（根据天气分类）
+        const POOP_MESSAGES = {
+            sunny: [
+                '☀️ 阳光明媚，适合拉屎！',
+                '☀️ 好天气，好心情，好便便！',
+                '☀️ 今天天气不错，拉屎也会很顺畅！',
+                '☀️ 阳光正好，去拉个屎吧！'
+            ],
+            cloudy: [
+                '☁️ 多云天气，适合慢慢拉屎',
+                '☁️ 阴天不热，拉屎正合适',
+                '☁️ 云淡风轻，拉屎也轻松',
+                '☁️ 今天多云，拉屎不会太急'
+            ],
+            rainy: [
+                '🌧️ 下雨天，最适合在厕所思考人生',
+                '🌧️ 雨声伴你拉屎，别有一番风味',
+                '🌧️ 雨天拉屎，记得多待一会儿',
+                '🌧️ 听着雨声拉屎，心情也会变好'
+            ],
+            snowy: [
+                '❄️ 下雪天，拉屎也要保暖哦',
+                '❄️ 雪天拉屎，记得多喝水',
+                '❄️ 天冷多拉屎，身体更健康',
+                '❄️ 雪天适合在温暖的厕所里拉屎'
+            ],
+            hot: [
+                '🔥 天气炎热，拉屎记得多喝水',
+                '🔥 热天拉屎，注意补充水分',
+                '🔥 高温天气，拉屎也要保持凉爽',
+                '🔥 天热多拉屎，排出体内热气'
+            ],
+            cold: [
+                '🧊 天气寒冷，拉屎也要保暖',
+                '🧊 冷天拉屎，记得多穿衣服',
+                '🧊 天冷多拉屎，保持身体温暖',
+                '🧊 寒冷天气，拉屎也要注意保暖'
+            ],
+            default: [
+                '💩 记录你的每一次拉屎',
+                '💩 健康从记录开始',
+                '💩 拉屎也要有仪式感',
+                '💩 每一次拉屎都是新的开始',
+                '💩 记录拉屎，记录健康',
+                '💩 拉屎也要认真对待',
+                '💩 好习惯从记录拉屎开始',
+                '💩 拉屎也要有规律'
+            ]
+        };
+        
+        function initWeatherMessage() {
+            // 获取地理位置
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        currentLocation = {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude
+                        };
+                        // 获取天气信息
+                        getWeatherInfo();
+                    },
+                    (error) => {
+                        console.log('获取位置失败:', error);
+                        // 即使获取位置失败，也根据时间生成天气寄语
+                        getWeatherInfo();
+                    },
+                    { timeout: 5000, enableHighAccuracy: false }
+                );
+            } else {
+                // 浏览器不支持地理位置，根据时间生成天气寄语
+                getWeatherInfo();
+            }
+        }
+        
+        async function getWeatherInfo() {
+            try {
+                // 使用模拟天气数据（根据地理位置和时间）
+                // 实际项目中可以使用真实的天气API，如OpenWeatherMap
+                const weatherData = await getWeatherByLocation(currentLocation);
+                currentWeather = weatherData;
+                generateMessagesByWeather(weatherData);
+            } catch (error) {
+                console.log('获取天气失败:', error);
+                // 根据时间推测天气
+                const hour = new Date().getHours();
+                const month = new Date().getMonth();
+                let weatherType = 'default';
+                let temp = 20;
+                
+                // 根据月份和小时推测
+                if (month >= 11 || month <= 2) {
+                    // 冬季
+                    weatherType = hour >= 6 && hour < 18 ? 'cold' : 'cold';
+                    temp = 5 + Math.random() * 10;
+                } else if (month >= 6 && month <= 8) {
+                    // 夏季
+                    if (hour >= 10 && hour < 18) {
+                        weatherType = 'hot';
+                        temp = 28 + Math.random() * 8;
+                    } else {
+                        weatherType = 'sunny';
+                        temp = 25 + Math.random() * 5;
+                    }
+                } else {
+                    // 春秋
+                    if (hour >= 6 && hour < 12) {
+                        weatherType = 'sunny';
+                        temp = 18 + Math.random() * 5;
+                    } else if (hour >= 12 && hour < 18) {
+                        weatherType = 'cloudy';
+                        temp = 20 + Math.random() * 5;
+                    } else {
+                        weatherType = 'cloudy';
+                        temp = 15 + Math.random() * 5;
+                    }
+                }
+                
+                generateMessagesByWeather({ type: weatherType, temp: Math.round(temp) });
+            }
+        }
+        
+        async function getWeatherByLocation(location) {
+            // 模拟天气数据（实际项目中可以调用真实API，如OpenWeatherMap）
+            // 这里根据时间、月份和位置（如果有）模拟不同的天气
+            const hour = new Date().getHours();
+            const month = new Date().getMonth();
+            const dayOfWeek = new Date().getDay();
+            
+            let weatherType = 'sunny';
+            let temp = 20;
+            
+            // 根据月份和小时模拟天气
+            if (month >= 11 || month <= 2) {
+                // 冬季（12月、1月、2月）
+                if (Math.random() > 0.7) {
+                    weatherType = 'snowy';
+                    temp = -5 + Math.random() * 10;
+                } else {
+                    weatherType = 'cold';
+                    temp = 0 + Math.random() * 10;
+                }
+            } else if (month >= 3 && month <= 5) {
+                // 春季（3月、4月、5月）
+                if (Math.random() > 0.6) {
+                    weatherType = 'rainy';
+                    temp = 10 + Math.random() * 15;
+                } else {
+                    weatherType = 'sunny';
+                    temp = 15 + Math.random() * 10;
+                }
+            } else if (month >= 6 && month <= 8) {
+                // 夏季（6月、7月、8月）
+                if (hour >= 10 && hour < 18) {
+                    // 白天高温
+                    if (Math.random() > 0.4) {
+                        weatherType = 'hot';
+                        temp = 30 + Math.random() * 8;
+                    } else if (Math.random() > 0.5) {
+                        weatherType = 'rainy';
+                        temp = 25 + Math.random() * 8;
+                    } else {
+                        weatherType = 'sunny';
+                        temp = 28 + Math.random() * 5;
+                    }
+                } else {
+                    weatherType = 'sunny';
+                    temp = 25 + Math.random() * 5;
+                }
+            } else {
+                // 秋季（9月、10月、11月）
+                if (Math.random() > 0.6) {
+                    weatherType = 'cloudy';
+                    temp = 15 + Math.random() * 10;
+                } else if (Math.random() > 0.5) {
+                    weatherType = 'rainy';
+                    temp = 12 + Math.random() * 8;
+                } else {
+                    weatherType = 'sunny';
+                    temp = 18 + Math.random() * 8;
+                }
+            }
+            
+            return { type: weatherType, temp: Math.round(temp) };
+        }
+        
+        function generateMessagesByWeather(weather) {
+            const weatherType = weather.type || 'default';
+            const messages = POOP_MESSAGES[weatherType] || POOP_MESSAGES.default;
+            
+            // 生成寄语列表
+            const messageList = [];
+            
+            // 添加带温度信息的寄语（前几条）
+            if (weather.temp !== undefined && weather.temp !== null) {
+                messages.slice(0, 2).forEach(msg => {
+                    messageList.push(`${weather.temp}°C ${msg}`);
+                });
+                // 添加不带温度的其他寄语
+                messages.slice(2).forEach(msg => {
+                    messageList.push(msg);
+                });
+            } else {
+                // 没有温度信息，直接使用所有寄语
+                messageList.push(...messages);
+            }
+            
+            // 添加一些通用寄语
+            messageList.push(...POOP_MESSAGES.default.slice(0, 2));
+            
+            // 显示寄语
+            displayMessages(messageList);
+        }
+        
+        function showDefaultMessages() {
+            displayMessages(POOP_MESSAGES.default);
+        }
+        
+        function displayMessages(messages) {
+            const scrollContainer = document.getElementById('message-scroll');
+            if (!scrollContainer) return;
+            
+            if (messages.length === 0) {
+                scrollContainer.innerHTML = '<div class="message-item">💩 记录你的健康时刻</div>';
+                return;
+            }
+            
+            // 为了无缝循环，需要复制消息列表
+            // 复制3次确保循环流畅
+            const allMessages = [...messages, ...messages, ...messages];
+            
+            scrollContainer.innerHTML = allMessages.map(msg => 
+                `<div class="message-item">${msg}</div>`
+            ).join('');
+            
+            // 计算动画时间（每条消息约3.5秒）
+            const duration = messages.length * 3.5;
+            scrollContainer.style.animationDuration = duration + 's';
+            
+            // 重置动画以确保重新开始
+            scrollContainer.style.animation = 'none';
+            requestAnimationFrame(() => {
+                scrollContainer.style.animation = `scrollMessage ${duration}s linear infinite`;
+            });
+        }
+        
+        // ==================== 便便类型选择 ====================
+        function initPoopTypeSelector() {
+            const container = document.getElementById('poop-type-selector');
+            container.innerHTML = '';
+            
+            POOP_TYPES.forEach(type => {
+                const div = document.createElement('div');
+                div.className = 'poop-type-card' + (selectedPoopType === type.id ? ' selected' : '');
+                div.onclick = () => selectPoopType(type.id);
+                div.innerHTML = `
+                    <div class="poop-type" style="width: 40px; height: 40px; font-size: 16px; margin: 0 auto 8px; background: ${selectedPoopType === type.id ? 'var(--poop-color)' : '#ccc'};">
+                        <i class="fas fa-poo"></i>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 600; color: ${selectedPoopType === type.id ? 'var(--poop-dark)' : '#666'};">${type.name}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function updatePoopTypeSelector() {
+            initPoopTypeSelector();
+            updatePoopTypeDesc();
+        }
+        
+        function selectPoopType(type) {
+            selectedPoopType = type;
+            updatePoopTypeSelector();
+            updatePoopTypeDesc();
+        }
+        
+        function updatePoopTypeDesc() {
+            const descDiv = document.getElementById('poop-type-desc');
+            if (selectedPoopType) {
+                const type = POOP_TYPES.find(t => t.id === selectedPoopType);
+                descDiv.textContent = `${type.name}：${type.desc}，${type.detail}`;
+            } else {
+                descDiv.textContent = '请选择便便类型';
+            }
+        }
+        
+        // ==================== 首页加载 ====================
+        function loadHomePage() {
+            const records = getRecords();
+            
+            // 今日统计
+            const today = new Date().toDateString();
+            const todayRecords = records.filter(r => new Date(r.time).toDateString() === today);
+            document.getElementById('today-count').textContent = `${todayRecords.length}次`;
+            
+            // 今日建议
+            const suggestionDiv = document.getElementById('today-suggestion');
+            if (todayRecords.length === 0) {
+                suggestionDiv.innerHTML = '<i class="fas fa-lightbulb"></i> 开始记录你的第一次拉屎吧！';
+            } else if (todayRecords.length === 1) {
+                suggestionDiv.innerHTML = '<i class="fas fa-lightbulb"></i> 今天已经记录1次，继续保持！';
+            } else if (todayRecords.length <= 3) {
+                suggestionDiv.innerHTML = '<i class="fas fa-lightbulb"></i> 今天排便正常，继续保持！';
+            } else {
+                suggestionDiv.innerHTML = '<i class="fas fa-lightbulb"></i> 今天排便次数较多，注意饮食健康！';
+            }
+            
+            // 数据概览
+            loadStatsOverview(records);
+            
+            // 本周统计
+            loadWeekStats(records);
+            
+            // 成就徽章
+            loadHomeBadges(records);
+            
+            // 记录列表
+            loadRecordsList(records);
+        }
+        
+        function loadStatsOverview(records) {
+            const container = document.getElementById('stats-overview');
+            if (!container) return;
+            
+            const totalRecords = records.length;
+            const avgDuration = records.length > 0 
+                ? Math.round(records.reduce((sum, r) => sum + r.duration, 0) / records.length)
+                : 0;
+            const perfectCount = records.filter(r => r.type === 4).length;
+            const uniqueDays = new Set(records.map(r => new Date(r.time).toDateString())).size;
+            
+            container.innerHTML = `
+                <div class="stat-mini-card">
+                    <div style="font-size: 14px; color: var(--poop-color); margin-bottom: 2px;">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-value">${totalRecords}</div>
+                    <div class="stat-label">总记录数</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div style="font-size: 14px; color: var(--poop-color); margin-bottom: 2px;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value">${avgDuration}</div>
+                    <div class="stat-label">平均时长(分)</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div style="font-size: 14px; color: var(--accent-yellow); margin-bottom: 2px;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-value">${perfectCount}</div>
+                    <div class="stat-label">完美次数</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div style="font-size: 14px; color: var(--poop-color); margin-bottom: 2px;">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stat-value">${uniqueDays}</div>
+                    <div class="stat-label">记录天数</div>
+                </div>
+            `;
+        }
+        
+        function loadHomeBadges(records) {
+            const earnedBadges = getEarnedBadges();
+            const allEarned = BADGES.filter(badge => {
+                if (earnedBadges.includes(badge.id)) return true;
+                if (badge.requirement(records)) {
+                    if (!earnedBadges.includes(badge.id)) {
+                        earnedBadges.push(badge.id);
+                        saveEarnedBadges(earnedBadges);
+                        showToast(`🎉 获得新徽章：${badge.name}！`);
+                    }
+                    return true;
+                }
+                return false;
+            });
+            
+            document.getElementById('badge-count').textContent = `${allEarned.length}/${BADGES.length}`;
+            
+            const container = document.getElementById('home-badges');
+            if (!container) return;
+            
+            container.innerHTML = allEarned.slice(0, 6).map(badge => `
+                <div class="badge-item earned">
+                    <div style="width: 50px; height: 50px; margin: 0 auto 8px; background: var(--accent-yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                        <i class="fas fa-${badge.icon}"></i>
+                    </div>
+                    <div style="font-size: 11px; font-weight: 600; color: var(--poop-dark);">${badge.name}</div>
+                </div>
+            `).join('');
+        }
+        
+        function loadWeekStats(records) {
+            const container = document.getElementById('week-stats');
+            const now = new Date();
+            const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+            weekStart.setHours(0, 0, 0, 0);
+            
+            const weekData = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(date.getDate() + i);
+                const dayRecords = records.filter(r => {
+                    const recordDate = new Date(r.time);
+                    return recordDate.toDateString() === date.toDateString();
+                });
+                weekData.push({
+                    day: ['日', '一', '二', '三', '四', '五', '六'][date.getDay()],
+                    count: dayRecords.length,
+                    isToday: date.toDateString() === new Date().toDateString()
+                });
+            }
+            
+            const maxCount = Math.max(...weekData.map(d => d.count), 1);
+            const chartHeight = 100; // 条形图最大高度
+            
+            container.innerHTML = `
+                <div class="bar-chart">
+                    ${weekData.map(data => {
+                        const height = maxCount > 0 ? Math.max((data.count / maxCount) * chartHeight, data.count > 0 ? 8 : 4) : 4;
+                        return `
+                            <div class="bar-item ${data.isToday ? 'today' : ''}">
+                                <div class="bar" style="height: ${height}px;">
+                                    ${data.count > 0 ? `<div class="bar-value">${data.count}</div>` : ''}
+                                </div>
+                                <div class="bar-label">
+                                    ${data.day}
+                                    ${data.isToday ? '<br><span style="font-size: 9px; color: var(--poop-color);">今天</span>' : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        function loadRecordsList(records) {
+            const container = document.getElementById('records-list');
+            
+            if (records.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-poo"></i>
+                        <div>还没有记录，快去添加第一条吧！</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = records.slice(0, 10).map(record => {
+                const date = new Date(record.time);
+                const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                const dateStr = date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+                const type = POOP_TYPES.find(t => t.id === record.type);
+                
+                return `
+                    <div class="card fade-in record-item" onclick="showRecordDetail('${record.id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="font-size: 16px; font-weight: 600;">${timeStr}</span>
+                                    <span class="badge">${type.name}</span>
+                                </div>
+                                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                                    <i class="fas fa-clock"></i> 持续 ${record.duration}分钟
+                                </div>
+                                ${record.feeling ? `<div style="font-size: 14px; color: #666;">
+                                    <i class="fas fa-smile"></i> 感觉：${record.feeling}
+                                </div>` : ''}
+                            </div>
+                            <div class="poop-type" style="width: 50px; height: 50px; font-size: 20px;">
+                                <i class="fas fa-poo"></i>
+                            </div>
+                        </div>
+                        ${record.food ? `<div style="font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px;">
+                            <i class="fas fa-utensils"></i> 之前吃了：${record.food}
+                        </div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function showRecordDetail(id) {
+            const records = getRecords();
+            const record = records.find(r => r.id === id);
+            if (!record) return;
+            
+            const date = new Date(record.time);
+            const type = POOP_TYPES.find(t => t.id === record.type);
+            
+            const modalContent = `
+                <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: var(--poop-dark);">记录详情</h2>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 4px;">时间</div>
+                    <div style="font-size: 16px; font-weight: 600;">${date.toLocaleString('zh-CN')}</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 4px;">持续时间</div>
+                    <div style="font-size: 16px; font-weight: 600;">${record.duration}分钟</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 4px;">便便类型</div>
+                    <div style="font-size: 16px; font-weight: 600;"><span class="badge">${type.name}</span> - ${type.desc}</div>
+                </div>
+                ${record.feeling ? `<div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 4px;">主观感受</div>
+                    <div style="font-size: 16px;">${record.feeling}</div>
+                </div>` : ''}
+                ${record.food ? `<div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 4px;">之前吃的食物</div>
+                    <div style="font-size: 16px;">${record.food}</div>
+                </div>` : ''}
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn-primary" style="flex: 1;" onclick="editRecord('${record.id}'); closeModal();">编辑</button>
+                    <button class="btn-primary" style="flex: 1; background: #e74c3c;" onclick="deleteRecord('${record.id}'); closeModal();">删除</button>
+                </div>
+            `;
+            
+            showModal(modalContent);
+        }
+        
+        // ==================== 科普页面 ====================
+        function initKnowledgePage() {
+            const container = document.getElementById('poop-types-info');
+            container.innerHTML = POOP_TYPES.map((type, index) => {
+                const isIdeal = type.id === 3 || type.id === 4;
+                return `
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: ${index < 6 ? '12px' : '0'}; padding: 12px; background: ${isIdeal ? 'var(--accent-yellow-light)' : '#f9f9f9'}; border-radius: 8px; ${isIdeal ? 'border: 2px solid var(--accent-yellow);' : ''}">
+                        <div class="poop-type" style="width: 50px; height: 50px; font-size: 20px;">${type.id}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">${type.name}：${type.desc}</div>
+                            <div style="font-size: 12px; color: #666;">${type.detail}</div>
+                        </div>
+                        ${isIdeal ? '<span class="badge" style="background: var(--accent-yellow);">理想</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ==================== 徽章系统 ====================
+        function loadBadgesPage() {
+            const records = getRecords();
+            const earnedBadges = getEarnedBadges();
+            const allEarned = BADGES.filter(badge => {
+                if (earnedBadges.includes(badge.id)) return true;
+                if (badge.requirement(records)) {
+                    if (!earnedBadges.includes(badge.id)) {
+                        earnedBadges.push(badge.id);
+                        saveEarnedBadges(earnedBadges);
+                        showToast(`🎉 获得新徽章：${badge.name}！`);
+                    }
+                    return true;
+                }
+                return false;
+            });
+            
+            document.getElementById('badge-count').textContent = `${allEarned.length}/${BADGES.length}`;
+            
+            // 已获得徽章
+            const earnedContainer = document.getElementById('earned-badges');
+            earnedContainer.innerHTML = allEarned.map(badge => `
+                <div style="text-align: center; padding: 16px; background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="width: 60px; height: 60px; margin: 0 auto 8px; background: var(--accent-yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                        <i class="fas fa-${badge.icon}"></i>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 600; color: var(--poop-dark);">${badge.name}</div>
+                    <div style="font-size: 10px; color: #999; margin-top: 4px;">${badge.desc}</div>
+                </div>
+            `).join('');
+            
+            // 未获得徽章
+            const unearned = BADGES.filter(b => !allEarned.find(eb => eb.id === b.id));
+            const unearnedContainer = document.getElementById('unearned-badges');
+            unearnedContainer.innerHTML = unearned.map(badge => `
+                <div style="text-align: center; padding: 16px; background: #f5f5f5; border-radius: 16px; opacity: 0.6;">
+                    <div style="width: 60px; height: 60px; margin: 0 auto 8px; background: #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #999;">
+                        <i class="fas fa-${badge.icon}"></i>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 600; color: #999;">${badge.name}</div>
+                    <div style="font-size: 10px; color: #999; margin-top: 4px;">${badge.desc}</div>
+                </div>
+            `).join('');
+        }
+        
+        function checkBadges(records) {
+            const earnedBadges = getEarnedBadges();
+            BADGES.forEach(badge => {
+                if (!earnedBadges.includes(badge.id) && badge.requirement(records)) {
+                    earnedBadges.push(badge.id);
+                    saveEarnedBadges(earnedBadges);
+                    showToast(`🎉 获得新徽章：${badge.name}！`);
+                }
+            });
+        }
+        
+        // 徽章辅助函数
+        function getMaxStreak(records) {
+            if (records.length === 0) return 0;
+            const sorted = [...records].sort((a, b) => new Date(a.time) - new Date(b.time));
+            let maxStreak = 1;
+            let currentStreak = 1;
+            
+            for (let i = 1; i < sorted.length; i++) {
+                const prevDate = new Date(sorted[i-1].time).toDateString();
+                const currDate = new Date(sorted[i].time).toDateString();
+                const daysDiff = Math.floor((new Date(currDate) - new Date(prevDate)) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff === 1) {
+                    currentStreak++;
+                    maxStreak = Math.max(maxStreak, currentStreak);
+                } else {
+                    currentStreak = 1;
+                }
+            }
+            
+            return maxStreak;
+        }
+        
+        function getTypeCount(records, type) {
+            return records.filter(r => r.type === type).length;
+        }
+        
+        function getUniqueDays(records) {
+            const days = new Set(records.map(r => new Date(r.time).toDateString()));
+            return days.size;
+        }
+        
+        function getMorningStreak(records) {
+            // 简化实现
+            return 0;
+        }
+        
+        function getNightStreak(records) {
+            // 简化实现
+            return 0;
+        }
+        
+        function getConsistentTime(records) {
+            // 简化实现
+            return 0;
+        }
+        
+        function shareBadgeImage() {
+            const records = getRecords();
+            const earnedBadges = getEarnedBadges();
+            const allEarned = BADGES.filter(b => earnedBadges.includes(b.id));
+            
+            const shareContent = document.createElement('div');
+            shareContent.style.cssText = 'background: linear-gradient(135deg, var(--poop-color) 0%, var(--poop-light) 100%); padding: 40px; text-align: center; color: white; width: 400px;';
+            shareContent.innerHTML = `
+                <h2 style="font-size: 32px; margin-bottom: 20px;">我的拉屎成就</h2>
+                <div style="font-size: 48px; font-weight: 700; margin-bottom: 30px;">${allEarned.length}/${BADGES.length} 个徽章</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 30px;">
+                    ${allEarned.slice(0, 6).map(b => `
+                        <div style="text-align: center;">
+                            <div style="width: 60px; height: 60px; margin: 0 auto 8px; background: var(--accent-yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                                <i class="fas fa-${b.icon}"></i>
+                            </div>
+                            <div style="font-size: 12px;">${b.name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="font-size: 14px; opacity: 0.9;">总记录数：${records.length}次</div>
+            `;
+            
+            document.body.appendChild(shareContent);
+            
+            html2canvas(shareContent).then(canvas => {
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '我的拉屎成就.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    document.body.removeChild(shareContent);
+                    showToast('成就图片已保存');
+                    
+                    // 增加分享计数
+                    const shareCount = getSetting('shareCount', 0);
+                    saveSettings({ shareCount: shareCount + 1 });
+                });
+            });
+        }
+        
+        // ==================== 比赛功能 ====================
+        function loadCompetitionPage() {
+            const challenges = getChallenges();
+            const records = getRecords();
+            
+            // 进行中的挑战
+            const activeContainer = document.getElementById('active-challenges');
+            const activeChallenges = challenges.filter(c => c.status === 'active');
+            
+            if (activeChallenges.length === 0) {
+                activeContainer.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><div>还没有进行中的挑战</div></div>';
+            } else {
+                activeContainer.innerHTML = activeChallenges.map(challenge => {
+                    const myScore = getChallengeScore(challenge, records);
+                    const maxScore = Math.max(...challenge.participants.map(p => p.score || 0), myScore);
+                    
+                    return `
+                        <div style="padding: 16px; background: linear-gradient(135deg, var(--accent-yellow-light) 0%, #fff 100%); border-radius: 12px; margin-bottom: 16px; border: 2px solid var(--accent-yellow);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 16px; color: var(--poop-dark);">${challenge.name}</div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 4px;">与 ${challenge.participants.length}位好友</div>
+                                </div>
+                                <span class="badge" style="background: var(--accent-yellow);">进行中</span>
+                            </div>
+                            <div style="display: flex; gap: 12px; margin-top: 12px;">
+                                <div style="flex: 1; text-align: center; padding: 8px; background: white; border-radius: 8px;">
+                                    <div style="font-size: 12px; color: #666;">我的得分</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: var(--poop-dark);">${myScore}${challenge.type === 'duration' ? '分钟' : '次'}</div>
+                                </div>
+                                <div style="flex: 1; text-align: center; padding: 8px; background: white; border-radius: 8px;">
+                                    <div style="font-size: 12px; color: #666;">最高得分</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: var(--poop-color);">${maxScore}${challenge.type === 'duration' ? '分钟' : '次'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // 排行榜
+            loadLeaderboard(records);
+        }
+        
+        function getChallengeScore(challenge, records) {
+            const startDate = new Date(challenge.startDate);
+            const relevantRecords = records.filter(r => new Date(r.time) >= startDate);
+            
+            if (challenge.type === 'duration') {
+                return Math.max(...relevantRecords.map(r => r.duration), 0);
+            } else if (challenge.type === 'perfect') {
+                return relevantRecords.filter(r => r.type === 4).length;
+            }
+            return 0;
+        }
+        
+        function loadLeaderboard(records) {
+            const container = document.getElementById('leaderboard');
+            const challenges = getChallenges();
+            const activeChallenge = challenges.find(c => c.status === 'active');
+            
+            if (!activeChallenge) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><div>没有进行中的挑战</div></div>';
+                return;
+            }
+            
+            const participants = [
+                { name: '我', score: getChallengeScore(activeChallenge, records), isMe: true },
+                ...activeChallenge.participants.map(p => ({ ...p, isMe: false }))
+            ].sort((a, b) => b.score - a.score);
+            
+            container.innerHTML = participants.map((p, index) => {
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                return `
+                    <div style="margin-bottom: 12px; padding: 12px; background: ${index === 0 ? 'var(--accent-yellow-light)' : '#f9f9f9'}; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: ${index === 0 ? 'var(--accent-yellow)' : '#ccc'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: ${index === 0 ? 'var(--poop-dark)' : '#666'};">${index + 1}</div>
+                        <div style="width: 40px; height: 40px; background: var(--poop-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: var(--poop-dark);">${p.name}</div>
+                            <div style="font-size: 12px; color: #666;">${p.score}${activeChallenge.type === 'duration' ? '分钟' : '次'}</div>
+                        </div>
+                        ${medal ? `<div style="font-size: 20px;">${medal}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function showCreateChallengeModal() {
+            const modalContent = `
+                <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: var(--poop-dark);">创建新挑战</h2>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--poop-dark);">挑战名称</label>
+                    <input type="text" id="challenge-name" style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 14px;" placeholder="例如：最长持续时间挑战">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--poop-dark);">挑战类型</label>
+                    <select id="challenge-type" style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 14px;">
+                        <option value="duration">最长持续时间</option>
+                        <option value="perfect">完美形状次数（类型4）</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn-primary" style="flex: 1;" onclick="createChallenge()">创建</button>
+                    <button class="btn-primary" style="flex: 1; background: #999;" onclick="closeModal()">取消</button>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+        
+        function createChallenge() {
+            const name = document.getElementById('challenge-name').value.trim();
+            const type = document.getElementById('challenge-type').value;
+            
+            if (!name) {
+                showToast('请输入挑战名称');
+                return;
+            }
+            
+            const challenges = getChallenges();
+            const challenge = {
+                id: Date.now().toString(),
+                name: name,
+                type: type,
+                startDate: new Date().toISOString(),
+                status: 'active',
+                participants: []
+            };
+            
+            challenges.push(challenge);
+            saveChallenges(challenges);
+            closeModal();
+            loadCompetitionPage();
+            showToast('挑战已创建');
+        }
+        
+        // ==================== 好友管理 ====================
+        function loadFriendsList() {
+            const friends = getFriends();
+            const container = document.getElementById('friends-list');
+            
+            if (friends.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends"></i><div>还没有好友，快去添加吧！</div></div>';
+                return;
+            }
+            
+            container.innerHTML = friends.map(friend => {
+                const challenges = getChallenges();
+                const activeCount = challenges.filter(c => c.participants.some(p => p.id === friend.id)).length;
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: var(--poop-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--poop-dark);">${friend.name}</div>
+                                <div style="font-size: 12px; color: #666;">${activeCount}个进行中的挑战</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: #ccc;"></i>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function showAddFriendModal() {
+            const modalContent = `
+                <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: var(--poop-dark);">添加好友</h2>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--poop-dark);">好友名称</label>
+                    <input type="text" id="friend-name" style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 14px;" placeholder="输入好友名称">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn-primary" style="flex: 1;" onclick="addFriend()">添加</button>
+                    <button class="btn-primary" style="flex: 1; background: #999;" onclick="closeModal()">取消</button>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+        
+        function addFriend() {
+            const name = document.getElementById('friend-name').value.trim();
+            
+            if (!name) {
+                showToast('请输入好友名称');
+                return;
+            }
+            
+            const friends = getFriends();
+            const friend = {
+                id: Date.now().toString(),
+                name: name
+            };
+            
+            friends.push(friend);
+            saveFriends(friends);
+            closeModal();
+            loadFriendsList();
+            showToast('好友已添加');
+        }
+        
+        // ==================== 设置功能 ====================
+        function loadSettings() {
+            const settings = getSettings();
+            document.getElementById('daily-reminder').checked = settings.dailyReminder !== false;
+            document.getElementById('smart-reminder').checked = settings.smartReminder === true;
+            
+            const reminderTime = settings.reminderTime || '08:00';
+            document.getElementById('reminder-time-display').textContent = reminderTime;
+        }
+        
+        function updateReminderSettings() {
+            const dailyReminder = document.getElementById('daily-reminder').checked;
+            const smartReminder = document.getElementById('smart-reminder').checked;
+            
+            saveSettings({
+                dailyReminder: dailyReminder,
+                smartReminder: smartReminder
+            });
+            
+            initReminders();
+            showToast('设置已保存');
+        }
+        
+        function showTimePicker() {
+            const settings = getSettings();
+            const currentTime = settings.reminderTime || '08:00';
+            const [hours, minutes] = currentTime.split(':');
+            
+            const modalContent = `
+                <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: var(--poop-dark);">选择提醒时间</h2>
+                <div style="margin-bottom: 16px;">
+                    <input type="time" id="reminder-time" value="${currentTime}" style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 16px;">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn-primary" style="flex: 1;" onclick="saveReminderTime()">保存</button>
+                    <button class="btn-primary" style="flex: 1; background: #999;" onclick="closeModal()">取消</button>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+        
+        function saveReminderTime() {
+            const time = document.getElementById('reminder-time').value;
+            saveSettings({ reminderTime: time });
+            document.getElementById('reminder-time-display').textContent = time;
+            closeModal();
+            initReminders();
+            showToast('提醒时间已设置');
+        }
+        
+        function initReminders() {
+            // 清除现有提醒
+            if (window.reminderInterval) {
+                clearInterval(window.reminderInterval);
+            }
+            
+            const settings = getSettings();
+            if (!settings.dailyReminder) return;
+            
+            // 简化实现：每5分钟检查一次（实际应该每天检查一次）
+            window.reminderInterval = setInterval(() => {
+                const now = new Date();
+                const reminderTime = settings.reminderTime || '08:00';
+                const [hours, minutes] = reminderTime.split(':').map(Number);
+                
+                if (now.getHours() === hours && now.getMinutes() === minutes) {
+                    if (Notification.permission === 'granted') {
+                        new Notification('一起拉屎', {
+                            body: '该记录今天的拉屎了！',
+                            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="50">💩</text></svg>'
+                        });
+                    }
+                }
+            }, 60000); // 每分钟检查一次
+            
+            // 请求通知权限
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        function exportData() {
+            const data = {
+                records: getRecords(),
+                settings: getSettings(),
+                friends: getFriends(),
+                challenges: getChallenges(),
+                badges: getEarnedBadges(),
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `poop-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('数据已导出');
+        }
+        
+        function importData() {
+            document.getElementById('file-input').click();
+        }
+        
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm('导入数据将覆盖现有数据，确定要继续吗？')) {
+                        if (data.records) saveRecords(data.records);
+                        if (data.settings) saveSettings(data.settings);
+                        if (data.friends) saveFriends(data.friends);
+                        if (data.challenges) saveChallenges(data.challenges);
+                        if (data.badges) saveEarnedBadges(data.badges);
+                        
+                        loadHomePage();
+                        loadBadgesPage();
+                        loadCompetitionPage();
+                        loadFriendsList();
+                        loadSettings();
+                        
+                        showToast('数据已导入');
+                    }
+                } catch (error) {
+                    showToast('导入失败：文件格式错误');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function clearAllData() {
+            if (confirm('确定要清除所有数据吗？此操作不可恢复！')) {
+                if (confirm('再次确认：真的要清除所有数据吗？')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        }
+        
+        // ==================== UI工具函数 ====================
+        function goBackFromRecord() {
+            // 显示导航栏
+            const navBottom = document.querySelector('.nav-bottom');
+            if (navBottom) {
+                navBottom.classList.remove('hidden');
+            }
+            
+            // 返回统计页面
+            switchPage('page-home');
+        }
+        
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            // 控制导航栏显示/隐藏
+            const navBottom = document.querySelector('.nav-bottom');
+            if (pageId === 'page-add') {
+                // 记录页面：隐藏导航栏
+                if (navBottom) {
+                    navBottom.classList.add('hidden');
+                }
+            } else {
+                // 其他页面：显示导航栏
+                if (navBottom) {
+                    navBottom.classList.remove('hidden');
+                }
+            }
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item-center').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 根据页面ID设置对应的导航项为激活状态
+            const navMap = {
+                'page-home': 0,
+                'page-knowledge': 1,
+                'page-add': 2,
+                'page-competition': 3,
+                'page-settings': 4
+            };
+            
+            const navIndex = navMap[pageId];
+            if (navIndex !== undefined) {
+                if (navIndex === 2) {
+                    // 中间的记录按钮
+                    document.querySelectorAll('.nav-item-center')[0].classList.add('active');
+                } else {
+                    const navItems = document.querySelectorAll('.nav-item');
+                    if (navItems[navIndex]) {
+                        navItems[navIndex].classList.add('active');
+                    }
+                }
+            }
+            
+            window.scrollTo(0, 0);
+            
+            // 页面切换时刷新数据
+            if (pageId === 'page-home') {
+                loadHomePage();
+            } else if (pageId === 'page-badges') {
+                loadBadgesPage();
+            } else if (pageId === 'page-competition') {
+                loadCompetitionPage();
+            } else if (pageId === 'page-add') {
+                resetAddForm();
+                initMagicEffects();
+                initWeatherMessage();
+                // 确保时间始终是当前时间
+                const timeInput = document.getElementById('record-time');
+                if (timeInput && !editingRecordId) {
+                    const now = new Date();
+                    timeInput.value = now.toISOString().slice(0, 16);
+                }
+            }
+        }
+        
+        function showModal(content) {
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('modal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 点击模态框外部关闭
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

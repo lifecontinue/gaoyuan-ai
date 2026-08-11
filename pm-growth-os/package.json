@@ -1,0 +1,28 @@
+{
+  "name": "pm-growth-os",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config configs/vite.config.ts",
+    "dev:api": "node server/index.mjs",
+    "bridge:usage": "node scripts/vscode-usage-bridge.mjs",
+    "build": "tsc -p configs/tsconfig.json && vite build --config configs/vite.config.ts",
+    "build:prod": "tsc -p configs/tsconfig.json && vite build --config configs/vite.config.ts",
+    "preview": "vite preview --config configs/vite.config.ts",
+    "test": "node tests/smoke.mjs",
+    "test:smoke": "node tests/smoke.mjs"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0"
+  }
+}

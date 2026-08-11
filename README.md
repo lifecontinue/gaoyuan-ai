@@ -19,17 +19,23 @@
 | `satir_family_communication_system/` | 萨提亚家庭沟通系统 | 家庭沟通模式相关系统 |
 | `Vibe Coding 课件/` | Vibe Coding 课件 | 课程资料 |
 | `collab-whiteboard/` | 协作白板（Collab Whiteboard） | Miro 类单文件 HTML 协作白板，可配置 Supabase 后端 + localStorage 回退 |
+| `tank-wars/` | 坦克大战（Tank Wars） | 纯静态 Canvas 小游戏（index.html + css + js），无构建、无依赖 |
+| `poop-tracker/` | 宝宝便便记录（Baby Poop Tracker） | 单文件 HTML 移动应用（Tailwind/FontAwesome CDN + localStorage） |
+| `pm-growth-os/` | PM 成长操作系统（PM Growth OS） | React 19 + Vite + TS + Supabase 全栈应用（.env 占位，需配 Tavily/WandB/Langfuse 等） |
 
 ## 品牌站中的应用映射（apps.js）
 
-`personal-brand-site/assets/js/data/apps.js` 是应用目录的唯一数据源。本仓库收录了其中在本地有源码的应用：
-`fret-flow`、`child-assessment`、`neck-soccer`、`travel-map`、`breathe`。
-`tank-wars`、`growth-stars`、`poop-tracker`、`pm-growth-os` 等应用在本 CodeSpace 中**无本地源码**（可能在其它仓库/部署环境中），未纳入本仓库。
+`personal-brand-site/assets/js/data/apps.js` 是应用目录的唯一数据源。本仓库已收录其中全部有本地源码的应用：
+`fret-flow`、`child-assessment`（含 `growth-stars` 星空前端）、`neck-soccer`、`travel-map`、`breathe`、
+`collab-whiteboard`，以及新增的 `tank-wars`、`poop-tracker`、`pm-growth-os`。
+
+各应用统一通过 **`gaoyuan-ai.xyz`** 访问：品牌站为站点根，其余应用分别挂在 `*.gaoyuan-ai.xyz` 子域名下（见下方部署说明）。
 
 ## 部署
 
-- 品牌站：`personal-brand-site/` 目录即 Vercel 部署根（`vercel.json` 为静态零构建）。
+- 品牌站：`personal-brand-site/` 目录即 Vercel 部署根（`vercel.json` 为静态零构建），发布到 `gaoyuan-ai.xyz`。
 - FRET FLOW 作为子站点挂载在 `/practice/`（构建产物位于 `personal-brand-site/practice/`）。
+- 子域名：每个独立应用各建一个 Vercel 项目，根目录指向本仓库对应子文件夹，自定义域名设为 `*.gaoyuan-ai.xyz`（如 `tank-wars.gaoyuan-ai.xyz`、`pm-growth-os.gaoyuan-ai.xyz`、`child-assessment.gaoyuan-ai.xyz` 等），并在 DNS 处为各子域名添加 CNAME 指向 Vercel。
 
 ## 注意事项
 
