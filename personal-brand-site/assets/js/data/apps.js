@@ -17,7 +17,7 @@ export const apps = [
     tagline: "立体战场 · 实时技能对战",
     icon: null,
     screenshot: "assets/img/screenshots/tank-wars.png",
-    url: "https://0eab4a97014d401f9f8adca41bbbc0ff.gz3.agentos-app.net",
+    url: "https://tank-wars.gaoyuan-ai.xyz",
     tags: ["游戏", "实时对战", "3D 地形"],
     status: "live",
     placements: [{
@@ -42,7 +42,7 @@ export const apps = [
     tagline: "把旅行变成可漫游的故事地图",
     icon: null,
     screenshot: "assets/img/screenshots/travel-map.png",
-    url: "https://trails-vert.vercel.app",
+    url: "https://travel-map.gaoyuan-ai.xyz",
     tags: ["旅行", "故事地图", "手绘"],
     status: "live",
     placements: [{
@@ -68,7 +68,7 @@ export const apps = [
     tagline: "点亮孩子的每一步成长",
     icon: null,
     screenshot: "assets/img/screenshots/growth-stars.png",
-    url: "https://2e6b524c74de4e0c91f79662efb2745f.bj8.agentos-app.net",
+    url: "https://growth-stars.gaoyuan-ai.xyz",
     tags: ["育儿", "成长记录", "数据可视化"],
     status: "live",
     placements: [{
@@ -93,7 +93,7 @@ export const apps = [
     tagline: "看见孩子成长的每一步",
     icon: null,
     screenshot: "assets/img/screenshots/child-assessment-system.png",
-    url: "https://child-assessment-system.vercel.app/",
+    url: "https://child-assessment.gaoyuan-ai.xyz",
     tags: ["育儿", "评估", "数据可视化"],
     status: "live",
     placements: [{
@@ -116,7 +116,7 @@ export const apps = [
     tagline: "把育儿的小瞬间变成数据",
     icon: null,
     screenshot: "assets/img/screenshots/poop-tracker-three.png",
-    url: "https://poop-tracker-three.vercel.app/",
+    url: "https://poop-tracker.gaoyuan-ai.xyz",
     tags: ["育儿", "健康记录", "小工具"],
     status: "live",
     placements: [{
@@ -139,7 +139,7 @@ export const apps = [
     tagline: "产品经理的自进化系统",
     icon: null,
     screenshot: "assets/img/screenshots/pm-growth-os.png",
-    url: "https://pm-growth-os.vercel.app/",
+    url: "https://pm-growth-os.gaoyuan-ai.xyz",
     tags: ["产品管理", "成长", "方法论"],
     status: "live",
     placements: [{
@@ -162,7 +162,7 @@ export const apps = [
     tagline: "歪一歪头，带球过人",
     icon: null,
     screenshot: "assets/img/screenshots/neck-soccer.png",
-    url: "https://neck-soccer.vercel.app",
+    url: "https://neck-soccer.gaoyuan-ai.xyz",
     tags: ["游戏", "体感控制", "健身"],
     status: "live",
     placements: [{
@@ -186,7 +186,7 @@ export const apps = [
     tagline: "用引导式呼吸减压、提神",
     icon: null,
     screenshot: "assets/img/screenshots/breathing-trainer.png",
-    url: "https://breathe-three-gamma.vercel.app",
+    url: "https://breathe.gaoyuan-ai.xyz",
     tags: ["健康", "身心", "正念"],
     status: "live",
     placements: [{
