@@ -1,0 +1,97 @@
+/* tokens.css — 设计变量：色板 / 字体 / 间距 / 圆角 / 层级
+   温暖纸质 · 编辑感 · 克制圆角 · 细描边
+   个人品牌网站 v2.0（交互式房间） */
+
+:root {
+  /* —— 色彩（日间 / 纸质暖调） —— */
+  --bg-page: #f5ecd7;        /* 全站底色（奶油纸） */
+  --bg-surface: #fff9f0;      /* 卡面 / 面板底色 */
+  --bg-hover: #e8d5b5;        /* 悬停态 */
+  --border: #c4a882;          /* 金棕描边 / 分割 */
+  --border-soft: #d8c4a3;
+  --text-primary: #3d2b1f;    /* 主文字（最深棕） */
+  --text-secondary: #5c3d2e;  /* 次文字 */
+  --text-muted: #8b7355;      /* 弱化文字 */
+  --accent-green: #7a8c68;    /* 鼠尾草绿点缀 */
+  --accent-amber: #d9a441;    /* 琥珀高亮 / 灯光 */
+  --accent-coral: #c0693b;    /* 强调 / 链接悬停 */
+  --scrim: rgba(29, 20, 16, 0.55); /* 遮罩 */
+
+  /* 热点 ping 配色 */
+  --ping-core: #fdf6e8;
+  --ping-ring: #d9a441;
+  --ping-ring-2: rgba(217, 164, 65, 0.35);
+
+  /* —— 字体 —— */
+  --font-display: "Playfair Display", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", Georgia, serif;
+  --font-body: "Lora", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", Georgia, serif;
+  --font-label: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-hand: "Homemade Apple", "Playfair Display", cursive;
+
+  /* —— 字号阶梯（正文基准 18px） —— */
+  --fs-10: 0.625rem;
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;   /* base */
+  --fs-22: 1.375rem;
+  --fs-28: 1.75rem;
+  --fs-36: 2.25rem;
+  --fs-48: 3rem;
+  --fs-64: 4rem;
+
+  /* —— 间距（4px 栅格） —— */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px;--sp-16: 64px;--sp-20: 80px;
+
+  /* —— 圆角（克制） —— */
+  --r-sm: 3px;   /* 按钮 / 小卡 */
+  --r-md: 4px;
+  --r-lg: 6px;   /* 大面板 */
+
+  /* —— 阴影（极淡，老派） —— */
+  --shadow-1: 0 2px 10px rgba(61, 43, 31, 0.12);
+  --shadow-2: 0 8px 30px rgba(61, 43, 31, 0.18);
+
+  /* —— 层级 —— */
+  --z-room: 0;
+  --z-hotspots: 10;
+  --z-chips: 30;
+  --z-controls: 40;
+  --z-topbar: 40;
+  --z-panel: 60;
+  --z-scrim: 55;
+  --z-loader: 100;
+
+  /* —— 房间图比例（用户提供后改） —— */
+  --room-ar: 1.7917;
+  --focus-x: 50;
+  --focus-y: 50;
+  --focus-sm-x: 50;
+  --focus-sm-y: 42;
+
+  /* —— 动效时长 —— */
+  --t-fast: 0.18s;
+  --t-med: 0.32s;
+  --t-slow: 0.6s;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* —— 玻璃拟态（Liquid Glass）主题：颜色由背景图动态提取，以下为冷调书房兜底值 —— */
+/* 实际 room.png 为冷调暗色书房（均值 ≈ rgb(60,73,98)），玻璃取暗色透明冷光以同源 */
+:root {
+  --glass-radius: 30px;                              /* 大圆角，漂浮空间面板 */
+  --glass-tint-top: rgba(78, 95, 128, 0.50);         /* 玻璃上层：提亮的冷蓝 */
+  --glass-tint-bottom: rgba(30, 40, 68, 0.62);       /* 玻璃下层：更暗的冷蓝 */
+  --glass-edge: rgba(150, 173, 218, 0.22);           /* 冷调描边 / 边缘高光 */
+  --glass-glow: rgba(130, 163, 218, 0.16);           /* 环境冷光（取背景亮部） */
+  --glass-spec: rgba(226, 238, 255, 0.20);           /* 镜面高光 */
+  --glass-text: #eef3fa;                             /* 高对比冷白文字 */
+  --glass-text-dim: rgba(222, 232, 246, 0.76);       /* 次级冷白文字 */
+  --glass-mx: 50%;                                    /* 光标镜面高光 X（JS 动态） */
+  --glass-my: 28%;                                    /* 光标镜面高光 Y（JS 动态） */
+  --glass-sheen: 135deg;                              /* 边缘反光角度（JS 动态） */
+  --glass-shift-x: 0px;                               /* 玻璃折射视差 X（JS 动态） */
+  --glass-shift-y: 0px;                               /* 玻璃折射视差 Y（JS 动态） */
+}

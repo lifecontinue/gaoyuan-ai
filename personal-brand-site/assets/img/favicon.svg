@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3a2c1c"/>
+      <stop offset="100%" stop-color="#2a1f12"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- "G" letterform drawn with stroke path (no font dependency) -->
+  <path d="M48 22 a17 17 0 1 0 0 20 H34 v-7 h7"
+        stroke="#f0c878"
+        stroke-width="6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+</svg>

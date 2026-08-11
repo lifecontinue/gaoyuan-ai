@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>AI 助手 · 高源（Yuan Gao）</title>
+  <meta name="description" content="由 AI 助手统一呈现：高源的个人信息与 Writing 作品展示，逐条流式输出。" />
+  <link rel="canonical" href="https://www.gaoyuan-ai.xyz/agent.html" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="AI 助手 · 高源（Yuan Gao）" />
+  <meta property="og:description" content="由 AI 助手统一呈现：高源的个人信息与 Writing 作品展示，逐条流式输出。" />
+  <meta property="og:url" content="https://www.gaoyuan-ai.xyz/agent.html" />
+  <meta name="theme-color" content="#f2efe7" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+  <link rel="stylesheet" href="assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/agent.css" />
+</head>
+<body class="agent-page">
+
+  <header class="agent-topbar" aria-label="站点导航">
+    <a class="agent-topbar__home" href="index.html">高源</a>
+    <span class="agent-topbar__sep" aria-hidden="true">/</span>
+    <span class="agent-topbar__section">AI 助手</span>
+    <span class="agent-topbar__spacer"></span>
+    <a class="agent-topbar__link" href="about.html">关于</a>
+    <a class="agent-topbar__link" href="essay.html">写作</a>
+    <button class="agent-audio-toggle" id="audioToggle" aria-label="开启背景音效" title="背景音效" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path class="sound-wave" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main class="agent-shell">
+    <p class="agent-status" data-agent-status hidden></p>
+    <section class="agent-stream" data-agent-stream aria-live="polite"></section>
+
+    <div class="agent-typing" data-agent-typing hidden aria-hidden="true">
+      <span class="agent-avatar agent-avatar--mini" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+      </span>
+      <span class="agent-typing__dots"><i></i><i></i><i></i></span>
+    </div>
+  </main>
+
+  <footer class="agent-foot-page">
+    <p class="agent-foot-page__text">
+      <a href="index.html">高源</a>
+      <span aria-hidden="true"> · </span>
+      <span>AI 助手聚合页</span>
+      <span aria-hidden="true"> · </span>
+      <a href="about.html">关于</a>
+      <span aria-hidden="true"> · </span>
+      <a href="essay.html">写作</a>
+      <span aria-hidden="true"> · </span>
+      <a href="llms.txt" target="_blank">llms.txt</a>
+    </p>
+  </footer>
+
+  <script type="module" src="assets/js/agent.js"></script>
+
+  <noscript>
+    <p style="padding:3rem 2rem;text-align:center;font-family:var(--font-body);color:var(--ng-ink);background:#f2efe7">
+      本页以流式方式呈现内容，需要 JavaScript。
+      <br><span style="font-size:.875rem;color:var(--ng-ink-muted)">请启用 JavaScript，或直接浏览 <a href="about.html" style="color:#3a4a35;text-decoration:underline">关于</a> / <a href="essay.html" style="color:#3a4a35;text-decoration:underline">写作</a>。</span>
+    </p>
+  </noscript>
+
+</body>
+</html>

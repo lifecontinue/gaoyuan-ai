@@ -1,0 +1,12 @@
+{
+  "title": "FRET FLOW · AI 吉他/钢琴陪练",
+  "language": "zh-CN",
+  "description": "An AI-powered music practice tool for intermediate guitar and piano players offering personalized scores, real-time feedback, and gamified progress tracking.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

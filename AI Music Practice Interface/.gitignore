@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+.cache/
+.env*
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.tmp-*
+.npm-cache*/
+.npmc2/
+.npmc3/
+
+# QA/工程师临时构建产物与 scratch（沙箱内验证时产生，勿入仓）
+dist-qa*/
+_*.txt
+chroma4096.txt

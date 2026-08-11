@@ -1,0 +1,738 @@
+/* ============================================
+   手绘 SVG filter + Rough 元素样式
+   ============================================ */
+
+/* 手绘抖动边框 filter（由 filters.svg 定义） */
+.handdrawn-border {
+  filter: url(#handdrawn);
+}
+
+/* 手绘标记图标 */
+.hd-marker {
+  overflow: visible !important;
+}
+
+.hd-marker-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  fill: #fff;
+  pointer-events: none;
+}
+
+/* 标记外层 + 地点名称标签 */
+.hd-marker-wrap {
+  position: relative;
+  width: 48px;
+  height: 60px;
+}
+
+/* 标记轻微脉冲动效 */
+.hd-marker .hd-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: hd-marker-pulse 2.6s ease-out infinite;
+}
+
+@keyframes hd-marker-pulse {
+  0% { transform: scale(1); opacity: 0.45; }
+  70% { opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+.hd-marker-name {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(244, 236, 216, 0.92);
+  border: 1px solid var(--ink-light);
+  border-radius: 10px 6px 12px 8px;
+  padding: 1px 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  pointer-events: auto;
+}
+
+/* 浮窗卡片基础样式 */
+.story-popup {
+  filter: url(#handdrawn);
+  background: var(--paper-light);
+  border-radius: 14px 10px 16px 12px / 10px 16px 12px 14px;
+  box-shadow: var(--shadow-strong);
+  padding: 16px 20px;
+  max-width: 320px;
+  min-width: 240px;
+  font-family: var(--font-body);
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+.story-popup .popup-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.story-popup .popup-emoji {
+  font-size: 18px;
+}
+
+.story-popup .popup-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* 浮窗「进入此刻记忆」按钮 */
+.story-popup .popup-enter-weather {
+  width: 100%;
+  margin: 8px 0 6px;
+  padding: 9px 14px;
+  border: 1.5px solid rgba(217, 116, 79, 0.4);
+  border-radius: 12px 8px 13px 9px / 8px 13px 9px 12px;
+  background: linear-gradient(135deg, rgba(217, 116, 79, 0.14), rgba(224, 169, 59, 0.1));
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+.story-popup .popup-enter-weather:hover {
+  background: linear-gradient(135deg, rgba(217, 116, 79, 0.26), rgba(224, 169, 59, 0.18));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 116, 79, 0.22);
+}
+
+.story-popup .popup-date {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+/* 图片区域（轮播 + 上传） */
+.story-popup .popup-image-zone {
+  position: relative;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.story-popup .popup-gallery {
+  width: 100%;
+}
+
+.story-popup .popup-main-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  border-radius: 8px 6px 10px 7px;
+  overflow: hidden;
+  background: var(--paper-dark);
+}
+
+.story-popup .popup-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.story-popup .popup-main-img:hover {
+  transform: scale(1.03);
+}
+
+/* 横向缩略图条（多图时显示） */
+.story-popup .popup-thumbs {
+  display: none;
+  gap: 6px;
+  margin-top: 8px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.story-popup .popup-thumbs::-webkit-scrollbar {
+  height: 5px;
+}
+
+.story-popup .popup-thumbs::-webkit-scrollbar-thumb {
+  background: var(--ink-light);
+  border-radius: 3px;
+}
+
+.story-popup .popup-thumb {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 42px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 7px 5px 8px 6px;
+  overflow: hidden;
+  background: var(--paper-dark);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.story-popup .popup-thumb:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.story-popup .popup-thumb.thumb--active {
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+.story-popup .popup-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 删除当前图按钮（仅已上传图显示） */
+.story-popup .popup-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(217, 116, 79, 0.85);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.story-popup .popup-remove:hover {
+  background: rgba(217, 116, 79, 1);
+}
+
+/* 上传拖拽区（无图时显示） */
+.story-popup .popup-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  border: 2px dashed var(--ink-light);
+  border-radius: 8px 6px 10px 7px;
+  background: linear-gradient(135deg, var(--paper-dark), var(--paper));
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.story-popup .popup-dropzone.dragover {
+  border-color: var(--accent);
+  background: rgba(217, 116, 79, 0.12);
+}
+
+.story-popup .dz-icon {
+  font-size: 26px;
+}
+
+.story-popup .dz-text {
+  font-size: 13px;
+}
+
+.story-popup .dz-link {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.story-popup .dz-hint {
+  font-size: 11px;
+  color: var(--ink-light);
+}
+
+.story-popup .popup-file-input {
+  display: none;
+}
+
+.story-popup .popup-story {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.story-popup .popup-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.story-popup .popup-tag {
+  font-size: 11px;
+  padding: 2px 10px;
+  border: 1px solid var(--ink-light);
+  border-radius: 12px 8px 14px 10px;
+  color: var(--ink-soft);
+  background: transparent;
+}
+
+/* --- 语音记忆（精简版：一行头部 + 紧凑播放列表） --- */
+.story-popup .popup-audio-zone {
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+  border: 1px dashed var(--accent-soft, #d9b08c);
+  border-radius: 14px 10px 16px 12px;
+  background: rgba(255, 253, 248, 0.6);
+}
+
+.story-popup .audio-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.story-popup .audio-head-ico {
+  font-size: 14px;
+}
+
+.story-popup .audio-rec-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #d9744f, #e0a93b);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(217, 116, 79, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.story-popup .audio-rec-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(217, 116, 79, 0.4);
+}
+
+.story-popup .audio-rec-btn:active {
+  transform: scale(0.96);
+}
+
+.story-popup .audio-rec-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.story-popup .rec-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #e23b3b;
+  box-shadow: 0 0 0 0 rgba(226, 59, 59, 0.6);
+  animation: rec-pulse 1.1s infinite;
+}
+
+@keyframes rec-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(226, 59, 59, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(226, 59, 59, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(226, 59, 59, 0); }
+}
+
+.story-popup .rec-time {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.story-popup .audio-stop-btn {
+  border: 1px solid #e23b3b;
+  background: #fff;
+  color: #e23b3b;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.story-popup .audio-stop-btn:hover {
+  background: #e23b3b;
+  color: #fff;
+}
+
+.story-popup .audio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.story-popup .audio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 4px 6px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 10px 8px 11px 9px;
+}
+
+.story-popup .audio-play {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent, #d9744f);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.story-popup .audio-play:hover {
+  transform: scale(1.08);
+}
+
+.story-popup .audio-item--playing .audio-play {
+  background: #e0a93b;
+}
+
+.story-popup .audio-dur {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+}
+
+.story-popup .audio-del {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.story-popup .audio-del:hover {
+  background: #e23b3b;
+  color: #fff;
+}
+
+/* ==========================================
+   常驻故事卡片（每个地点一张，可手动关闭）
+   ========================================== */
+.hd-card-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 700;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.hd-story-card {
+  position: absolute;
+  width: 320px;
+  transform: translate(-50%, calc(-100% - 18px));
+  pointer-events: none;
+  animation: card-pop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* 小尾巴指向图钉 */
+.hd-story-card::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  margin-left: -7px;
+  border: 7px solid transparent;
+  border-top-color: var(--paper-light);
+  filter: drop-shadow(0 4px 4px rgba(60, 40, 20, 0.18));
+}
+
+.hd-story-card .story-popup {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  max-height: min(64vh, 460px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+.hd-story-card * {
+  pointer-events: auto;
+}
+
+.hd-story-card .story-popup::-webkit-scrollbar {
+  width: 5px;
+}
+
+.hd-story-card .story-popup::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+}
+
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 6px)) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 18px)) scale(1);
+  }
+}
+
+/* 卡片右上角关闭按钮 */
+.story-popup .popup-close {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.story-popup .popup-close:hover {
+  background: #e23b3b;
+  color: #fff;
+}
+
+/* 列表项手绘高亮 */
+.trip-item-active {
+  position: relative;
+}
+
+.trip-item-active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  filter: url(#handdrawn);
+  opacity: 0.7;
+}
+
+/* --- 常驻动态连线（地点之间的流动轨迹） --- */
+.route-flow {
+  stroke-dashoffset: 0;
+  animation: route-dash-flow 1.4s linear infinite, route-fade-in 0.8s ease both;
+}
+
+@keyframes route-dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+
+@keyframes route-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Leaflet popup 覆写 */
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 14px 10px 16px 12px !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* 交通图标（地图上相邻站点间） */
+.transport-icon-container {
+  background: transparent !important;
+  border: none !important;
+}
+
+.transport-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--paper-light);
+  border: 1.5px solid var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  animation: transport-bob 2s ease-in-out infinite;
+}
+
+.transport-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+@keyframes transport-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* 浮窗内的交通方式标签 */
+.popup-transport {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--accent);
+  background: rgba(217, 116, 79, 0.08);
+  padding: 2px 10px;
+  border-radius: 10px 6px 12px 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(217, 116, 79, 0.2);
+}
+
+/* ==========================================
+   多日行程卡片（横向滚动）
+   ========================================== */
+.popup-day-cards {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 8px 4px 4px;
+  margin-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* 隐藏滚动条但保持可滚动 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.popup-day-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.day-card {
+  flex: 0 0 auto;
+  width: 120px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink-light);
+  border-radius: 12px 8px 14px 10px / 8px 14px 10px 12px;
+  scroll-snap-align: start;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.day-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(217, 116, 79, 0.15);
+}
+
+.day-card--active {
+  border-color: var(--accent);
+  background: rgba(217, 116, 79, 0.04);
+}
+
+.day-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.day-card__date {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.day-card__weekday {
+  font-size: 11px;
+  color: var(--ink-light);
+}
+
+.day-card__weather {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.day-card__weather-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.day-card__weather-text {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.day-card__story {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 超过4张时的滚动提示 */
+.day-cards-hint {
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--ink-light, #999);
+  margin-bottom: 8px;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: inherit !important;
+}
+
+.leaflet-popup-tip-container {
+  display: none; /* 隐藏默认箭头，手绘风格不需要 */
+}
+
+.leaflet-popup-close-button {
+  top: 6px !important;
+  right: 8px !important;
+  font-size: 20px !important;
+  color: var(--ink-soft) !important;
+  z-index: 10 !important;
+}

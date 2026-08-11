@@ -1,0 +1,168 @@
+/* works.css — 滚动式 Work 展示区（Liquid Glass 冷调，与首页同源）
+   固定在首屏房间之下：向下滚动进入本区，背景由 Three.js 渐变着色，
+   章节之间平滑过渡。玻璃卡片承接 --glass-* 冷调变量。 */
+
+/* 固定渐变画布：位于房间(0)之上、内容(2)之下；首屏透明（露出房间），滚动进入后渐显 */
+.works-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+  /* WebGL 不可用时的兜底渐变 */
+  background: linear-gradient(160deg, #16324f 0%, #2f7d9e 100%);
+  opacity: 0;
+  transition: opacity var(--t-slow, .6s) var(--ease);
+}
+
+/* Work 区主体：正常流，推到首屏房间之下 */
+.works {
+  position: relative;
+  z-index: 2;
+  margin-top: 100svh;
+  padding: 0 0 120px;
+  min-height: 100svh;
+}
+
+.works-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 88px 24px 0;
+}
+
+.works-head { text-align: center; margin-bottom: 56px; }
+.works-eyebrow {
+  font-family: var(--font-label);
+  font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: #f0d48a; margin: 0 0 14px;
+}
+.works-title {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5vw, 46px); font-weight: 700;
+  color: var(--glass-text, #eef3fa);
+  margin: 0 0 14px; text-shadow: 0 2px 30px rgba(0,0,0,0.5);
+}
+.works-sub {
+  font-size: 17px; color: var(--glass-text-dim, rgba(222,232,246,0.78));
+  max-width: 620px; margin: 0 auto; line-height: 1.7;
+}
+
+/* —— 章节 —— */
+.works-chapter { margin: 64px 0; }
+.chapter-head {
+  display: flex; align-items: baseline; gap: 14px;
+  margin-bottom: 24px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(150,173,218,0.16);
+}
+.chapter-index {
+  font-family: var(--font-label); font-size: 13px; letter-spacing: 0.1em;
+  color: rgba(240,212,138,0.8);
+  border: 1px solid rgba(240,212,138,0.35);
+  border-radius: 999px; padding: 3px 10px;
+}
+.chapter-title {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 700; color: var(--glass-text, #eef3fa);
+  margin: 0; text-shadow: 0 1px 18px rgba(0,0,0,0.4);
+}
+.chapter-note { font-size: 14px; color: var(--glass-text-dim, rgba(222,232,246,0.6)); margin-left: auto; }
+
+/* —— 玻璃卡片网格 —— */
+.chapter-grid {
+  display: grid; gap: 18px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) { .chapter-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .chapter-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.work-card {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 22px 22px 20px;
+  background: linear-gradient(160deg, rgba(78,95,128,0.26), rgba(30,40,68,0.40));
+  border: 1px solid rgba(150,173,218,0.18);
+  border-radius: 20px;
+  backdrop-filter: blur(22px) saturate(132%);
+  -webkit-backdrop-filter: blur(22px) saturate(132%);
+  box-shadow:
+    inset 0 1px 0 rgba(232,242,255,0.12),
+    0 22px 60px -34px rgba(0,0,0,0.75);
+  transition: transform var(--t-med, .32s) var(--ease), border-color var(--t-med, .32s) var(--ease), box-shadow var(--t-med, .32s) var(--ease);
+  text-decoration: none; color: inherit;
+}
+.work-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(176,198,232,0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(232,242,255,0.18),
+    0 30px 70px -30px rgba(0,0,0,0.8),
+    0 0 60px -28px rgba(130,163,218,0.5);
+}
+.work-card__top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.work-card__name {
+  font-family: var(--font-display); font-size: 21px; font-weight: 700;
+  color: var(--glass-text, #eef3fa); margin: 0; text-shadow: 0 1px 16px rgba(0,0,0,0.4);
+}
+.work-card__en {
+  font-family: var(--font-label); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--glass-text-dim, rgba(222,232,246,0.5)); white-space: nowrap;
+}
+.work-card__tagline {
+  font-family: var(--font-label); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--glass-text-dim, rgba(222,232,246,0.6)); white-space: nowrap;
+}
+.work-card__desc { font-size: 14.5px; line-height: 1.7; color: var(--glass-text-dim, rgba(222,232,246,0.8)); margin: 0; }
+.work-card__tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.work-card__tags span {
+  font-family: var(--font-label); font-size: 11px; letter-spacing: 0.03em;
+  color: #cfe0f5; background: rgba(150,182,232,0.10);
+  border: 1px solid rgba(150,182,232,0.34); border-radius: 999px; padding: 3px 9px;
+}
+.work-card__cta {
+  margin-top: auto; align-self: flex-start;
+  font-family: var(--font-label); font-size: 13px; letter-spacing: 0.04em;
+  color: #1a120b; background: linear-gradient(135deg, #e7b860, #d9a441);
+  border-radius: 12px; padding: 9px 14px;
+  box-shadow: 0 8px 22px rgba(217,164,65,0.30);
+  transition: transform var(--t-fast, .18s) var(--ease), box-shadow var(--t-fast, .18s) var(--ease);
+}
+.work-card:hover .work-card__cta { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(217,164,65,0.44); }
+
+/* —— 页脚 —— */
+.works-foot {
+  display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;
+  margin-top: 72px; padding-top: 32px;
+  border-top: 1px solid rgba(150,173,218,0.16);
+}
+.works-foot__link {
+  font-family: var(--font-label); font-size: 14px; letter-spacing: 0.04em;
+  color: var(--glass-text-dim, rgba(222,232,246,0.82));
+  transition: color var(--t-fast, .18s) var(--ease);
+}
+.works-foot__link:hover { color: #f0d48a; }
+
+/* —— 滚动渐入 —— */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* —— 滚动离开首屏：隐藏房间期的底部 ticker / 移动端索引条 —— */
+body.is-scrolled .quote-ticker,
+body.is-scrolled .chips {
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t-med, .32s) var(--ease);
+}
+
+/* —— 响应式 —— */
+@media (max-width: 600px) {
+  .works-inner { padding: 64px 18px 0; }
+  .works-head { margin-bottom: 40px; }
+  .chapter-note { display: none; }
+  .work-card__name { font-size: 19px; }
+}
+
+/* —— 降低动效偏好 —— */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .work-card { transition: none; }
+  .work-card:hover { transform: none; }
+}

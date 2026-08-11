@@ -1,0 +1,26 @@
+User-agent: *
+Allow: /
+
+# 显式允许主流 AI 检索爬虫（提升被 ChatGPT / Claude / Perplexity / Gemini 等引用的概率）
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://www.gaoyuan-ai.xyz/sitemap.xml

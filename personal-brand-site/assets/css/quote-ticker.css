@@ -1,0 +1,98 @@
+/* quote-ticker.css — 底部向上循环滚动的 AI 名人名言字幕条
+   纯 CSS 动画（GPU transform），零 JS、零布局抖动，不影响首屏加载性能。
+   设计语言：冷调玻璃条，呼应整站 Liquid Glass 风格；Times New Roman 斜体。 */
+
+.quote-ticker {
+  --ticker-duration: 34s;            /* 滚动一圈时长，越大越慢 */
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 62px;
+  z-index: 36;                       /* 高于 .chips(30)，低于 .topbar(40)/.panel(60) */
+  overflow: hidden;
+  cursor: default;
+  background: linear-gradient(180deg, rgba(32, 42, 70, 0.42), rgba(15, 23, 44, 0.66));
+  backdrop-filter: blur(12px) saturate(135%);
+  -webkit-backdrop-filter: blur(12px) saturate(135%);
+  border-top: 1px solid rgba(150, 173, 218, 0.16);
+  box-shadow: 0 -8px 26px rgba(8, 14, 26, 0.35);
+  /* 上下边缘渐隐，弱化接缝、柔化视觉 */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);
+          mask-image: linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);
+}
+
+/* 垂直滚动轨道：含两份完全相同的列表，平移 -50% 即无缝循环 */
+.quote-ticker__track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  animation: ticker-up var(--ticker-duration) linear infinite;
+}
+
+@keyframes ticker-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+/* 鼠标悬停或键盘聚焦时暂停，移开自动恢复 */
+.quote-ticker:hover .quote-ticker__track,
+.quote-ticker:focus-within .quote-ticker__track {
+  animation-play-state: paused;
+}
+
+.quote-ticker__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quote-ticker__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.55em;
+  flex-wrap: wrap;
+  max-width: min(1120px, 92vw);
+  margin: 0 auto;
+  padding: 8px 18px;
+  font-family: "Times New Roman", Times, Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: center;
+  color: rgba(232, 240, 252, 0.92);
+}
+
+.quote-ticker__author {
+  font-style: italic;
+  color: rgba(150, 190, 240, 0.86);
+  white-space: nowrap;
+}
+
+/* 名言之间的分隔符（圆点） */
+.quote-ticker__sep {
+  text-align: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 1px 0 3px;
+  color: rgba(150, 173, 218, 0.45);
+  letter-spacing: 0.4em;
+}
+
+/* —— 移动端：上移避开底部 .chips 索引条 —— */
+@media (max-width: 767px) {
+  .quote-ticker {
+    height: 54px;
+    bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+  }
+  .quote-ticker__item {
+    font-size: 13px;
+    padding: 6px 12px;
+    max-width: 94vw;
+  }
+  .quote-ticker__sep { font-size: 10px; }
+}
+
+/* —— 尊重降低动态偏好：停动画，静态展示首屏 —— */
+@media (prefers-reduced-motion: reduce) {
+  .quote-ticker__track { animation: none; }
+}

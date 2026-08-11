@@ -1,0 +1,863 @@
+{
+  "generatedAt": "2026-08-07T15:30:14",
+  "account": "Yuan Gao",
+  "total": 37,
+  "categories": [
+    {
+      "name": "静夜思",
+      "count": 24
+    },
+    {
+      "name": "AI产品",
+      "count": 13
+    }
+  ],
+  "tags": [
+    {
+      "name": "AI产品",
+      "count": 34
+    },
+    {
+      "name": "产品方法论",
+      "count": 18
+    },
+    {
+      "name": "留学教育",
+      "count": 4
+    }
+  ],
+  "posts": [
+    {
+      "id": "7GeAO6V3Iby52OGAYICTxg",
+      "title": "陪8岁孩子做游戏：Vibe Coding 的家庭实践经验",
+      "slug": "2026-08-01-陪8岁孩子做游戏：Vibe-Coding-的家庭实践经验",
+      "date": "2026-08-01",
+      "timestamp": 1785580290,
+      "summary": "本文记录了我陪女儿用 Vibe Coding 做游戏的全过程。我没有先教她任何编程工具，而是先帮她建立\\x26quot;准确说出看到的 → 表达想要的 → 看到变化\\x26quot;这一闭环习惯——这恰恰是 Vibe Coding 真正的元能力。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2026-08-01-陪8岁孩子做游戏：Vibe-Coding-的家庭实践经验/006-a556a54f94.jpg",
+      "wordCount": 3844,
+      "imageCount": 5,
+      "markdown": "content/posts/2026-08-01-陪8岁孩子做游戏：Vibe-Coding-的家庭实践经验.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/7GeAO6V3Iby52OGAYICTxg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "EwE-pZcgXZsS1hQgJRgEgg",
+      "title": "从shadowing到AI接管: 我们如何通过automation重塑组织架构和增效。",
+      "slug": "2026-07-31-从shadowing到AI接管-我们如何通过automation重塑组织架构和增效。",
+      "date": "2026-07-31",
+      "timestamp": 1785461400,
+      "summary": "一个automation项目的失败，通常不发生在技术环节。我把最近半年的项目实践经验完整呈现给你看。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2026-07-31-从shadowing到AI接管-我们如何通过automation重塑组织架构和增效。/002-e30a7e033e.jpg",
+      "wordCount": 5924,
+      "imageCount": 1,
+      "markdown": "content/posts/2026-07-31-从shadowing到AI接管-我们如何通过automation重塑组织架构和增效。.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/EwE-pZcgXZsS1hQgJRgEgg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "q6FmHO5SVnxVb33ekJPpeg",
+      "title": "当界面开始消失：从OpenAI Realtime到新一代 VoiceAI的实践与判断",
+      "slug": "2026-07-25-当界面开始消失：从OpenAI-Realtime到新一代-VoiceAI的实践与判断",
+      "date": "2026-07-25",
+      "timestamp": 1784952000,
+      "summary": "从realtime到voiceai，语音不是一种新的交互方式，而是agent跨越发展，代表着GUI之后下个时代",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2026-07-25-当界面开始消失：从OpenAI-Realtime到新一代-VoiceAI的实践与判断/001-03efd39c72.jpg",
+      "wordCount": 3104,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-07-25-当界面开始消失：从OpenAI-Realtime到新一代-VoiceAI的实践与判断.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/q6FmHO5SVnxVb33ekJPpeg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "th4MhULlh9RTaM71CVyQEA",
+      "title": "Human-in-the-Loop 产品的构建复盘",
+      "slug": "2026-07-24-Human-in-the-Loop-产品的构建复盘",
+      "date": "2026-07-24",
+      "timestamp": 1784865600,
+      "summary": "纯AI领域的探索陷入瓶颈后，关于 Human-in-the-Loop 产品到底该怎么做，也许我的经验能够给你带来一些参考。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论",
+        "留学教育"
+      ],
+      "cover": "assets/img/posts/2026-07-24-Human-in-the-Loop-产品的构建复盘/004-16fc463ab9.jpg",
+      "wordCount": 6906,
+      "imageCount": 3,
+      "markdown": "content/posts/2026-07-24-Human-in-the-Loop-产品的构建复盘.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/th4MhULlh9RTaM71CVyQEA",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "QaILscwhk7E5B1YlseJp1A",
+      "title": "会前笔记产品的开发全流程简述",
+      "slug": "2026-07-23-会前笔记产品的开发全流程简述",
+      "date": "2026-07-23",
+      "timestamp": 1784788149,
+      "summary": "今天介绍我去年8月做的一款产品——pre-session notes。通过对整个开发流程的介绍，希望为大家提供一些借鉴。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "留学教育"
+      ],
+      "cover": "assets/img/posts/2026-07-23-会前笔记产品的开发全流程简述/001-1049f7e457.jpg",
+      "wordCount": 4583,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-07-23-会前笔记产品的开发全流程简述.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/QaILscwhk7E5B1YlseJp1A",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "NJysGe5mftzD1ynrGt3u-A",
+      "title": "从\"互联网+\"到 AI 浪潮的重复建设问题",
+      "slug": "2026-07-20-从互联网+到-AI-浪潮的重复建设问题",
+      "date": "2026-07-20",
+      "timestamp": 1784539800,
+      "summary": "AI 消灭中间层虽提升效率，但会导致信息压缩、上下文缺失、重复建设、组织记忆流失、责任模糊、创新被扼杀——这些问题在 2015-2016 年\\x26quot;互联网+\\x26quot;浪潮中已出现。太阳底下无新事。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2026-07-20-从互联网+到-AI-浪潮的重复建设问题/001-3bad39a47b.jpg",
+      "wordCount": 3083,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-07-20-从互联网+到-AI-浪潮的重复建设问题.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/NJysGe5mftzD1ynrGt3u-A",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "iliFx-N26oz8nK5eiYh4bg",
+      "title": "与友人游寒山寺有感",
+      "slug": "2026-07-18-与友人游寒山寺有感",
+      "date": "2026-07-18",
+      "timestamp": 1784365306,
+      "summary": "有朋友邀，欣然顶着38度的太阳同游寒山寺。没有佛教的信仰基础，所以两人更多是带着新奇和散漫心态打卡式溜达。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2026-07-18-与友人游寒山寺有感/004-96af23780a.jpg",
+      "wordCount": 1813,
+      "imageCount": 3,
+      "markdown": "content/posts/2026-07-18-与友人游寒山寺有感.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/iliFx-N26oz8nK5eiYh4bg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "_DpmUM6snSbwS-s67iIt4g",
+      "title": "企业探索AI转型的项目过程",
+      "slug": "2026-07-13-企业探索AI转型的项目过程",
+      "date": "2026-07-13",
+      "timestamp": 1783937669,
+      "summary": "一、我们要改变世界处在现在这个时间节点，无论是市场驱动，还是因为整个行业的AI浪潮，都会推动公司内部启动了AI",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2026-07-13-企业探索AI转型的项目过程/001-43d694feae.jpg",
+      "wordCount": 2419,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-07-13-企业探索AI转型的项目过程.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/_DpmUM6snSbwS-s67iIt4g",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "K-Iv3fBISeVVBRsnRoNwdA",
+      "title": "AI时代，我的团队与工作模式的深度思考",
+      "slug": "2026-03-30-AI时代，我的团队与工作模式的深度思考",
+      "date": "2026-03-30",
+      "timestamp": 1774871595,
+      "summary": "AI时代，开发团队组织架构的精简化趋势思考。在这个“速度不代表正确”的时代，我们该如何重新定义人的价值？",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2026-03-30-AI时代，我的团队与工作模式的深度思考/001-e34f253fc1.jpg",
+      "wordCount": 2117,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-03-30-AI时代，我的团队与工作模式的深度思考.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/K-Iv3fBISeVVBRsnRoNwdA",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "UHqYczwht6_5abUjMM8E1Q",
+      "title": "我的Agent产品设计与反思",
+      "slug": "2026-03-25-我的Agent产品设计与反思",
+      "date": "2026-03-25",
+      "timestamp": 1774436400,
+      "summary": "我从去年8年开始负责一款app的从0到1，核心目标是从传统人力咨询模式，转向以多Agent系统驱动的标准化、规模化服务生态。产品通过AI构建画像，结合动态时间轴与任务拆解，持续优化学生的申请路径与竞争力指数。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "留学教育"
+      ],
+      "cover": "assets/img/posts/2026-03-25-我的Agent产品设计与反思/004-56b4e91cfb.jpg",
+      "wordCount": 3269,
+      "imageCount": 3,
+      "markdown": "content/posts/2026-03-25-我的Agent产品设计与反思.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/UHqYczwht6_5abUjMM8E1Q",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "J5bLvMGuEqKozJ8vVhdv1Q",
+      "title": "两个月内完成4轮产品架构迭代",
+      "slug": "2026-02-09-两个月内完成4轮产品架构迭代",
+      "date": "2026-02-09",
+      "timestamp": 1770628377,
+      "summary": "Complete four rounds of product architecture iteration within a two-month timeframe.",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "产品方法论",
+        "留学教育"
+      ],
+      "cover": "assets/img/posts/2026-02-09-两个月内完成4轮产品架构迭代/003-d55110f75d.jpg",
+      "wordCount": 2236,
+      "imageCount": 2,
+      "markdown": "content/posts/2026-02-09-两个月内完成4轮产品架构迭代.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/J5bLvMGuEqKozJ8vVhdv1Q",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "E3-6J4VdGzmfc3dsR3az7A",
+      "title": "对下一代AI产品形态的畅想",
+      "slug": "2026-01-09-对下一代AI产品形态的畅想",
+      "date": "2026-01-09",
+      "timestamp": 1767946595,
+      "summary": "结构负责确定性，AI 负责可能性，用户始终有“可点的东西”。AI 是“操作系统级入口”，而不是聊天工具，可以通过结构化的内容作为trigger，能够突破chatbox，成为用户探索世界的引擎。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2026-01-09-对下一代AI产品形态的畅想/001-043d2ba548.jpg",
+      "wordCount": 1143,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-01-09-对下一代AI产品形态的畅想.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/E3-6J4VdGzmfc3dsR3az7A",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "64AaYqVMjJ1QpQdkhtc3bQ",
+      "title": "Vibe coding的阶段性反思",
+      "slug": "2026-01-06-Vibe-coding的阶段性反思",
+      "date": "2026-01-06",
+      "timestamp": 1767695718,
+      "summary": "通过为期两个月的vibe coding，我们团队已经积攒了大量的feature，在过程中也总结经验和改进的方案。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2026-01-06-Vibe-coding的阶段性反思/001-7b79ce3d5b.jpg",
+      "wordCount": 2139,
+      "imageCount": 0,
+      "markdown": "content/posts/2026-01-06-Vibe-coding的阶段性反思.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/64AaYqVMjJ1QpQdkhtc3bQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "ESGWINF338OdxMETT8KmhQ",
+      "title": "Minecontext作为个人copilot的产品分析",
+      "slug": "2025-11-17-Minecontext作为个人copilot的产品分析",
+      "date": "2025-11-17",
+      "timestamp": 1763375772,
+      "summary": "今天从10点到12点，我用两个小时体验了 mine context。无论从产品前景还是费用上来说都很具有吸引力，相比智谱一堆虎头蛇尾的demo产品，我更看好字节的产品体系。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [],
+      "cover": "assets/img/posts/2025-11-17-Minecontext作为个人copilot的产品分析/004-87cbbf14e7.jpg",
+      "wordCount": 1762,
+      "imageCount": 3,
+      "markdown": "content/posts/2025-11-17-Minecontext作为个人copilot的产品分析.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/ESGWINF338OdxMETT8KmhQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "y3vRvkR6bOR0Mpca9hPu6Q",
+      "title": "AI产品的新特性：从“场景化”到“泛目的性”",
+      "slug": "2025-11-11-AI产品的新特性：从“场景化”到“泛目的性”",
+      "date": "2025-11-11",
+      "timestamp": 1762842617,
+      "summary": "App设计过度强调固定场景，限制了用户的泛目的性。AI应主动通过意图识别、情绪感知和记忆检索拼接模糊意图，避免工具化导致体验空洞化、情感负担和现实脱节。建议将交互选择权交给用户，由Agent配合优化UX。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-11-11-AI产品的新特性：从“场景化”到“泛目的性”/001-04c16bbd34.jpg",
+      "wordCount": 1655,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-11-11-AI产品的新特性：从“场景化”到“泛目的性”.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/y3vRvkR6bOR0Mpca9hPu6Q",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "oFix-4pnJ0HDrPmZEKwNkQ",
+      "title": "LLM时代的PM应该怎么做？",
+      "slug": "2025-10-11-LLM时代的PM应该怎么做？",
+      "date": "2025-10-11",
+      "timestamp": 1760182843,
+      "summary": "所以LLM时代的PM应该怎么做？LLM出来后，其实做PM的逻辑发生了根本性的变化，因为这是一种全新对信息的处理方式，而是完全可以绕过软硬件先天缺陷导致增加的大量冗余交互、流程和学习成本。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-10-11-LLM时代的PM应该怎么做？/001-237641efdd.jpg",
+      "wordCount": 1574,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-10-11-LLM时代的PM应该怎么做？.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/oFix-4pnJ0HDrPmZEKwNkQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "4pdcYAYpQ6CQBQvLXAS5Zg",
+      "title": "参观WAIC对产品的一些思考",
+      "slug": "2025-08-01-参观WAIC对产品的一些思考",
+      "date": "2025-08-01",
+      "timestamp": 1754018965,
+      "summary": "参观完2025世界人工智能大会（WAIC 2025），感慨AI已经深刻融入到各行各业，都说2025是agent元年，但实际上到年中时，但凡有能力的企业都已经在日常办公中广泛使用各类agent。时不我待~",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-08-01-参观WAIC对产品的一些思考/011-7323d18d08.jpg",
+      "wordCount": 3001,
+      "imageCount": 10,
+      "markdown": "content/posts/2025-08-01-参观WAIC对产品的一些思考.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/4pdcYAYpQ6CQBQvLXAS5Zg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "blHFHgBFbS0FEBIVxBNerA",
+      "title": "kira learning的产品分析",
+      "slug": "2025-06-29-kira-learning的产品分析",
+      "date": "2025-06-29",
+      "timestamp": 1751183398,
+      "summary": "Kira Learning是由吴恩达担任董事长的教育科技公司，其产品定位为教师管理平台结合AI工具。亮点功能包括Standards Mapping、自动聚合学情数据可视化评估，以及通过prompt参数设置实现个性化作业生成和评分。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-06-29-kira-learning的产品分析/001-c00f1a00de.jpg",
+      "wordCount": 1587,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-06-29-kira-learning的产品分析.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/blHFHgBFbS0FEBIVxBNerA",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "FjK49ddubYTE--bBmt31AQ",
+      "title": "智能体系统的探索和开发实践",
+      "slug": "2025-06-14-智能体系统的探索和开发实践",
+      "date": "2025-06-14",
+      "timestamp": 1749892093,
+      "summary": "回顾一下最近一个月做的事情，提醒自己别忘了持续输出，也将最近对agent的学习和实践做下分享。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-06-14-智能体系统的探索和开发实践/004-adf6e4fed4.jpg",
+      "wordCount": 2791,
+      "imageCount": 3,
+      "markdown": "content/posts/2025-06-14-智能体系统的探索和开发实践.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/FjK49ddubYTE--bBmt31AQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "jvQVMtifpVzMRUSKocThzg",
+      "title": "AI领域最近动态观察_25.5",
+      "slug": "2025-05-14-AI领域最近动态观察_25.5",
+      "date": "2025-05-14",
+      "timestamp": 1747206484,
+      "summary": "“ AI领域当前发展聚焦生产与整合两大趋势：生产端以AIGC为核心覆盖多模态技术，整合端通过Agent平台、RRPA工具等推动B/G端市场应用，底层云计算及API平台降低AI成本。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-05-14-AI领域最近动态观察_25.5/002-cbce7f0c23.jpg",
+      "wordCount": 1925,
+      "imageCount": 1,
+      "markdown": "content/posts/2025-05-14-AI领域最近动态观察_25.5.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/jvQVMtifpVzMRUSKocThzg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "H268cBoK86HzFa01ijHQgw",
+      "title": "智慧教育动态管理系统（EDMS）",
+      "slug": "2025-05-12-智慧教育动态管理系统（EDMS）",
+      "date": "2025-05-12",
+      "timestamp": 1747046972,
+      "summary": "智慧教育动态管理系统（EDMS）结合管理科学理论（如F.Taylor标准化理念）与AI技术（XGBoost、LSTM等算法），建立包含人员画像、环境感知、过程追踪的四维架构，提供动态监测、策略优化及自适应实施功能。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-05-12-智慧教育动态管理系统（EDMS）/001-b3fec5e878.jpg",
+      "wordCount": 1954,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-05-12-智慧教育动态管理系统（EDMS）.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/H268cBoK86HzFa01ijHQgw",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "dArnJIGTt0OK1avHz3KH9g",
+      "title": "面试评分系统自研全景图",
+      "slug": "2025-04-25-面试评分系统自研全景图",
+      "date": "2025-04-25",
+      "timestamp": 1745564078,
+      "summary": "面试评分系统的核心需求为确保系统稳定性和兼容各地个性化考务流程，需整合数字基座、表单配置、分布式数据同步及快速部署等功能。系统需覆盖硬件部署、网络调试、应急处理等复杂供应链服务，并满足严苛的考场环境要求。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-04-25-面试评分系统自研全景图/006-757e29cade.jpg",
+      "wordCount": 2130,
+      "imageCount": 5,
+      "markdown": "content/posts/2025-04-25-面试评分系统自研全景图.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/dArnJIGTt0OK1avHz3KH9g",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "YRR2nwxH2dciUwmGQfQWeA",
+      "title": "AI作业管理平台，从0~1全流程分享",
+      "slug": "2025-04-16-AI作业管理平台，从0~1全流程分享",
+      "date": "2025-04-16",
+      "timestamp": 1744799400,
+      "summary": "设计了一套智能作业优化系统，价反馈等功能，通过分享从需求分析到原型落地的全流程，为教育信息化类企业提供了可复制的实践案例。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-04-16-AI作业管理平台，从0~1全流程分享/005-46c2dc75a1.jpg",
+      "wordCount": 1951,
+      "imageCount": 4,
+      "markdown": "content/posts/2025-04-16-AI作业管理平台，从0~1全流程分享.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/YRR2nwxH2dciUwmGQfQWeA",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "gl5iDus9My9XeRhsJOJUSQ",
+      "title": "用AI拆解孩子作业后，发现提升学习效率的秘密！家长必看攻略",
+      "slug": "2025-04-14-用AI拆解孩子作业后，发现提升学习效率的秘密！家长必看攻略",
+      "date": "2025-04-14",
+      "timestamp": 1744607907,
+      "summary": "通过QQ群作业功能整理女儿语文作业数据，利用NotebookLM和deepseek-V3进行结构化处理并对比模型差异，AutoGLM和R1对作业进行多维度统计分析。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-04-14-用AI拆解孩子作业后，发现提升学习效率的秘密！家长必看攻略/001-013695f54a.jpg",
+      "wordCount": 3314,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-04-14-用AI拆解孩子作业后，发现提升学习效率的秘密！家长必看攻略.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/gl5iDus9My9XeRhsJOJUSQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "wNkEQsAIacIfm7-xiIjPIQ",
+      "title": "基于三级模型的内容生产力策略",
+      "slug": "2025-04-01-基于三级模型的内容生产力策略",
+      "date": "2025-04-01",
+      "timestamp": 1743502233,
+      "summary": "针对新媒体内容生产瓶颈，IT部门推出三级策略：灌水级（AI批量生成）、信息流级（人机协同优化）、宣传片级（人工精品）。结合AGI技术，采用Flowith等工具实现任务拆解与流程可视化，验证“AI提效-人力创新”协同模式。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-04-01-基于三级模型的内容生产力策略/005-844c4cfd46.jpg",
+      "wordCount": 4412,
+      "imageCount": 4,
+      "markdown": "content/posts/2025-04-01-基于三级模型的内容生产力策略.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/wNkEQsAIacIfm7-xiIjPIQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "m5saDfTSggB4N__g9JSY9w",
+      "title": "家校协作的边界探索及家庭内核分级模型",
+      "slug": "2025-03-27-家校协作的边界探索及家庭内核分级模型",
+      "date": "2025-03-27",
+      "timestamp": 1743074119,
+      "summary": "从工作到生活，其实取得balance的方法不只是做切割，还可以做跷跷板，两边各放置一些投入，动态调整自己的注意力权重。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-03-27-家校协作的边界探索及家庭内核分级模型/002-3d97671ead.jpg",
+      "wordCount": 2257,
+      "imageCount": 1,
+      "markdown": "content/posts/2025-03-27-家校协作的边界探索及家庭内核分级模型.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/m5saDfTSggB4N__g9JSY9w",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "YLm-z1sqNjq2LfnUg2Kpnw",
+      "title": "使用Trae开发班级座位表管理功能",
+      "slug": "2025-03-21-使用Trae开发班级座位表管理功能",
+      "date": "2025-03-21",
+      "timestamp": 1742549742,
+      "summary": "开发基础薄弱的人使用Trae，首轮对话最为关键，目前也只能实现一些1000行代码以内的功能，太长或多轮对话还是会存在不少问题。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-03-21-使用Trae开发班级座位表管理功能/003-57adc38dda.jpg",
+      "wordCount": 1643,
+      "imageCount": 2,
+      "markdown": "content/posts/2025-03-21-使用Trae开发班级座位表管理功能.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/YLm-z1sqNjq2LfnUg2Kpnw",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "_p4GIYm1RfJn1u4EP3azeg",
+      "title": "AI时代的3个职业画像及发展路径",
+      "slug": "2025-03-14-AI时代的3个职业画像及发展路径",
+      "date": "2025-03-14",
+      "timestamp": 1741927370,
+      "summary": "任何的变化都孕育着新的机遇，对于能持续学习并不断发觉机遇的人来说，卖铲子永远是更好的选择。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-03-14-AI时代的3个职业画像及发展路径/004-17c8a047f0.jpg",
+      "wordCount": 2216,
+      "imageCount": 3,
+      "markdown": "content/posts/2025-03-14-AI时代的3个职业画像及发展路径.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/_p4GIYm1RfJn1u4EP3azeg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "vriW3TIYcleVFQGVDZtZUQ",
+      "title": "对manus的产品推广思考",
+      "slug": "2025-03-07-对manus的产品推广思考",
+      "date": "2025-03-07",
+      "timestamp": 1741330871,
+      "summary": "在其他平台还是通过标签页或分类显示文生图、文生视频、图生视频等不同业务形态的入口，将AI工具化，专注提升垂直能力的时候，manus以产品的理念进行了整合，打造爆款。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-03-07-对manus的产品推广思考/001-16e5f10bf0.jpg",
+      "wordCount": 2062,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-03-07-对manus的产品推广思考.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/vriW3TIYcleVFQGVDZtZUQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "LaLsA__1HQk2tMAAmdGQgw",
+      "title": "针对AI提问质量的5个评价指标",
+      "slug": "2025-03-02-针对AI提问质量的5个评价指标",
+      "date": "2025-03-02",
+      "timestamp": 1740923209,
+      "summary": "基于五大指标优化提问策略，显著提升AI应答质量。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-03-02-针对AI提问质量的5个评价指标/001-de1adaf725.jpg",
+      "wordCount": 2207,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-03-02-针对AI提问质量的5个评价指标.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/LaLsA__1HQk2tMAAmdGQgw",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "PGMz-1Po6n-QnGe4py_C9Q",
+      "title": "7岁女童霸凌的典型行为及解决方案",
+      "slug": "2025-03-01-7岁女童霸凌的典型行为及解决方案",
+      "date": "2025-03-01",
+      "timestamp": 1740839279,
+      "summary": "以前一直以为霸凌行为潜伏很深，难以发觉和判断，但实际上有大量研究结果，如果能投入精力学习掌握，锻炼一双火眼金睛，就会见微知著，防范于未然。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-03-01-7岁女童霸凌的典型行为及解决方案/001-20fb32a6a9.jpg",
+      "wordCount": 13672,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-03-01-7岁女童霸凌的典型行为及解决方案.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/PGMz-1Po6n-QnGe4py_C9Q",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "tFpIksTaaYM3rYfFpVitPQ",
+      "title": "女孩之间的霸凌是一座冰山",
+      "slug": "2025-02-24-女孩之间的霸凌是一座冰山",
+      "date": "2025-02-24",
+      "timestamp": 1740365642,
+      "summary": "女孩之间的霸凌，就像一座漂浮在水面上的巨大冰山，能够被外界看到的行为表现或应对方式，只是露在水面上很小的一部分，而暗涌在水面之下更大的山体，长期被忽略。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-02-24-女孩之间的霸凌是一座冰山/001-3e031971f1.jpg",
+      "wordCount": 1576,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-02-24-女孩之间的霸凌是一座冰山.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/tFpIksTaaYM3rYfFpVitPQ",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "9K484Ryn8Aa7SBxJ-UmU8w",
+      "title": "AI个人开发者操作参考",
+      "slug": "2025-02-22-AI个人开发者操作参考",
+      "date": "2025-02-22",
+      "timestamp": 1740200572,
+      "summary": "最近有一些朋友询问个人想要深入学习AI可以​从哪方面着手？其实脱离学校环境后最好的学习方式就是“做中学”，通过练习去摸索大模型的特性。换言之，盲人摸象未尝不可，只要把手接触到最近的知识​学以致用就可以了。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-02-22-AI个人开发者操作参考/004-7f178191ba.jpg",
+      "wordCount": 2702,
+      "imageCount": 3,
+      "markdown": "content/posts/2025-02-22-AI个人开发者操作参考.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/9K484Ryn8Aa7SBxJ-UmU8w",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "qCbqh0go2dMkAQ9hUDZ04g",
+      "title": "为什么现在的年轻人普遍emo了",
+      "slug": "2025-02-15-为什么现在的年轻人普遍emo了",
+      "date": "2025-02-15",
+      "timestamp": 1739603298,
+      "summary": "人不必时刻保持正确，要重新翻阅课本，拾起一种叫革命乐观主义的精神，在一次次成功或失败中竹杖芒鞋轻胜马，一往无前。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-02-15-为什么现在的年轻人普遍emo了/003-b96e77fe32.jpg",
+      "wordCount": 3365,
+      "imageCount": 2,
+      "markdown": "content/posts/2025-02-15-为什么现在的年轻人普遍emo了.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/qCbqh0go2dMkAQ9hUDZ04g",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "gdvf0Q41sy6O6fzBQGfTqg",
+      "title": "如何缓解AI时代的焦虑？",
+      "slug": "2025-02-14-如何缓解AI时代的焦虑？",
+      "date": "2025-02-14",
+      "timestamp": 1739528839,
+      "summary": "焦虑来源于对新事物的不了解，而不是对新事物本身的威胁，通过主动学习和心态调整，从容面对，并且抓住​机遇去做新的尝试。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-02-14-如何缓解AI时代的焦虑？/001-43bad8e574.jpg",
+      "wordCount": 1981,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-02-14-如何缓解AI时代的焦虑？.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/gdvf0Q41sy6O6fzBQGfTqg",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "tFvy2OnEQcQeaHB-Li586g",
+      "title": "AI时代家长期待的评价",
+      "slug": "2025-02-07-AI时代家长期待的评价",
+      "date": "2025-02-07",
+      "timestamp": 1738900938,
+      "summary": "利用循证教育评价平台，通过统一接口采集孩子学校与家庭数据，借助AI代理过滤整合信息，提供客观评价与建议，辅助家长主动决策、调整关注策略，实现家校协同成长。",
+      "author": "高源",
+      "categories": [
+        "静夜思"
+      ],
+      "tags": [
+        "AI产品"
+      ],
+      "cover": "assets/img/posts/2025-02-07-AI时代家长期待的评价/001-a05d142cb5.jpg",
+      "wordCount": 2001,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-02-07-AI时代家长期待的评价.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/tFvy2OnEQcQeaHB-Li586g",
+      "sourceUrl": "",
+      "archived": false
+    },
+    {
+      "id": "-E6ZaXN0Nn0oQnkmMxA1xQ",
+      "title": "如何搭建适合自己的AI体系",
+      "slug": "2025-01-26-如何搭建适合自己的AI体系",
+      "date": "2025-01-26",
+      "timestamp": 1737879657,
+      "summary": "在AI信息泛滥的环境中，我们可以尝试建立最小可行工具包（MVK）来有效应对信息过载。首先，确定工作中反复出现的任务，选择合适的AI工具解决问题，并不断评估优化使用效果。通过积累提示词和工作流程，并将其固化为日常习惯，提高效率。",
+      "author": "高源",
+      "categories": [
+        "AI产品"
+      ],
+      "tags": [
+        "AI产品",
+        "产品方法论"
+      ],
+      "cover": "assets/img/posts/2025-01-26-如何搭建适合自己的AI体系/001-83becd34a4.jpg",
+      "wordCount": 1801,
+      "imageCount": 0,
+      "markdown": "content/posts/2025-01-26-如何搭建适合自己的AI体系.md",
+      "wechatUrl": "https://mp.weixin.qq.com/s/-E6ZaXN0Nn0oQnkmMxA1xQ",
+      "sourceUrl": "",
+      "archived": false
+    }
+  ]
+}

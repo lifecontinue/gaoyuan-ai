@@ -1,0 +1,33 @@
+/* motion.css — 关键帧 + 状态类 + 降级 */
+
+/* 控件入场（首屏后轻微上浮） */
+@keyframes ui-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.topbar, .controls, .chips {
+  animation: ui-rise 0.6s var(--ease) both;
+}
+.controls { animation-delay: 0.1s; }
+
+/* 房间背景（视频）淡入 */
+.room-video { opacity: 0; transition: opacity var(--t-slow) var(--ease); }
+.room-video.is-loaded { opacity: 1; }
+
+/* 房间图缺失时的暖色渐变兜底（预览期可用，真实照片就位后自动覆盖） */
+.room--fallback {
+  background:
+    radial-gradient(80% 60% at 50% 35%, #6b5436 0%, #4a3a25 45%, #2a2014 100%);
+}
+.room--fallback .room-overlay { opacity: 0.5; }
+
+/* —— 性能 / 无障碍降级 —— */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hotspot__ping { display: none; }
+}

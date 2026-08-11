@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build & dist output
+dist/
+dist-*/
+build/
+out/
+.next/
+.vercel/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Package-manager caches
+.npm-cache/
+.npm-cache-*/
+.npmc*
+
+# Secrets — never commit real env files
+.env
+.env.local
+*.local
+
+# Logs & scratch
+*.log
+_*.txt
+chroma*.txt
+.mise.toml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime / trash artifacts
+.trash/
+.workbuddy/

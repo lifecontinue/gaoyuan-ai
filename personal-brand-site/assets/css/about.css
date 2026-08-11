@@ -1,0 +1,150 @@
+/* about.css — 关于页（Liquid Glass 冷调暗色，与首页书房同源）
+   纯静态、可被搜索引擎与 AI 爬虫读取，不依赖 JS。
+   配色沿用 tokens.css 的 --glass-* 冷调变量（兜底值即冷色书房）。 */
+
+:root { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+/* 本页需可滚动（base.css 全局 overflow:hidden 是为单屏房间准备的，此处覆盖） */
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: 18px; line-height: 1.85;
+  color: var(--glass-text, #eef3fa);
+  /* 冷调暗色书房渐变底，与首页背景同源 */
+  background:
+    radial-gradient(120% 80% at 78% 8%, rgba(130,163,218,0.14), transparent 55%),
+    radial-gradient(120% 90% at 12% 96%, rgba(120,150,200,0.10), transparent 58%),
+    linear-gradient(165deg, #0d1220 0%, #131a2b 52%, #0f1626 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100svh;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+a { color: var(--accent-amber, #d9a441); text-decoration: none; }
+a:hover { color: #f0d48a; text-decoration: underline; text-underline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; margin: 0; color: var(--glass-text, #eef3fa); }
+
+/* —— 顶部玻璃栏（与首页暗玻璃 topbar 同源） —— */
+.about-topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 22px;
+  position: sticky; top: 0; z-index: 10;
+  background: linear-gradient(180deg, rgba(13,18,32,0.82), rgba(13,18,32,0.42));
+  border-bottom: 1px solid rgba(150,173,218,0.16);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  font-family: var(--font-label); font-size: 13px;
+  color: var(--glass-text-dim, rgba(222,232,246,0.78));
+}
+.about-topbar a { color: var(--glass-text-dim, rgba(222,232,246,0.78)); text-decoration: none; transition: color var(--t-fast, .18s) var(--ease); }
+.about-topbar a:hover { color: #f0d48a; }
+.about-topbar .sep { color: var(--glass-edge, rgba(150,173,218,0.5)); }
+.about-topbar .spacer { flex: 1; }
+
+.about-wrap { max-width: 860px; margin: 0 auto; padding: 56px 22px 96px; }
+
+.about-hero { margin-bottom: 40px; }
+.about-hero h1 {
+  font-size: clamp(30px, 5.5vw, 50px); font-weight: 700;
+  margin: 0 0 10px; text-shadow: 0 1px 24px rgba(0,0,0,0.5);
+}
+.about-hero .role {
+  font-family: var(--font-label); font-size: 14px;
+  color: #f0d48a; letter-spacing: 0.06em;
+  text-transform: uppercase; margin: 0 0 18px;
+}
+.about-hero .lede { font-size: 20px; color: var(--glass-text-dim, rgba(222,232,246,0.82)); margin: 0; }
+
+/* —— 玻璃卡片通用 —— */
+.about-section { margin: 44px 0; }
+.about-section > h2 {
+  font-size: 26px; font-weight: 700;
+  padding-bottom: 10px; margin-bottom: 18px;
+  border-bottom: 1px solid rgba(150,173,218,0.18);
+  position: relative;
+}
+.about-section > h2::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 56px; height: 2px;
+  background: linear-gradient(90deg, #f0d48a, rgba(240,212,138,0));
+}
+
+/* —— 关于我 —— */
+.about-bio p { margin: 0 0 16px; color: var(--glass-text-dim, rgba(222,232,246,0.82)); }
+.about-bio strong { color: var(--glass-text, #eef3fa); }
+
+/* —— 产品（不再 listicle，只一句引导） —— */
+.about-products__note {
+  color: var(--glass-text-dim, rgba(222,232,246,0.82));
+  background: linear-gradient(160deg, rgba(78,95,128,0.20), rgba(30,40,68,0.30));
+  border: 1px solid rgba(150,173,218,0.16);
+  border-radius: 18px; padding: 20px 22px; line-height: 1.8;
+}
+
+/* —— 我持续在写什么（思考卡片网格） —— */
+.about-thinking__lede { color: var(--glass-text-dim, rgba(222,232,246,0.78)); margin: 0 0 22px; }
+.thinking-grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 680px) { .thinking-grid { grid-template-columns: 1fr 1fr; } }
+
+.thinking-card {
+  background: linear-gradient(160deg, rgba(78,95,128,0.26), rgba(30,40,68,0.38));
+  border: 1px solid rgba(150,173,218,0.18);
+  border-radius: 20px;
+  padding: 22px 22px 20px;
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgba(232,242,255,0.10), 0 18px 50px -28px rgba(0,0,0,0.7);
+  transition: transform var(--t-fast, .18s) var(--ease), border-color var(--t-fast, .18s) var(--ease);
+}
+.thinking-card:hover { transform: translateY(-3px); border-color: rgba(176,198,232,0.40); }
+.thinking-card h3 {
+  font-size: 19px; font-weight: 700; margin: 0 0 10px;
+  color: #eef3fa; text-shadow: 0 1px 16px rgba(0,0,0,0.4);
+}
+.thinking-card p { margin: 0 0 14px; color: var(--glass-text-dim, rgba(222,232,246,0.78)); font-size: 15px; line-height: 1.75; }
+.thinking-links { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.thinking-links li { position: relative; padding-left: 16px; }
+.thinking-links li::before {
+  content: ""; position: absolute; left: 0; top: 11px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(240,212,138,0.7);
+}
+.thinking-links a { font-size: 14px; color: var(--glass-text-dim, rgba(222,232,246,0.82)); line-height: 1.6; }
+.thinking-links a:hover { color: #f0d48a; }
+
+/* —— FAQ —— */
+.faq-item { padding: 18px 0; border-bottom: 1px solid rgba(150,173,218,0.14); }
+.faq-item:last-child { border-bottom: none; }
+.faq-item h3 { font-size: 19px; font-weight: 700; margin: 0 0 10px; }
+.faq-item p { margin: 0 0 10px; color: var(--glass-text-dim, rgba(222,232,246,0.82)); }
+.faq-item p:last-child { margin-bottom: 0; }
+
+/* —— 联系方式 —— */
+.about-contact {
+  background: linear-gradient(160deg, rgba(78,95,128,0.20), rgba(30,40,68,0.30));
+  border: 1px solid rgba(150,173,218,0.16); border-radius: 18px; padding: 24px 26px;
+  backdrop-filter: blur(20px) saturate(130%); -webkit-backdrop-filter: blur(20px) saturate(130%);
+}
+.about-contact ul { margin: 0; padding: 0; list-style: none; }
+.about-contact li { margin: 8px 0; color: var(--glass-text-dim, rgba(222,232,246,0.82)); }
+.about-contact .k { font-family: var(--font-label); font-size: 13px; color: rgba(222,232,246,0.55); margin-right: 10px; }
+
+.about-foot { margin-top: 40px; font-family: var(--font-label); font-size: 13px; color: rgba(222,232,246,0.5); text-align: center; }
+
+/* —— 响应式 —— */
+@media (max-width: 600px) {
+  body { font-size: 17px; }
+  .about-wrap { padding: 36px 18px 72px; }
+  .thinking-card h3 { font-size: 18px; }
+}
+
+/* —— 降低动效偏好 —— */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .thinking-card { transition: none; }
+  .thinking-card:hover { transform: none; }
+}

@@ -1,0 +1,146 @@
+Page 1 Confidential · 保密
+个人总结
+AI 产品经理，具备大模型 / LLM 产品从 0→1 到上线与商业化的全流程落地能力。拥有 11 年企业级产品管理经
+验，具备跨行业复杂产品建设与数字化转型经验，覆盖教育科技、政企解决方案、智能硬件及人工智能领域。擅长从
+0 到 1 构建平台型产品，将复杂业务问题转化为可规模化的产品体系。具备业务流程梳理、产品架构设计、技术方案
+协同及跨团队推动落地能力。同时作为 AI 转型顾问为多家企业提供整体数字化转型咨询；目前专注于企业 AI 转型
+方向，负责 Enterprise AI Platform 和 AI-native 产品建设。
+工作经历
+Crimson Education — AI 产品经
+高源 (Yuan Gao) · AI Product Manager Resume
+haidagy@gmail.com · 13585840034
+[https://www.linkedin.com/in/gaoyuan93/]   [https://gaoyuan-ai.xyz]
+理
+2025.6 – 至今
+ 负责 SuperOS（AI-native Mobile Application）从 0 到 1 产品建设，探索以 Agent 为核心的新一代学生申请
+操作系统，通过 Hybrid + vibe coding 方式，快速迭代，推动 AI 从工具型功能向持续陪伴式智能助手演进。
+ 负责 OpenAI Voice Realtime 场景（语音入驻 + 表单、面试辅导）产品
+ 推进 AI automation 项目，通过重构 infra 需求，开发面向不同 role 的 dashboard+AI assistant 系统，通过
+monitoring 逐步使用 AI workflow 替代真人操作，降低 57%的人力成本，NPS 为 75（75%的 9-10 分）
+ 主导 AdmitYogi 从信息聚合平台向 human in the loop 模式的架构设计与前期开发工作
+ 交付 Pre-session Notes，基于"n8n workflow + JSON" pipeline 将非结构化沟通内容转化为结构化 Session
+Brief，提升服务准备效率和信息一致性。
+苏州科达科技股份有限公司 — 产品经理
+2024.08 – 2025.2
+ 打造"禁毒 RPA + 大模型"产品：定义数据清洗、embedding 要求、prompt 需求、验收标准及 RPA 迭代计划
+ 设计纪委健康看护多模态系统，整合体征监测硬件与 LLM 研判预警；以"智慧看护"牵引"智慧留置"
+ 交付公安智慧街面巡防标准化方案，精简部署与对接复杂度
+苏州金瑞阳信息科技有限责任公司 — 产品经理
+2022.09 – 2024.06
+ 主导公务员面试评分系统从 0→1 的全系统设计与实施方案，服务于人社部及山西、安徽、湖北、山东等省级考
+试机构。
+ 端到端负责 2 款无线信号屏蔽器与 1 款网络时钟的硬件研发（参数确认、供应商管理、量产），降本 15%，年
+营收超 3,000 万元，时钟出货 5,000+ 台。贡献 3 项实用新型专利
+
+高源 (Yuan Gao) · AI Product Manager Resume
+Page 2 Confidential · 保密
+ 优化供应链与跨职能交付，提升硬件 / 软件产品组合的交付速度与成本效益。参与国家教育考试无线屏蔽标准的
+制定。
+上海思来氏信息咨询有限公司 — 产品经理
+2017.05 – 2022.09
+ 打造"小思徽章"学生综合素质评价平台（移动端 / 小程序 / 桌面端 / 报告），月活 30 万+、年评价数据 2,000
+万+ 条、覆盖 120+ 所学校
+ 支撑巴蜀小学评价项目获 2018 年国家级教学成果奖特等奖；搭建产品体系与内训制度，使单运营人员可同时服
+务 10+ 所学校，单校年费 5 万元+。
+上海英和教育科技有限公司 — 产品经理
+2015.07 – 2017.04
+ 从 0→1 搭建 K12 课堂评价产品线，覆盖智能硬件、PC 客户端、学校管理 Web 报表、家长端 App 与德育评价
+App。
+企业 AI 转型咨询（顾问）
+2025.03 – 2025.5
+为 3 家企业提供以 AI 为驱动的整体数字化转型咨询，将大模型能力嵌入核心业务流程，覆盖人事招聘、财务、合规
+化、合同审核、质量检测、新媒体运营、AIGC、企业内训、舆情监控等模块，并输出可落地的转型路线图与优先
+级，提升企业内信息准确性，降低运营成本。
+教育经历
+中国海洋大学 — 教育技术学 学士
+2011 – 2015
+证书
+心理咨询师三级 · 计算机三级 · 普通话二级甲等 · 高中教师资格证
+技能
+ AI / ML： 大模型 / LLM 产品化、Prompt 工程、RAG、多模态 AI、RPA+LLM、human in the loop、数据驱
+动决策
+ 产品管理： 产品战略、产品路线图、干系人管理、跨职能领导力、用户研究、需求梳理、Go-to-Market、敏捷
+/ Scrum
+ 技术： SQL、产品数据分析、Jira / Figma / Confluence
+
+高源 (Yuan Gao) · AI Product Manager Resume
+Page 3 Confidential · 保密
+Professional Summary
+AI Product Manager with end-to-end expertise taking LLM / large-model products from 0→1 through
+launch and commercialization. 11 years of enterprise product management across EdTech, government /
+enterprise solutions, smart hardware, and artificial intelligence. Builds platform products from 0→1,
+translating complex business problems into scalable product systems. Owns business-process mapping,
+product architecture, technical alignment, and cross-functional delivery. Serves as an AI transformation
+advisor delivering end-to-end digital-transformation consulting to multiple enterprises, and is currently
+focused on enterprise AI transformation—building an Enterprise AI Platform and AI-native products.
+Work Experience
+Crimson Education — AI Product Manager
+2025.6 – Present
+ Led 0→1 development of SuperOS (an AI-native mobile application), exploring an Agent-centric next-
+generation student-application OS; used a Hybrid + vibe-coding approach for rapid iteration, evolving
+AI from tool-like features into a persistent companion assistant.
+ Owned OpenAI Voice Realtime scenarios (voice onboarding + forms, interview coaching) as products.
+ Drove AI automation by rebuilding infra requirements and shipping role-based dashboards + AI
+assistant systems; via monitoring, progressively replaced human operations with AI workflows, cutting
+labor cost by 57% and reaching an NPS of 75 (75% of users scoring 9–10).
+ Led the architecture design and early development to evolve AdmitYogi from an info-aggregation
+platform into a human-in-the-loop model.
+ Shipped Pre-session Notes, a pipeline ("n8n workflow + JSON") that converts unstructured
+conversation into structured Session Briefs, improving service-prep efficiency and information
+consistency.
+Suzhou Keda Technology Co., Ltd. (苏州科达) — Product Manager
+2024.08 – 2025.2
+ Built an "anti-drug RPA + large-model" product: defined data-cleaning, embedding requirements,
+prompt requirements, acceptance criteria, and the RPA iteration plan.
+ Designed a discipline-inspection multimodal health-monitoring system, integrating vital-sign
+hardware with LLM-based analysis and early warning; used "smart care" to lead the "smart detention"
+line.
+ Delivered a standardized public-safety smart street-patrol solution, simplifying deployment and
+integration complexity.
+
+高源 (Yuan Gao) · AI Product Manager Resume
+Page 4 Confidential · 保密
+Suzhou Jinruiyang Information Technology Co., Ltd. (苏州金瑞阳) — Product Manager
+2022.09 – 2024.06
+ Led 0→1 design and implementation of a civil-service interview scoring system, serving the Ministry of
+Human Resources and provincial exam authorities in Shanxi, Anhui, Hubei, and Shandong.
+ Owned end-to-end hardware R&D of 2 wireless signal blockers and 1 network clock (spec
+confirmation, supplier management, mass production): cut cost by 15%, drove RMB 30M+ in annual
+revenue, and shipped 5,000+ clock units.
+ Optimized supply chain and cross-functional delivery to improve speed and cost-efficiency across the
+hardware / software portfolio.
+Shanghai Silaishi Information Consulting Co., Ltd. (上海思来氏) — Product Manager
+2017.05 – 2022.09
+ Built 小思徽章, a student competency-evaluation platform (mobile / mini-program / desktop / reports):
+300K+ MAU, 20M+ annual evaluation records, and 120+ schools covered.
+ Supported the Bashu Primary School evaluation project to win the 2018 National Teaching
+Achievement Award (Special Prize); built the product system and training program that let one
+operations staff member serve 10+ schools at an RMB 50K+ annual fee per school.
+ Managed 2 municipal- and 4 district-level education research projects, building durable cross-region
+EdTech delivery capability.
+Shanghai Yinghe Education Technology Co., Ltd. (上海英和) — Product Manager
+2015.07 – 2017.04
+ Built a K12 classroom-evaluation product line from 0→1 spanning smart hardware, a PC client, school-
+admin Web reports, a parent app, and a moral-education evaluation app.
+Enterprise AI Transformation Consulting (Advisor)
+2025.03 – 2025.5
+Provided AI-driven end-to-end digital-transformation consulting to 3 enterprises, embedding large-model
+capabilities into core business processes—covering HR recruiting, finance, compliance, contract review,
+quality inspection, new-media operations, AIGC, corporate training, and public-opinion monitoring—and
+delivered an actionable transformation roadmap with priorities, improving information accuracy and
+reducing operating costs.
+
+高源 (Yuan Gao) · AI Product Manager Resume
+Page 5 Confidential · 保密
+Education
+Ocean University of China (中国海洋大学) — B.S. in Educational Technology
+2011 – 2015
+Certifications
+Level-3 Psychological Counselor · Computer Level-3 · Putonghua (Mandarin) Level 2-A · High-School
+Teacher Certificate
+Skills
+ AI / ML: LLM / large-model productization, prompt engineering, RAG, multimodal AI, RPA + LLM,
+human-in-the-loop, data-driven decision making
+ Product Management: product strategy, product roadmap, stakeholder management, cross-
+functional leadership, user research, requirements gathering, go-to-market (GTM), agile / Scrum
+ Technical: SQL, product analytics, Jira / Figma / Confluence

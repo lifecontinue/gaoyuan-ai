@@ -1,0 +1,24 @@
+# Yuan Gao · AI Product Manager
+
+> Yuan Gao（高源）是一位 AI 产品经理，专注于把大模型能力产品化：从 LLM 产品化、RAG、多模态 AI，到 RPA+LLM 自动化与 human-in-the-loop（人在回路）系统；同时构建覆盖育儿、教育与游戏的消费级应用。个人网站：https://www.gaoyuan-ai.xyz/
+
+## About
+- 关于高源（个人简介、产品目录、常见问题）：<https://www.gaoyuan-ai.xyz/about.html>
+
+## Products & Apps（高源构建的产品）
+- 坦克大战 — 更大的地图、分层 3D 地形与 QWER 技能战斗，搭配可交互的商店系统。三种坦克——均衡、重装、迅猛——靠近建筑即可触发商店、加油站与银行。 标签：游戏、实时对战、3D 地形。打开：<https://0eab4a97014d401f9f8adca41bbbc0ff.gz3.agentos-app.net>
+- 旅行故事地图 — 把一次旅行变成可漫游的故事地图：从杭州西湖的日落，到北海道的雪国——四个站点、手绘路线与沉浸式风景。 标签：旅行、故事地图、手绘。打开：<https://trails-vert.vercel.app>
+- 成长星图 — 面向幼儿园阶段的六维成长记录，把评估变成一片可以点亮的星空——每一次小小的进步，都是一颗亮起的星。 标签：育儿、成长记录、数据可视化。打开：<https://2e6b524c74de4e0c91f79662efb2745f.bj8.agentos-app.net>
+- 儿童成长评估 — 一套围绕儿童发展阶段构建的评估系统。它量化每一个维度的成长并生成可视化报告，让家长真正看见孩子每一步的前进。 标签：育儿、评估、数据可视化。打开：<https://child-assessment-system.vercel.app/>
+- 宝宝便便记录 — 按时间段与形态记录宝宝每日的排便情况，帮助家长读懂健康节律——把育儿中的琐碎小事，变成可用的数据。 标签：育儿、健康记录、小工具。打开：<https://poop-tracker-three.vercel.app/>
+- PM 成长操作系统 — 一套面向产品经理的成长操作系统。它把方法论、目标与复盘沉淀为个人能力地图，支撑持续的自进化。 标签：产品管理、成长、方法论。打开：<https://pm-growth-os.vercel.app/>
+- 颈部足球 — 一款体感控制的小足球游戏：歪一歪头就能操控球、躲避障碍、射门得分。把一次短暂的屏幕休息，变成轻量的颈肩锻炼。 标签：游戏、体感控制、健身。打开：<https://neck-soccer.vercel.app>
+- 呼吸 — 一款引导式的呼吸与放松陪伴应用。可视化节奏、可调的呼吸模式与温柔的提醒，帮你降低压力、提升专注——忙碌日子里随身携带的冷静教练。 标签：健康、身心、正念。打开：<https://breathe-three-gamma.vercel.app>
+
+## Writing（AI 产品方法论与教育科技长文）
+- 全部文章列表（交互式阅读）：<https://www.gaoyuan-ai.xyz/essay.html>
+
+## Contact
+- Email：haidagy@gmail.com
+- 微信公众号：见站点二维码
+- 个人网站：<https://www.gaoyuan-ai.xyz/>

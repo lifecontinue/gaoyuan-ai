@@ -1,0 +1,108 @@
+# =============================================================================
+# wechat-migrate 配置文件
+# 复制本文件为 config.yaml 后填写。config.yaml 已被 .gitignore 排除，
+# 里面包含你的登录态，切勿提交到任何仓库或分享给他人。
+# =============================================================================
+
+account:
+  # 公众号显示名，仅用于生成 front-matter 与日志，可随意填
+  name: "Yuan Gao"
+  # 公众号 __biz 参数（可选）。留空时脚本会从第一篇文章链接里自动识别。
+  biz: ""
+
+
+auth:
+  # -------------------------------------------------------------------------
+  # 未认证个人订阅号采集通道：复用你自己在浏览器里的公众号后台登录态。
+  # 获取方式见 README「步骤 2：抓取登录态」。
+  # -------------------------------------------------------------------------
+  # 后台地址栏 URL 里的 token=xxxxxxxxx，纯数字
+  token: ""
+  # Cookie 整串。二选一：直接写在这里，或写进 cookie_file 指向的文件（推荐）
+  cookie: ""
+  # Cookie 文件路径（相对本配置文件所在目录）。文件内容就是一整行 Cookie 字符串
+  cookie_file: "secrets/cookie.txt"
+
+
+fetch:
+  # 采集通道：
+  #   mp_backend  —— 公众号后台登录态（未认证订阅号唯一可行的全量通道，默认）
+  #   link_list   —— 从 links.txt 逐行读取文章永久链接，不需要登录态
+  channel: "mp_backend"
+
+  # 每页拉取条数，后台接口上限 20，不建议调大
+  page_size: 20
+  # 最多翻多少页，0 表示拉完为止
+  max_pages: 0
+  # 只同步该日期之后发布的文章，格式 YYYY-MM-DD，留空表示全量
+  since: ""
+  # link_list 通道使用的链接清单文件（每行一个 https://mp.weixin.qq.com/s/... ）
+  link_list_file: "links.txt"
+
+
+network:
+  # 每次请求之间的随机停顿区间（秒）。低于 2 秒极易触发频率限制，别贪快。
+  min_delay: 2.5
+  max_delay: 5.0
+  # 单次请求超时（秒）
+  timeout: 30
+  # 失败重试次数（指数退避）
+  max_retries: 3
+  # 命中频率限制后的冷却时间（秒），默认 10 分钟
+  cooldown_on_freq_limit: 600
+  # 代理，例如 "http://127.0.0.1:7890"，留空表示不用
+  proxy: ""
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+
+
+media:
+  # 是否下载并本地化图片。关掉则 Markdown 里保留 mmbiz 原链（会被防盗链拦截，不推荐）
+  download: true
+  # 图片并发下载线程数
+  concurrency: 4
+  # 单张图片体积上限（字节），超过则跳过并保留原链，默认 20MB
+  max_bytes: 20971520
+  # 是否下载文章封面图
+  download_cover: true
+  # 正文里的音频/视频转成什么形态：placeholder（占位说明+链接） | drop（直接丢弃）
+  rich_media: "placeholder"
+
+
+output:
+  # 个人网站根目录（绝对路径）
+  site_root: "D:/forster children/personal-brand-site"
+  # 以下路径均相对 site_root
+  markdown_dir: "content/posts"          # Markdown 正文落盘目录
+  image_dir: "assets/img/posts"          # 图片本地化目录
+  index_json: "assets/js/data/posts.json" # 前端消费的索引文件
+  # Markdown 里图片引用的 URL 前缀（相对站点根，供浏览器直接访问）
+  image_url_prefix: "assets/img/posts"
+  # 前端 fetch Markdown 的 URL 前缀
+  markdown_url_prefix: "content/posts"
+  # 文件名风格：date-title（2026-08-07-标题） | title（标题） | sn（微信短码）
+  slug_style: "date-title"
+  # slug 是否转拼音/ASCII。false 时保留中文文件名（URL 会被百分号编码，但可读性更好）
+  ascii_slug: false
+
+
+taxonomy:
+  # 把公众号「合集」当作分类。这是微信原生唯一的结构化分组，优先级最高。
+  use_album_as_category: true
+  # 没有合集归属时的兜底分类
+  default_category: "未分类"
+  # 关键词规则：命中标题或正文前 500 字则打上对应标签。左边是标签名，右边是关键词列表。
+  keyword_rules:
+    AI产品: ["AI", "LLM", "大模型", "Agent", "GPT", "智能体"]
+    产品方法论: ["北极星", "指标", "需求", "复盘", "路线图", "Roadmap"]
+    留学教育: ["留学", "申请", "Mentor", "选校", "文书"]
+  # 给所有文章统一追加的标签
+  extra_tags: []
+
+
+sync:
+  # 状态库文件（相对本配置文件所在目录），记录已同步文章与图片指纹
+  state_db: "state.db"
+  # 正文内容变化时是否覆盖已有 Markdown。false 则只增不改。
+  rewrite_on_content_change: true
+  # 公众号后台已删除的文章，本地是否保留。true 表示保留文件但在索引里标记 archived。
+  keep_removed: true

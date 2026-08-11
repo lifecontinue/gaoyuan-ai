@@ -1,0 +1,172 @@
+/* hotspots.css — 物件轮廓描边 + 居中标签 + 悬停/聚焦浮窗 */
+
+.hotspots {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-hotspots);
+  pointer-events: none;       /* only shape/dot/label themselves are clickable */
+}
+
+/* ── SVG overlay：轮廓 ── */
+.hotspot-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: visible;
+}
+
+.hotspot-group {
+  pointer-events: none;
+  outline: none;
+}
+
+/* 正圆环标记 —— 极淡融入背景，悬停/激活时微微亮起 */
+.hotspot-shape {
+  pointer-events: auto;
+  cursor: pointer;
+  fill: rgba(100, 130, 170, 0.06);
+  stroke: rgba(115, 145, 180, 0.22);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--t-fast) var(--ease),
+    stroke var(--t-fast) var(--ease),
+    stroke-width var(--t-fast) var(--ease);
+}
+
+.hotspot-group.is-active .hotspot-shape,
+.hotspot-shape:hover,
+.hotspot-shape:focus-visible {
+  fill: rgba(130, 160, 200, 0.12);
+  stroke: rgba(150, 185, 220, 0.52);
+  stroke-width: 1.6;
+}
+
+/* 连接线已移除 —— 标签直接居中于物件，无需连线 */
+
+/* ── 中心微光点 —— 与圆环合为一体，融入背景 ── */
+.hotspot {
+  --x: 50; --y: 50;
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  z-index: 2;
+}
+.hotspot:focus-visible { outline: none; }
+
+/* 移除玻璃圆盘视觉层 */
+.hotspot::before { display: none; }
+
+.hotspot__dot {
+  position: relative;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(150, 180, 210, 0.55);
+  box-shadow: 0 0 4px rgba(130, 160, 195, 0.25);
+  z-index: 2;
+  transition: background var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.hotspot.is-active .hotspot__dot,
+.hotspot:hover .hotspot__dot,
+.hotspot:focus-visible .hotspot__dot {
+  background: rgba(190, 212, 242, 0.88);
+  box-shadow: 0 0 8px rgba(145, 180, 220, 0.50);
+  transform: scale(1.3);
+}
+
+/* 旧动画与脉冲环均移除 */
+.hotspot__ping { display: none; }
+
+/* ── 应用名标签（居中于物件上方，无连线） ── */
+.hotspot-name {
+  --lx: 50; --ly: 50;
+  position: absolute;
+  left: calc(var(--lx) * 1%);
+  top: calc(var(--ly) * 1%);
+  transform: translate(-50%, calc(-100% - 14px));
+  z-index: 3;
+  white-space: nowrap;
+  font-family: var(--font-label);
+  font-size: var(--fs-11);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #eef3fa;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.60), 0 0 12px rgba(10, 16, 28, 0.50);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(12, 18, 28, 0.58);
+  border: 1px solid rgba(176, 198, 232, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 0.92;
+  transition:
+    opacity var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+.hotspot-name.is-active,
+.hotspot-name:hover {
+  opacity: 1;
+  transform: translate(-50%, calc(-100% - 18px));
+  background: rgba(16, 22, 36, 0.78);
+  border-color: rgba(200, 220, 248, 0.55);
+}
+
+/* 触屏 */
+@media (hover: none) {
+  .hotspot-name {
+    opacity: 1;
+    font-size: var(--fs-10);
+    padding: 4px 9px;
+  }
+  .hotspot { width: 50px; height: 50px; }
+  .hotspot__dot { width: 7px; height: 7px; }
+}
+
+/* 移动端：隐藏标签，底部 chips 承担索引 */
+@media (max-width: 767px) {
+  .hotspot-name { display: none; }
+}
+
+/* reduced motion — all animations already removed; no-op for hotspots */
+
+/* ── 自动轮播呼吸光环 ── */
+.hotspots.is-touring .popover.is-visible {
+  outline: 2px solid rgba(176, 198, 232, 0.48);
+  outline-offset: 3px;
+  animation: tour-pulse 1.6s var(--ease) infinite;
+}
+@keyframes tour-pulse {
+  0%, 100% { outline-color: rgba(176, 198, 232, 0.28); }
+  50%      { outline-color: rgba(200, 220, 248, 0.78); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hotspots.is-touring .popover.is-visible { animation: none; outline-color: rgba(176, 198, 232, 0.50); }
+}
+
+/* ── 校准模式 ── */
+body.is-calibrating .room { cursor: crosshair; }
+body.is-calibrating .hotspots { pointer-events: none; }
+body.is-calibrating .hotspot-svg,
+body.is-calibrating .hotspot,
+body.is-calibrating .hotspot-name,
+body.is-calibrating .popover { display: none; }
+.calib-tip {
+  position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%);
+  z-index: 70; background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 8px 14px; font-family: var(--font-label);
+  font-size: var(--fs-12); color: var(--text-secondary); box-shadow: var(--shadow-1);
+}

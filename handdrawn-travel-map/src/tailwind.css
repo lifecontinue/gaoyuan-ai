@@ -1,0 +1,4 @@
+/* Tailwind v4 — utilities only (no preflight, to protect the existing
+   hand-drawn theme + Leaflet controls). Imported FIRST in main.ts so its
+   reset-free utilities layer beneath component styles. */
+@import "tailwindcss";

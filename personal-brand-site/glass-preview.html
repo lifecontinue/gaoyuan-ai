@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Liquid Glass Panel · Preview</title>
+  <link rel="stylesheet" href="assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/room.css" />
+  <link rel="stylesheet" href="assets/css/hotspots.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/motion.css" />
+  <link rel="stylesheet" href="assets/css/three-layer.css" />
+  <style>
+    /* Preview-only: tile the room background so the glass/background blend is easy to judge */
+    .preview-room {
+      position: fixed; inset: 0;
+      background: url("assets/img/room.png") center / cover no-repeat;
+      z-index: 0;
+    }
+    .preview-hint {
+      position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+      z-index: 90;
+      font-family: var(--font-label); font-size: var(--fs-12);
+      color: rgba(226,238,255,0.7);
+      background: rgba(8,12,20,0.5); border: 1px solid var(--glass-edge);
+      padding: 8px 14px; border-radius: 999px; backdrop-filter: blur(8px);
+    }
+    .preview-reopen {
+      position: fixed; left: 24px; top: 24px; z-index: 90;
+      font-family: var(--font-label); font-size: var(--fs-12);
+      color: var(--glass-text); cursor: pointer;
+      background: rgba(8,12,20,0.45); border: 1px solid var(--glass-edge);
+      padding: 10px 16px; border-radius: 999px; backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="preview-room"></div>
+
+    <button class="preview-reopen" type="button">Reopen panel</button>
+
+    <!-- Reuses the real component in its open state -->
+    <div class="panel-scrim is-open"></div>
+    <aside class="panel is-open" aria-label="App details">
+      <div class="panel__glow" aria-hidden="true"></div>
+      <div class="panel__sheen" aria-hidden="true"></div>
+      <div class="panel__float">
+        <button class="panel__close" type="button" aria-label="Close">×</button>
+        <div class="panel__media">
+          <img class="panel__screenshot" src="assets/img/screenshots/app-placeholder.png" alt="App screenshot"
+               onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span class=ph>Live preview</span>')" />
+        </div>
+        <h2 class="panel__title">AI Notes Workshop</h2>
+        <p class="panel__desc">Turns meetings, reading and stray ideas into structured notes. A human-in-the-loop workflow that keeps AI in sync with how you actually think.</p>
+        <div class="panel__tags">
+          <span class="tag">AI Notes</span>
+          <span class="tag">Workflow</span>
+          <span class="tag">Spatial UI</span>
+        </div>
+        <a class="panel__cta" href="#" target="_blank" rel="noopener">Open app ↗</a>
+      </div>
+    </aside>
+
+    <div class="preview-hint">Move your cursor to feel the glass reflection and refraction · click × to close</div>
+  </div>
+
+  <script type="module">
+    import { initGlassTheme } from "./assets/js/glass-theme.js";
+    initGlassTheme();
+
+    const panel = document.querySelector(".panel");
+    const scrim = document.querySelector(".panel-scrim");
+    const close = document.querySelector(".panel__close");
+    const reopen = document.querySelector(".preview-reopen");
+
+    const open = () => { panel.classList.add("is-open"); scrim.classList.add("is-open"); };
+    const shut = () => { panel.classList.remove("is-open"); scrim.classList.remove("is-open"); };
+
+    close.addEventListener("click", shut);
+    scrim.addEventListener("click", shut);
+    reopen.addEventListener("click", open);
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+A0 afterBoot: {"state":"PLAY","demo":true,"by":509}
+A4 samples: [{"i":0,"by":552,"hy":562,"sc":0,"st":"PLAY"},{"i":1,"by":504,"hy":592,"sc":1,"st":"PLAY"},{"i":2,"by":513,"hy":544,"sc":1,"st":"PLAY"},{"i":3,"by":495,"hy":552,"sc":2,"st":"PLAY"},{"i":4,"by":498,"hy":534,"sc":2,"st":"PLAY"},{"i":5,"by":504,"hy":537,"sc":2,"st":"PLAY"},{"i":6,"by":454,"hy":543,"sc":4,"st":"PLAY"},{"i":7,"by":458,"hy":494,"sc":4,"st":"PLAY"},{"i":8,"by":446,"hy":498,"sc":6,"st":"PLAY"},{"i":9,"by":445,"hy":486,"sc":6,"st":"PLAY"},{"i":10,"by":445,"hy":485,"sc":6,"st":"PLAY"},{"i":11,"by":402,"hy":485,"sc":8,"st":"PLAY"}]
+A4 break: 
+
+===== TEST RESULTS =====
+PASS  A1 boot state  ({"state":"PLAY","demo":true})
+PASS  A2 demo fallback  (demo=true)
+PASS  A3 mode label  (DEMO)
+PASS  A4 collision scored  (maxScore=259 maxCombo=57 break=)
+PASS  A5 header active  (headerHasSeen=true)
+PASS  A6 game over triggers  (state=OVER)
+PASS  A7 overlay visible  (overlayShown=true)
+PASS  A8 restart works  (state=PLAY)
+PASS  B1 camera path no-crash  (state=OVER)
+PASS  B2 mode CAMERA/DEMO  (mode=CAMERA)
+
+10/10 checks passed
+
+===== ERRORS (0) =====

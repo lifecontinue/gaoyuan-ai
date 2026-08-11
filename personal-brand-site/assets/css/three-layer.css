@@ -1,0 +1,24 @@
+/* three-layer.css — 3D 增强层（画布叠加）
+   位置：置于 .room-stage 内、房间图之上、热点层之下，纯粹装饰，不拦截事件。
+   配色严格沿用 tokens.css 的暖色书房体系（琥珀 / 奶油纸 / 金棕）。 */
+
+.three-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;                 /* 房间图(0) < 本层(5) < 热点(10) */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease);
+}
+.three-layer.is-ready { opacity: 1; }
+/* 面板 / 个人抽屉打开时，背景 3D 层轻微模糊 + 压暗，呼应现有 scrim 逻辑 */
+.three-layer.is-dim {
+  filter: blur(3px) brightness(0.82);
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .three-layer { transition: opacity 0.2s linear; }
+}

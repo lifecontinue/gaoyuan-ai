@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Breathe Across the Lake · Mic Breathing Trainer</title>
+  <meta name="description" content="A calming breathing trainer for adults. Use gentle exhales to push a little boat across a moonlit lake, and let your mind settle as it moves." />
+  <style>
+    :root{
+      --bg:#07111b;
+      --bg2:#102235;
+      --panel:rgba(10,18,30,.56);
+      --panel-strong:rgba(8,14,24,.74);
+      --ink:#e9f1fb;
+      --muted:#97a8be;
+      --line:rgba(255,255,255,.10);
+      --teal:#7fe7d6;
+      --teal-soft:rgba(127,231,214,.22);
+      --gold:#f8d895;
+      --gold-soft:rgba(248,216,149,.20);
+      --danger:#ffb8b0;
+      --shadow:0 18px 60px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      background:radial-gradient(120% 90% at 50% 8%, #173353 0%, var(--bg2) 32%, var(--bg) 72%);
+      color:var(--ink);
+      font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+      overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+      user-select:none;
+    }
+    #stage{position:fixed;inset:0;width:100%;height:100%;display:block}
+    .hud{position:fixed;z-index:10;display:flex;gap:10px;align-items:center;pointer-events:none}
+    #hudTop{top:16px;left:16px;right:16px;justify-content:space-between}
+    #hudBottom{left:50%;bottom:18px;transform:translateX(-50%);gap:12px;flex-wrap:wrap;justify-content:center;max-width:min(92vw,920px)}
+    .pill,.progress-card,.coach,.meter-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      backdrop-filter:blur(12px);
+      box-shadow:var(--shadow);
+    }
+    .pill{
+      border-radius:999px;
+      padding:10px 14px;
+      display:flex;align-items:center;gap:8px;
+      font-size:13px;letter-spacing:.02em;
+    }
+    .pill b{font-size:16px;color:var(--gold)}
+    .dot{width:9px;height:9px;border-radius:50%;background:#6f7f95;box-shadow:none;transition:.25s ease}
+    .dot.live{background:var(--teal);box-shadow:0 0 16px var(--teal)}
+    .progress-card{
+      position:fixed;z-index:9;top:78px;left:50%;transform:translateX(-50%);
+      min-width:min(86vw,620px);padding:12px 16px;border-radius:22px;text-align:center;
+    }
+    .progress-top{display:flex;justify-content:space-between;gap:16px;font-size:13px;color:var(--muted);margin-bottom:10px}
+    .progress-top b{color:var(--ink);font-size:15px}
+    .progress-track{height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+    .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),#97f1ff,var(--gold));border-radius:999px;box-shadow:0 0 20px rgba(151,241,255,.35)}
+    .coach{
+      position:fixed;z-index:9;left:50%;top:138px;transform:translateX(-50%);
+      padding:12px 18px;border-radius:18px;text-align:center;max-width:min(86vw,560px)
+    }
+    .coach .phase{font-size:14px;color:var(--muted);margin-bottom:4px}
+    .coach .line{font-size:18px;font-weight:700;letter-spacing:.01em}
+    .coach .sub{margin-top:6px;font-size:13px;color:var(--muted)}
+    .meter-card{
+      padding:14px 16px;border-radius:24px;display:flex;align-items:center;gap:14px;pointer-events:none;
+    }
+    .ring-wrap{position:relative;width:92px;height:92px;display:grid;place-items:center}
+    .ring{
+      width:92px;height:92px;border-radius:50%;
+      background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.08) 0 33%, transparent 34%),
+      conic-gradient(var(--teal) 0deg, rgba(255,255,255,.08) 0deg 360deg);
+      box-shadow:0 0 24px rgba(127,231,214,.18), inset 0 0 20px rgba(255,255,255,.04);
+      transition:transform .18s ease;
+    }
+    .ring-core{position:absolute;width:54px;height:54px;border-radius:50%;background:rgba(5,11,19,.78);border:1px solid rgba(255,255,255,.08)}
+    .ring-label{position:absolute;text-align:center;font-size:11px;color:var(--muted);line-height:1.25}
+    .ring-label b{display:block;color:var(--ink);font-size:16px}
+    .meter-stats{display:grid;gap:8px;min-width:min(42vw,280px)}
+    .meter-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
+    .meter-row b{color:var(--ink);font-size:15px}
+    .bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+    .bar > i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--teal));box-shadow:0 0 16px rgba(248,216,149,.28)}
+    #overlay{
+      position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+      padding:24px;background:radial-gradient(1000px 720px at 50% 26%, rgba(127,231,214,.12), transparent 55%), rgba(3,9,16,.56);
+      backdrop-filter:blur(10px)
+    }
+    #overlay.hidden{display:none}
+    .sheet{
+      width:min(92vw,760px);padding:28px;border-radius:30px;border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(13,24,39,.88), rgba(6,14,24,.92));
+      box-shadow:0 24px 80px rgba(0,0,0,.38)
+    }
+    .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);opacity:.85}
+    h1{margin-top:10px;font-size:clamp(34px,6vw,58px);line-height:1.04;letter-spacing:-.03em}
+    h1 .grad{background:linear-gradient(90deg,var(--teal),#d6fbff 50%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{margin-top:16px;font-size:15px;line-height:1.7;color:var(--muted);max-width:600px}
+    .cards{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+    .card{padding:16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .card .k{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .card b{font-size:17px;color:var(--ink)}
+    .card p{margin-top:8px;font-size:13px;line-height:1.55;color:var(--muted)}
+    /* mode-pill styles removed: single breathing mode only */
+    .actions{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{cursor:pointer;border:0;border-radius:999px;padding:14px 22px;font-size:15px;font-weight:700;transition:transform .15s ease,filter .15s ease,opacity .2s ease}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.04)}
+    .btn.primary{color:#0b1621;background:linear-gradient(90deg,var(--teal),#d7fbff,var(--gold));box-shadow:0 16px 40px rgba(127,231,214,.20)}
+    .btn.secondary{color:var(--ink);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
+    .tips{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+    .tips span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+    .footer-note{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);z-index:8;font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.03em;text-align:center;width:min(92vw,720px)}
+    @media (max-width: 720px){
+      #hudTop{top:12px;left:12px;right:12px;gap:8px;align-items:flex-start}
+      .progress-card{top:66px;min-width:min(92vw,620px)}
+      .coach{top:132px;width:min(92vw,560px)}
+      .meter-card{padding:12px 14px}
+      .ring-wrap{width:82px;height:82px}
+      .ring{width:82px;height:82px}
+      .ring-core{width:48px;height:48px}
+      .sheet{padding:22px;border-radius:24px}
+      .actions .btn{width:100%;justify-content:center}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+
+  <div class="hud" id="hudTop">
+    <div class="pill"><span class="dot" id="micDot"></span><span id="micLabel">Mic not connected</span></div>
+    <div class="pill">Steadiness <b id="steadyText">0%</b></div>
+  </div>
+
+  <div class="progress-card" id="progressCard">
+    <div class="progress-top">
+      <span>Mode <b>Calm Lake Breathing</b></span>
+      <span id="roundText">Round 0 / 6</span>
+      <span id="timeText">0:00</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="coach" id="coachCard">
+    <div class="phase" id="phaseLabel">Get ready</div>
+    <div class="line" id="coachLine">Whenever you're ready, begin gently.</div>
+    <div class="sub" id="coachSub">Let your breath move the boat forward. No need to blow hard.</div>
+  </div>
+
+  <div class="hud" id="hudBottom">
+    <div class="meter-card">
+      <div class="ring-wrap">
+        <div class="ring" id="breathRing"></div>
+        <div class="ring-core"></div>
+        <div class="ring-label"><b id="phaseCountdown">0.0</b><span id="phaseShort">Ready</span></div>
+      </div>
+      <div class="meter-stats">
+        <div class="meter-row"><span>Exhale detected</span><b id="breathText">0%</b></div>
+        <div class="bar"><i id="breathBar"></i></div>
+        <div class="meter-row"><span>Distance</span><b id="distanceText">0 m</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div class="sheet" id="sheet">
+      <div class="eyebrow">BREATHING MICRO JOURNEY</div>
+      <h1>Let your <span class="grad">exhale</span><br/>drift the boat forward.</h1>
+      <p class="lead" id="overlayLead">This is not a training you can "get wrong". Think of it as a short night voyage: gather wind as you inhale, move forward as you exhale. No big gusts needed — just steady, slow breaths, and the lake will quiet down with you.</p>
+      <div class="cards">
+        <div class="card"><div class="k">Input</div><b>Microphone breath</b><p>The first version uses the mic to detect your exhale — its presence and strength — and moves the boat forward.</p></div>
+        <div class="card" id="modeCard"><div class="k">Rhythm</div><b>In 4 · Out 6</b><p>6 rounds, about 1 minute. Just follow the on-screen prompts.</p></div>
+        <div class="card"><div class="k">Goal</div><b>Relax, not win</b><p>No failure, no score. You'll simply watch the lake grow calm and the lights slowly come on.</p></div>
+      </div>
+      <div class="actions" id="overlayActions">
+        <button class="btn primary" id="btnStart">Enable mic &amp; begin</button>
+        <button class="btn secondary" id="btnDemo">Watch demo first</button>
+      </div>
+      <div class="tips" id="overlayTips">
+        <span>Headphones help reduce background noise</span>
+        <span>Open in a localhost / preview environment</span>
+        <span>Everything runs locally — your audio is never uploaded</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">For relaxation only, not medical advice · Let your breath move the world, not complete a task</div>
+
+  <script>
+    (() => {
+      const cv = document.getElementById('stage');
+      const ctx = cv.getContext('2d');
+      let DPR = Math.min(window.devicePixelRatio || 1, 2);
+      let W = innerWidth, H = innerHeight;
+      let lakeY = H * 0.70;
+      function resize(){
+        W = innerWidth; H = innerHeight;
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        cv.width = Math.floor(W * DPR);
+        cv.height = Math.floor(H * DPR);
+        cv.style.width = W + 'px';
+        cv.style.height = H + 'px';
+        ctx.setTransform(DPR,0,0,DPR,0,0);
+        lakeY = H * 0.70;
+      }
+      addEventListener('resize', resize); resize();
+
+      const micDot = document.getElementById('micDot');
+      const micLabel = document.getElementById('micLabel');
+      const steadyText = document.getElementById('steadyText');
+      const roundText = document.getElementById('roundText');
+      const timeText = document.getElementById('timeText');
+      const progressFill = document.getElementById('progressFill');
+      const phaseLabel = document.getElementById('phaseLabel');
+      const coachLine = document.getElementById('coachLine');
+      const coachSub = document.getElementById('coachSub');
+      const breathRing = document.getElementById('breathRing');
+      const phaseCountdown = document.getElementById('phaseCountdown');
+      const phaseShort = document.getElementById('phaseShort');
+      const breathText = document.getElementById('breathText');
+      const breathBar = document.getElementById('breathBar');
+      const distanceText = document.getElementById('distanceText');
+      const overlay = document.getElementById('overlay');
+      const overlayLead = document.getElementById('overlayLead');
+      const btnStart = document.getElementById('btnStart');
+      const btnDemo = document.getElementById('btnDemo');
+      const overlayActions = document.getElementById('overlayActions');
+      const overlayTips = document.getElementById('overlayTips');
+
+      const STATE = { IDLE:'IDLE', READY:'READY', PLAY:'PLAY', END:'END' };
+      const MODE = {
+        name:'Calm Lake Breathing',
+        desc:'About 1.5 minutes. Inhale, hold, then exhale slowly — six calm rounds.',
+        totalRounds:6,
+        phases:[
+          { key:'inhale', label:'Inhale', short:'In', duration:4, line:'Breathe in slowly; the lake begins to gather wind.', sub:'Let your chest rise gently. No need to force it.' },
+          { key:'hold', label:'Hold', short:'Hold', duration:4, line:'Hold the breath softly; the boat rests on still water.', sub:'Just a gentle pause. Let your shoulders drop.' },
+          { key:'exhale', label:'Exhale', short:'Out', duration:6, line:'Breathe out and let the boat drift forward.', sub:'Steady and slow is perfect. No need to blow hard.' }
+        ],
+        overlayLead:'This is not a training you can “get wrong”. Think of it as a short night voyage: gather wind as you inhale, rest as you hold, and move forward as you exhale. No big gusts needed — just slow, full breaths, and the lake will quiet down with you.'
+      };
+      let PHASES = MODE.phases;
+      let TOTAL_ROUNDS = MODE.totalRounds;
+      let sessionTotal = PHASES.reduce((a,p)=>a+p.duration,0) * TOTAL_ROUNDS;
+
+      let state = STATE.IDLE;
+      let useMic = false;
+      let micReady = false;
+      let audioContext = null;
+      let analyser = null;
+      let mediaStream = null;
+      let dataArray = null;
+      let micRaw = 0;
+      let micLevel = 0;
+      let exhaleConfidence = 0;
+      let noiseFloor = 0.01;
+      let sensitivity = 1;
+      let calibrationFrames = 0;
+      let calibrationNoiseSum = 0;
+      let isCalibrating = false;
+      let phaseIndex = 0;
+      let phaseElapsed = 0;
+      let round = 0;
+      let sessionElapsed = 0;
+      let stableSamples = 0;
+      let unstableSamples = 0;
+      let sessionDistance = 0;
+      let boatCommittedSegments = 0;   // sum of finished rounds' breath ratios (carryover-aware)
+      let currentRoundCompletion = 0;  // this round's breath completion 0..1 (drives boat within round)
+      const BOAT_START_X = 0.18;
+      const BOAT_END_X = 0.88;
+      const SEG_LEN = (BOAT_END_X - BOAT_START_X) / TOTAL_ROUNDS;
+      let endedByComplete = false;
+      let currentPromptPulse = 0;
+      let demoBreath = 0;
+      let last = performance.now();
+
+      const boat = {
+        x: 0.2,
+        yOffset: 0,
+        targetX: 0.2,
+        bob: 0,
+        glow: 0
+      };
+
+      const stars = Array.from({length: 68}, () => ({
+        x: Math.random(),
+        y: Math.random() * 0.45,
+        r: Math.random() * 1.8 + 0.5,
+        a: Math.random() * 0.65 + 0.15,
+        tw: Math.random() * Math.PI * 2,
+      }));
+      const fireflies = Array.from({length: 22}, () => ({
+        x: Math.random(),
+        y: 0.56 + Math.random() * 0.23,
+        s: Math.random() * 0.8 + 0.4,
+        p: Math.random() * Math.PI * 2,
+      }));
+      const reeds = Array.from({length: 9}, (_, i) => ({ x: 0.08 + i * 0.1 + Math.random()*0.02, h: 0.07 + Math.random()*0.05 }));
+
+      function resetSession(){
+        phaseIndex = 0;
+        phaseElapsed = 0;
+        round = 0;
+        sessionElapsed = 0;
+        stableSamples = 0;
+        unstableSamples = 0;
+        sessionDistance = 0;
+        boatCommittedSegments = 0;
+        currentRoundCompletion = 0;
+        endedByComplete = false;
+        boat.x = BOAT_START_X;
+        boat.targetX = BOAT_START_X;
+        boat.yOffset = 0;
+        boat.bob = 0;
+        boat.glow = 0;
+      }
+
+      function currentPhase(){ return PHASES[phaseIndex]; }
+
+      function formatTime(sec){
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${String(s).padStart(2,'0')}`;
+      }
+
+      function setMicStatus(text, live){
+        micLabel.textContent = text;
+        micDot.classList.toggle('live', !!live);
+      }
+
+      async function initMic(){
+        try{
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true }, video:false });
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const source = audioContext.createMediaStreamSource(mediaStream);
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 1024;
+          analyser.smoothingTimeConstant = 0.82;
+          source.connect(analyser);
+          dataArray = new Uint8Array(analyser.fftSize);
+          micReady = true;
+          startCalibration();
+          setMicStatus('Calibrating mic…', true);
+          return true;
+        }catch(err){
+          console.warn('mic init failed', err);
+          micReady = false;
+          setMicStatus('Mic unavailable — switched to demo', false);
+          return false;
+        }
+      }
+
+      function stopMic(){
+        if (mediaStream){ mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+        if (audioContext){ audioContext.close(); audioContext = null; }
+        analyser = null;
+        dataArray = null;
+        micReady = false;
+        isCalibrating = false;
+      }
+
+      function startCalibration(){
+        calibrationFrames = 0;
+        calibrationNoiseSum = 0;
+        isCalibrating = true;
+        coachLine.textContent = 'Stay quiet for 2 seconds while we calibrate the room.';
+        coachSub.textContent = 'After calibration, just exhale softly.';
+      }
+
+      function finishCalibration(){
+        if (calibrationFrames > 0){
+          noiseFloor = Math.max(0.006, calibrationNoiseSum / calibrationFrames);
+        }
+        isCalibrating = false;
+        setMicStatus('Mic connected', true);
+      }
+
+      function sampleMic(now){
+        if (useMic && analyser && dataArray){
+          analyser.getByteTimeDomainData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++){
+            const v = (dataArray[i] - 128) / 128;
+            sum += v * v;
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          micRaw = rms;
+          if (isCalibrating){
+            calibrationFrames += 1;
+            calibrationNoiseSum += rms;
+            if (calibrationFrames >= 120) finishCalibration();
+          }
+          const dynamicRange = Math.max(0.04, 0.11 * sensitivity);
+          const mapped = Math.max(0, Math.min(1, (rms - noiseFloor * 1.15) / dynamicRange));
+          micLevel += (mapped - micLevel) * 0.18;
+        } else {
+          demoBreath = (Math.sin(now * 0.00105) + 1) * 0.5;
+          const simulated = currentPhase().key === 'exhale' ? 0.2 + demoBreath * 0.8 : 0.06 + demoBreath * 0.08;
+          micLevel += (simulated - micLevel) * 0.12;
+          micRaw = micLevel;
+        }
+        exhaleConfidence = Math.max(0, Math.min(1, (micLevel - 0.12) / 0.62));
+      }
+
+      function startSession(withMic){
+        useMic = withMic;
+        resetSession();
+        state = STATE.PLAY;
+        overlay.classList.add('hidden');
+        overlayActions.innerHTML = `
+          <button class="btn primary" id="btnStart">Enable mic &amp; begin</button>
+          <button class="btn secondary" id="btnDemo">Watch demo first</button>
+        `;
+        overlayTips.innerHTML = `
+          <span>Headphones help reduce background noise</span>
+          <span>Open in a localhost / preview environment</span>
+          <span>Everything runs locally — your audio is never uploaded</span>
+        `;
+        setMicStatus(withMic ? 'Mic connected' : 'Demo mode', withMic);
+        updateUI();
+        bindPrimaryActions();
+      }
+
+      function nextPhase(){
+        phaseElapsed = 0;
+        phaseIndex = (phaseIndex + 1) % PHASES.length;
+        if (phaseIndex === 0){
+          // a full round (inhale → hold → exhale) just finished: bank its breath completion
+          boatCommittedSegments += currentRoundCompletion;
+          currentRoundCompletion = 0;
+          round += 1;
+          if (round >= TOTAL_ROUNDS){
+            endedByComplete = true;
+            endSession();
+            return;
+          }
+        }
+        updateUI();
+      }
+
+      function endSession(){
+        state = STATE.END;
+        const totalSamples = stableSamples + unstableSamples;
+        const steady = totalSamples ? Math.round(stableSamples / totalSamples * 100) : 0;
+        const travelMeters = Math.max(12, Math.round(sessionDistance * 120));
+        overlay.classList.remove('hidden');
+        overlayActions.innerHTML = `
+          <button class="btn primary" id="btnRestart">Row again</button>
+          <button class="btn secondary" id="btnReplayDemo">Watch demo</button>
+        `;
+        overlayLead.innerHTML = endedByComplete
+          ? `This round is over. You guided the boat across <b>${travelMeters} m</b> of the night lake, with a steadiness of about <b>${steady}%</b>. If your shoulders feel a little looser and your mind a little quieter now, that is more than enough.`
+          : `This voyage stopped a bit early, and that is okay. You have still traveled <b>${travelMeters} m</b>, with steadiness around <b>${steady}%</b>. Rest for a moment; starting again is always fine.`;
+        overlayTips.innerHTML = `
+          <span>Completed ${Math.min(round + (phaseIndex===0?0:1), TOTAL_ROUNDS)} / ${TOTAL_ROUNDS} rounds</span>
+          <span>Mode: ${MODE.name}</span>
+          <span>Room noise floor: ${noiseFloor.toFixed(3)}</span>
+          <span>If it is noisy, use headphones</span>
+        `;
+        document.getElementById('btnRestart').onclick = async () => {
+          if (useMic && !micReady){
+            const ok = await initMic();
+            startSession(ok);
+          } else {
+            startSession(useMic && micReady);
+          }
+        };
+        document.getElementById('btnReplayDemo').onclick = () => startSession(false);
+      }
+
+      function updateUI(){
+        const phase = currentPhase();
+        phaseLabel.textContent = phase.label;
+        if (!isCalibrating){
+          coachLine.textContent = phase.line;
+          coachSub.textContent = phase.sub;
+        }
+        phaseShort.textContent = phase.short;
+        roundText.textContent = `Round ${Math.min(round + 1, TOTAL_ROUNDS)} / ${TOTAL_ROUNDS}`;
+      }
+
+      function tick(dt){
+        if (state !== STATE.PLAY) return;
+        sessionElapsed += dt;
+        phaseElapsed += dt;
+
+        const phase = currentPhase();
+        const phaseProgress = Math.min(1, phaseElapsed / phase.duration);
+        const totalProgress = Math.min(1, sessionElapsed / sessionTotal);
+
+        if (phase.key === 'exhale'){
+          // a round's breath completion = the strongest exhale reached this round
+          if (exhaleConfidence > currentRoundCompletion) currentRoundCompletion = exhaleConfidence;
+          if (exhaleConfidence > 0.18) stableSamples += 1; else unstableSamples += 1;
+        } else {
+          if (exhaleConfidence < 0.2) stableSamples += 1; else unstableSamples += 1;
+        }
+
+        // Boat target = committed segments from finished rounds + this round's completion.
+        // The journey is split into 6 equal segments; each round advances by its breath-
+        // completion ratio (e.g. an 80% breath moves 80% of the segment, the shortfall
+        // simply persists into later rounds). 6 rounds at 100% reach the far shore; the
+        // total displacement always equals the summed completion ratio × segment — consistent
+        // and carryover-aware.
+        boat.targetX = Math.min(BOAT_END_X, BOAT_START_X + SEG_LEN * (boatCommittedSegments + currentRoundCompletion));
+        boat.x += (boat.targetX - boat.x) * 0.06;
+        boat.bob += dt * (phase.key === 'exhale' ? 1.8 : 1.15);
+        boat.yOffset = Math.sin(boat.bob) * 5;
+        boat.glow += ((phase.key === 'exhale' ? exhaleConfidence : 0.15) - boat.glow) * 0.08;
+        currentPromptPulse += dt * (phase.key === 'inhale' ? 1.3 : 1.1);
+
+        sessionDistance = (boat.x - BOAT_START_X) / (BOAT_END_X - BOAT_START_X);
+
+        const steady = stableSamples + unstableSamples ? Math.round(stableSamples / (stableSamples + unstableSamples) * 100) : 0;
+        steadyText.textContent = steady + '%';
+        timeText.textContent = formatTime(sessionElapsed);
+        progressFill.style.width = (totalProgress * 100).toFixed(2) + '%';
+        phaseCountdown.textContent = Math.max(0, phase.duration - phaseElapsed).toFixed(1);
+        breathText.textContent = Math.round(exhaleConfidence * 100) + '%';
+        breathBar.style.width = Math.round(exhaleConfidence * 100) + '%';
+        distanceText.textContent = Math.round(sessionDistance * 120) + ' m';
+
+        const ringDeg = phaseProgress * 360;
+        const accent = phase.key === 'inhale' ? 'var(--gold)' : phase.key === 'hold' ? '#b9a7d6' : 'var(--teal)';
+        const scaleBy = phase.key === 'exhale' ? exhaleConfidence : phaseProgress;
+        breathRing.style.background = `radial-gradient(circle at 50% 50%, rgba(255,255,255,.08) 0 33%, transparent 34%), conic-gradient(${accent} ${ringDeg}deg, rgba(255,255,255,.08) ${ringDeg}deg 360deg)`;
+        breathRing.style.transform = `scale(${1 + scaleBy * 0.06})`;
+
+        if (phaseElapsed >= phase.duration){ nextPhase(); }
+      }
+
+      function drawSky(now){
+        const g = ctx.createLinearGradient(0,0,0,H);
+        g.addColorStop(0,'#0f2340');
+        g.addColorStop(0.35,'#10253b');
+        g.addColorStop(1,'#07111b');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,W,H);
+
+        const moonX = W * 0.74;
+        const moonY = H * 0.2;
+        const moonR = Math.min(W,H) * 0.064;
+        const moonGlow = ctx.createRadialGradient(moonX, moonY, moonR * 0.2, moonX, moonY, moonR * 2.7);
+        moonGlow.addColorStop(0,'rgba(248,216,149,.72)');
+        moonGlow.addColorStop(0.3,'rgba(248,216,149,.22)');
+        moonGlow.addColorStop(1,'rgba(248,216,149,0)');
+        ctx.fillStyle = moonGlow;
+        ctx.beginPath(); ctx.arc(moonX, moonY, moonR * 2.7, 0, 7); ctx.fill();
+        ctx.fillStyle = '#f6e5ba';
+        ctx.beginPath(); ctx.arc(moonX, moonY, moonR, 0, 7); ctx.fill();
+
+        for (const s of stars){
+          const alpha = s.a + Math.sin(now * 0.00045 + s.tw) * 0.12;
+          ctx.fillStyle = `rgba(226,240,255,${Math.max(0.08, alpha)})`;
+          ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.r, 0, 7); ctx.fill();
+        }
+
+        ctx.fillStyle = 'rgba(255,255,255,.035)';
+        ctx.beginPath();
+        ctx.moveTo(0, H*0.42);
+        ctx.quadraticCurveTo(W*0.17,H*0.34,W*0.34,H*0.44);
+        ctx.quadraticCurveTo(W*0.56,H*0.3,W*0.74,H*0.42);
+        ctx.quadraticCurveTo(W*0.88,H*0.48,W,H*0.39);
+        ctx.lineTo(W,H*0.6); ctx.lineTo(0,H*0.6); ctx.closePath(); ctx.fill();
+      }
+
+      function drawLake(now){
+        const lakeGrad = ctx.createLinearGradient(0,lakeY,0,H);
+        lakeGrad.addColorStop(0,'rgba(20,54,78,.92)');
+        lakeGrad.addColorStop(1,'rgba(4,17,28,1)');
+        ctx.fillStyle = lakeGrad;
+        ctx.fillRect(0,lakeY,W,H-lakeY);
+
+        const moonX = W * 0.74;
+        const moonWiggle = Math.sin(now*0.0014) * 6;
+        const reflectGrad = ctx.createLinearGradient(moonX, lakeY, moonX, H);
+        reflectGrad.addColorStop(0,'rgba(248,216,149,.18)');
+        reflectGrad.addColorStop(1,'rgba(248,216,149,0)');
+        ctx.fillStyle = reflectGrad;
+        ctx.beginPath();
+        ctx.moveTo(moonX - 26 + moonWiggle, lakeY);
+        ctx.quadraticCurveTo(moonX - 60, H*0.83, moonX - 14 + moonWiggle, H);
+        ctx.lineTo(moonX + 14 + moonWiggle, H);
+        ctx.quadraticCurveTo(moonX + 64, H*0.83, moonX + 26 + moonWiggle, lakeY);
+        ctx.closePath(); ctx.fill();
+
+        for (let i=0;i<6;i++){
+          const yy = lakeY + 24 + i * 34;
+          const amp = 8 + i * 1.8 + exhaleConfidence * 7;
+          ctx.strokeStyle = `rgba(127,231,214,${0.05 + i * 0.018})`;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          for (let x=0;x<=W;x+=18){
+            const y = yy + Math.sin(x*0.014 + now*0.0012 + i*0.9) * amp;
+            x === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+          }
+          ctx.stroke();
+        }
+
+        for (const r of reeds){
+          const x = r.x * W;
+          const baseY = H;
+          const tipY = H - r.h * H;
+          const sway = Math.sin(now*0.0012 + x*0.01) * 6;
+          ctx.strokeStyle = 'rgba(87,142,125,.45)';
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(x, baseY); ctx.quadraticCurveTo(x + sway, (baseY + tipY) / 2, x + sway * 0.5, tipY); ctx.stroke();
+        }
+      }
+
+      function drawBoat(now){
+        const x = boat.x * W;
+        const y = lakeY + 34 + boat.yOffset;
+        const glow = 18 + boat.glow * 22;
+        const halo = ctx.createRadialGradient(x, y-4, 0, x, y-4, glow*2.4);
+        halo.addColorStop(0, `rgba(127,231,214,${0.12 + boat.glow * 0.22})`);
+        halo.addColorStop(1, 'rgba(127,231,214,0)');
+        ctx.fillStyle = halo;
+        ctx.beginPath(); ctx.arc(x, y-4, glow*2.4, 0, 7); ctx.fill();
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.fillStyle = '#2a4056';
+        ctx.beginPath();
+        ctx.moveTo(-34, 0); ctx.quadraticCurveTo(0, 18, 34, 0); ctx.lineTo(22, 12); ctx.quadraticCurveTo(0, 18, -22, 12); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,.10)'; ctx.lineWidth = 1.2; ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(-2, -4); ctx.lineTo(-2, -44); ctx.stroke();
+
+        const sailLift = currentPhase().key === 'inhale' ? Math.min(1, phaseElapsed / currentPhase().duration) : exhaleConfidence;
+        ctx.fillStyle = `rgba(232,244,255,${0.78 + sailLift * 0.16})`;
+        ctx.beginPath();
+        ctx.moveTo(0,-42);
+        ctx.quadraticCurveTo(28 + sailLift*14, -26, 0, -12);
+        ctx.closePath(); ctx.fill();
+
+        ctx.fillStyle = '#f8d895';
+        ctx.beginPath(); ctx.arc(0, -8, 4.2, 0, 7); ctx.fill();
+        ctx.restore();
+
+        ctx.strokeStyle = `rgba(248,216,149,${0.16 + boat.glow * 0.28})`;
+        ctx.lineWidth = 1.5;
+        for (let i=0;i<3;i++){
+          const rr = 24 + i * 14 + exhaleConfidence * 12;
+          const alpha = 0.14 - i * 0.03;
+          ctx.strokeStyle = `rgba(248,216,149,${Math.max(0.02, alpha)})`;
+          ctx.beginPath();
+          ctx.ellipse(x - i*5, y + 8, rr * 1.4, rr * 0.34, 0, 0, Math.PI, true);
+          ctx.stroke();
+        }
+      }
+
+      function drawLandmarks(now){
+        const pulse = (Math.sin(currentPromptPulse * 2.2) + 1) * 0.5;
+        const islandX = W * 0.87;
+        const islandY = lakeY - 12;
+        ctx.fillStyle = 'rgba(17,41,56,.72)';
+        ctx.beginPath();
+        ctx.moveTo(islandX - 74, islandY + 32);
+        ctx.quadraticCurveTo(islandX - 14, islandY - 4, islandX + 66, islandY + 28);
+        ctx.lineTo(islandX + 78, H);
+        ctx.lineTo(islandX - 88, H);
+        ctx.closePath(); ctx.fill();
+
+        const beaconY = islandY - 30;
+        const beaconGlow = ctx.createRadialGradient(islandX + 6, beaconY, 0, islandX + 6, beaconY, 70 + pulse * 18);
+        beaconGlow.addColorStop(0, 'rgba(248,216,149,.58)');
+        beaconGlow.addColorStop(0.3, 'rgba(248,216,149,.16)');
+        beaconGlow.addColorStop(1, 'rgba(248,216,149,0)');
+        ctx.fillStyle = beaconGlow;
+        ctx.beginPath(); ctx.arc(islandX + 6, beaconY, 70 + pulse * 18, 0, 7); ctx.fill();
+
+        ctx.fillStyle = '#d8bd86';
+        ctx.fillRect(islandX - 2, beaconY, 14, 56);
+        ctx.fillStyle = '#f8d895';
+        ctx.beginPath(); ctx.arc(islandX + 5, beaconY, 7 + pulse * 1.6, 0, 7); ctx.fill();
+
+        for (const f of fireflies){
+          const x = f.x * W + Math.sin(now*0.0009 + f.p) * 18;
+          const y = f.y * H + Math.cos(now*0.0012 + f.p) * 10;
+          const alpha = 0.18 + (Math.sin(now*0.0016 + f.p) + 1) * 0.14;
+          ctx.fillStyle = `rgba(248,216,149,${alpha})`;
+          ctx.beginPath(); ctx.arc(x, y, f.s * 2.2, 0, 7); ctx.fill();
+        }
+      }
+
+      function draw(now){
+        drawSky(now);
+        drawLandmarks(now);
+        drawLake(now);
+        drawBoat(now);
+
+        const vignette = ctx.createRadialGradient(W/2, H/2, Math.min(W,H)*0.3, W/2, H/2, Math.max(W,H)*0.8);
+        vignette.addColorStop(0, 'rgba(0,0,0,0)');
+        vignette.addColorStop(1, 'rgba(0,0,0,.28)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0,0,W,H);
+      }
+
+      function frame(now){
+        let dt = (now - last) / 1000;
+        last = now;
+        if (dt > 0.05) dt = 0.05;
+        sampleMic(now);
+        tick(dt);
+        draw(now);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      function bindPrimaryActions(){
+        const startBtn = document.getElementById('btnStart');
+        const demoBtn = document.getElementById('btnDemo');
+        if (startBtn){
+          startBtn.onclick = async () => {
+            startBtn.disabled = true;
+            startBtn.textContent = 'Connecting to mic…';
+            const ok = await initMic();
+            startBtn.disabled = false;
+            startBtn.textContent = 'Enable mic & begin';
+            startSession(ok);
+          };
+        }
+        if (demoBtn){
+          demoBtn.onclick = () => startSession(false);
+        }
+      }
+
+      updateUI();
+      setMicStatus('Mic not connected', false);
+      bindPrimaryActions();
+
+      addEventListener('beforeunload', stopMic);
+    })();
+  </script>
+</body>
+</html>

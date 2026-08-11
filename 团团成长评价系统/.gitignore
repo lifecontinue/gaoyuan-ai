@@ -1,0 +1,9 @@
+# 依赖与构建缓存
+node_modules/
+*.log
+
+# 服务端密钥（绝不入库 / 不进前端）
+server/.env
+
+# 本地临时文件
+.workbuddy/tmp/

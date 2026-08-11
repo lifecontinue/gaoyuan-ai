@@ -1,0 +1,166 @@
+/* ============================================
+   手绘旅行地图 — 全局样式
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* 纸张色系 */
+  --paper: #f4ecd8;
+  --paper-light: #faf3e0;
+  --paper-dark: #e8dcc4;
+
+  /* 墨色系 */
+  --ink: #3a3226;
+  --ink-soft: #6b5d49;
+  --ink-light: #8c7b66;
+
+  /* 强调色 */
+  --accent: #d9744f;
+  --accent-hover: #c5653f;
+
+  /* 调色板（按行程顺序循环） */
+  --palette-1: #d9744f;  /* 赤陶 */
+  --palette-2: #e0a93b;  /* 金黄 */
+  --palette-3: #4a8a8a;  /* 青绿 */
+  --palette-4: #6b8cae;  /* 雾蓝 */
+  --palette-5: #7a8b5a;  /* 橄榄 */
+  --palette-6: #b5688f;  /* 藤紫 */
+
+  /* 字体 */
+  --font-display: 'Caveat', 'Ma Shan Zheng', cursive;
+  --font-body: 'Noto Sans SC', 'Nunito', -apple-system, sans-serif;
+  --font-serif: 'Noto Serif SC', Georgia, 'Songti SC', serif;
+
+  /* 阴影 */
+  --shadow-soft: 2px 3px 0 rgba(58, 50, 38, 0.18);
+  --shadow-strong: 3px 5px 0 rgba(58, 50, 38, 0.25);
+
+  /* 过渡 */
+  --ease-handdrawn: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* z-index 层级 */
+  --z-tile: 100;
+  --z-overlay: 450;
+  --z-path: 500;
+  --z-marker: 600;
+  --z-popup: 700;
+  --z-panel: 800;
+  --z-loading: 900;
+  --z-topbar: 950;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+/* 标题字体 */
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-soft);
+}
+
+/* 通用按钮风格 */
+.btn-handdrawn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border: 2px solid var(--ink);
+  border-radius: 18px 14px 20px 16px / 14px 20px 16px 18px;
+  background: var(--paper-light);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-handdrawn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-strong);
+}
+
+.btn-handdrawn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(58, 50, 38, 0.18);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* 输入框手绘风格 */
+.textarea-handdrawn {
+  width: 100%;
+  min-height: 160px;
+  padding: 16px 20px;
+  border: 2px solid var(--ink-soft);
+  border-radius: 12px 8px 14px 10px / 8px 14px 10px 12px;
+  background: var(--paper-light);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  box-shadow: inset 1px 2px 4px rgba(58, 50, 38, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.textarea-handdrawn:focus {
+  border-color: var(--accent);
+  box-shadow: inset 1px 2px 4px rgba(58, 50, 38, 0.08), 0 0 0 3px rgba(217, 116, 79, 0.15);
+}
+
+.textarea-handdrawn::placeholder {
+  color: var(--ink-light);
+  opacity: 0.7;
+}
