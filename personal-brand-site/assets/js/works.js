@@ -17,7 +17,7 @@ const CHAPTERS = [
   {
     title: "育儿与教育",
     note: "成长记录 · 评估 · 数据",
-    ids: ["child-assessment", "poop-tracker"],
+    ids: ["growth-stars", "child-assessment", "poop-tracker"],
     colorA: [0.141, 0.102, 0.227], colorB: [0.420, 0.275, 0.659]
   },
   {

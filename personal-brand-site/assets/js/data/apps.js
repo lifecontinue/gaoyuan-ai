@@ -61,6 +61,31 @@ export const apps = [
     }]
   },
   {
+    id: "growth-stars",
+    name: "成长星图",
+    en: "Growth Starfield",
+    desc: "把孩子的成长评估变成一片可以点亮的星空——面向幼儿园到小学阶段的成长记录与可视化，每一次小小的进步，都是一颗亮起的星。",
+    tagline: "点亮孩子的每一步成长",
+    icon: null,
+    screenshot: "assets/img/screenshots/growth-stars.png",
+    url: "https://growth-stars.gaoyuan-ai.xyz",
+    tags: ["育儿", "成长记录", "数据可视化"],
+    status: "live",
+    placements: [{
+      room: "study",
+      x: 48, y: 72,        // assessment cards / paper on the desk
+      lx: 48, ly: 72,      // label centred above the object
+      label: "成长星图",
+      anchor: "top",
+      // Outline of the assessment cards / paper at the centre of the desk
+      shape: [
+        { x: 40, y: 62 }, { x: 47, y: 60 }, { x: 54, y: 61 },
+        { x: 59, y: 66 }, { x: 58, y: 73 }, { x: 53, y: 78 },
+        { x: 45, y: 78 }, { x: 39, y: 74 },       { x: 38, y: 67 }
+      ]
+    }]
+  },
+  {
     id: "child-assessment",
     name: "成长评估",
     en: "Child Growth Assessment",
@@ -73,15 +98,13 @@ export const apps = [
     status: "live",
     placements: [{
       room: "study",
-      x: 48, y: 72,        // assessment cards / paper on the desk
-      lx: 48, ly: 72,      // label centred above the object
+      x: 80, y: 30,        // upper-right storage / screen area
+      lx: 80, ly: 30,      // label centred above the object
       label: "成长评估",
       anchor: "top",
-      // Outline of the assessment cards / paper at the centre of the desk
       shape: [
-        { x: 40, y: 62 }, { x: 47, y: 60 }, { x: 54, y: 61 },
-        { x: 59, y: 66 }, { x: 58, y: 73 }, { x: 53, y: 78 },
-        { x: 45, y: 78 }, { x: 39, y: 74 },       { x: 38, y: 67 }
+        { x: 72, y: 24 }, { x: 80, y: 22 }, { x: 88, y: 25 },
+        { x: 90, y: 32 }, { x: 86, y: 37 }, { x: 78, y: 37 }, { x: 72, y: 33 }
       ]
     }]
   },
