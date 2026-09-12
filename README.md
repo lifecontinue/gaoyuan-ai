@@ -22,12 +22,13 @@
 | `tank-wars/` | 坦克大战（Tank Wars） | 纯静态 Canvas 小游戏（index.html + css + js），无构建、无依赖 |
 | `poop-tracker/` | 宝宝便便记录（Baby Poop Tracker） | 单文件 HTML 移动应用（Tailwind/FontAwesome CDN + localStorage） |
 | `pm-growth-os/` | PM 成长操作系统（PM Growth OS） | React 19 + Vite + TS + Supabase 全栈应用（.env 占位，需配 Tavily/WandB/Langfuse 等） |
+| `interview-coach/` | **Brief · 面场** AI/PM 面试陪练 | React 19 + Vite + TS + LangGraph.js。真实场景模拟面试官追问与分维度复盘 |
 
 ## 品牌站中的应用映射（apps.js）
 
 `personal-brand-site/assets/js/data/apps.js` 是应用目录的唯一数据源。本仓库已收录其中全部有本地源码的应用：
 `fret-flow`、`child-assessment`（含 `growth-stars` 星空前端）、`neck-soccer`、`travel-map`、`breathe`、
-`collab-whiteboard`，以及新增的 `tank-wars`、`poop-tracker`、`pm-growth-os`。
+`collab-whiteboard`，以及新增的 `tank-wars`、`poop-tracker`、`pm-growth-os`、`interview-coach`。
 
 各应用统一通过 **`gaoyuan-ai.xyz`** 访问：品牌站为站点根，其余应用分别挂在 `*.gaoyuan-ai.xyz` 子域名下（见下方部署说明）。
 
