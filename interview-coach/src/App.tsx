@@ -40,6 +40,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const answerRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     fetchHealth()
@@ -82,14 +83,19 @@ export default function App() {
   }
 
   async function onReply() {
-    if (!session || !answer.trim()) return;
+    if (!session) return;
+    // Prefer live DOM value so browser automation / IME still works
+    // even if React controlled state lagged behind.
+    const text = (answerRef.current?.value ?? answer).trim();
+    if (!text) return;
     setBusy(true);
     setError("");
     try {
-      const { session: next } = await replySession(session.id, answer.trim());
+      const { session: next } = await replySession(session.id, text);
       startTransition(() => {
         setSession(next);
         setAnswer("");
+        if (answerRef.current) answerRef.current.value = "";
         if (next.phase === "scored") setUiPhase("report");
       });
     } catch (err) {
@@ -247,12 +253,20 @@ export default function App() {
               ))}
               <div ref={bottomRef} />
             </div>
-            <div className="composer">
+            <form
+              className="composer"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void onReply();
+              }}
+            >
               <textarea
+                ref={answerRef}
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 placeholder="像真实面试一样回答。短句、取舍、证据。"
                 disabled={busy || !session.awaitingAnswer}
+                onInput={(e) => setAnswer((e.target as HTMLTextAreaElement).value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                     e.preventDefault();
@@ -262,16 +276,15 @@ export default function App() {
               />
               <div className="row">
                 <button
-                  type="button"
+                  type="submit"
                   className="primary"
-                  disabled={busy || !answer.trim() || !session.awaitingAnswer}
-                  onClick={onReply}
+                  disabled={busy || !session.awaitingAnswer}
                 >
                   {busy ? "面试官思考中…" : "发送回答 ⌘↵"}
                 </button>
                 {error && <span className="error">{error}</span>}
               </div>
-            </div>
+            </form>
           </div>
         </section>
       )}
