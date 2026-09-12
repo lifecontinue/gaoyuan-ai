@@ -39,3 +39,8 @@ Thumbs.db
 # Runtime / trash artifacts
 .trash/
 .workbuddy/
+
+# interview-coach
+interview-coach/node_modules/
+interview-coach/dist/
+interview-coach/.env
