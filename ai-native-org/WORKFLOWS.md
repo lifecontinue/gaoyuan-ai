@@ -289,12 +289,17 @@ Datadog / 用户 / Bot 异常
 
 ## WF-12 周节奏（Calendar 驱动）
 
+> 活动目的、会前/会中/会后与工具咬合的完整说明见 [ORG-OPERATING-CADENCE.md](./ORG-OPERATING-CADENCE.md)。
+
 | 时间 | 流程 |
 |------|------|
-| 每日 | Feedback 摘要、逾期 Linear、Gateway 成本异常 |
-| 周一 | Cycle 目标 Brief；Sales pipeline 风险（SF） |
-| 双周 | Prompt/Harness Review |
-| 月末 | Key 轮换检查、成本与配额回顾；入离职权限抽检（Rippling↔Auth0） |
+| 每日 | Squad Standup 摘要；Feedback 消化；逾期 Linear；Gateway 成本异常 |
+| 每周 | Weekly 需求评审（评审包 → Cycle） |
+| 双周 | Biweekly 进度同步；Prompt/Harness Review |
+| 周一附加 | Cycle 目标 Brief；Sales pipeline 风险（SF） |
+| 每季 | Tech Town Hall；权限/Catalog 抽检 |
+| 周期 | In-person / Offsite / Summit（会后必须回流 Linear/Docs） |
+| 月末 | Key 轮换检查、成本回顾；入离职权限抽检（Rippling↔Auth0） |
 
 ---
 

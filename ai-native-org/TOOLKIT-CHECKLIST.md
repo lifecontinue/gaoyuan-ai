@@ -2,7 +2,7 @@
 
 > **用法**：把本文发给协作团队或新 BU。按「必选 / 推荐 / 可选」勾选；名称可替换为等价产品，但**职责列不要删**。复制后填「负责人 / 账号 / 环境」。
 
-**配套**：[架构](./AI-NATIVE-INFRA.md) · [工作流](./WORKFLOWS.md) · [Skill/MCP/Plugin](./SKILLS-MCP-PLUGINS.md)
+**配套**：[架构](./AI-NATIVE-INFRA.md) · [组织节奏](./ORG-OPERATING-CADENCE.md) · [工作流](./WORKFLOWS.md) · [Skill/MCP/Plugin](./SKILLS-MCP-PLUGINS.md)
 
 ---
 

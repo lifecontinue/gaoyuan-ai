@@ -437,15 +437,19 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 
 ## 10. 仪式与 90 天清单
 
-| 仪式 | 频率 |
-|------|------|
-| AI Standup | 每日 |
-| Feedback Triage | 每日（Bot 摘要 + 人确认边界 case） |
-| Prompt/Harness Review | 双周 |
-| Catalog / Scope Office Hour | 双周 |
-| Knowledge Gardening | 每周 |
-| Key Rotation Drill | 每月 |
-| Game Day | 每季 |
+> **完整「活动 × 工具」咬合说明**见 [ORG-OPERATING-CADENCE.md](./ORG-OPERATING-CADENCE.md)（Weekly 需求评审、Biweekly 进度同步、Town Hall、Standup、1:1、In-person、Offsite、Summit）。
+
+| 仪式 | 频率 | 与工具的关系（摘要） |
+|------|------|----------------------|
+| Squad Daily Standup | 每日 | 会前 Linear 阻塞帖；会后更新票 |
+| Feedback Triage | 每日 | Bot 评估 → Linear；人审边界 |
+| Weekly 需求评审 | 每周 | Claude/Docs 评审包 → 通过进 Cycle |
+| Biweekly 进度同步 | 双周 | 自动双周报（Linear+指标+Harness） |
+| Prompt/Harness Review | 双周 | Langfuse 对比 + CI 门禁 |
+| Catalog / 权限抽检 | 每月 | Gateway + Rippling 对账 |
+| Tech Town Hall | 每季 | 议题征集 → 录播 → 决策卡/FAQ |
+| 1:1 | 持续 | Rippling 汇报线；内容默认不上公共 Agent |
+| In-person / Offsite / Summit | 周期 | 高带宽现场；**必须**会后回流 Linear/Docs |
 
 **90 天**
 
