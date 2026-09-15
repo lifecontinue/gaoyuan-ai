@@ -15,13 +15,15 @@
 | **一种活动，一个主目的** | Standup 不评审需求；Town Hall 不定 Sprint 范围 |
 | **会前自动，会中人判，会后入库** | Bot 负责 Brief / 纪要 / Action；人不负责复制粘贴 |
 | **Linear 是执行真相，会议只是催化剂** | 没进 Linear 的待办视为不存在 |
-| **人场保留给高带宽** | 1:1、In-person、Offsite、Summit 处理信任、冲突、方向；日常同步尽量异步+短会 |
+| **人场保留给高带宽** | 1:1、Stakeholder Catchup、In-person、Offsite、Summit 处理信任、冲突、方向；日常同步尽量异步+短会 |
 | **同一上下文** | 任意活动打开时，应能看到同一套 Issue / 指标 / 反馈 / 决策卡 |
+| **对内执行、对外叙事分层** | Squad/评审用 Linear 细节；Stakeholder Catchup 用结局与决策，不把看板念一遍 |
 
 ```text
         ┌──────────── 组织节奏（人）────────────┐
         │ Daily → Weekly → Biweekly → Quarterly │
-        │ 1:1 / In-person / Offsite / Summit    │
+        │ 1:1 / Stakeholder Catchup             │
+        │ In-person / Offsite / Summit          │
         └───────────────┬───────────────────────┘
                         │ 触发 / 消费
         ┌───────────────▼───────────────────────┐
@@ -41,6 +43,7 @@
 | 每日 | Feedback Triage（异步） | 消化 `#feedback` | Linear + Slack | 自动评估建单，人审边界 |
 | 每周 | Weekly 需求评审 | 决定做什么/不做 | Docs Spec + Linear | 会前 Spec 包与依赖图 |
 | 双周 | Biweekly 进度同步 | 进度、风险、跨队依赖 | Linear + Metabase | 进度摘要、风险雷达 |
+| 双周/按需 | **Stakeholder Catchup** | 与业务/客户/领导对齐预期与决策 | Docs 一页纸 + Linear 承诺 | 会前 Brief；会后决策/行动入库 |
 | 双周 | Prompt / Harness Review | Agent 质量门禁 | Langfuse + Git | 跑分对比、坏例抽样 |
 | 每月 | Catalog / 权限抽检 | Endpoint 与入离职对账 | Gateway + Rippling | 差异报告 |
 | 每季 | Tech Town Hall | 技术方向、架构、文化 | Docs ADR + 录播 | 会前 FAQ、会后决策卡 |
@@ -141,7 +144,53 @@ cycle: ...
 
 ---
 
-### 3.4 Quarterly Tech Town Hall（每季）
+### 3.4 Stakeholder Catchup（双周或按需）
+
+| 项 | 内容 |
+|----|------|
+| **目的** | 与 **stakeholder**（业务负责人、客户成功/大客户、跨部门 Owner、领导）对齐：进展叙事、预期、决策、资源，而不是内部排期细节 |
+| **时长** | 25–45 min |
+| **人** | 主办：PM 或 Eng Lead；对侧：1–3 名 stakeholder；按需带 Sales（客户场） |
+| **不是** | 不是 Squad Standup，不是 Weekly 需求评审，不是全员 Town Hall |
+
+**常见类型**
+
+| 类型 | Stakeholder | 额外真相源 |
+|------|-------------|------------|
+| 业务/内部 BP | 业务线 Owner、运营 | Metabase 业务指标、Linear 承诺 |
+| 客户/账号 | AE/CS + 客户侧 | Salesforce Account/Opportunity |
+| 领导抽查 | VP/Director | 双周报浓缩版 + 风险 Top3 |
+| 跨部门依赖 | 其他 Squad/平台 Owner | Linear blocking links |
+
+**工具咬合**
+
+| 阶段 | 做什么 | 工具 |
+|------|--------|------|
+| 会前 T-24h | 生成 **Catchup 一页纸**：目标回顾、已交付、下一步、需决策项、风险、相关反馈/商机 | Claude + Docs；Linear（只取承诺级 Issue）；Metabase Question；可选 Salesforce |
+| 会前 | 发到 stakeholder 可访问处（Docs 链或 Slack DM）；Calendar 标题带 `[Stakeholder]` | Calendar + Slack |
+| 会中 | 按一页纸走：先决策项，再风险；细节 Issue 不逐条念 | Zoom；可共开 Docs |
+| 会中（客户场） | 注意对外表述；敏感路线图按披露级别 | Salesforce 会后补 Note（HITL） |
+| 会后 24h | 决策写入决策卡；承诺 → Linear（label `stakeholder-commit`）并 @owner；纪要回帖 | Linear + Docs + Slack；客户场回写 SF Activity |
+| 会后 | 新需求意向 → 进 Weekly 需求评审池（`ready-for-review`），**不当场开干** | Linear backlog |
+
+**与邻近活动的边界**
+
+```text
+Stakeholder 提出想法
+  → Catchup 记录「意向 / 决策」
+  → Weekly 需求评审 才定做不做与 AC
+  → Biweekly 进度同步 对内看执行
+  → 下次 Catchup 用一页纸闭环「上次承诺」
+```
+
+**AI 角色**：起草一页纸、抽取上次未闭环承诺、聚类 stakeholder 原话进 `#feedback`（若是产品声音）。  
+**AI 不做**：替团队向 stakeholder 承诺日期；不自动改 Salesforce 阶段或对外发邮件（Front HITL）。
+
+**成功信号**：连续两次 Catchup 能打开「上次承诺」列表且状态可追踪；stakeholder 不再私聊多处要同一份进度。
+
+---
+
+### 3.5 Quarterly Tech Town Hall（每季）
 
 | 项 | 内容 |
 |----|------|
@@ -162,7 +211,7 @@ cycle: ...
 
 ---
 
-### 3.5 1:1（持续）
+### 3.6 1:1（持续）
 
 | 项 | 内容 |
 |----|------|
@@ -183,7 +232,7 @@ cycle: ...
 
 ---
 
-### 3.6 In-person / Office Day（周期性）
+### 3.7 In-person / Office Day（周期性）
 
 | 项 | 内容 |
 |----|------|
@@ -202,7 +251,7 @@ cycle: ...
 
 ---
 
-### 3.7 Offsite（小队 / 部门，定期）
+### 3.8 Offsite（小队 / 部门，定期）
 
 | 项 | 内容 |
 |----|------|
@@ -222,7 +271,7 @@ cycle: ...
 
 ---
 
-### 3.8 Summit / Company All-Hands（半年或年度）
+### 3.9 Summit / Company All-Hands（半年或年度）
 
 | 项 | 内容 |
 |----|------|
@@ -259,7 +308,8 @@ cycle: ...
 
 第 2 周中段
   Biweekly 进度同步 ← 自动双周报（Linear+指标+Harness）
-  风险与依赖入库
+  Stakeholder Catchup ← 一页纸（承诺级叙事 + 待决策）
+  风险与依赖入库；对外承诺进 `stakeholder-commit`
 
 穿插
   1:1（Rippling 汇报线，私密）
@@ -278,20 +328,21 @@ cycle: ...
 
 ## 5. 「有机结合」对照表（活动 × 工具职责）
 
-| 工具 | Standup | 需求评审 | 进度同步 | Town Hall | 1:1 | In-person | Offsite | Summit |
-|------|:-------:|:--------:|:--------:|:---------:|:---:|:---------:|:-------:|:------:|
-| Calendar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Slack | 议程帖 | 评审包 | 双周报 | Q&A | DM 可选 | 预热 | 材料 | Q&A |
-| Zoom | 短会 | 评审 | 同步 | 主会 | ✓ | — | 可选录 | 主会/录 |
-| Linear | 真相板 | 出入 Cycle | 风险/依赖 | 行动 | 偶发 | 回流 | Project | 承诺 |
-| Docs/Claude | — | Spec/AC | 纪要 | ADR/FAQ | 私密笔记 | 照片纪要 | 战略包 | 演讲/FAQ |
-| Figma | — | 设计输入 | — | — | — | 共创 | 工作坊 | — |
-| Metabase | — | 证据 | 指标 | 大图 | — | — | 材料 | 大图 |
-| Datadog/Langfuse | — | — | 红灯 | 平台话题 | — | — | 技术债 | — |
-| Salesforce | — | 商机缺口 | 可选 | — | — | — | 客户声 | 客户故事 |
-| Rippling | — | — | — | — | 汇报线 | 差旅 | 后勤 | 全员名单 |
-| PandaDoc | — | — | — | — | — | — | 场地/NDA | 赞助/协议 |
-| Algolia/Knowledge | 查决策 | 查旧评审 | 查风险 | FAQ | — | — | 历史战略 | FAQ |
+| 工具 | Standup | 需求评审 | 进度同步 | **Stakeholder** | Town Hall | 1:1 | In-person | Offsite | Summit |
+|------|:-------:|:--------:|:--------:|:---------------:|:---------:|:---:|:---------:|:-------:|:------:|
+| Calendar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Slack | 议程帖 | 评审包 | 双周报 | 一页纸/DM | Q&A | DM 可选 | 预热 | 材料 | Q&A |
+| Zoom | 短会 | 评审 | 同步 | Catchup | 主会 | ✓ | — | 可选录 | 主会/录 |
+| Linear | 真相板 | 出入 Cycle | 风险/依赖 | **承诺级** Issue | 行动 | 偶发 | 回流 | Project | 承诺 |
+| Docs/Claude | — | Spec/AC | 纪要 | **Catchup 一页纸** | ADR/FAQ | 私密笔记 | 照片纪要 | 战略包 | 演讲/FAQ |
+| Figma | — | 设计输入 | — | 可选演示 | — | — | 共创 | 工作坊 | — |
+| Metabase | — | 证据 | 指标 | 结局指标 | 大图 | — | — | 材料 | 大图 |
+| Datadog/Langfuse | — | — | 红灯 | 仅重大事故 | 平台话题 | — | — | 技术债 | — |
+| Salesforce | — | 商机缺口 | 可选 | **客户场主源** | — | — | — | 客户声 | 客户故事 |
+| Front/Aircall | — | — | — | 可选客户声音 | — | — | — | — | — |
+| Rippling | — | — | — | — | — | 汇报线 | 差旅 | 后勤 | 全员名单 |
+| PandaDoc | — | — | — | 合同节点时 | — | — | — | 场地/NDA | 赞助/协议 |
+| Algolia/Knowledge | 查决策 | 查旧评审 | 查风险 | 查历史承诺 | FAQ | — | — | 历史战略 | FAQ |
 
 读表方式：勾选表示该活动**默认会碰**该工具；空白表示不要硬塞，避免仪式变成工具巡演。
 
@@ -302,12 +353,13 @@ cycle: ...
 | 角色 | 每日 | 每周 | 双周 | 每季 | 人场活动 |
 |------|------|------|------|------|----------|
 | Squad 成员 | Standup、推票 | 参与评审相关项 | 听同步、解依赖 | Town Hall | Offsite 共建 |
-| PM | Feedback 边界 | **主持需求评审** | 进度叙事 | 议题输入 | Offsite 路线 |
-| Eng Lead | 阻塞升级 | 技术可行性 | **主持进度同步** | Town Hall 内容 | 架构深度会 |
-| Design | — | 评审设计约束 | 体验风险 | — | In-person 共创 |
-| Sales | SF 活动 | 提供缺口证据 | 大客户风险 | — | Summit 客户故事 |
+| PM | Feedback 边界 | **主持需求评审** | 进度叙事；**主持/出席 Stakeholder Catchup** | 议题输入 | Offsite 路线 |
+| Eng Lead | 阻塞升级 | 技术可行性 | **主持进度同步**；关键 Catchup 陪同 | Town Hall 内容 | 架构深度会 |
+| Design | — | 评审设计约束 | 体验风险；按需 Catchup | — | In-person 共创 |
+| Sales | SF 活动 | 提供缺口证据 | 大客户风险；**客户场 Catchup** | — | Summit 客户故事 |
 | People | 入离职事件 | — | — | 文化/调研 | Offsite/Summit 后勤 |
-| Leadership | — | 抽查决策质量 | 看双周报红灯 | Town Hall/Summit | Offsite 定方向 |
+| Leadership | — | 抽查决策质量 | 看双周报；可发起 Catchup | Town Hall/Summit | Offsite 定方向 |
+| Stakeholder（业务/客户） | — | 异步看一页纸评论 | **Catchup 决策与预期** | Summit/All-Hands | 按邀约 |
 
 ---
 
@@ -319,6 +371,7 @@ cycle: ...
 | 小 AC 澄清 | Slack 线程 + 改 Docs | 影响范围跨队 |
 | 指标问答 | `@DataBot` | 口径争议 |
 | 重复反馈 | Feedback Bot 挂 duplicate | 严重度争议 |
+| Stakeholder 要进度 | 发 Catchup 一页纸异步批注 | 有待决策或预期冲突 → 开会 |
 | 发版说明 | Linear Release + Slack | 事故或重大 breaking |
 
 **AI Native 的会议变少，不是活动变少，而是低频高带宽活动更贵、更值得准备。**
@@ -332,6 +385,7 @@ cycle: ...
 | Standup | 阻塞票最新状态 | Linear |
 | 需求评审 | 决策（做/缓/砍）+ AC | Docs + Linear |
 | 进度同步 | 风险/依赖列表 | Linear `risk` / blocks |
+| Stakeholder Catchup | 一页纸 + 决策 + `stakeholder-commit` | Docs + Linear（+ SF Note 若客户场） |
 | Town Hall | 决策卡 + FAQ + 录播 | Knowledge + Docs |
 | 1:1 | （可选）双方同意的行动 | 私密 Doc；团队事项进 Linear |
 | In-person | 当日决策回流 | Linear + Docs |
@@ -349,6 +403,7 @@ cycle: ...
 | `[Standup] Squad X` | T-15m Linear 摘要 |
 | `[Req Review] Weekly` | T-2h 评审包链接汇总 |
 | `[Prog Sync] Biweekly` | T-2h 双周报 |
+| `[Stakeholder] ...` | T-24h Catchup 一页纸；会后承诺扫描 |
 | `[Town Hall] Tech YYYY-QN` | 征集期 Bot + 会后纪要管道 |
 | `[1:1] A / B` | 仅私密 Brief（需双方 opt-in） |
 | `[Offsite] ...` | 材料包清单检查 |

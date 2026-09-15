@@ -5,7 +5,7 @@
 | 文档 | 说明 |
 |------|------|
 | [AI-NATIVE-INFRA.md](./AI-NATIVE-INFRA.md) | 九层架构、公司运转视角遗漏补齐、Auth0 / Key Gateway / Audit / Harness |
-| [ORG-OPERATING-CADENCE.md](./ORG-OPERATING-CADENCE.md) | **组织工作如何与工具有机结合**（Standup / 需求评审 / 进度同步 / Town Hall / 1:1 / In-person / Offsite / Summit） |
+| [ORG-OPERATING-CADENCE.md](./ORG-OPERATING-CADENCE.md) | **组织工作如何与工具有机结合**（Standup / 需求评审 / 进度同步 / **Stakeholder Catchup** / Town Hall / 1:1 / In-person / Offsite / Summit） |
 | [WORKFLOWS.md](./WORKFLOWS.md) | 端到端流转（含 **Slack 反馈 → Bot 评估 → Linear**） |
 | [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md) | MCP / Skill / Plugin / Agent / Harness 具体目录 |
 | [TOOLKIT-CHECKLIST.md](./TOOLKIT-CHECKLIST.md) | **发给其他团队即可 Copy 的工具清单与两周最小包** |
