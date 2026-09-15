@@ -120,7 +120,7 @@
 
 | 宿主 | Plugin / App 名称 | 必选 Skills | Owner |
 |------|-------------------|-------------|-------|
-| Slack | Company AI Bus | feedback-triage, metrics-answer, pre-meeting-brief, sales-opportunity-brief | |
+| Slack | Company AI Bus | feedback-triage, metrics-answer, pre-meeting-brief, sales-opportunity-brief, stakeholder-catchup-brief | |
 | Cursor / Codex | company-ai-native | spec-authoring, pr-ai-review, agent-release | |
 | Claude Project | Spec Studio | spec-authoring, meeting-to-actions | |
 | Replit | pm-agent-sandbox | metrics-answer | |
@@ -182,9 +182,12 @@ source:front
 source:aircall
 source:salesforce
 source:rippling
+source:stakeholder
 type:bug | type:request | type:incident
 area:<product_area>
 auto-filed
+stakeholder-commit
+ready-for-review
 needs-harness
 security
 pii

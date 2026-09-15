@@ -445,6 +445,7 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 | Feedback Triage | 每日 | Bot 评估 → Linear；人审边界 |
 | Weekly 需求评审 | 每周 | Claude/Docs 评审包 → 通过进 Cycle |
 | Biweekly 进度同步 | 双周 | 自动双周报（Linear+指标+Harness） |
+| Stakeholder Catchup | 双周/按需 | 一页纸对齐预期；承诺进 Linear；客户场回写 SF |
 | Prompt/Harness Review | 双周 | Langfuse 对比 + CI 门禁 |
 | Catalog / 权限抽检 | 每月 | Gateway + Rippling 对账 |
 | Tech Town Hall | 每季 | 议题征集 → 录播 → 决策卡/FAQ |

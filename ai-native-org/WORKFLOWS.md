@@ -295,7 +295,7 @@ Datadog / 用户 / Bot 异常
 |------|------|
 | 每日 | Squad Standup 摘要；Feedback 消化；逾期 Linear；Gateway 成本异常 |
 | 每周 | Weekly 需求评审（评审包 → Cycle） |
-| 双周 | Biweekly 进度同步；Prompt/Harness Review |
+| 双周 | Biweekly 进度同步；**Stakeholder Catchup**（一页纸→承诺入库）；Prompt/Harness Review |
 | 周一附加 | Cycle 目标 Brief；Sales pipeline 风险（SF） |
 | 每季 | Tech Town Hall；权限/Catalog 抽检 |
 | 周期 | In-person / Offsite / Summit（会后必须回流 Linear/Docs） |

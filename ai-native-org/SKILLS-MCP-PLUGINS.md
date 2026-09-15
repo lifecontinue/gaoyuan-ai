@@ -264,6 +264,27 @@ description: 会前 30 分钟推送上下文简报
 mcp: [mcp-calendar, mcp-linear, mcp-knowledge, mcp-slack]
 ```
 
+### Skill：`stakeholder-catchup-brief`
+
+```yaml
+name: stakeholder-catchup-brief
+description: 为 Stakeholder Catchup 生成一页纸（交付/下一步/待决策/风险/上次承诺），会后把承诺写入 Linear
+when_to_use:
+  - Calendar 标题含 [Stakeholder]
+  - PM 请求 /catchup-brief
+mcp: [mcp-calendar, mcp-docs, mcp-linear, mcp-metabase, mcp-salesforce, mcp-slack, mcp-knowledge]
+steps:
+  - 拉取上次同系列 Catchup 的 stakeholder-commit 未闭环项
+  - 汇总承诺级进度与指标（非全量看板）
+  - 生成一页纸并分享
+  - 会后：决策卡 + create/update Linear label stakeholder-commit
+  - 客户场：draft Salesforce note（HITL）
+constraints:
+  - 不替团队承诺日期
+  - 新想法只进 ready-for-review，不当场开干
+  - 不自动改 SF Stage/Amount
+```
+
 ### Skill：`spec-authoring`
 
 ```yaml
