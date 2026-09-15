@@ -56,8 +56,23 @@
 | ✓ | CMS | **Contentful** | Sanity, Strapi | | AI 只 draft |
 | ○ | 实验 / 内容态 / Flag | **Darklight** 或 LaunchDarkly | Unleash, Flagsmith | | 与发布门禁绑定 |
 | ○ | 客户通讯 | **Front** | Zendesk, Intercom | | 回复 HITL |
-| ○ | 通话 | **Aircall** | Aircall 等价 / Dialpad | | 转写脱敏 |
-| ○ | Customer 360 只读 API | 内部服务 | Segment+CRM | | 供 Agent 上下文 |
+| ○ | 通话 | **Aircall** | Dialpad 等 | | 转写脱敏 |
+| ○ | Customer 360 / CRM | **Salesforce** | HubSpot | Sales 主责；只读 MCP 优先 |
+| ○ | HRIS / People | **Rippling** | BambooHR, Workday, Deel | 入离职权威源 |
+| ○ | 合同 / Offer 文件 | **PandaDoc** | DocuSign, HelloSign | 发送签署 HITL |
+
+---
+
+## C2. GTM 与 People（按团队必选）
+
+| 团队 | 必选 | 职责 | 示例产品 | Owner | AI 默认权限 |
+|------|:----:|------|----------|-------|-------------|
+| Sales | ✓ | CRM 真相源 | **Salesforce** | | 读机会/账户；关单/改价 HITL |
+| Sales | ○ | 通话/会议入库 SF | Zoom + Aircall → SF | | 纪要草稿可自动 |
+| People | ✓ | 员工生命周期 | **Rippling** | | Webhook→开通/吊销，非闲聊写 |
+| People | ✓ | Offer/NDA/员工文件 | **PandaDoc** | | 只建草稿 |
+| Sales + Legal | ✓ | MSA/订单/客户 NDA | **PandaDoc** | | 只建草稿；send HITL |
+| CS | ○ | 工单 | Front | | 回复 HITL |
 
 ---
 
@@ -105,10 +120,13 @@
 
 | 宿主 | Plugin / App 名称 | 必选 Skills | Owner |
 |------|-------------------|-------------|-------|
-| Slack | Company AI Bus | feedback-triage, metrics-answer, pre-meeting-brief | |
+| Slack | Company AI Bus | feedback-triage, metrics-answer, pre-meeting-brief, sales-opportunity-brief | |
 | Cursor / Codex | company-ai-native | spec-authoring, pr-ai-review, agent-release | |
 | Claude Project | Spec Studio | spec-authoring, meeting-to-actions | |
 | Replit | pm-agent-sandbox | metrics-answer | |
+| Salesforce | sales-copilot（侧栏/Slack） | sales-opportunity-brief | |
+| Rippling + n8n | people-provisioner | people-lifecycle-sync | |
+| PandaDoc | doc-copilot | pandadoc-draft | |
 | GitHub Actions | harness-gate + secret-scan | — | |
 
 MCP 明细见 [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md)。
@@ -131,6 +149,9 @@ MCP 明细见 [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md)。
 | mcp-docs / figma | ○ | ✓ |
 | mcp-contentful | | ✓ |
 | mcp-front / aircall | | ✓ |
+| mcp-salesforce | | ✓ |
+| mcp-rippling | | ✓（People） |
+| mcp-pandadoc | | ✓（People/Sales） |
 | mcp-github | ○ | ✓ |
 | mcp-datadog | ○ | ✓ |
 
@@ -142,6 +163,8 @@ MCP 明细见 [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md)。
 |------|------|
 | `#feedback` | 反馈收集（Bot 监听） |
 | `#feedback-triage` | 日摘要与争议 |
+| `#sales-wins` | 赢单/丢单结构化回流（可选） |
+| `#people-ops` | 入离职开通结果与失败告警（无薪酬明文） |
 | `#ai-agents` | Agent 发版与 Harness 报告 |
 | `#ai-costs` | Gateway 成本告警 |
 | `#incidents` | 事故 |
@@ -157,6 +180,8 @@ source:slack-feedback
 source:meeting
 source:front
 source:aircall
+source:salesforce
+source:rippling
 type:bug | type:request | type:incident
 area:<product_area>
 auto-filed
@@ -214,11 +239,13 @@ DATADOG_API_KEY / DATADOG_APP_KEY
 | 身份 | 共享账号 | SSO | 人/机分离 + scope |
 | 评测 | 无 | Langfuse 只读 | Harness CI 门禁 |
 | 会议行动 | 口头 | 人工纪要 | Calendar/Zoom 自动建单 |
+| 销售上下文 | 口头 | SF 手查 | 会前 Bot Brief + 缺口进反馈 |
+| 入离职权限 | 工单手工 | 半自动 | Rippling 驱动开通/吊销+审计 |
 | 指标问答 | 截图 | 固定看板 | Bot 带 Question ID |
 | 事故 | 群里喊 | 有频道 | 可切断 Agent 写权限 |
 | 可复制性 | 口口相传 | 有文档 | 本清单+Skill/MCP 齐全 |
 
-**建议达标**：总分 ≥ 10 / 16 再扩展新 Agent。
+**建议达标**：总分 ≥ 12 / 20 再扩展新 Agent。
 
 ---
 
@@ -248,6 +275,9 @@ DATADOG_API_KEY / DATADOG_APP_KEY
 | PM 沙箱 | Replit |
 | 客服 | Front |
 | 电话 | Aircall |
+| 销售 CRM | Salesforce |
+| People HRIS | Rippling |
+| 合同/Offer | PandaDoc |
 | 审计 | Audit Log |
 
 ---

@@ -62,7 +62,10 @@
 ├──────────────────────────────────────────────────────────────────┤
 │ L0 审计合规    Audit Log · Policy Engine · Retention · Red Team  │
 └──────────────────────────────────────────────────────────────────┘
-  横切：Front / Aircall（客户）· GitHub（代码）· Incident / Oncall
+  横切：
+    GTM     Salesforce · Front · Aircall
+    People  Rippling · PandaDoc
+    EngOps  GitHub · Incident / Oncall
 ```
 
 ```mermaid
@@ -144,7 +147,10 @@ flowchart TB
 | **数据保留与删除** | 会议/通话/工单含 PII，要有 retention | Policy + Lake lifecycle | 补齐 |
 | **服务目录 / ADR** | 避免每人发明一套集成 | Service Catalog + ADR 库 | 补齐 |
 | **安全扫描** | 依赖与密钥扫描 | Gitleaks / Dependabot / SAST | 补齐 |
-| **客户真相源** | Front/Aircall 之外要有账号/订阅上下文 | CRM 轻量字段或内部 Customer 360 只读 API | 建议 |
+| **销售真相源 (Salesforce)** | Pipeline、账号、机会是 GTM 与产品反馈的上游 | Salesforce + 只读 MCP；赢单/丢单回流 Linear/Feedback | 补齐 |
+| **People / HRIS (Rippling)** | 入离职决定账号、权限、设备与 Agent 访问 lifecyle | Rippling → Auth0/Google/1Password 自动开通与吊销 | 补齐 |
+| **合同与文件 (PandaDoc)** | Offer、NDA、客户合同需可追踪且限制 AI 写权限 | PandaDoc；AI 只起草，发送/签署 HITL | 补齐 |
+| **客户支持真相源** | Front/Aircall 之外要有账号/订阅上下文 | Salesforce Account + 内部 Customer 360 只读 API | 建议 |
 | **状态页 / 变更日志** | 对外与对内沟通发版 | Statuspage + Linear Releases / Changelog | 建议 |
 | **设计系统可消费** | Figma token → 代码 | Tokens pipeline | 建议 |
 | **向量/记忆层** | 长期记忆与会话摘要 | 向量库或 Algolia Neural + Memory MCP | 建议 |
@@ -309,6 +315,22 @@ AuditEvent:
 | Incident 工具 | 故障响应 |
 | Status / Changelog | 变更沟通 |
 
+### 4.7 GTM 与 People（组织运转横切）
+
+| 团队 | 工具 | 职责 | AI Native 用法 |
+|------|------|------|----------------|
+| **Sales** | **Salesforce** | CRM：Lead/Account/Opportunity/Activity | 会前 Brief、赢/丢单原因结构化、产品反馈回流 `#feedback`→Linear；Agent 默认只读，阶段变更需人确认或窄 scope |
+| **People** | **Rippling** | HRIS：入离职、组织、薪酬/设备（按采购模块） | 入职自动开通 Auth0/Google/Slack/1Password/工具组；离职自动吊销 Gateway 逻辑 key 与 M2M；组织变更同步 Linear/Slack 用户组 |
+| **People / GTM** | **PandaDoc** | Offer、NDA、客户合同、对外正式文件 | AI 生成草稿与条款差异摘要；发送、签署、改价默认 HITL；完成后回写 Salesforce / Rippling |
+
+**数据流向（摘要）**
+
+```text
+Rippling 入职 → 账号与权限总线 → 才能使用 Slack Bot / MCP
+Salesforce 机会变更 → n8n → 会前材料 / 风险 Linear / 反馈候选
+PandaDoc 签署完成 → 回写 SF Account 或 Rippling candidate → Audit
+```
+
 ---
 
 ## 5. 组织级闭环（六条）
@@ -362,6 +384,8 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 | Eng | Codex + LangGraph + Harness | Tool schema、门禁、埋点 | 无 Trace 上生产 |
 | Data | Metabase + Lake | Gold 语义层 | Agent 任意写 SQL |
 | Ops/CS | Front + Slack Bot | 升级规则、HITL | 自动对外发送 |
+| Sales | Salesforce + Slack Bot | 机会摘要、会前 Brief、反馈回流 | 自动改关单/金额 |
+| People | Rippling + PandaDoc | 入离职自动化、文件草稿 | 自动发薪/自动发正式 Offer |
 | Security | Auth0 + Audit + Gateway | 轮换、scope、红队 | 长期上帝密钥 |
 | Leadership | 周报 Bot | 组织层指标 | 用聊天替代 Linear |
 
@@ -428,6 +452,9 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 - [ ] `#feedback` → 评估 → Linear 主路径跑通（含 duplicate 检测）
 - [ ] Auth0 区分人与 M2M；生产 publish 需 HITL
 - [ ] API Key Gateway 覆盖 OpenAI/Anthropic；业务侧无裸 key
+- [ ] Rippling 入职开通 / 离职吊销与 Auth0·Gateway 对账通过
+- [ ] Salesforce 会前 Brief 可用；赢丢单产品缺口进 `#feedback`
+- [ ] PandaDoc 仅草稿自动；发送/签署 HITL，并回写 SF/Rippling
 - [ ] 会议/Calendar Action Item 自动进 Linear
 - [ ] 所有生产 Agent：Langfuse + Audit + Harness 基线集
 - [ ] Metabase Gold Collection 供 Agent 专用
@@ -440,8 +467,9 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 ## 11. 一页纸
 
 ```text
-身份（Auth0）→ 密钥（1Password/Gateway）→ 模型（OpenAI SDK）
+身份（Auth0）← 入离职（Rippling）→ 密钥（1Password/Gateway）→ 模型（OpenAI SDK）
   → 编排（n8n / LangGraph）→ 工作（Linear / Code / Content）
+  → 销售（Salesforce）· 文件（PandaDoc HITL）
   → 反馈（Slack）→ 评估（Bot + Harness）→ 回流（Linear）
   → 观测（Langfuse / Datadog）→ 审计（Audit）→ 改进
 ```

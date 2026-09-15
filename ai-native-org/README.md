@@ -9,4 +9,4 @@
 | [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md) | MCP / Skill / Plugin / Agent / Harness 具体目录 |
 | [TOOLKIT-CHECKLIST.md](./TOOLKIT-CHECKLIST.md) | **发给其他团队即可 Copy 的工具清单与两周最小包** |
 
-**一句话**：Auth0 + API Key Gateway 管住身份与密钥；Slack/Calendar/Zoom 把上下文送进 Linear；Bot + Harness 负责评估；LangGraph/n8n 编排；OpenAI SDK 统一模型出口；Langfuse/Datadog/Audit 保证可观测、可评测、可追责。
+**一句话**：Auth0 + API Key Gateway 管住身份与密钥；Rippling 管入离职权限总线；Salesforce / PandaDoc 接住 Sales 与 People 文档流；Slack/Calendar/Zoom 把上下文送进 Linear；Bot + Harness 负责评估；LangGraph/n8n 编排；OpenAI SDK 统一模型出口；Langfuse/Datadog/Audit 保证可观测、可评测、可追责。

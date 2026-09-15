@@ -12,7 +12,10 @@
 Slack #feedback          →  Eval Bot + Harness     →  Linear + 线程回复
 Zoom / Calendar 会议     →  n8n + 结构化 Agent     →  Slack AI + Linear
 Google Docs / Figma      →  变更 Webhook           →  知识索引 + 相关 Issue
-Front / Aircall          →  摘要 Agent             →  Linear / FAQ / CRM
+Front / Aircall          →  摘要 Agent             →  Linear / FAQ / Salesforce
+Salesforce 机会/通话纪要  →  GTM Copilot            →  Brief / 风险 Issue / #feedback
+Rippling 入离职           →  Identity Provisioner   →  Auth0 / Google / Gateway 吊销
+PandaDoc 草稿/签署        →  Doc Copilot（HITL）    →  SF / Rippling 回写
 Datadog 告警             →  路由规则               →  #incidents + Oncall
 Harness 失败（CI）       →  门禁                   →  阻断合并 / 开 Linear
 Calendar Cycle 边界      →  定时 Bot               →  进度摘要 + 风险 Issue
@@ -183,18 +186,81 @@ Langfuse 采集线上失败 / 低分
 
 ---
 
-## WF-06 客户信号：Front / Aircall → 产品回流
+## WF-06 客户信号：Front / Aircall / Salesforce → 产品回流
 
 ```text
-Front 工单标签「product-bug」或 Aircall 通话结束
+Front 工单标签「product-bug」
+或 Aircall 通话结束
+或 Salesforce Opportunity 丢单原因 / 赢单 feature request 字段
   → 转写/正文摘要（脱敏）
   → 与 WF-01 同一 Classify/Dedup 管道
   → Linear 或 Contentful FAQ 草稿（publish 需人）
+  → 可选：回写 Salesforce Task「已同步 Linear XXX」
 ```
 
 ---
 
-## WF-07 密钥与身份：申请 → 发放 → 轮换
+## WF-07 Sales：Salesforce 机会驱动
+
+```text
+Calendar：客户会前 30min
+  → 读 Salesforce Account + Opportunity + 最近 Activity
+  → 生成 Brief（痛点、竞品、未关异议、相关产品 Linear）
+  → 推送到 AE 的 Slack DM / 机会频道
+
+Opportunity Stage = Closed Lost / Closed Won
+  → 结构化「原因 / 竞品 / 产品缺口」
+  → 产品缺口 → #feedback 管道（WF-01）
+  → 赢单 → 通知 CS onboarding checklist（可开 Linear project）
+
+通话/会议纪要（Zoom）与机会关联
+  → 摘要写入 Salesforce Content/Note（HITL 或自动+可编辑）
+```
+
+**门禁**：改 Amount、Close Date、Stage 到 Closed* 默认需人确认；Bot 可建议不可静默提交。
+
+---
+
+## WF-08 People：Rippling 入离职与权限总线
+
+```text
+Rippling: Employee hired / start_date-1
+  → 开通 Google Workspace + Slack + Auth0 组
+  → 按角色模板授予：Linear team、1Password vault、Gateway 逻辑 key 档位
+  → 发送 onboarding Doc（含 Skills 列表，而非 20 个账号口令）
+  → Audit: identity.provision
+
+Rippling: Employee terminated / last_day
+  → 即时吊销 Auth0、Gateway keys、1Password、GitHub、Salesforce、生产权限
+  → Slack 账号停用；开放 Issue 转移 owner
+  → Audit: identity.revoke（P0 告警若失败）
+```
+
+组织变更（部门/经理）：同步 Slack user group 与审批路由表。
+
+---
+
+## WF-09 文件与合同：PandaDoc（People + Sales）
+
+```text
+场景 A（People）：Offer / NDA
+  Rippling candidate 达「Offer」阶段
+    → Doc Copilot 用模板填薪资带宽、职级、start date（敏感字段来自 Rippling，不进 Slack）
+    → 生成 PandaDoc 草稿
+    → People HITL 审核 → Send → 签署完成回写 Rippling
+
+场景 B（Sales）：MSA / Order Form / NDA
+  Salesforce Opportunity 达「Contract」
+    → 拉取 Account/商业条款字段生成 PandaDoc 草稿
+    → AE/法务 HITL → Send
+    → 签署完成：回写 SF（Contract Signed）+ 通知 Finance/CS
+```
+
+**门禁**：价格、补偿、法律条款 diff 必须人看；Agent 禁止直接 `send` / `void`（除非显式 break-glass + Audit）。
+
+---
+
+## WF-10 密钥与身份：申请 → 发放 → 轮换
 
 ```text
 工程师申请新模型/SaaS 能力
@@ -204,11 +270,12 @@ Front 工单标签「product-bug」或 Aircall 通话结束
   → 业务只配置 COMPANY_GATEWAY_KEY
   → 月度轮换：1Password 更新 → Gateway reload → Audit「key.rotated」
   → 泄露：Gateway 吊销 + Auth0 token revoke + Incident WF
+  → 离职：以 Rippling 事件为权威触发源（见 WF-08）
 ```
 
 ---
 
-## WF-08 事故：发现 → 止损 → 复盘
+## WF-11 事故：发现 → 止损 → 复盘
 
 ```text
 Datadog / 用户 / Bot 异常
@@ -220,14 +287,14 @@ Datadog / 用户 / Bot 异常
 
 ---
 
-## WF-09 周节奏（Calendar 驱动）
+## WF-12 周节奏（Calendar 驱动）
 
 | 时间 | 流程 |
 |------|------|
 | 每日 | Feedback 摘要、逾期 Linear、Gateway 成本异常 |
-| 周一 | Cycle 目标 Brief |
+| 周一 | Cycle 目标 Brief；Sales pipeline 风险（SF） |
 | 双周 | Prompt/Harness Review |
-| 月末 | Key 轮换检查、成本与配额回顾 |
+| 月末 | Key 轮换检查、成本与配额回顾；入离职权限抽检（Rippling↔Auth0） |
 
 ---
 

@@ -139,6 +139,42 @@ Plugin（安装到 Cursor/Slack/Claude）
 | `draft_reply` | 不直接发送 |
 | `get_call_transcript` | |
 
+### 1.13b `mcp-salesforce`
+
+| Tool | 权限 | 说明 |
+|------|------|------|
+| `get_account` | read | Account + 关键字段 |
+| `get_opportunity` | read | 阶段、金额、Close Date、竞品 |
+| `search` | read | Lead/Contact/Oppty |
+| `list_activities` | read | Task/Event 最近 N 条 |
+| `draft_note` | write | 写草稿笔记，不改 Stage |
+| `suggest_stage` | write | 仅建议；真正 Closed* 需 HITL |
+| `log_product_feedback` | write | 创建反馈候选打到 WF-01 |
+
+**禁默认开放**：`update_amount`、`delete_record`、批量导出。
+
+### 1.13c `mcp-rippling`
+
+| Tool | 权限 | 说明 |
+|------|------|------|
+| `get_worker` | read | 在职状态、部门、经理、start/end |
+| `list_upcoming_starts` | read | 入职管道 |
+| `list_terminations` | read | 离职管道 |
+| `get_org_chart_edge` | read | 汇报关系（路由审批用） |
+
+实际开通/吊销由 **Identity Provisioner**（n8n/内部服务）消费 Rippling Webhook 完成，不交给通用对话 Agent。
+
+### 1.13d `mcp-pandadoc`
+
+| Tool | 权限 | 说明 |
+|------|------|------|
+| `list_templates` | read | Offer / NDA / MSA |
+| `create_draft_from_template` | draft_write | 填字段生成草稿 |
+| `get_document` | read | 状态、签署方 |
+| `summarize_diff` | read | 相对模板的条款差异 |
+| `send_document` | publish | **HITL only** |
+| `void_document` | admin | **HITL + break-glass** |
+
 ### 1.14 `mcp-github`
 
 | Tool | 说明 |
@@ -253,10 +289,47 @@ constraints:
 ```yaml
 name: support-summarize
 description: 摘要 Front/Aircall 并可选回流反馈管道
-mcp: [mcp-front, mcp-aircall, mcp-linear, mcp-contentful]
+mcp: [mcp-front, mcp-aircall, mcp-linear, mcp-contentful, mcp-salesforce]
 constraints:
   - draft_reply 不发送
   - publish FAQ 需 HITL
+```
+
+### Skill：`sales-opportunity-brief`
+
+```yaml
+name: sales-opportunity-brief
+description: 会前基于 Salesforce 生成客户/机会简报，并可把产品缺口送入反馈管道
+when_to_use:
+  - Calendar 客户会前
+  - AE 在 Slack 请求 /brief deal
+mcp: [mcp-salesforce, mcp-calendar, mcp-slack, mcp-linear, mcp-knowledge]
+constraints:
+  - 不自动改 Stage/Amount
+  - 赢丢单原因结构化后，产品缺口走 feedback-triage
+```
+
+### Skill：`people-lifecycle-sync`
+
+```yaml
+name: people-lifecycle-sync
+description: 消费 Rippling 入离职事件，驱动账号开通/吊销与审计（供 Provisioner 使用）
+mcp: [mcp-rippling, mcp-audit, mcp-slack]
+constraints:
+  - 不在对话里展示薪酬明文
+  - 离职吊销失败必须 P0 告警
+runtime: n8n-or-internal-worker  # 非闲聊 Agent
+```
+
+### Skill：`pandadoc-draft`
+
+```yaml
+name: pandadoc-draft
+description: 从 Rippling/Salesforce 字段生成 PandaDoc 草稿并做条款差异摘要
+mcp: [mcp-pandadoc, mcp-rippling, mcp-salesforce, mcp-slack]
+constraints:
+  - send/void 必须 HITL
+  - 补偿与定价字段不进公开频道
 ```
 
 ### Skill：`agent-release`
@@ -361,6 +434,9 @@ mcp: [mcp-github, mcp-harness, mcp-datadog]
 | `calendar-briefer` | pre-meeting-brief | read+slack post | n8n cron |
 | `data-copilot` | metrics-answer | read:metabase | Slack |
 | `support-copilot` | support-summarize | read+draft | Front 侧栏 |
+| `sales-copilot` | sales-opportunity-brief | read:sf + slack | Slack / Calendar |
+| `people-provisioner` | people-lifecycle-sync | identity write | n8n worker |
+| `doc-copilot` | pandadoc-draft | draft:pandadoc | People/Sales HITL |
 | `coding-copilot` | spec-authoring, pr-ai-review | read+github comment | Cursor/Codex |
 | `release-copilot` | agent-release | harness+langfuse | CI / Slack |
 
@@ -430,8 +506,13 @@ mcp: [mcp-github, mcp-harness, mcp-datadog]
 | meeting-to-actions | ✓ | ✓ | 低 | ✗ | ✗ |
 | metrics-answer | ✗ | ✓ | ✗ | ✗ | ✗ |
 | support-summarize | ✓ | ✓ | 脱敏 | HITL | ✗ |
+| sales-opportunity-brief | ✓* | ✓ | 低 | ✗ | ✗ |
+| people-lifecycle-sync | ✗ | ✓ | 高(受限) | ✗ | ✓（身份） |
+| pandadoc-draft | ✗ | ✓ | 高(受限) | HITL(send) | ✗ |
 | agent-release | ✗ | ✓ | ✗ | ✗ | HITL |
 | incident-ai-cutswitch | ✓ | ✓ | ✓ | ✗ | ✓（受限角色） |
+
+\*仅创建产品回流 Issue，不改 SF 金额/关单。
 
 ---
 
@@ -441,6 +522,8 @@ mcp: [mcp-github, mcp-harness, mcp-datadog]
 2. 接 Gateway + OpenAI SDK + Langfuse
 3. 上 `harness-feedback-classifier` 与 PII harness
 4. 再开 Calendar/Zoom、Metabase、Contentful
-5. 最后才把 HITL 按钮对高置信度 case 默认折叠（仍可回放）
+5. 接入 `mcp-salesforce`（只读 Brief）与 `mcp-rippling`（Provisioner）
+6. `mcp-pandadoc` 仅 draft；send 保持 HITL
+7. 最后才把 HITL 按钮对高置信度 case 默认折叠（仍可回放）
 
 完整工具采购/账号清单见 [TOOLKIT-CHECKLIST.md](./TOOLKIT-CHECKLIST.md)。
