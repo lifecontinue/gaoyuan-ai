@@ -1,0 +1,13 @@
+---
+description: PRD、工程师对齐与 Jira 草稿
+globs: 30-prd/**,40-delivery/**
+alwaysApply: false
+---
+
+# PRD 与交付对齐
+
+- 用 `00-os/templates/prd.md` 与 `jira-ticket.md`。
+- PRD 写清问题、非目标、验收、依赖仓、与现有能力的差。
+- Jira 草稿要工程师能直接开工：范围、不做什么、验收、仓库路径。
+- 对齐纪要放 `40-delivery/engineer-sync/`，工单索引更新 `40-delivery/_ticket-index.md`。
+- Atlassian 未登录时只写草稿，不要假装已建票。
