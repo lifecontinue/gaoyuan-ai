@@ -1,10 +1,10 @@
-# 组织节奏 × 工具：有机结合手册
+# 组织节奏 × 工具
 
-> 工具不是工作本身。AI Native 组织的关键是：**人的节奏（Cadence）定义何时决策、对齐、创造；工具与 Agent 负责把上下文运到现场、把结论送回真相源。**
->
-> 本文说明各类活动如何与 Slack / Linear / Calendar / Zoom / Claude / Metabase / Salesforce / Rippling 等**咬合**，避免「堆了一堆 SaaS，开会还是从零口头同步」。
+工具不是工作本身。人决定什么时候对齐和拍板；Bot 只负责把材料运到会上、把结论写回系统。
 
-**配套**：[架构](./AI-NATIVE-INFRA.md) · [工作流](./WORKFLOWS.md) · [Skill/MCP](./SKILLS-MCP-PLUGINS.md) · [工具清单](./TOOLKIT-CHECKLIST.md)
+任务系统在蓝图里写成 Linear。若你的工程团队像 crimson-app 一样以 GitHub PR 为交活面，把下表里的 Linear **换成 PR + 项目板** 即可，不必强行再引入一套真相源。
+
+**配套**：[架构](./AI-NATIVE-INFRA.md) · [对照笔记](./REFLECTION.md) · [工作流](./WORKFLOWS.md) · [Skill/MCP](./SKILLS-MCP-PLUGINS.md) · [工具清单](./TOOLKIT-CHECKLIST.md)
 
 ---
 
@@ -13,9 +13,9 @@
 | 原则 | 含义 |
 |------|------|
 | **一种活动，一个主目的** | Standup 不评审需求；Town Hall 不定 Sprint 范围 |
-| **会前自动，会中人判，会后入库** | Bot 负责 Brief / 纪要 / Action；人不负责复制粘贴 |
-| **Linear 是执行真相，会议只是催化剂** | 没进 Linear 的待办视为不存在 |
-| **人场保留给高带宽** | 1:1、Stakeholder Catchup、In-person、Offsite、Summit 处理信任、冲突、方向；日常同步尽量异步+短会 |
+| **会前自动，会中人判，会后入库** | Bot 做 Brief / 纪要草稿；人不做复制粘贴 |
+| **没进任务系统的待办当不存在** | Linear、Jira 或 GitHub，团队只选一个执行面 |
+| **人场留给高带宽** | 1:1、Catchup、Offsite 处理信任和方向；日常尽量异步 |
 | **同一上下文** | 任意活动打开时，应能看到同一套 Issue / 指标 / 反馈 / 决策卡 |
 | **对内执行、对外叙事分层** | Squad/评审用 Linear 细节；Stakeholder Catchup 用结局与决策，不把看板念一遍 |
 

@@ -1,8 +1,10 @@
 # AI Native 团队工具清单（可复制版）
 
-> **用法**：把本文发给协作团队或新 BU。按「必选 / 推荐 / 可选」勾选；名称可替换为等价产品，但**职责列不要删**。复制后填「负责人 / 账号 / 环境」。
+> **用法**：发给协作团队。按「必选 / 推荐 / 可选」勾选。名称可以换成等价产品，**职责列不要删**。
+>
+> 这份清单是目标采购表。对照 crimson-app 时：GitHub、1Password、Secrets Manager、Auth0/SSO、Langfuse（产品 Agent）、Salesforce 同步、Contentful、`featureSwitches` 已经有现场落点；Linear 反馈 Bot、Key Gateway、n8n/LangGraph 总线未在对照文档中证实。
 
-**配套**：[架构](./AI-NATIVE-INFRA.md) · [组织节奏](./ORG-OPERATING-CADENCE.md) · [工作流](./WORKFLOWS.md) · [Skill/MCP/Plugin](./SKILLS-MCP-PLUGINS.md)
+**配套**：[架构](./AI-NATIVE-INFRA.md) · [对照笔记](./REFLECTION.md) · [组织节奏](./ORG-OPERATING-CADENCE.md) · [工作流](./WORKFLOWS.md) · [Skill/MCP/Plugin](./SKILLS-MCP-PLUGINS.md)
 
 ---
 
@@ -35,7 +37,7 @@
 | 必选 | 职责 | 示例产品 | 等价替代 | Owner | 备注 |
 |:----:|------|----------|----------|-------|------|
 | ✓ | 即时协作 + 反馈频道 | **Slack** | Teams, Discord | | `#feedback` `#incidents` |
-| ✓ | 任务真相源 | **Linear** | Jira, Height, Asana | | 自动建单字段约定 |
+| ✓ | 任务队列 | **Linear** 或 Jira | GitHub Issues | | 工程交付仍以 GitHub PR 为准 |
 | ✓ | 文档 / Spec / ADR | **Google Docs** | Notion, Confluence | | 每 Issue 回链 |
 | ✓ | 设计 | **Figma** | Penpot, Sketch | | 标注可被 MCP 读 |
 | ✓ | 会议 | **Zoom** | Meet, Teams | | 需转写 |

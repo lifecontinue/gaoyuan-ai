@@ -1,14 +1,22 @@
 # AI Native 组织基建体系
 
-> 目标：把「人写文档 → 人转发 → 人记事 → 人查数 → 人埋点」升级为「上下文自动流入 → Agent 可执行 → 结果可观测 → 知识可复用」的闭环，让团队以 AI 为默认协作界面。
+这套东西要解决的不是「再装一个更强的模型」，而是：上下文怎么进场、Agent 能做什么、结果能不能复查、改完业务规则有没有写回文档。
+
+对照过 crimson-app 的 `AGENTS.md` / `README` 之后，全文默认两套状态：
+
+- **现场（as-is）**：仓库里已经在约束编码 Agent、产品 Copilot 已经在跑。
+- **目标（to-be）**：组织级反馈总线、统一 Key Gateway、日历驱动的会议入库。还没被这份 codebase 证实的，不当成已上线。
+
+对照明细见 [REFLECTION.md](./REFLECTION.md)。
 
 **配套文档**
 
 | 文档 | 用途 |
 |------|------|
-| [WORKFLOWS.md](./WORKFLOWS.md) | 端到端工作流（含 Slack 反馈→Bot 评估→Linear） |
-| [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md) | Skill / MCP / Plugin 具体清单与契约 |
-| [TOOLKIT-CHECKLIST.md](./TOOLKIT-CHECKLIST.md) | **可发给其他团队直接 Copy 的工具清单** |
+| [WORKFLOWS.md](./WORKFLOWS.md) | 端到端工作流（编码交付环是现场；Slack→任务是目标） |
+| [SKILLS-MCP-PLUGINS.md](./SKILLS-MCP-PLUGINS.md) | Skill / MCP / Plugin：仓库 Skill 是现场，公司 MCP 总线是目标 |
+| [TOOLKIT-CHECKLIST.md](./TOOLKIT-CHECKLIST.md) | 给其他团队复制的工具清单 |
+| [ORG-OPERATING-CADENCE.md](./ORG-OPERATING-CADENCE.md) | 人的会议节奏怎么接工具 |
 
 ---
 
@@ -20,52 +28,57 @@
 |------|-----------|-----------|
 | 工作入口 | 人打开工具找信息 | Agent / Skill 带着上下文找你 |
 | 知识形态 | 散落的 Doc / 会议 / 聊天 | 可检索、可引用、可冲突追溯的知识层 |
-| 需求流转 | 会议 → 人工纪要 → 手动建单 | 录音/文档/反馈 → 评估 → Linear Issue |
-| 交付方式 | 人写代码为主 | 人定义约束，AI 在沙箱与 Secrets 下执行 |
+| 需求流转 | 会议 → 人工纪要 → 手动建单 | 信号进评估，再进任务系统（GitHub Issue/PR 或 Linear） |
+| 交付方式 | 人写代码为主 | 人定义约束，AI 在沙箱与 Secrets 下执行；改行为必须改知识库 |
 | 数据使用 | 人写 SQL / 找看板 | Agent 经受控语义层查询 |
 | 质量保障 | 上线后看日志 | Harness 回归 + Langfuse + Datadog + Audit |
-| 身份与密钥 | 各系统各管一套 | Auth0 统一身份 + API Key Gateway 统一密钥 |
+| 身份与密钥 | 各系统各管一套 | 人走 SSO；机器走短时凭证；密钥不进聊天和文档 |
 | 协作语言 | 口头约定 | Scenario / Role / Input / Output / Constraint / Benchmark |
 
 **核心原则**
 
-1. **Information Bus 优先**：瓶颈是组织内信息流动，不是再找一个更强的模型。
-2. **先打通高频关键路径**：先固化「反馈/会议→评估→任务→实现→观测」。
-3. **AI Feature Spec 可机器读**：每个 Agent 必须结构化。
-4. **Secrets / Endpoint / Auth 是契约**：没有进 Catalog 的能力，Agent 不可见。
-5. **可观测 + 可审计 + 可评测**：没有 Trace / Audit / Harness，生成越多债越多。
-6. **人机门禁写在默认路径上**：对外发送、发布、删改、高 PII 默认 HITL。
+1. **先通信息，再换模型。** 卡住的通常是上下文到不了现场。
+2. **先打高频路径。** 现场已经能跑的是：改代码 → 验证 → 更新 `docs/` → PR。反馈进任务系统是下一步。
+3. **给 Agent 的说明要分层。** 根目录管流程，workspace 管实现，组件目录管产品 Copilot。
+4. **没进目录的能力，默认当不存在。** 密钥、接口、权限都要有主人。
+5. **没有 Trace / 评测 / 审计，就不要扩大写权限。**
+6. **对外发送、发布、删数据、高敏感信息，默认等人点头。** 迁移、鉴权、计费同样先问工程师。
 
 ---
 
 ## 2. 总体架构（九层 + 横切）
 
-从「公司正常运转」出发，在原七层上补齐 **身份运行时、模型网关、评测 Harness、审计**：
+下面这张图是 **目标分层**。括号里标出现场已经对得上的部分。
 
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
-│ L8 体验入口   Slack Bot · Claude · Codex · Cursor · Replit · IDE │
+│ L8 入口     Cursor/Codex · 产品 Copilot 抽屉 · Claude · Slack*   │
 ├──────────────────────────────────────────────────────────────────┤
-│ L7 编排工作流  LangGraph · n8n · Calendar Triggers · Event Bus   │
+│ L7 编排     产品：Vercel AI SDK + AgentBus + GraphQL 线程        │
+│             组织：n8n / LangGraph / Calendar*（目标）             │
 ├──────────────────────────────────────────────────────────────────┤
-│ L6 模型运行时  OpenAI SDK · Claude API · LLM Gateway · Prompt Reg│
+│ L6 模型     产品流式接口；组织侧统一 SDK + Gateway*               │
 ├──────────────────────────────────────────────────────────────────┤
-│ L5 评测观测    Langfuse · Eval Harness · Datadog · Metabase      │
+│ L5 观测     Langfuse（产品 Agent 已用）· 评测门禁* · Datadog*    │
 ├──────────────────────────────────────────────────────────────────┤
-│ L4 执行交付    Codex/CI · Feature Flag · Content Publish Gate    │
+│ L4 交付     GitHub PR · pr-agent · featureSwitches · e2e         │
 ├──────────────────────────────────────────────────────────────────┤
-│ L3 数据检索    Data Lake · Algolia · Metabase · CMS              │
+│ L3 数据     PostgreSQL · Contentful · Lake/分析层*               │
 ├──────────────────────────────────────────────────────────────────┤
-│ L2 知识上下文  Zoom · Docs · Figma · Canvas · Slack · Calendar   │
+│ L2 知识     仓库 docs/ + AGENTS.md + agent_log（现场）           │
+│             会议/Slack/日历入库*（目标）                           │
 ├──────────────────────────────────────────────────────────────────┤
-│ L1 身份密钥    Auth0 · 1Password · API Key Gateway · SSO/RBAC    │
+│ L1 密钥     1Password → local.env；prod 用 AWS Secrets Manager   │
+│             统一 Key Gateway*（目标）                             │
 ├──────────────────────────────────────────────────────────────────┤
-│ L0 审计合规    Audit Log · Policy Engine · Retention · Red Team  │
+│ L0 纪律     高风险先问人 · 知识库同 PR 更新 · 审计/retention*    │
 └──────────────────────────────────────────────────────────────────┘
+  * 目标态，对照文档里未证实已落地
+
   横切：
-    GTM     Salesforce · Front · Aircall
-    People  Rippling · PandaDoc
-    EngOps  GitHub · Incident / Oncall
+    产品 Agent   学生/文档/页面上下文 · 多入口
+    GTM          Salesforce（delegate 同步存在）
+    EngOps       GitHub · Terraform · AWS SSO
 ```
 
 ```mermaid
@@ -129,27 +142,26 @@ flowchart TB
 
 ## 3. 从公司运转视角：原先遗漏与补齐
 
-对照「一家公司每天如何运转」，以下能力是 AI Native 团队常漏、但必须有的：
+对照「一家公司每天如何运转」，这些能力经常漏。下表把 **现场已经有影子的** 和 **仍是蓝图的** 分开。
 
-| 能力域 | 为何必要 | 推荐落点 | 状态 |
+| 能力域 | 为何必要 | 推荐落点 | 对照 |
 |--------|----------|----------|------|
-| **统一身份 (Auth0)** | 人、Bot、Agent、服务账号要同一套身份与 RBAC | Auth0 + Google Workspace SSO | 补齐 |
-| **API Key 统一管理** | 模型/SaaS key 分散会导致泄露与无法计费 | API Key Gateway（见下）+ 1Password | 补齐 |
-| **LLM Gateway** | 多模型路由、限流、成本、统一 OpenAI SDK 兼容 | 自建 Gateway 或 LiteLLM/Portkey 类 | 补齐 |
-| **Calendar** | 会前简报、会后同步、Cycle 节奏都靠日历事件 | Google Calendar → n8n | 补齐 |
-| **反馈闭环** | Slack 频道反馈需自动评估并进研发队列 | `#feedback` Bot → Harness → Linear | 补齐 |
-| **Eval Harness** | Prompt/Agent 变更要像测代码一样测 | 离线数据集 + 在线采样打分 | 补齐 |
-| **Audit** | 谁用了哪个 Agent、调了哪个工具、看了哪些 PII | 不可篡改审计流 → Lake / SIEM | 补齐 |
-| **Incident / Oncall** | Agent 误写、密钥泄露、模型供应商挂了要有人接 | PagerDuty/Opsgenie + Slack `#incidents` | 补齐 |
-| **CI/CD + 代码托管** | AI 写的代码必须过同样门禁 | GitHub + Actions + Required Checks | 补齐 |
-| **环境分层** | dev / staging / prod 密钥与 Flag 隔离 | Auth0 Application + Key Gateway 按 env | 补齐 |
-| **成本与预算** | Token/API 费用是 COGS | Gateway 配额 + Langfuse 成本看板 | 补齐 |
-| **数据保留与删除** | 会议/通话/工单含 PII，要有 retention | Policy + Lake lifecycle | 补齐 |
-| **服务目录 / ADR** | 避免每人发明一套集成 | Service Catalog + ADR 库 | 补齐 |
-| **安全扫描** | 依赖与密钥扫描 | Gitleaks / Dependabot / SAST | 补齐 |
-| **销售真相源 (Salesforce)** | Pipeline、账号、机会是 GTM 与产品反馈的上游 | Salesforce + 只读 MCP；赢单/丢单回流 Linear/Feedback | 补齐 |
-| **People / HRIS (Rippling)** | 入离职决定账号、权限、设备与 Agent 访问 lifecyle | Rippling → Auth0/Google/1Password 自动开通与吊销 | 补齐 |
-| **合同与文件 (PandaDoc)** | Offer、NDA、客户合同需可追踪且限制 AI 写权限 | PandaDoc；AI 只起草，发送/签署 HITL | 补齐 |
+| **编码 Agent 操作系统** | 不规定怎么交活，Agent 会乱改范围、漏文档 | 分层 `AGENTS.md` + 知识库同 PR | **现场** |
+| **业务知识库** | 改了规则却不写 docs，下次 Agent 继续猜 | `docs/business-map.md`、`domains/`、`log.md` | **现场** |
+| **产品 Copilot 运行时** | 用户侧 Agent 需要上下文、线程、观测 | Vercel AI SDK + GraphQL + Langfuse | **现场** |
+| **统一身份** | 人、Bot、服务账号不能混用一套长期密钥 | Auth0 + Google SSO；Agent 用短时 M2M | 人的 SSO **现场有**；Agent Catalog **目标** |
+| **密钥** | key 散落就无法吊销和计费 | 现场：1Password + Secrets Manager；目标：Key Gateway | 混合 |
+| **LLM Gateway** | 多模型路由、限流、成本 | LiteLLM / Portkey / 自建 | **目标** |
+| **Calendar / 会议入库** | 会前简报、会后行动不要靠人粘贴 | Calendar + 转写 → 任务系统 | **目标** |
+| **反馈进研发** | Slack 里的话要变成可跟踪工作 | Bot 评估 → GitHub 或 Linear | **目标** |
+| **Eval Harness** | 改 prompt 要能回归 | 数据集 + CI 门禁；复杂调参先跑评测 | Skill 形态 **有**；全量 CI **目标** |
+| **Audit** | 谁调了工具、碰了哪些敏感字段 | 不可删审计流 | **目标** |
+| **CI/CD** | AI 写的代码走同一套检查 | GitHub + required checks + pr-agent | **现场** |
+| **环境分层** | local / staging / prod 密钥隔离 | `local.env` + Secrets Manager 分 secret | **现场** |
+| **Feature Flag** | Agent 功能要能关 | `featureSwitches`；不必绑定某一家 Flag 产品 | **现场** |
+| **Salesforce** | GTM 数据在 CRM | `services/delegate` 同步；只读 Brief 是目标 | 同步 **现场**；Copilot **目标** |
+| **CMS** | 内容发布要人审 | Contentful；AI 只 draft | 同步 **现场**；AI 发布门禁 **目标** |
+| **People / 合同** | 入离职和 Offer 决定权限 | Rippling / PandaDoc 或等价物 | 对照文档 **未证实** |
 | **客户支持真相源** | Front/Aircall 之外要有账号/订阅上下文 | Salesforce Account + 内部 Customer 360 只读 API | 建议 |
 | **状态页 / 变更日志** | 对外与对内沟通发版 | Statuspage + Linear Releases / Changelog | 建议 |
 | **设计系统可消费** | Figma token → 代码 | Tokens pipeline | 建议 |
@@ -170,9 +182,32 @@ flowchart TB
 - Scope 与 Endpoint Catalog 的 `access_level` 对齐（`metrics:read`、`issues:write`…）。
 - Auth0 Actions 里写：禁止生产 publish scope 发给非人工确认流。
 
+### 3.1b 现场已经在跑的两套 Agent
+
+**编码 Agent（给工程师）**
+
+根 `AGENTS.md` 把交活标准写死了：改完代码、跑最小验证、业务规则变了就改 `docs/`、推分支、开 PR。默认不直提 `master`，分支用 `codex/` 前缀。高风险（迁移、鉴权、计费、共享基建）先问人。`pr-agent` 会评 PR；`agent_log/` 只记摘要，不塞聊天和密钥。
+
+Web / API 各自还有一份 `AGENTS.md`，管框架、测试命令、模块边界。产品 Copilot 还有组件级说明。
+
+**产品 Copilot（给学生顾问用）**
+
+- 框架：Vercel AI SDK（`@ai-sdk/react`），不是 LangGraph。
+- 状态：Zustand 两套 store（持久 UI + 运行时）。
+- 入口：`default_agent`、`student_onboarding`、`ssa_copilot`。
+- 上下文：学生、文档、当前页面；页面正文发送时再取，避免把敏感大段存进本地状态。
+- 接口：`POST /crimson-copilot`、`POST /student-onboarding`，流式返回。
+- 开关：`GLOBAL_AGENT`、`COPILOT_AGENT_UI`、`AGENT_DOCUMENT_GENERATION`。
+- 观测：Langfuse + 浏览器日志。
+- 页面模块和 Agent 之间用 `AgentBus` 发事件 / RPC。
+
+组织级 Slack Bot 不要和这个 Copilot 画成同一个进程。
+
 ### 3.2 API Key 统一管理（Key Gateway）
 
-问题：OpenAI / Anthropic / Algolia / Datadog… 密钥散落在 Replit、CI、个人 `.env`。
+现场做法：1Password 出库，本地写成 `local.env`；staging/prod 从 AWS Secrets Manager 拉 `crimson-app/{env}`（API 再拉 db secret）。个人覆盖用 `overrides.env`。
+
+问题仍然在：模型厂商 key 一旦进 Replit、CI、个人 `.env` 副本，就很难统一吊销和计费。
 
 **目标架构**
 
@@ -247,7 +282,9 @@ AuditEvent:
 
 ---
 
-## 4. 工具地图（完整栈）
+## 4. 工具地图
+
+L1 的 Gateway、L7 的 n8n/LangGraph 按 **目标** 采购。现场已经能指着仓库说的，写在职责列里。
 
 ### 4.1 L0–L1 治理与身份
 
@@ -269,8 +306,8 @@ AuditEvent:
 | Figma | 设计意图与约束 |
 | Google Calendar | 时间触发与会前会后上下文 |
 | Slack | 协作、`#feedback` 收集、Bot 入口 |
-| Linear | 执行状态唯一真相源 |
-| GitHub | 代码、Prompt、Harness、ADR |
+| Linear / Jira | 产品与反馈队列（目标常用 Linear；现场工程主路径是 GitHub） |
+| GitHub | 代码、PR、`AGENTS.md`、Prompt、评测、ADR |
 
 ### 4.3 L3 数据与检索
 
@@ -280,21 +317,22 @@ AuditEvent:
 | Algolia | 低延迟检索 / RAG |
 | Metabase | 语义层 SQL / 看板 |
 | Contentful | CMS |
-| Darklight | 内容/实验态 |
+| 仓库 docs/ + AGENTS.md | 给编码 Agent 的可执行知识（现场） |
+| Darklight 或 Flag | 内容/实验态；现场 Web 灰度是 `featureSwitches` |
 | Customer 360 API（建议） | 账号/订阅只读上下文 |
 
 ### 4.4 L4–L6 执行、模型、编排
 
 | 工具 | 职责 |
 |------|------|
-| Codex / Claude Coding | 编码 |
-| GitHub Actions | CI、Harness gate、密钥扫描 |
-| Feature Flag / Darklight | 灰度 |
+| Codex / Cursor / Claude Coding | 编码 Agent |
+| GitHub Actions + pr-agent | CI、PR 评语、密钥扫描 |
+| featureSwitches / Flag 产品 | 灰度；现场 Web 用 `featureSwitches` |
 | **OpenAI SDK** | 统一模型调用客户端 |
 | **LLM Gateway** | 路由、限流、计费、兼容层 |
-| LangGraph | 有状态 Agent |
-| n8n | 系统集成胶水 |
-| Replit | PM 沙箱（Secrets + Endpoint） |
+| 产品：Vercel AI SDK + AgentBus | 用户侧有状态对话与页面协同 |
+| 组织：LangGraph / n8n | 跨系统胶水（目标） |
+| Replit 或内部 Studio | PM 沙箱（可选；仓库有 SDK，不表示全员入口） |
 
 ### 4.5 L5 观测与评测
 
@@ -339,9 +377,11 @@ PandaDoc 签署完成 → 回写 SF Account 或 Rippling candidate → Audit
 
 Zoom/Calendar → 转写 → 结构化 → Slack + Linear
 
-### B. 需求 → 交付
+### B. 需求 → 交付（现场主路径）
 
-Claude Spec → Figma → Linear → Codex → CI/Harness → Flag → Datadog 验 AC
+Spec / 知识库 → GitHub 分支（`codex/`）→ 最小验证 → 更新 `docs/domains`（若改行为）→ PR → pr-agent → Flag 灰度
+
+Linear 可以当产品队列，但不要写成工程唯一真相源。
 
 ### C. 数据 → 决策
 
@@ -351,7 +391,7 @@ Lake → Metabase Gold → Bot/Agent 引用 Question ID → 写回 Docs/Linear
 
 Langfuse Trace → Bad case → Harness → 版本晋升 → 灰度
 
-### E. 反馈 → 评估 → 研发（新增主路径）
+### E. 反馈 → 评估 → 研发（目标主路径）
 
 ```text
 用户/同事在 Slack #feedback 发帖
@@ -426,12 +466,12 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 
 | Stage | 能力 |
 |-------|------|
-| 0 对齐 | 账号、频道、Linear、1Password 分库 |
-| 1 Information Bus | Zoom/Docs/Calendar → Slack/Linear；`#feedback` 人工标签 |
-| 2 受控运行时 | Auth0 M2M、Key Gateway v1、OpenAI SDK 统一、Langfuse |
-| 3 反馈自动化 | Feedback Bot + 在线评估 + 自动建 Linear |
-| 4 Harness 门禁 | PR 必过评测集；双周 Prompt Review |
-| 5 组织 OS | 统一 MCP、组织看板、onboarding=授 Skills |
+| 0 对齐 | 账号、频道、任务系统、1Password 分库 |
+| 1 编码 Agent OS | 分层 `AGENTS.md`、知识库同 PR、最小验证、`codex/` 分支 |
+| 2 产品 Copilot | 入口/上下文/Flag/Langfuse；页面用 AgentBus |
+| 3 受控模型出口 | 人机身份分开；Gateway 或至少 Secrets 分环境 |
+| 4 反馈进队列 | Slack/工单 → 评估 → GitHub 或 Linear |
+| 5 组织 OS | 会议入库、统一 MCP、onboarding=授 Skills 而不是发 20 个密码 |
 
 ---
 
@@ -485,4 +525,4 @@ Auth0 发 token → Key Gateway 放行 → 工具调用 → Audit/Langfuse → �
 
 见 [TOOLKIT-CHECKLIST.md](./TOOLKIT-CHECKLIST.md)（对外复制版）。
 
-*维护：随 Catalog、Agent、Harness、Auth0 scope 变更更新。*
+*维护：随 Catalog、Agent、评测、身份 scope 变更更新。对照笔记过期时先改 [REFLECTION.md](./REFLECTION.md)。*

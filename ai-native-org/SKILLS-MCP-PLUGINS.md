@@ -1,6 +1,8 @@
 # Skills · MCP · Plugins 目录
 
-> 目标：把「会用工具的人」变成「可调用的能力面」。Claude / Codex / Cursor / Slack Bot / LangGraph **共用同一套 MCP**；Skill 是给模型的操作手册；Plugin 是各宿主里的安装单元。
+> 目标：把「会用工具的人」变成「可调用的能力面」。
+>
+> 对照现场：仓库里的 Skill 是给 Cursor/Codex 的操作手册（例如 `.agents/skills/application-review`）。公司级「所有宿主共用同一套 MCP」是目标，不要写成已经装好。
 
 ---
 
@@ -12,7 +14,9 @@
 | **Skill** | 面向某类任务的步骤、约束与何时调用哪些 MCP | `skill-feedback-triage` |
 | **Plugin** | 在宿主中的打包安装形态 | Cursor Plugin、Slack App、Claude Project Connector、浏览器插件 |
 | **Agent** | 绑定若干 Skill + MCP + 模型 + 权限的运行实体 | `feedback-eval-bot` |
-| **Harness** | 对 Agent/Skill 的自动化评测支架 | `harness-feedback-classifier` |
+| **Harness** | 对 Agent/Skill 的评测支架 | 复杂调参走评测；目标是 CI 门禁 |
+
+现场补充：产品 Copilot 的「工具」是服务端 tool invocation + GraphQL，不是 Slack MCP。编码 Agent 的「工具」是仓库规则 + 各人已装的 MCP。
 
 ```text
 Plugin（安装到 Cursor/Slack/Claude）
@@ -24,9 +28,11 @@ Plugin（安装到 Cursor/Slack/Claude）
 
 ---
 
-## 1. MCP Server 清单（建议开源内部实现）
+## 1. MCP Server 清单（目标：内部实现）
 
-每个 MCP 均经 **API Key Gateway**；写操作默认要求 HITL scope。
+下列工具名是蓝图。落地时按职责对接现有系统即可：工程用 GitHub，任务队列可以是 Linear 或 Jira。
+
+每个 MCP 若经过 **API Key Gateway**，写操作默认要求人确认。
 
 ### 1.1 `mcp-auth`（内部，不直接给业务 Agent）
 
@@ -213,6 +219,30 @@ Plugin（安装到 Cursor/Slack/Claude）
 ---
 
 ## 2. Skill 清单（具体内容可直接复制为 SKILL.md）
+
+### Skill：`repo-delivery`（现场，给编码 Agent）
+
+```yaml
+name: repo-delivery
+description: 按仓库 AGENTS.md 交活：单 workspace、最小验证、知识库同 PR、codex 分支
+when_to_use:
+  - 在 crimson-app 或同类 monorepo 改代码
+mcp:
+  - mcp-github
+steps:
+  - 读最近的 AGENTS.md，不要扫全库
+  - 只改任务所需 workspace
+  - 跑该包最小 lint/test
+  - 业务规则变了就改 docs/domains 并追加 docs/log.md
+  - 高风险先停下来问人
+  - PR 写明 Validation 与 Knowledge-Base 判断
+constraints:
+  - 不直提 master
+  - 不把聊天记录和密钥写入 agent_log
+  - 无关本地改动不要还原
+```
+
+---
 
 ### Skill：`feedback-triage`
 
@@ -458,10 +488,10 @@ mcp: [mcp-github, mcp-harness, mcp-datadog]
 | `sales-copilot` | sales-opportunity-brief | read:sf + slack | Slack / Calendar |
 | `people-provisioner` | people-lifecycle-sync | identity write | n8n worker |
 | `doc-copilot` | pandadoc-draft | draft:pandadoc | People/Sales HITL |
-| `coding-copilot` | spec-authoring, pr-ai-review | read+github comment | Cursor/Codex |
+| `coding-copilot` | spec-authoring, pr-ai-review, **repo-delivery** | read+github | Cursor/Codex |
 | `release-copilot` | agent-release | harness+langfuse | CI / Slack |
 
-全部走：**Auth0 M2M → Gateway → MCP → Audit/Langfuse**。
+产品 Copilot 走现有流式接口 + Langfuse。编码 Agent 走仓库规则 + GitHub。组织 Bot 的目标路径才是：Auth0 M2M → Gateway → MCP → Audit/Langfuse。
 
 ---
 

@@ -1,6 +1,10 @@
 # AI Native 工作流说明书
 
-本文描述组织内**默认信息如何流转**。所有流程默认写 Audit +（若涉及 LLM）Langfuse Trace。
+默认：涉及模型的步骤写 Langfuse；涉及写操作的步骤写审计。
+
+任务系统在目标蓝图里常用 Linear。对照 crimson-app 时，**工程主路径是 GitHub PR**（`codex/` 分支、知识库同 PR、`pr-agent`）。下面把现场能跑的编码交付写成 WF-00，其余流程标成目标。
+
+所有流程默认写 Audit +（若涉及 LLM）Langfuse Trace。
 
 ---
 
@@ -9,21 +13,45 @@
 ```text
 信号源                         处理                         真相源/出口
 ────────                       ────                         ──────────
-Slack #feedback          →  Eval Bot + Harness     →  Linear + 线程回复
-Zoom / Calendar 会议     →  n8n + 结构化 Agent     →  Slack AI + Linear
-Google Docs / Figma      →  变更 Webhook           →  知识索引 + 相关 Issue
-Front / Aircall          →  摘要 Agent             →  Linear / FAQ / Salesforce
-Salesforce 机会/通话纪要  →  GTM Copilot            →  Brief / 风险 Issue / #feedback
-Rippling 入离职           →  Identity Provisioner   →  Auth0 / Google / Gateway 吊销
-PandaDoc 草稿/签署        →  Doc Copilot（HITL）    →  SF / Rippling 回写
-Datadog 告警             →  路由规则               →  #incidents + Oncall
-Harness 失败（CI）       →  门禁                   →  阻断合并 / 开 Linear
-Calendar Cycle 边界      →  定时 Bot               →  进度摘要 + 风险 Issue
+工程师任务（现场）         →  AGENTS.md 纪律          →  GitHub PR + docs/
+产品 Copilot（现场）       →  Vercel AI SDK 流式      →  GraphQL 线程 / Langfuse
+Slack #feedback*           →  Eval Bot + 评测          →  Linear 或 GitHub + 线程回复
+Zoom / Calendar 会议*      →  编排 + 结构化 Agent      →  Slack + 任务系统
+Google Docs / Figma*       →  变更 Webhook             →  知识索引 + 相关 Issue
+Front / Aircall*           →  摘要 Agent               →  任务 / FAQ / Salesforce
+Salesforce 机会*           →  GTM Copilot              →  Brief / 风险 Issue
+Rippling 入离职*           →  Identity Provisioner     →  SSO / 密钥吊销
+PandaDoc 草稿/签署*        →  Doc Copilot（人审）      →  SF / HRIS 回写
+Datadog 告警*              →  路由规则                 →  #incidents + Oncall
+评测失败（CI）*            →  门禁                     →  阻断合并 / 开 Issue
+Calendar Cycle 边界*       →  定时 Bot                 →  进度摘要 + 风险 Issue
+
+* 目标态，除非另标现场
 ```
 
 ---
 
-## WF-01 反馈闭环（核心）：Slack → Bot 评估 → Linear
+## WF-00 编码 Agent 交付（现场）
+
+```text
+接到需求
+  → 只改相关 workspace（web / api / 其他包）
+  → 实现
+  → 跑该 workspace 最小验证
+  → 若改了业务规则：更新 docs/domains，并在 docs/log.md 留一条
+  → git：codex/ 前缀分支，conventional commit，不直提 master
+  → push + 开 PR（Summary / Validation / Knowledge-Base / Risks）
+  → 看 pr-agent；明确问题就改，吃不准就标给人确认
+  → 推过的工作写一份 agent_log（无聊天原文、无密钥）
+```
+
+高风险（数据库迁移、鉴权、计费、部署脚本）停下来问人。E2E 该跑没跑，要在总结里写明。
+
+这是目前最像「组织 OS」的一条路径。WF-01 是把它扩到反馈和销售信号的蓝图。
+
+---
+
+## WF-01 反馈闭环（目标）：Slack → Bot 评估 → 任务系统
 
 ### 适用频道
 
