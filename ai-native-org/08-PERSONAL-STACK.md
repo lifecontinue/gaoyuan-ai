@@ -45,41 +45,31 @@
 
 ---
 
-## 连接状态（本机刚查过）
+## 连接状态（持续更新）
 
 | 项 | 状态 |
 |----|------|
-| Git | 已安装 |
-| Node | 已安装（v24） |
-| Vercel CLI | 已安装，账号 **lifecontinue** 已登录 |
-| GitHub CLI (`gh`) | **未登录** → 需要你在本机跑一次登录 |
-| Supabase CLI | 可用（npx）；**项目登录/选项目**还要做一步 |
+| Cursor / Git / Node | OK |
+| Vercel CLI | 已登录 **lifecontinue** |
+| GitHub CLI (`gh`) | 已登录 **lifecontinue**（keyring） |
+| Supabase CLI | 已登录 |
+| 选用项目 | **lifecontinue's Project** · ref `ghlbpxlyclmgsawfjhqt` |
+| `supabase link` | ⏳ 项目曾为 **paused**，需 Dashboard Restore 后再 link |
+| 本地脚手架 | 仓库内 `personal-lab/`（含 `.env.example`） |
 
-下面按顺序帮你连。
+恢复项目：https://supabase.com/dashboard/project/ghlbpxlyclmgsawfjhqt  
+
+恢复后在 `personal-lab` 执行：
+
+```powershell
+npx supabase link --project-ref ghlbpxlyclmgsawfjhqt --yes
+```
 
 ---
 
-## Step 1 — GitHub（必做，需你点一下浏览器）
+## Step 1 — GitHub（已完成）
 
-在 **本机终端**执行（会打开浏览器）：
-
-```bash
-gh auth login
-```
-
-建议选项：
-
-- GitHub.com  
-- HTTPS  
-- Login with a web browser  
-
-登录成功后告诉我，或自己跑：
-
-```bash
-gh auth status
-```
-
-有了 GitHub，Vercel 才能「跟仓库自动发版」。你的公开仓示例：https://github.com/lifecontinue/gaoyuan-ai
+账号 `lifecontinue`，HTTPS，凭证在 keyring。日常：`git push` 即可触发后续 Vercel（若已 Import 仓库）。
 
 ---
 
@@ -91,46 +81,37 @@ gh auth status
 
 1. 打开 https://vercel.com/new  
 2. Import 你的 GitHub 仓库  
-3. Root Directory 指到具体应用目录（例如品牌站或某个 app 子目录）  
+3. Root Directory 指到具体应用目录（例如 `personal-lab` 或品牌站子目录）  
 4. Deploy → 得到 `https://xxx.vercel.app`
 
-**B. CLI（在项目根目录）**
+**B. CLI**
 
 ```bash
-cd <你的应用目录>
-npx vercel login   # 若未登录
-npx vercel         # 预览
-npx vercel --prod  # 生产
+cd personal-lab   # 或你的应用目录
+npx vercel
+npx vercel --prod
 ```
 
 之后：`git push` → Vercel 自动构建 → 链接可分享。
 
 ---
 
-## Step 3 — Supabase
+## Step 3 — Supabase（选用 lifecontinue's Project）
 
-1. 打开 https://supabase.com/dashboard → New project  
-2. 记下：
-   - Project URL  
-   - `anon` public key（前端可用）  
-   - `service_role` key（**只放服务端 / Vercel 私密变量，绝不进前端**）  
-3. 本机登录 CLI（浏览器）：
+1. 确认项目已 **Restore**（非 paused）：https://supabase.com/dashboard/project/ghlbpxlyclmgsawfjhqt  
+2. Settings → API：复制 URL、`anon` public、`service_role`（仅服务端）  
+3. 本机：
 
 ```bash
-npx supabase login
-npx supabase link --project-ref <你的-project-ref>
+cd personal-lab
+npx supabase link --project-ref ghlbpxlyclmgsawfjhqt --yes
+copy .env.example .env.local
+# 编辑 .env.local 填入 anon / service_role
 ```
 
-4. 本地环境文件（**不要 commit**）`.env.local`：
+4. 同一组变量加到 Vercel Environment Variables（Production + Preview）。
 
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-# 仅服务端：
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-```
-
-5. 同一组变量加到 Vercel → Project → Settings → Environment Variables（Production + Preview）。
+脚手架说明见仓库 [`personal-lab/README.md`](../personal-lab/README.md)。
 
 ---
 
