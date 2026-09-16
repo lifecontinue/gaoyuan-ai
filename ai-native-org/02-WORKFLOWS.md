@@ -148,6 +148,8 @@ Claude（+ Canvas）产出 AI Feature Spec / PRD
 
 Spec 最小章节：problem、users、scenario、ac[]、out_of_scope、metrics、agent_requirements（要否新 Endpoint / 新工具）。
 
+**PM 自动化加速路径**（收集 → 分析 → vibe prototype → Plan → PR → 简单需求 auto-merge/部署 → 每日 `#shipped`）：见 [07-PM-VIBE-PIPELINE.md](./07-PM-VIBE-PIPELINE.md)。与本 WF 并存——M/L 与高风险仍进 Weekly 评审与 Eng Review。
+
 ---
 
 ## WF-04 数据洞察：提问 → Metabase Gold → 结论

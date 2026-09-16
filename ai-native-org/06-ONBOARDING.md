@@ -101,6 +101,8 @@
 4. 通过后进 Cycle；需要试接口 → Replit + Catalog 只读。  
 5. 用 Metabase Question 定成功指标，写进 Spec。
 
+端到端「需求 → vibe coding → Plan → PR → 简单自动上线 → `#shipped`」及资源目录（数据/Schema/API/Design System/Magic Prompt/前后端约定）：见 [07-PM-VIBE-PIPELINE.md](./07-PM-VIBE-PIPELINE.md)。
+
 ### 3.5 PM / EM：双周与 Stakeholder
 
 1. 会前读自动双周报（Linear+Metabase+Langfuse+Datadog）。  
