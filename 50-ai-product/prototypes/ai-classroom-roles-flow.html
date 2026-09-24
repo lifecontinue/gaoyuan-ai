@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI课堂角色 · 完整流程原型</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body { overflow: hidden; background: #f2f3f5; }
+
+    .proto-view { display: none; height: 100%; }
+    .proto-view.is-active { display: flex; flex-direction: column; }
+    #view-settings.is-active { display: block; height: 100%; overflow: hidden; }
+    #view-learning.is-active { display: block; height: 100%; overflow: hidden; }
+    #view-settings .layout { height: 100%; }
+    #view-learning .course-learning { height: 100%; }
+    .proto-back-settings {
+      position: fixed; top: 12px; left: 12px; z-index: 10050;
+      height: 32px; padding: 0 12px; border-radius: 16px;
+      background: rgba(255,255,255,.95); border: 1px solid #e5e6eb;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      font-size: 13px; color: #0152d9; cursor: pointer;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .proto-back-settings:hover { background: #e8f0fe; }
+    
+/* ===== settings ===== */
+#view-settings{
+      --primary: #0152D9;
+      --primary-soft: #e8f0fe;
+      --text: #1f2329;
+      --text-2: #646a73;
+      --text-3: #8f959e;
+      --border: #e5e6eb;
+      --bg: #f2f3f5;
+      --sidebar: #1a2332;
+      --font: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }#view-settings *{ box-sizing: border-box; margin: 0; padding: 0; }#view-settings, #view-settings{ height: 100%; }#view-settings{
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow: hidden;
+    }#view-settings button, #view-settings input, #view-settings select, #view-settings textarea{ font-family: inherit; font-size: inherit; }#view-settings button{ cursor: pointer; border: none; background: none; }#view-settings .layout{ display: flex; height: 100vh; }#view-settings .icon-sidebar{
+      width: 64px; background: var(--sidebar); color: rgba(255,255,255,.75);
+      display: flex; flex-direction: column; align-items: center; padding-top: 8px; flex-shrink: 0;
+    }#view-settings .icon-side-item{
+      width: 56px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      font-size: 10px; color: rgba(255,255,255,.7);
+    }#view-settings .icon-side-item.active{ color: #fff; background: rgba(1,82,217,.35); }#view-settings .icon-side-item svg{ width: 18px; height: 18px; }#view-settings .main-col{ flex: 1; min-width: 0; display: flex; flex-direction: column; background: #fff; }#view-settings .topbar{
+      height: 48px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 8px; flex-shrink: 0;
+    }#view-settings .tabs-top{ display: flex; gap: 4px; }#view-settings .tab-chip{
+      height: 32px; padding: 0 12px; background: var(--primary-soft); color: var(--primary);
+      border-radius: 4px 4px 0 0; font-size: 13px; display: inline-flex; align-items: center;
+    }#view-settings .top-right{ display: flex; align-items: center; gap: 16px; color: var(--text-2); font-size: 13px; }#view-settings .search-pill{
+      height: 28px; width: 160px; border: 1px solid var(--border); border-radius: 14px;
+      padding: 0 10px; display: flex; align-items: center; color: var(--text-3); font-size: 12px; background: #fafafa;
+    }#view-settings .avatar{
+      width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;
+    }#view-settings .body-row{ flex: 1; min-height: 0; display: flex; background: var(--bg); }#view-settings .app-nav{
+      width: 180px; background: #fff; border-right: 1px solid var(--border); padding: 12px 8px; flex-shrink: 0;
+    }#view-settings .app-nav-title{ font-size: 12px; color: var(--text-3); padding: 4px 10px 8px; }#view-settings .nav-item{
+      display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: 4px;
+      color: var(--text); font-size: 13px; margin-bottom: 2px;
+    }#view-settings .nav-item:hover{ background: #f5f6f8; }#view-settings .nav-item.active{ background: var(--primary-soft); color: var(--primary); font-weight: 500; }#view-settings .content-wrap{
+      flex: 1; min-width: 0; display: flex; flex-direction: column; background: #fff; margin: 12px;
+      border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,.04); overflow: hidden;
+    }#view-settings .inner-tabs{
+      display: flex; gap: 24px; padding: 0 24px; border-bottom: 1px solid var(--border); height: 44px; align-items: stretch;
+    }#view-settings .inner-tab{
+      display: inline-flex; align-items: center; color: var(--text-2); font-size: 14px;
+      border-bottom: 2px solid transparent; padding: 0 2px;
+    }#view-settings .inner-tab.active{ color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }#view-settings .panel-scroll{ flex: 1; overflow: auto; padding: 20px 24px 80px; }#view-settings .section{ padding: 4px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }#view-settings .section:last-of-type{ border-bottom: none; }#view-settings .section-title{ font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 14px; }#view-settings .section-desc{ font-size: 12px; color: var(--text-3); margin: -6px 0 14px; line-height: 1.6; }#view-settings .check-row{ display: flex; gap: 8px; align-items: flex-start; margin-bottom: 12px; }#view-settings .check-row.indent{ margin-left: 24px; }#view-settings .check{
+      width: 16px; height: 16px; border: 1px solid #c9cdd4; border-radius: 2px; margin-top: 2px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; background: #fff;
+    }#view-settings .check.on{ background: var(--primary); border-color: var(--primary); }#view-settings .check.on::after{ content: ""; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }#view-settings .check-label{ font-size: 14px; color: var(--text); }#view-settings .check-hint{ font-size: 12px; color: var(--text-3); margin-top: 4px; line-height: 1.55; }#view-settings .switch-row{ display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }#view-settings .switch{
+      width: 40px; height: 22px; border-radius: 11px; background: #c9cdd4; position: relative; flex-shrink: 0;
+      transition: background .15s;
+    }#view-settings .switch.on{ background: var(--primary); }#view-settings .switch::after{
+      content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff;
+      top: 2px; left: 2px; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.15);
+    }#view-settings .switch.on::after{ left: 20px; }#view-settings .mode-row{ display: flex; gap: 16px; margin: 12px 0 16px; flex-wrap: wrap; }#view-settings .radio-opt{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      flex: 1;
+      min-width: 240px;
+      max-width: 400px;
+      padding: 14px 16px;
+      text-align: left;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f7f9fc;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+    }#view-settings .radio-opt:hover{
+      border-color: #b3cfff;
+      background: var(--primary-soft);
+    }#view-settings .radio-opt.selected{
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 1px var(--primary);
+    }#view-settings .radio{
+      width: 16px; height: 16px; border-radius: 50%; border: 1px solid #c9cdd4; margin-top: 2px; flex-shrink: 0; background: #fff;
+    }#view-settings .radio-opt.selected .radio{ border: 5px solid var(--primary); }#view-settings .radio-title{ font-size: 14px; font-weight: 600; color: var(--text); }#view-settings .radio-hint{ font-size: 12px; color: var(--text-2); margin-top: 4px; line-height: 1.55; }#view-settings .role-grid{
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 8px;
+    }#view-settings .role-card{
+      border: 1px solid var(--border); border-radius: 6px; padding: 12px; text-align: left; background: #fff;
+      position: relative; transition: border-color .15s, box-shadow .15s;
+    }#view-settings .role-card:hover{ border-color: #b3cfff; }#view-settings .role-card.selected{ border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }#view-settings .role-card .pick{
+      position: absolute; top: 10px; right: 10px; width: 16px; height: 16px; border: 1px solid #c9cdd4; border-radius: 2px;
+    }#view-settings .role-card.selected .pick{ background: var(--primary); border-color: var(--primary); }#view-settings .role-card.selected .pick::after{
+      content: ""; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+      transform: rotate(-45deg); margin: 3px 0 0 3px;
+    }#view-settings .role-head{ display: flex; gap: 10px; align-items: center; margin-bottom: 8px; padding-right: 22px; }#view-settings .role-avatar-wrap{
+      position: relative; width: 40px; height: 40px; flex-shrink: 0;
+    }#view-settings .role-avatar{
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 600; font-size: 14px;
+      position: relative; overflow: hidden; cursor: pointer; border: none; padding: 0;
+    }#view-settings .role-avatar img{ width: 100%; height: 100%; object-fit: cover; display: block; }#view-settings .role-avatar .avatar-mask{
+      position: absolute; inset: 0; background: rgba(0,0,0,.4); color: #fff;
+      font-size: 10px; opacity: 0; display: flex; align-items: center; justify-content: center;
+      transition: opacity .15s;
+    }#view-settings .role-avatar:hover .avatar-mask{ opacity: 1; }#view-settings .avatar-edit-badge{
+      position: absolute; right: -2px; bottom: -2px; width: 18px; height: 18px;
+      border-radius: 50%; background: #fff; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,.08); pointer-events: none; z-index: 1;
+    }#view-settings .avatar-edit-badge svg{ width: 11px; height: 11px; }#view-settings .role-card.locked .pick{
+      background: var(--primary); border-color: var(--primary); opacity: .85; cursor: not-allowed;
+    }#view-settings .role-card.locked .pick::after{
+      content: ""; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+      transform: rotate(-45deg); margin: 3px 0 0 3px;
+    }#view-settings .role-card.locked{ cursor: default; }#view-settings .locked-tag{
+      margin-left: 6px; font-size: 11px; color: var(--primary); font-weight: 400; flex-shrink: 0;
+    }#view-settings .role-name-row{
+      display: flex; align-items: center; gap: 4px; margin-bottom: 2px;
+    }#view-settings .role-name-input{
+      width: 100%; max-width: 148px; height: 28px; padding: 0 8px;
+      border: 1px solid var(--border); border-radius: 4px;
+      font-size: 14px; font-weight: 600; color: var(--text); background: #fff;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }#view-settings .role-name-input:hover{ border-color: #b3cfff; }#view-settings .role-name-input:focus{
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(1,82,217,.12);
+    }#view-settings .role-type{
+      display: inline-block; margin-top: 2px; font-size: 11px; padding: 1px 6px; border-radius: 2px;
+      background: #f2f3f5; color: var(--text-2);
+    }#view-settings .role-type.assistant{ background: #e8ffea; color: #00b42a; }#view-settings .role-type.student{ background: #fff7e8; color: #ff7d00; }#view-settings .role-type.teacher{ background: #e8f0fe; color: var(--primary); }#view-settings .role-prompt-wrap{
+      margin-bottom: 8px;
+    }#view-settings .role-prompt-toolbar{
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      margin-bottom: 4px;
+    }#view-settings .role-prompt-label{
+      font-size: 11px; color: var(--text-3); line-height: 16px;
+    }#view-settings .btn-gen-prompt{
+      flex-shrink: 0; height: 24px; padding: 0 4px; gap: 6px;
+      border: none; border-radius: 4px;
+      background: transparent; color: var(--bj-text, #1f1f1f);
+      font-size: 14px; line-height: 22px; font-weight: 500; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      white-space: nowrap;
+    }#view-settings .btn-gen-prompt img{
+      display: block; width: 16px; height: 16px; flex-shrink: 0;
+    }#view-settings .btn-gen-prompt:hover{
+      color: var(--bj-primary, #1677ff);
+      background: #f5f5f5;
+    }#view-settings .btn-gen-prompt:disabled{
+      opacity: .55; cursor: not-allowed;
+    }#view-settings .btn-gen-prompt.is-loading{ color: var(--bj-text-muted, #8c8c8c); }#view-settings .role-prompt{
+      display: block; width: 100%; box-sizing: border-box;
+      font-family: inherit; font-size: 12px; color: var(--text-2); line-height: 1.5;
+      min-height: 72px; max-height: 180px; margin-bottom: 0; padding: 6px 8px;
+      border: 1px solid var(--border); border-radius: 4px; background: #fff;
+      resize: vertical; outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }#view-settings .role-prompt:hover{ border-color: #b3cfff; }#view-settings .role-prompt:focus{
+      border-color: var(--primary); box-shadow: 0 0 0 2px rgba(1,82,217,.12); color: var(--text);
+    }#view-settings .role-prompt.is-default{
+      border-style: dashed;
+    }#view-settings .role-voice{ font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }#view-settings .role-voice select{
+      height: 28px; border: 1px solid var(--border); border-radius: 4px; padding: 0 8px; color: var(--text); background: #fff;
+      max-width: 140px;
+    }#view-settings .auto-hint{
+      padding: 12px 14px; background: #f7f8fa; border-radius: 6px; font-size: 12px; color: var(--text-2); line-height: 1.6;
+    }#view-settings .sub-title{ font-size: 14px; font-weight: 500; margin: 8px 0 10px; }#view-settings .remain{ font-size: 13px; color: var(--text-2); margin-bottom: 10px; }#view-settings table{ width: 100%; border-collapse: collapse; font-size: 13px; }#view-settings th, #view-settings td{ border: 1px solid var(--border); padding: 10px 12px; text-align: left; }#view-settings th{ background: #f7f8fa; color: var(--text-2); font-weight: 500; }#view-settings .footer-bar{
+      position: absolute; right: 36px; bottom: 28px;
+    }#view-settings .content-wrap{ position: relative; }#view-settings .btn-confirm{
+      height: 32px; padding: 0 20px; background: var(--primary); color: #fff; border-radius: 4px; font-size: 14px;
+    }#view-settings .btn-confirm:hover{ filter: brightness(.95); }#view-settings .roles-block[hidden], #view-settings .auto-block[hidden]{ display: none !important; }#view-settings .disabled-overlay{ opacity: .45; pointer-events: none; }
+  
+/* ===== learning ===== */
+#view-learning{
+      --primary: #0152d9;
+      --font: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }#view-learning *{ box-sizing: border-box; margin: 0; padding: 0; }#view-learning, #view-learning{ height: 100%; }#view-learning{
+      font-family: var(--font);
+      color: rgba(0,0,0,.85);
+      background: #f5f5f5;
+      overflow: hidden;
+    }#view-learning button{ font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }#view-learning .course-learning{
+      height: 100%;
+      background: url("apaas-bg.png") no-repeat 50% / cover;
+      display: flex;
+      flex-direction: column;
+    }#view-learning /* —— header（对齐线上 course-header / data-v-5b5c106e） —— */
+    .course-header{
+      height: 72px;
+      display: flex;
+      align-items: center;
+      padding: 8px 28px;
+      background: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 1px 0 rgba(0,0,0,.04);
+    }#view-learning .course-header-left{ flex: 1; min-width: 0; }#view-learning .course-title{ display: flex; align-items: center; }#view-learning .course-title .title{
+      font-size: 20px; font-weight: 600; line-height: 28px; color: #000;
+      white-space: nowrap; max-width: 548px; overflow: hidden; text-overflow: ellipsis;
+    }#view-learning .course-title .steps{
+      display: flex; align-items: center; margin-left: 20px;
+      padding: 4px 12px; border-radius: 374px;
+      background: linear-gradient(180deg, rgba(79,138,255,.1), rgba(79,138,255,0));
+      font-size: 14px; color: rgba(0,0,0,.65); line-height: 22px;
+    }#view-learning .steps-item{ display: flex; align-items: center; margin-right: 8px; }#view-learning .steps-item:last-child{ margin-right: 0; }#view-learning .steps-item-icon{
+      width: 16px; height: 16px; border-radius: 50%;
+      font-size: 12px; line-height: 16px; text-align: center;
+      color: #fff; background: #d9d9d9; margin-right: 6px; flex-shrink: 0;
+    }#view-learning .steps-item.is-learning .steps-item-icon{
+      background: linear-gradient(180deg, #0152d9, #92d1ff);
+    }#view-learning .steps-item.is-learning .steps-item-label{ color: #0152d9; }#view-learning .steps-item-line{
+      width: 24px; height: 1px; background: #d9d9d9; margin: 0 8px 0 0;
+    }#view-learning .steps-item:last-child .steps-item-line{ display: none; }#view-learning .course-infos{
+      margin-top: 4px; display: flex; align-items: center;
+      font-size: 14px; line-height: 22px; color: rgba(0,0,0,.45);
+    }#view-learning .course-info{ display: flex; align-items: center; margin-right: 24px; }#view-learning .course-info .label{ margin-right: 4px; }#view-learning .course-info .value{ color: rgba(0,0,0,.65); }#view-learning .course-info .progress{
+      width: 60px; height: 6px; border-radius: 3px; background: #f0f0f0;
+      overflow: hidden; margin: 0 4px 0 0; display: inline-block; vertical-align: middle;
+    }#view-learning .course-info .progress > i{ display: block; height: 100%; width: 0; background: var(--primary); }#view-learning .course-info .progress-value{ margin-left: 4px; color: rgba(0,0,0,.85); }#view-learning .course-header-right{
+      display: flex; align-items: center; flex-shrink: 0; margin-left: 16px;
+    }#view-learning .ai-assistant{
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 14px; color: rgba(0,0,0,.65); cursor: pointer;
+    }#view-learning .ai-assistant .bot{
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(145deg, #4da3ff, #0152d9);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(1,82,217,.25);
+    }#view-learning .ai-assistant .bot svg{ width: 16px; height: 16px; color: #fff; }#view-learning /* —— main —— */
+    .course-learning-main{
+      flex: 1; min-height: 0; overflow-y: auto; padding: 8px 0 24px;
+    }#view-learning .course-learning-main-course{
+      max-width: 1660px; min-width: 1100px; padding: 0 32px; margin: 12px auto 0;
+    }#view-learning .course-learning-main-course-container{
+      border-radius: 8px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }#view-learning /* play row */
+    .course-play-container{
+      display: flex; width: 100%; background: #fff; height: 560px;
+    }#view-learning .player-container{
+      position: relative; flex: 1; min-width: 600px; height: 100%;
+      background: #0f0f1e; overflow: hidden;
+    }#view-learning .player-stage{
+      height: calc(100% - 44px);
+      display: flex; align-items: center; justify-content: center;
+      background: #111;
+      color: rgba(255,255,255,.55); font-size: 14px;
+    }#view-learning .player-stage .play-circle{
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+    }#view-learning .player-stage .play-circle svg{ width: 28px; height: 28px; color: #fff; margin-left: 3px; }#view-learning .player-stage-inner{ text-align: center; }#view-learning .player-area-info{
+      height: 44px; display: flex; justify-content: space-between; align-items: center;
+      background: #fff; padding: 0 12px; color: rgba(0,0,0,.45); font-size: 14px;
+      border-top: 1px solid #f0f0f0;
+    }#view-learning .player-area-info-left{ display: flex; align-items: center; gap: 8px; }#view-learning .player-area-info-item{
+      display: flex; align-items: center; padding: 0 16px; height: 28px;
+      border-radius: 14px; background: #f5f5f5; color: rgba(0,0,0,.45);
+    }#view-learning .player-area-info-right{ display: flex; align-items: center; gap: 12px; }#view-learning .btn-finish{
+      height: 32px; padding: 0 16px; border-radius: 8px;
+      background: var(--primary); color: #fff; font-size: 14px;
+    }#view-learning /* right catalog */
+    .rightList-container{
+      width: 460px; position: relative; background: #fff;
+      border-left: 1px solid #f0f0f0; display: flex; flex-direction: column;
+    }#view-learning .tabs-header-row{
+      display: flex; align-items: center; height: 46px;
+      border-bottom: 1px solid #f0f0f0; padding-right: 8px;
+    }#view-learning .side-tabs{ display: flex; flex: 1; height: 100%; }#view-learning .side-tab{
+      padding: 0 20px; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 14px; color: rgba(0,0,0,.65);
+    }#view-learning .side-tab.active{ color: var(--primary); font-weight: 500; }#view-learning .side-tab .bar{
+      width: 16px; height: 3px; border-radius: 8px; margin-top: 6px; background: transparent;
+    }#view-learning .side-tab.active .bar{ background: var(--primary); }#view-learning .ai-qa-btn{
+      margin-left: auto; margin-right: 12px; padding: 0 12px; height: 32px;
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; border: 1px solid #dbeafe;
+      background: rgba(239,246,255,.8); color: #2563eb; font-size: 14px; font-weight: 500;
+    }#view-learning .ai-qa-btn.is-open, #view-learning .ai-assistant.is-open{ color: #0152d9; }#view-learning /* —— AI 助手 side panel（对齐线上 ai-even + tbc-ai-kit 截图） —— */
+    .tbc-sider-window-root{
+      display: none;
+      position: fixed; top: 0; right: 0; bottom: 0; width: 464px;
+      z-index: 2147483649; background: #fff;
+      border: 1px solid #e5e8eb; border-right: none;
+      box-shadow: 0 8px 16px #919eab29;
+      flex-direction: column; overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px; font-weight: 400; color: #212b36; line-height: normal;
+    }#view-learning .tbc-sider-window-root.is-open{ display: flex; }#view-learning .tbc-ai-kit-container{
+      display: flex; flex-direction: column; height: 100%; width: 100%;
+      background: #fff;
+    }#view-learning .__sider-window-header{
+      display: flex; align-items: center; justify-content: space-between;
+      height: 50px; min-height: 50px; max-height: 50px;
+      padding: 0 12px 0 16px; user-select: none;
+      border-bottom: 1px solid #f0f0f0; background: #fff; width: 100%;
+    }#view-learning .__header-title{
+      display: flex; align-items: center; flex-direction: row; gap: 8px;
+      font-size: 16px; font-weight: 500; color: var(--bj-text, #1f1f1f);
+      text-decoration: none; width: auto; min-width: 0;
+    }#view-learning .__header-title-img{
+      width: 22px; height: 22px; margin-right: 0; border-radius: 0;
+      background: transparent;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+      overflow: hidden;
+    }#view-learning .__header-title-img img,
+    #view-learning .__header-title-img svg{
+      display: block; width: 22px; height: 22px;
+    }#view-learning .__tbc-ai-session-robot-name{
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: 16px; line-height: 24px; font-weight: 500; color: var(--bj-text, #1f1f1f);
+    }#view-learning .__header-btn-group{
+      display: flex; align-items: center; height: 100%; margin-left: auto; flex-shrink: 0;
+    }#view-learning .__header-btn-rtr{
+      align-items: center; background: rgba(56,114,224,.06); border-radius: 4px;
+      color: #3872e0; cursor: pointer; display: flex;
+      font-size: 14px; font-weight: 500; letter-spacing: 0;
+      margin-right: 8px; padding: 6px 12px; white-space: nowrap;
+    }#view-learning .__header-btn-rtr:hover{ background: rgba(56,114,224,.1); }#view-learning .__header-style-wrap{ position: relative; margin-right: 8px; }#view-learning .__header-btn-style{
+      align-items: center; background: #fff; border: 1px solid #e5e8eb; border-radius: 4px;
+      color: #595959; cursor: pointer; display: inline-flex; gap: 4px;
+      font-size: 12px; font-weight: 500; height: 28px; padding: 0 10px; white-space: nowrap;
+    }#view-learning .__header-btn-style:hover{ border-color: #91b4f5; color: #3872e0; }#view-learning .__header-btn-style[aria-expanded="true"]{ border-color: #3872e0; color: #3872e0; background: rgba(56,114,224,.06); }#view-learning .ai-style-menu{
+      display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 20;
+      min-width: 220px; padding: 6px; background: #fff; border: 1px solid #e5e8eb;
+      border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }#view-learning .ai-style-menu.is-open{ display: block; }#view-learning .ai-style-option{
+      display: block; width: 100%; text-align: left; padding: 8px 10px; border-radius: 6px;
+      font-size: 12px; line-height: 18px; color: #262626;
+    }#view-learning .ai-style-option:hover{ background: #f5f7fa; }#view-learning .ai-style-option.is-active{ background: rgba(56,114,224,.08); color: #3872e0; font-weight: 600; }#view-learning .ai-style-option small{ display: block; color: #8c8c8c; font-weight: 400; margin-top: 2px; }#view-learning .__header-icon-btn{
+      width: 28px; height: 28px; border-radius: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #8c8c8c; flex-shrink: 0;
+    }#view-learning .__header-icon-btn:hover{ background: #f5f5f5; color: #595959; }#view-learning /* style 2 / 3：头像多回复 */
+    .ai-msg.bot.role-card-msg{
+      flex-direction: row; align-items: flex-start; gap: 10px;
+    }#view-learning .ai-role-avatar-wrap{
+      position: relative;
+      width: 32px; height: 32px; flex-shrink: 0;
+    }#view-learning .ai-role-avatar{
+      width: 32px; height: 32px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 12px; font-weight: 600; overflow: hidden;
+      position: relative; z-index: 1;
+    }#view-learning .ai-role-avatar img{ width: 100%; height: 100%; object-fit: cover; }#view-learning .ai-talk-rings{
+      position: absolute; inset: -5px; pointer-events: none; display: none;
+    }#view-learning .ai-msg.is-talking .ai-talk-rings{ display: block; }#view-learning .ai-talk-rings span{
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 2px solid #3872e0;
+      opacity: 0;
+      animation: ai-talk-ring 1.35s ease-out infinite;
+    }#view-learning .ai-talk-rings span:nth-child(2){ animation-delay: .45s; }#view-learning .ai-talk-rings span:nth-child(3){ animation-delay: .9s; }@keyframes ai-talk-ring{
+      0% { transform: scale(.72); opacity: .55; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }#view-learning .ai-talk-bars{
+      position: absolute; left: 50%; bottom: -11px; transform: translateX(-50%);
+      display: none; align-items: flex-end; gap: 2px; height: 10px; z-index: 2;
+    }#view-learning .ai-msg.is-talking .ai-talk-bars{ display: flex; }#view-learning .ai-talk-bars i{
+      display: block; width: 2px; border-radius: 1px; background: #3872e0;
+      animation: ai-talk-bar .55s ease-in-out infinite;
+    }#view-learning .ai-talk-bars i:nth-child(1){ height: 4px; animation-delay: 0s; }#view-learning .ai-talk-bars i:nth-child(2){ height: 8px; animation-delay: .12s; }#view-learning .ai-talk-bars i:nth-child(3){ height: 5px; animation-delay: .24s; }#view-learning .ai-talk-bars i:nth-child(4){ height: 9px; animation-delay: .08s; }@keyframes ai-talk-bar{
+      0%, 100% { transform: scaleY(.45); opacity: .65; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }#view-learning .ai-msg.is-talking .ai-role-avatar{
+      box-shadow: 0 0 0 2px rgba(56,114,224,.28);
+    }#view-learning .ai-role-main{ flex: 1; min-width: 0; }#view-learning .ai-role-name-row{
+      display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+      font-size: 13px; font-weight: 600; color: #1d2129; line-height: 20px;
+    }#view-learning .ai-role-name-row .tts-dot{
+      width: 6px; height: 6px; border-radius: 50%; background: #52c41a;
+      display: none;
+    }#view-learning .ai-msg.is-speaking .tts-dot, #view-learning .ai-msg.is-talking .tts-dot{ display: inline-block; animation: ai-tts-pulse 1s infinite; }@keyframes ai-tts-pulse{
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .35; transform: scale(1.3); }
+    }#view-learning .ai-msg.bot.role-card-msg .ai-bubble.bot{
+      background: #f7f8fa; padding: 10px 12px; border-radius: 0 10px 10px 10px;
+    }#view-learning .ai-msg-action[data-action="speak"].is-playing{
+      color: #3872e0; background: rgba(56,114,224,.08);
+    }#view-learning .ai-cursor-blink::after{
+      content: "▍";
+      margin-left: 1px;
+      color: #3872e0;
+      animation: ai-cursor-blink .8s step-end infinite;
+    }@keyframes ai-cursor-blink{
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }#view-learning /* style 3：AI帮建 Design System（宽仍 464px，见 ai-bangjian/AGENTS.md） */
+    .tbc-sider-window-root.chat-style-3{
+      --bj-text: #1f1f1f;
+      --bj-text-muted: #8c8c8c;
+      --bj-text-hint: #a6a6a6;
+      --bj-text-placeholder: #bfbfbf;
+      --bj-text-label: #595959;
+      --bj-page: #f5f5f5;
+      --bj-surface: #ffffff;
+      --bj-divider: #f0f0f0;
+      --bj-border: #d9d9d9;
+      --bj-primary: #1677ff;
+      --bj-accent: #1159ff;
+      --bj-user-bubble: #e8f3ff;
+      --bj-success: #52c41a;
+      --bj-accent-soft: rgba(17, 89, 255, 0.04);
+      --bj-focus-ring: rgba(17, 89, 255, 0.1);
+      --bj-input-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), 0 8px 32px rgba(0, 0, 0, 0.05);
+      --bj-font: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      width: 464px;
+      font-family: var(--bj-font);
+      color: var(--bj-text);
+      background: var(--bj-surface);
+      border-color: var(--bj-divider);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .tbc-ai-kit-container{
+      background: var(--bj-surface);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__sider-window-header{
+      height: 57px; min-height: 57px; max-height: 57px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--bj-divider);
+      background: #fff;
+      overflow: visible;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-title-img{
+      width: 22px; height: 22px; border-radius: 0; background: transparent; margin-right: 0;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-title-img img{
+      width: 22px; height: 22px; display: block;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__tbc-ai-session-robot-name{
+      font-size: 16px; line-height: 24px; font-weight: 500; color: var(--bj-text);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-btn-rtr{
+      display: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-btn-style{
+      height: 28px; border-radius: 6px; border-color: var(--bj-border);
+      color: var(--bj-text); font-size: 12px; line-height: 20px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-btn-style:hover, #view-learning .tbc-sider-window-root.chat-style-3 .__header-btn-style[aria-expanded="true"]{
+      border-color: var(--bj-primary); color: var(--bj-primary);
+      background: var(--bj-accent-soft);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-icon-btn{
+      width: 32px; height: 32px; color: var(--bj-text-muted);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-panel-body{
+      background: var(--bj-surface);
+      padding: 16px 20px 24px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__first-chat-show-msg{
+      display: none !important;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-chat-log{
+      gap: 20px; padding: 4px 0 8px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-bubble.user{
+      max-width: 85%;
+      background: var(--bj-user-bubble);
+      color: var(--bj-text);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 14px; line-height: 22px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.bot.role-card-msg{
+      gap: 12px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-role-main{
+      display: flex; flex-direction: column; gap: 0; min-width: 0; flex: 1;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-actions{
+      margin-top: 10px; gap: 16px; flex-shrink: 0;
+      position: relative; z-index: 1;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action{
+      width: 24px; height: 24px; cursor: pointer;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-chat-log{
+      gap: 24px; padding: 8px 0 16px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.user{
+      justify-content: flex-end;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-bubble.user{
+      max-width: min(85%, 320px);
+      background: var(--bj-user-bubble);
+      color: var(--bj-text);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 14px; line-height: 22px; font-weight: 400;
+      box-shadow: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.bot.role-card-msg{
+      gap: 12px; align-items: flex-start;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-role-avatar-wrap,
+    #view-learning .tbc-sider-window-root.chat-style-3 .ai-role-avatar{
+      width: 32px; height: 32px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-role-name-row{
+      margin-bottom: 8px;
+      font-size: 14px; line-height: 22px; font-weight: 500; color: var(--bj-text);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.bot.role-card-msg .ai-bubble.bot{
+      background: var(--bj-page);
+      border: none;
+      border-radius: 16px;
+      padding: 12px 16px;
+      max-width: 100%;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-bot-md p{
+      font-size: 14px; line-height: 22px; color: var(--bj-text);
+      margin: 0; word-break: break-word;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-actions{
+      display: flex; align-items: center; gap: 16px;
+      margin-top: 12px; padding-top: 0;
+      position: static; clear: both;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action{
+      width: 24px; height: 24px; border: none; border-radius: 4px; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: var(--bj-text-muted); cursor: pointer;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action:hover{
+      background: var(--bj-accent-soft); color: var(--bj-accent);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action img{
+      display: block; width: 24px; height: 24px; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action svg{ display: none; }#view-learning .tbc-sider-window-root.chat-style-3 .ai-panel-body{
+      padding: 16px 20px 20px; background: var(--bj-surface);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__sider-window-header{
+      height: 57px; padding: 0 16px;
+      border-bottom: 1px solid var(--bj-divider);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-role-avatar-wrap, #view-learning .tbc-sider-window-root.chat-style-3 .ai-role-avatar{
+      width: 32px; height: 32px; border-radius: 50%;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-role-avatar{
+      font-size: 13px; font-weight: 500;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-talk-rings span{
+      border-color: var(--bj-primary);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-talk-bars i{
+      background: var(--bj-primary);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.is-talking .ai-role-avatar{
+      box-shadow: 0 0 0 2px rgba(22,119,255,.3);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-role-name-row{
+      font-size: 14px; line-height: 22px; font-weight: 500; color: var(--bj-text);
+      margin-bottom: 8px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.bot.role-card-msg .ai-bubble.bot{
+      background: var(--bj-surface);
+      border: 1px solid var(--bj-divider);
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-bot-md, #view-learning .tbc-sider-window-root.chat-style-3 .ai-bot-md p{
+      font-size: 14px; line-height: 22px; color: var(--bj-text);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-actions{
+      margin-top: 12px; gap: 16px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action{
+      width: 24px; height: 24px; color: var(--bj-text-muted);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action img{
+      display: block; width: 24px; height: 24px; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action[data-action="speak"].is-playing{
+      color: var(--bj-primary); background: var(--bj-accent-soft);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.is-speaking .tts-dot, #view-learning .tbc-sider-window-root.chat-style-3 .ai-msg.is-talking .tts-dot{
+      background: var(--bj-success);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-cursor-blink::after{
+      color: var(--bj-primary);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-panel-footer{
+      padding: 0 16px 12px; background: linear-gradient(transparent, #fff 28%);
+      border-top: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-toolbar{
+      display: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__btn-instruct-wrapper{
+      display: none !important;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-input-box{
+      border: 1px solid var(--bj-border);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: var(--bj-input-shadow);
+      padding: 12px 16px 44px;
+      min-height: 112px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-input-box:focus-within{
+      border-color: var(--bj-accent);
+      box-shadow: 0 0 0 1px var(--bj-accent), 0 0 0 3px var(--bj-focus-ring), var(--bj-input-shadow);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-input-box textarea{
+      font-size: 16px; line-height: 24px; color: var(--bj-text); min-height: 48px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-input-box textarea::placeholder{
+      color: var(--bj-text-muted);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-kb-toggle{ display: none; }#view-learning .tbc-sider-window-root.chat-style-3 .ai-input-meta{
+      left: 16px; right: 16px; bottom: 10px; justify-content: flex-end;
+    }/* 帮建 DS：附件+语音 gap 8，与发送间距 16；圆形 32 */
+    #view-learning .tbc-sider-window-root.chat-style-3 .ai-input-tools{
+      display: inline-flex; align-items: center; gap: 16px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-composer-tools{
+      display: inline-flex; align-items: center; gap: 8px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-attach-btn,
+    #view-learning .tbc-sider-window-root.chat-style-3 .ai-mic-btn{
+      width: 32px; height: 32px; padding: 0; border: none; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--bj-text); background: transparent; line-height: 0; flex-shrink: 0; cursor: pointer;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-attach-btn:hover,
+    #view-learning .tbc-sider-window-root.chat-style-3 .ai-mic-btn:hover{
+      background: var(--bj-accent-soft);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-attach-btn img{
+      display: block; width: 20px; height: 20px; object-fit: contain; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-mic-btn img{
+      display: block; width: 13px; height: 18px; object-fit: contain; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-mic-btn{ display: inline-flex; }#view-learning .ai-mic-btn{ display: none; }#view-learning .tbc-sider-window-root.chat-style-3 .ai-send-btn{
+      width: 32px; height: 32px; padding: 0; border: none; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: inherit; line-height: 0; flex-shrink: 0; cursor: pointer;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-send-btn img{
+      display: block; width: 32px; height: 32px; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-send-btn:not(:disabled):hover{
+      filter: brightness(1.03);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-send-btn:disabled{
+      cursor: not-allowed; opacity: 1;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-send-btn.has-text{
+      background: transparent; color: inherit;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-actions{
+      gap: 16px; margin-top: 8px;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action{
+      width: 24px; height: 24px; padding: 0; border: none; border-radius: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: var(--bj-text-muted); cursor: pointer;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action:hover{
+      background: var(--bj-accent-soft); color: var(--bj-accent);
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action img{
+      display: block; width: 24px; height: 24px; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .ai-msg-action svg{ display: none; }#view-learning .tbc-sider-window-root.chat-style-3 .ai-disclaimer{
+      margin: 12px 0 0; font-size: 12px; line-height: 20px; color: var(--bj-text-hint);
+      text-align: center;
+    }#view-learning .tbc-sider-window-root.chat-style-3 .bj-new-session{
+      display: none !important;
+    }#view-learning .bj-new-session{ display: none;     }#view-learning .tbc-sider-window-root.chat-style-3 .__header-btn-new{
+      display: grid;
+    }#view-learning .ai-agents-strip{
+      display: flex; align-items: center; flex-direction: row;
+      flex-shrink: 1; min-width: 0; max-width: 168px;
+      margin-right: 4px; padding-right: 4px;
+    }#view-learning .ai-agent-chip{
+      position: relative;
+      width: 28px; height: 28px; margin-left: -8px; flex-shrink: 0;
+      border: 2px solid #fff; border-radius: 50%;
+      background: var(--bj-primary, #1677ff); color: #fff;
+      font-size: 12px; font-weight: 500; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      overflow: visible; cursor: default; padding: 0;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.04);
+    }#view-learning .ai-agent-chip:first-child{ margin-left: 0; }#view-learning .ai-agent-chip:hover{
+      z-index: 6;
+    }#view-learning .ai-agent-chip img{
+      display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    }#view-learning .ai-agent-chip[data-tip]::after{
+      content: attr(data-tip);
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: #1f1f1f; color: #fff;
+      font-size: 12px; line-height: 18px; font-weight: 400;
+      white-space: nowrap;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      z-index: 30;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    }#view-learning .ai-agent-chip[data-tip]:hover::after,
+    #view-learning .ai-agent-chip[data-tip]:focus-visible::after{
+      opacity: 1; visibility: visible;
+    }#view-learning .ai-agent-more{
+      margin-left: -8px; width: 28px; height: 28px;
+      border: 2px solid #fff; border-radius: 50%;
+      background: #f5f5f5; color: var(--bj-text-muted, #8c8c8c);
+      font-size: 11px; font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }#view-learning .__header-btn-new{
+      display: none; width: 32px; height: 32px; place-items: center;
+      border: none; border-radius: 6px; background: transparent; color: var(--bj-text-muted, #8c8c8c);
+      cursor: pointer; padding: 0;
+    }#view-learning .__header-btn-new:hover{ color: var(--bj-primary, #1677ff); background: var(--bj-accent-soft, rgba(17,89,255,.04)); }#view-learning .tbc-sider-window-root.chat-style-3 .bj-new-session:hover{
+      border-color: var(--bj-primary); color: var(--bj-primary);
+    }#view-learning .ai-panel-body{
+      position: relative;
+      flex: 1; min-height: 0; overflow-y: auto;
+      padding: 16px 20px 20px; background: #fff;
+      display: flex; flex-direction: column;
+    }#view-learning .__first-chat-show-msg{
+      margin: 0 0 16px;
+      color: #8c8c8c; line-height: 22px; font-size: 14px;
+      padding: 0; background: transparent;
+    }#view-learning .ai-chat-log{
+      display: flex; flex-direction: column; gap: 16px;
+      flex: 1;
+    }#view-learning .ai-msg{ display: flex; width: 100%; }#view-learning .ai-msg.user{ justify-content: flex-end; }#view-learning .ai-msg.bot{ justify-content: flex-start; flex-direction: column; align-items: stretch; }#view-learning .ai-bubble{
+      max-width: 100%; padding: 10px 14px; border-radius: 12px;
+      font-size: 14px; line-height: 22px; white-space: pre-wrap; word-break: break-word;
+    }#view-learning .ai-bubble.user{
+      max-width: 80%;
+      background: #e8f3ff; color: #1d2129;
+      border-radius: 12px 12px 4px 12px;
+      white-space: pre-wrap;
+    }#view-learning .ai-bubble.bot{
+      max-width: 100%;
+      background: transparent;
+      color: #1d2129;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      white-space: normal;
+      box-sizing: border-box;
+    }#view-learning .ai-bot-md{ font-size: 14px; line-height: 24px; color: #1d2129; }#view-learning .ai-role-block + .ai-role-block{
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed #d6e4ff;
+    }#view-learning .ai-role-tag{
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3872e0;
+      line-height: 22px;
+    }#view-learning .ai-bot-md p{ margin: 0 0 10px; }#view-learning .ai-bot-md p:last-child{ margin-bottom: 0; }#view-learning .ai-bot-md ul{
+      margin: 6px 0 12px; padding: 0; list-style: none;
+    }#view-learning .ai-bot-md li{
+      position: relative; padding-left: 18px; margin: 4px 0;
+    }#view-learning .ai-bot-md li.diamond::before{
+      content: "◆"; position: absolute; left: 0; top: 0;
+      color: #3872e0; font-size: 10px; line-height: 24px;
+    }#view-learning .ai-bot-md li.check::before{
+      content: "✔"; position: absolute; left: 0; top: 0;
+      color: #00b42a; font-size: 12px; line-height: 24px; font-weight: 700;
+    }#view-learning .ai-msg-actions{
+      display: flex; align-items: center; gap: 4px;
+      margin-top: 10px;
+    }#view-learning .ai-msg-action{
+      width: 28px; height: 28px; border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #c0c4cc;
+    }#view-learning .ai-msg-action:hover{ background: #f5f5f5; color: #86909c; }#view-learning .ai-msg-action svg{ width: 15px; height: 15px; }#view-learning .ai-scroll-bottom{
+      position: sticky; bottom: 8px; align-self: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #fff; border: 1px solid #e5e8eb;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      display: none; align-items: center; justify-content: center;
+      color: #86909c; margin-top: -40px; z-index: 2;
+    }#view-learning .ai-scroll-bottom.is-visible{ display: inline-flex; }#view-learning .ai-scroll-bottom svg{ width: 14px; height: 14px; }#view-learning .ai-panel-footer{
+      flex-shrink: 0; padding: 0 16px 12px; background: #fff;
+      display: flex; flex-direction: column;
+    }#view-learning .__btn-instruct-wrapper{
+      margin: 0 0 12px; width: auto; z-index: 1;
+      display: flex; justify-content: flex-start;
+    }#view-learning .__btn-instruct-wrapper.is-hidden{ display: none; }#view-learning .__btn-instruct-action{
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; height: 28px; min-height: 28px; padding: 0 12px;
+      border-radius: 14px; background: #fff; border: 1px solid #e8f0ff;
+      box-shadow: 0 1px 4px #0000001c, 0 7px 9px #7585a31f;
+      color: #3872e0; font-size: 12px; cursor: default; box-sizing: border-box;
+    }#view-learning .__btn-instruct-icon{
+      display: inline-flex; align-items: center; width: 14px; height: 14px;
+    }#view-learning .__btn-instruct-icon svg{ width: 14px; height: 14px; }#view-learning .__btn-instruct-txt{ white-space: nowrap; font-weight: 500; }#view-learning .ai-toolbar{
+      display: flex; gap: 8px; margin-bottom: 12px;
+    }#view-learning .ai-toolbar-btn{
+      flex: 1; height: 36px; padding: 0 8px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      border: 1px solid #e5e8eb; border-radius: 8px; background: #fff;
+      color: #262626; font-size: 13px; white-space: nowrap;
+    }#view-learning .ai-toolbar-btn:hover{ border-color: #c9cdd4; background: #fafafa; }#view-learning .ai-toolbar-btn svg{ width: 14px; height: 14px; color: #8c8c8c; flex-shrink: 0; }#view-learning .ai-input-box{
+      position: relative;
+      border: 1px solid #e5e8eb; border-radius: 20px; background: #fff;
+      padding: 12px 14px 40px; min-height: 100px;
+    }#view-learning .ai-input-box:focus-within{ border-color: #91b4f5; box-shadow: 0 0 0 2px rgba(56,114,224,.08); }#view-learning .ai-input-box textarea{
+      width: 100%; border: none; outline: none; resize: none; background: transparent;
+      font-family: inherit; font-size: 14px; line-height: 22px;
+      min-height: 44px; max-height: 120px; color: #262626; padding: 0;
+    }#view-learning .ai-input-box textarea::placeholder{ color: #bfbfbf; }#view-learning .ai-input-meta{
+      position: absolute; left: 12px; right: 12px; bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }#view-learning .ai-kb-toggle{
+      display: inline-flex; align-items: center; gap: 4px;
+      color: #8c8c8c; font-size: 12px; padding: 4px 8px; border-radius: 999px;
+      background: #f7f8fa;
+    }#view-learning .ai-kb-toggle:hover{ background: #eef0f3; color: #595959; }#view-learning .ai-kb-toggle svg{ width: 10px; height: 10px; }#view-learning .ai-input-tools{ display: inline-flex; align-items: center; gap: 4px; }#view-learning .ai-attach-btn, #view-learning .ai-mic-btn{
+      width: 28px; height: 28px; padding: 0; border: none; border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #c0c4cc; background: transparent; line-height: 0; flex-shrink: 0;
+    }#view-learning .ai-attach-btn:hover, #view-learning .ai-mic-btn:hover{ background: #f5f5f5; color: #86909c; }#view-learning .ai-send-btn{
+      width: 32px; height: 32px; padding: 0; border: none; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #c0c4cc; background: #f2f3f5; line-height: 0; flex-shrink: 0;
+    }#view-learning .ai-send-btn.has-text{
+      color: #fff; background: #3872e0;
+    }#view-learning .ai-send-btn:disabled{ opacity: .45; cursor: not-allowed; }#view-learning .ai-disclaimer{
+      margin-top: 10px; font-size: 12px; color: #bfbfbf; text-align: center;
+      line-height: 18px;
+    }#view-learning .chapter-container{ flex: 1; min-height: 0; overflow: auto; padding: 8px 0 24px; }#view-learning .chapter-section-box{ padding: 0 20px; }#view-learning .chapter-box{ margin-top: 16px; }#view-learning .chapter-name{
+      font-size: 14px; font-weight: 600; color: rgba(0,0,0,.85);
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }#view-learning .section-item{
+      width: 100%; text-align: left; padding: 10px 12px; border-radius: 6px;
+      margin-bottom: 4px;
+    }#view-learning .section-item:hover{ background: #f5f7fa; }#view-learning .section-item.active{ background: #e8f3ff; }#view-learning .section-item .first-line{
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; color: rgba(0,0,0,.85); line-height: 22px;
+    }#view-learning .section-item.active .first-line{ color: var(--primary); }#view-learning .section-item .palying{ font-size: 12px; color: var(--primary); }#view-learning .section-item .todo{ font-size: 12px; color: rgba(0,0,0,.45); }#view-learning .section-item .second-line{
+      font-size: 12px; color: rgba(0,0,0,.45); line-height: 20px; margin-top: 2px;
+    }#view-learning .side-pane[hidden]{ display: none !important; }#view-learning .note-empty{
+      padding: 80px 24px; text-align: center; color: rgba(0,0,0,.45); font-size: 13px;
+    }#view-learning /* footer below player */
+    .course-play-footer{
+      margin-top: 16px; display: flex; align-items: flex-start; gap: 0;
+    }#view-learning .cpf-left{
+      width: calc(100% - 360px); background: #fff; margin-right: 24px; border-radius: 8px;
+    }#view-learning .cpf-left-header{
+      height: 64px; padding: 0 4px; display: flex; align-items: center;
+      border-bottom: 1px solid rgba(0,0,0,.14);
+    }#view-learning .clh-item{
+      padding: 0 28px; font-size: 16px; color: rgba(0,0,0,.85); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }#view-learning .clh-item span{
+      display: block; width: 16px; height: 3px; border-radius: 8px; margin-top: 9px;
+    }#view-learning .clh-item-active{ color: var(--primary); }#view-learning .clh-item-active span{ background: var(--primary); }#view-learning .course_introduction{ padding: 25px 24px 30px; }#view-learning .ci-item{
+      display: flex; margin-bottom: 20px; font-size: 14px; color: rgba(0,0,0,.85);
+    }#view-learning .ci-item-l{
+      width: 140px; text-align: right; color: rgba(0,0,0,.45); flex-shrink: 0; padding-right: 16px;
+    }#view-learning .ci-item-r{ flex: 1; line-height: 22px; }#view-learning .cpf-right{
+      width: 336px; background: #fff; min-height: 296px; border-radius: 8px; padding: 24px;
+    }#view-learning .cpf-right-title{ font-size: 20px; color: rgba(0,0,0,.85); margin-bottom: 24px; }#view-learning .cpf-right-item{
+      width: 100%; display: flex; margin-bottom: 22px; text-align: left;
+    }#view-learning .cpf-right-item .thumb{
+      width: 89px; height: 50px; border-radius: 4px; margin-right: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg, #e8f0fe, #d6e4ff);
+    }#view-learning .cpf-right-item .title{ font-size: 14px; color: rgba(0,0,0,.85); margin-bottom: 4px; }#view-learning .cpf-right-item .count{ font-size: 12px; color: rgba(0,0,0,.45); }@media (max-width: 1280px){
+      .course-learning-main-course { min-width: 0; padding: 0 16px; }
+      .course-play-container { height: 480px; }
+      .rightList-container { width: 360px; }
+      .cpf-left { width: calc(100% - 300px); }
+      .cpf-right { width: 276px; }
+    }
+  
+  </style>
+</head>
+<body>
+  <div id="view-settings" class="proto-view is-active">
+
+  <div class="layout">
+    <aside class="icon-sidebar">
+      <div class="icon-side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg><span>首页</span></div>
+      <div class="icon-side-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>线上培训</span></div>
+    </aside>
+    <div class="main-col">
+      <header class="topbar">
+        <div class="tabs-top"><div class="tab-chip">课程管理</div></div>
+        <div class="top-right">
+          <div class="search-pill">搜索应用</div>
+          <span>切换学员</span>
+          <span>高源</span>
+          <div class="avatar">高</div>
+        </div>
+      </header>
+      <div class="body-row">
+        <nav class="app-nav">
+          <div class="app-nav-title">课程管理</div>
+          <button type="button" class="nav-item">课程管理</button>
+          <button type="button" class="nav-item">AI智能出课</button>
+          <button type="button" class="nav-item">讨论区管理</button>
+          <button type="button" class="nav-item">分类管理</button>
+          <button type="button" class="nav-item">学习地图管理</button>
+          <button type="button" class="nav-item">资源包管理</button>
+          <button type="button" class="nav-item">课程授权审核</button>
+          <button type="button" class="nav-item active">系统设置</button>
+        </nav>
+        <div class="content-wrap">
+          <div class="inner-tabs">
+            <button type="button" class="inner-tab">学习步骤</button>
+            <button type="button" class="inner-tab active">授权审核</button>
+            <button type="button" class="inner-tab">课程字段</button>
+            <button type="button" class="inner-tab">学分策略</button>
+            <button type="button" class="inner-tab">消息通知</button>
+          </div>
+          <div class="panel-scroll">
+            <!-- 课程授权设置 -->
+            <section class="section">
+              <h3 class="section-title">课程授权设置</h3>
+              <div class="check-row">
+                <span class="check on"></span>
+                <div>
+                  <div class="check-label">启用课程授权</div>
+                  <div class="check-hint">勾选后，除管理员自己创建的课程外，所有课程需经管理员授权后方可使用。</div>
+                </div>
+              </div>
+              <div class="check-row indent">
+                <span class="check"></span>
+                <div>
+                  <div class="check-label">二级管理员可授权</div>
+                  <div class="check-hint">允许二级管理员对管辖范围内的课程进行授权审核。</div>
+                </div>
+              </div>
+              <div class="check-row indent">
+                <span class="check"></span>
+                <div>
+                  <div class="check-label">三级管理员可授权</div>
+                  <div class="check-hint">允许三级管理员对管辖范围内的课程进行授权审核。</div>
+                </div>
+              </div>
+            </section>
+
+            <!-- AI课堂角色（新增，在 AI伴学管理 上方） -->
+            <section class="section" id="section-ai-roles">
+              <h3 class="section-title">AI课堂角色</h3>
+              <p class="section-desc">
+                配置虚拟课堂中的互动角色（教师、助教、同学）。每位角色可设置头像、名称、人设与音色。
+                人设旁可点「帮建」按 <a href="https://elevenlabs.io/docs/eleven-agents/best-practices/prompting-guide" target="_blank" rel="noopener">ElevenLabs Prompting Guide</a> 扩写完整规范；为空或违规时回落系统默认。
+                启用后，标准建课「创建课堂」将按本页策略组班；关闭则使用系统默认角色组。
+              </p>
+
+              <div class="switch-row">
+                <button type="button" class="switch on" id="switch-roles" role="switch" aria-checked="true" aria-label="启用AI课堂角色"></button>
+                <div>
+                  <div class="check-label">启用 AI 课堂角色</div>
+                  <div class="check-hint">关闭后，创建课堂使用系统默认角色组（教师 + 助教 + 若干同学），租户不可自定义。</div>
+                </div>
+              </div>
+
+              <div id="roles-config">
+                <p class="section-desc" style="margin-top:0">
+                  预设模式：从下方角色库多选。创建课堂时固定使用勾选角色及其人设、音色；学员提问时按角色分别生成台词。
+                </p>
+
+                <div class="roles-block" id="preset-block">
+                  <div class="sub-title">预设角色库（可多选）</div>
+                  <div class="role-grid" id="role-grid"></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- AI伴学管理 -->
+            <section class="section">
+              <h3 class="section-title">AI伴学管理</h3>
+              <div class="sub-title">AI伴学套餐信息</div>
+              <div class="remain">当前剩余时长（分钟）：</div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>时长包 (分钟)</th>
+                    <th>订单日期</th>
+                    <th>来源</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>5000</td><td>2025-11-20</td><td>赠送</td></tr>
+                  <tr><td>500</td><td>2025-06-18</td><td>赠送</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+          <div class="footer-bar">
+            <button type="button" class="btn-confirm" id="btn-confirm">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var CLASSROOM_API = "http://127.0.0.1:8768";
+      var PROMPT_GUIDE = "https://elevenlabs.io/docs/eleven-agents/best-practices/prompting-guide";
+      var SHARED_GUARD =
+        "Never invent illegal, sexual, violent, or politically extremist content. This step is important.\n" +
+        "Never insult learners, leak private data, or claim to be a human teacher offline.\n" +
+        "Stay in your classroom role; do not speak as the director or other roles.\n" +
+        "Keep answers in Chinese unless the learner asks for another language.\n" +
+        "If the topic is outside the course, briefly redirect to learning. This step is important.";
+
+      function defaultPrompt(type, name) {
+        var n = name || (type === "teacher" ? "AI教师" : type === "assistant" ? "AI助教" : "同学");
+        if (type === "teacher") {
+          return (
+            "# Personality\nYou are " + n + ", the lead classroom teacher. Warm, clear, and patient.\n\n" +
+            "# Environment\nVirtual classroom Q&A beside a recorded lesson. Learners ask short questions; you answer with spoken lines.\n\n" +
+            "# Goal\nExplain the learner's question with a simple structure: point → example → check understanding.\nPrefer 2–4 short Chinese sentences unless the learner asks for more detail.\n\n" +
+            "# Guardrails\n" + SHARED_GUARD + "\nDo not let a peer student take the first substantive explanation when you are available.\nDo not digress into off-lesson entertainment.\n\n" +
+            "# Tone\nProfessional but friendly. Use plain words and light analogies. Avoid jargon dumps."
+          );
+        }
+        if (type === "assistant") {
+          return (
+            "# Personality\nYou are " + n + ", the teaching assistant. Supportive, concrete, never stealing the teacher's spotlight.\n\n" +
+            "# Environment\nVirtual classroom Q&A. You speak after or beside the teacher to fill gaps for slower learners.\n\n" +
+            "# Goal\nRestate hard points in simpler Chinese and add one practical tip. Prefer 1–2 short sentences.\n\n" +
+            "# Guardrails\n" + SHARED_GUARD + "\nDo not contradict the teacher on core facts; clarify instead.\nDo not open a new unrelated topic.\n\n" +
+            "# Tone\nColloquial and encouraging. Shorter than the teacher."
+          );
+        }
+        return (
+          "# Personality\nYou are " + n + ", a curious classmate. Brief, curious, never lecturing.\n\n" +
+          "# Environment\nVirtual classroom Q&A with a teacher and optional assistant. You add social presence, not instruction.\n\n" +
+          "# Goal\nAsk one short, specific follow-up or share a one-line observation that helps the class think.\nPrefer a single Chinese sentence.\n\n" +
+          "# Guardrails\n" + SHARED_GUARD + "\nNever give the first substantive explanation of a topic. This step is important.\nDo not mock classmates or derail the lesson.\n\n" +
+          "# Tone\nCasual and friendly. Keep it light."
+        );
+      }
+
+      function isBlockedPrompt(text) {
+        return /色情|淫秽|裸聊|赌博|毒品|自杀|自残|恐怖袭击|爆炸物|枪支制造|推翻政府/.test(text || "");
+      }
+
+      function ensurePrompt(role) {
+        var raw = (role.prompt || "").trim();
+        if (!raw || isBlockedPrompt(raw) || raw.length < 40 || !/#\s*Guardrails/i.test(raw)) {
+          role.prompt = defaultPrompt(role.type, role.name);
+          role._promptFromDefault = true;
+        } else {
+          role._promptFromDefault = false;
+        }
+        return role.prompt;
+      }
+
+      var ROLES = [
+        {
+          id: "teacher",
+          name: "AI 教师",
+          type: "teacher",
+          typeLabel: "教师",
+          color: "#3b82f6",
+          avatar: "师",
+          prompt: "",
+          voice: "沉稳男声"
+        },
+        {
+          id: "assistant",
+          name: "AI 助教",
+          type: "assistant",
+          typeLabel: "助教",
+          color: "#10b981",
+          avatar: "助",
+          prompt: "",
+          voice: "亲和女声"
+        },
+        {
+          id: "clown",
+          name: "显眼包",
+          type: "student",
+          typeLabel: "同学",
+          color: "#f59e0b",
+          avatar: "显",
+          prompt: "",
+          voice: "活泼男声"
+        },
+        {
+          id: "curious",
+          name: "好奇宝宝",
+          type: "student",
+          typeLabel: "同学",
+          color: "#ec4899",
+          avatar: "奇",
+          prompt: "",
+          voice: "清亮女声"
+        },
+        {
+          id: "noter",
+          name: "笔记员",
+          type: "student",
+          typeLabel: "同学",
+          color: "#8b5cf6",
+          avatar: "记",
+          prompt: "",
+          voice: "平稳女声"
+        },
+        {
+          id: "thinker",
+          name: "深思者",
+          type: "student",
+          typeLabel: "同学",
+          color: "#0ea5e9",
+          avatar: "思",
+          prompt: "",
+          voice: "低沉男声"
+        }
+      ];
+      ROLES.forEach(ensurePrompt);
+
+      var VOICES = ["沉稳男声", "亲和女声", "活泼男声", "清亮女声", "平稳女声", "低沉男声"];
+      var selected = { teacher: true, assistant: true, curious: true };
+      var avatarUrls = {};
+      var REQUIRED_ROLE = "teacher";
+      var grid = document.getElementById("role-grid");
+      var switchEl = document.getElementById("switch-roles");
+      var configEl = document.getElementById("roles-config");
+      var presetBlock = document.getElementById("preset-block");
+      var fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/png,image/jpeg,image/webp,image/gif";
+      fileInput.hidden = true;
+      document.body.appendChild(fileInput);
+      var pendingAvatarRoleId = null;
+
+      var EDIT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+
+      function renderRoles() {
+        selected[REQUIRED_ROLE] = true;
+        grid.innerHTML = ROLES.map(function (r) {
+          ensurePrompt(r);
+          var on = !!selected[r.id];
+          var locked = r.id === REQUIRED_ROLE;
+          var avatarHtml = avatarUrls[r.id]
+            ? '<img src="' + avatarUrls[r.id] + '" alt="' + r.name.replace(/"/g, "&quot;") + '" />'
+            : r.avatar;
+          return (
+            '<div class="role-card' + (on ? " selected" : "") + (locked ? " locked" : "") + '" data-id="' + r.id + '"' +
+              (locked ? ' title="AI 教师为必选角色，不可取消"' : "") + ">" +
+              '<span class="pick" aria-hidden="true"></span>' +
+              '<div class="role-head">' +
+                '<div class="role-avatar-wrap">' +
+                  '<button type="button" class="role-avatar" data-upload="' + r.id + '" style="background:' + r.color + '" title="点击更换头像" aria-label="更换头像">' +
+                    avatarHtml +
+                    '<span class="avatar-mask">' + EDIT_ICON + "</span>" +
+                  "</button>" +
+                  '<span class="avatar-edit-badge" aria-hidden="true">' + EDIT_ICON + "</span>" +
+                "</div>" +
+                "<div>" +
+                  '<div class="role-name-row">' +
+                    '<input class="role-name-input" type="text" data-name-for="' + r.id + '" value="' +
+                      r.name.replace(/"/g, "&quot;") + '" maxlength="20" title="点击编辑名称" />' +
+                    (locked ? '<span class="locked-tag">必选</span>' : "") +
+                  "</div>" +
+                  '<span class="role-type ' + r.type + '">' + r.typeLabel + "</span>" +
+                "</div>" +
+              "</div>" +
+              '<div class="role-prompt-wrap">' +
+                '<div class="role-prompt-toolbar">' +
+                  '<span class="role-prompt-label">人设 Prompt' +
+                    (r._promptFromDefault ? " · 系统默认" : "") +
+                  "</span>" +
+                  '<button type="button" class="btn-gen-prompt" data-gen-prompt="' + r.id + '" title="帮建：按 ElevenLabs 规范生成完整 Prompt" aria-label="帮建生成 Prompt">' +
+                    '<img src="./assets/icons/logo.svg?v=bj" width="16" height="16" alt="" />' +
+                    "<span>帮建</span>" +
+                  "</button>" +
+                "</div>" +
+                '<textarea class="role-prompt' + (r._promptFromDefault ? " is-default" : "") + '" rows="5" data-prompt-for="' + r.id + '" title="点击编辑人设 Prompt（建议含 Personality / Goal / Guardrails / Tone）" placeholder="可先写一句草稿，再点「帮建」扩写为完整规范">' +
+                  r.prompt.replace(/&/g, "&amp;").replace(/</g, "&lt;") +
+                "</textarea>" +
+              "</div>" +
+              '<div class="role-voice">音色 ' +
+                '<select data-voice-for="' + r.id + '">' +
+                  VOICES.map(function (v) {
+                    return '<option' + (v === r.voice ? " selected" : "") + ">" + v + "</option>";
+                  }).join("") +
+                "</select>" +
+              "</div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      renderRoles();
+
+      grid.addEventListener("click", function (e) {
+        if (
+          e.target.closest("select") ||
+          e.target.closest("[data-upload]") ||
+          e.target.closest(".role-name-input") ||
+          e.target.closest(".role-prompt") ||
+          e.target.closest("[data-gen-prompt]")
+        ) return;
+        var card = e.target.closest(".role-card");
+        if (!card) return;
+        var id = card.getAttribute("data-id");
+        if (id === REQUIRED_ROLE) return;
+        selected[id] = !selected[id];
+        renderRoles();
+      });
+
+      grid.addEventListener("click", function (e) {
+        var genBtn = e.target.closest("[data-gen-prompt]");
+        if (!genBtn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var rid = genBtn.getAttribute("data-gen-prompt");
+        var role = ROLES.find(function (item) { return item.id === rid; });
+        if (!role || genBtn.disabled) return;
+        var ta = grid.querySelector('textarea.role-prompt[data-prompt-for="' + rid + '"]');
+        var seed = ta ? ta.value : role.prompt;
+        genBtn.disabled = true;
+        genBtn.classList.add("is-loading");
+        var genLabel = genBtn.querySelector("span");
+        if (genLabel) genLabel.textContent = "生成中…";
+        else genBtn.textContent = "生成中…";
+        fetch(CLASSROOM_API + "/prompt/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: role.name,
+            role_type: role.type,
+            seed: seed,
+            course_hint: "企业培训 / 虚拟课堂答疑"
+          })
+        })
+          .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            if (!data || !data.ok || !data.prompt) throw new Error("empty");
+            role.prompt = data.prompt;
+            role._promptFromDefault = !!(data.meta && (data.meta.source === "default" || data.meta.source === "default_merged" || data.meta.source === "default_fallback"));
+            if (ta) {
+              ta.value = role.prompt;
+              ta.classList.toggle("is-default", !!role._promptFromDefault);
+            }
+            var label = genBtn.parentNode && genBtn.parentNode.querySelector(".role-prompt-label");
+            if (label) {
+              label.textContent = "人设 Prompt" + (role._promptFromDefault ? " · 系统默认" : " · 已生成");
+            }
+          })
+          .catch(function () {
+            // Offline fallback: local ElevenLabs-style default / merge
+            if (isBlockedPrompt(seed)) {
+              role.prompt = defaultPrompt(role.type, role.name);
+              role._promptFromDefault = true;
+            } else if ((seed || "").trim().length >= 8) {
+              role.prompt = defaultPrompt(role.type, role.name).replace(
+                /(# Personality\n)([\s\S]*?)(\n# )/,
+                "$1" + String(seed).trim().slice(0, 280) + "\n$3"
+              );
+              role._promptFromDefault = true;
+            } else {
+              role.prompt = defaultPrompt(role.type, role.name);
+              role._promptFromDefault = true;
+            }
+            if (ta) {
+              ta.value = role.prompt;
+              ta.classList.add("is-default");
+            }
+            alert("导演服务未连通，已用系统默认规范 Prompt（对齐 ElevenLabs 分区）。启动 8768 后可 AI 扩写。\n" + PROMPT_GUIDE);
+          })
+          .finally(function () {
+            genBtn.disabled = false;
+            genBtn.classList.remove("is-loading");
+            genBtn.innerHTML =
+              '<img src="./assets/icons/logo.svg?v=bj" width="16" height="16" alt="" /><span>帮建</span>';
+          });
+      });
+
+      grid.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-upload]");
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        pendingAvatarRoleId = btn.getAttribute("data-upload");
+        fileInput.value = "";
+        fileInput.click();
+      });
+
+      grid.addEventListener("input", function (e) {
+        var nameInput = e.target.closest(".role-name-input");
+        if (nameInput) {
+          var nameId = nameInput.getAttribute("data-name-for");
+          var nameRole = ROLES.find(function (item) { return item.id === nameId; });
+          if (nameRole) nameRole.name = nameInput.value.trim() || nameRole.name;
+          return;
+        }
+        var promptInput = e.target.closest(".role-prompt");
+        if (!promptInput) return;
+        var promptId = promptInput.getAttribute("data-prompt-for");
+        var promptRole = ROLES.find(function (item) { return item.id === promptId; });
+        if (promptRole) {
+          promptRole.prompt = promptInput.value;
+          promptRole._promptFromDefault = false;
+          promptInput.classList.remove("is-default");
+        }
+      });
+
+      grid.addEventListener("keydown", function (e) {
+        if (e.target.classList.contains("role-name-input") && e.key === "Enter") {
+          e.preventDefault();
+          e.target.blur();
+        }
+      });
+
+      fileInput.addEventListener("change", function () {
+        var file = fileInput.files && fileInput.files[0];
+        var roleId = pendingAvatarRoleId;
+        pendingAvatarRoleId = null;
+        if (!file || !roleId) return;
+        if (avatarUrls[roleId]) URL.revokeObjectURL(avatarUrls[roleId]);
+        avatarUrls[roleId] = URL.createObjectURL(file);
+        renderRoles();
+      });
+
+      switchEl.addEventListener("click", function () {
+        var on = !switchEl.classList.contains("on");
+        switchEl.classList.toggle("on", on);
+        switchEl.setAttribute("aria-checked", on ? "true" : "false");
+        configEl.classList.toggle("disabled-overlay", !on);
+      });
+
+      document.getElementById("btn-confirm").addEventListener("click", function () {
+        grid.querySelectorAll("select[data-voice-for]").forEach(function (sel) {
+          var role = ROLES.find(function (r) { return r.id === sel.getAttribute("data-voice-for"); });
+          if (role) role.voice = sel.value;
+        });
+        grid.querySelectorAll("textarea.role-prompt[data-prompt-for]").forEach(function (ta) {
+          var role = ROLES.find(function (r) { return r.id === ta.getAttribute("data-prompt-for"); });
+          if (role) role.prompt = ta.value;
+        });
+        ROLES.forEach(function (r) { ensurePrompt(r); });
+        var enabled = switchEl.classList.contains("on");
+        var payload = {
+          enabled: enabled,
+          mode: "preset",
+          selected: Object.assign({}, selected),
+          roles: ROLES.map(function (r) {
+            return {
+              id: r.id,
+              name: r.name,
+              type: r.type,
+              typeLabel: r.typeLabel,
+              color: r.color,
+              avatar: r.avatar,
+              prompt: r.prompt,
+              voice: r.voice,
+              avatarUrl: avatarUrls[r.id] || null
+            };
+          }),
+          savedAt: Date.now()
+        };
+        try {
+          localStorage.setItem("21tb.prototype.aiClassroomRoles", JSON.stringify(payload));
+        } catch (err) {}
+        if (window.__protoResetClassroomSession) window.__protoResetClassroomSession();
+        window.__protoShowLearning && window.__protoShowLearning();
+      });
+    })();
+  </script>
+
+  </div>
+  <div id="view-learning" class="proto-view">
+
+  <div class="course-learning" id="app">
+    <button type="button" id="proto-back-settings" class="proto-back-settings" title="返回系统设置">← 系统设置</button>
+
+    <div class="ant-spin-container" style="height:100%;display:flex;flex-direction:column;">
+      <header class="course-header course-learning-header">
+        <div class="course-header-left">
+          <div class="course-title">
+            <div class="title">指标为锚，智能驭变：构建卓越设备管理目标体系</div>
+            <div class="steps">
+              <div class="steps-item is-learning">
+                <span class="steps-item-icon">1</span>
+                <span class="steps-item-label">课程学习</span>
+              </div>
+              <span class="steps-item-line"></span>
+              <div class="steps-item">
+                <span class="steps-item-icon">2</span>
+                <span class="steps-item-label">课程评估</span>
+              </div>
+            </div>
+          </div>
+          <div class="course-infos">
+            <div class="course-info"><span class="label">课程时长:</span><span class="value">49分钟17秒</span></div>
+            <div class="course-info"><span class="label">学时:</span><span class="value">1.5</span></div>
+            <div class="course-info"><span class="label">学分:</span><span class="value">1.5</span></div>
+            <div class="course-info"><span class="label">结业条件:</span><span class="value">课程评估</span></div>
+            <div class="course-info"><span class="label">课程编号:</span><span class="value">POM013601</span></div>
+            <div class="course-info" style="margin-left:auto;margin-right:0;">
+              <span class="label">学习进度:</span>
+              <span class="progress"><i></i></span>
+              <span class="value progress-value">0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="course-header-right">
+          <button type="button" class="ai-assistant" id="btn-ai-assistant" title="AI助手">
+            <span class="bot" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="5" y="8" width="14" height="11" rx="3"/>
+                <circle cx="9.5" cy="13" r="1.2" fill="currentColor"/>
+                <circle cx="14.5" cy="13" r="1.2" fill="currentColor"/>
+                <path d="M12 5v3M9 19h6"/>
+              </svg>
+            </span>
+            AI助手
+          </button>
+        </div>
+      </header>
+
+      <div class="course-learning-main">
+        <div class="course-learning-main-course">
+          <div class="course-learning-main-course-container">
+            <div class="course-play-container">
+              <div class="player-container">
+                <div class="player-stage">
+                  <div class="player-stage-inner">
+                    <div class="play-circle" style="margin:0 auto 12px;">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    <div>第一章 · 指标为锚：设备管理目标体系概览</div>
+                  </div>
+                </div>
+                <div class="player-area-info">
+                  <div class="player-area-info-left">
+                    <span class="player-area-info-item">上一节</span>
+                    <span class="player-area-info-item">下一节</span>
+                  </div>
+                  <div class="player-area-info-right">
+                    <button type="button" class="btn-finish" id="btn-finish">完成学习</button>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="rightList-container">
+                <div class="tabs-header-row">
+                  <div class="side-tabs">
+                    <button type="button" class="side-tab active" data-pane="contents">目录<span class="bar"></span></button>
+                    <button type="button" class="side-tab" data-pane="note">笔记<span class="bar"></span></button>
+                  </div>
+                  <button type="button" class="ai-qa-btn" id="btn-ai-qa">AI 问答</button>
+                </div>
+                <div class="chapter-container side-pane" data-pane="contents">
+                  <div class="chapter-section-box">
+                    <div class="chapter-box">
+                      <div class="chapter-name">第一章 指标为锚</div>
+                      <button type="button" class="section-item active">
+                        <div class="first-line">
+                          <span>设备管理目标体系概览</span>
+                          <span class="palying">学习中</span>
+                        </div>
+                        <div class="second-line">视频 · 12分30秒</div>
+                      </button>
+                      <button type="button" class="section-item">
+                        <div class="first-line">
+                          <span>关键绩效指标拆解</span>
+                          <span class="todo">未学习</span>
+                        </div>
+                        <div class="second-line">视频 · 15分08秒</div>
+                      </button>
+                    </div>
+                    <div class="chapter-box">
+                      <div class="chapter-name">第二章 智能驭变</div>
+                      <button type="button" class="section-item">
+                        <div class="first-line">
+                          <span>数据驱动的设备决策</span>
+                          <span class="todo">未学习</span>
+                        </div>
+                        <div class="second-line">视频 · 11分20秒</div>
+                      </button>
+                      <button type="button" class="section-item">
+                        <div class="first-line">
+                          <span>目标体系落地路径</span>
+                          <span class="todo">未学习</span>
+                        </div>
+                        <div class="second-line">视频 · 10分19秒</div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="side-pane note-empty" data-pane="note" hidden>暂无笔记</div>
+              </aside>
+            </div>
+          </div>
+
+          <div class="course-play-footer">
+            <div class="cpf-left">
+              <div class="cpf-left-header">
+                <button type="button" class="clh-item clh-item-active" data-ftab="intro">课程介绍<span></span></button>
+                <button type="button" class="clh-item" data-ftab="ref">参考资料<span></span></button>
+                <button type="button" class="clh-item" data-ftab="discuss">讨论区<span></span></button>
+              </div>
+              <div class="course_introduction" data-ftab-pane="intro">
+                <div class="ci-item"><div class="ci-item-l">课程名称</div><div class="ci-item-r">指标为锚，智能驭变：构建卓越设备管理目标体系</div></div>
+                <div class="ci-item"><div class="ci-item-l">课程编号</div><div class="ci-item-r">POM013601</div></div>
+                <div class="ci-item"><div class="ci-item-l">课程时长</div><div class="ci-item-r">49分钟17秒</div></div>
+                <div class="ci-item"><div class="ci-item-l">学时 / 学分</div><div class="ci-item-r">1.5 / 1.5</div></div>
+                <div class="ci-item"><div class="ci-item-l">结业条件</div><div class="ci-item-r">课程评估</div></div>
+                <div class="ci-item"><div class="ci-item-l">课程简介</div><div class="ci-item-r">围绕设备管理目标体系建设，讲解指标锚定、智能决策与落地路径，帮助管理者建立可衡量、可执行的目标闭环。</div></div>
+              </div>
+              <div class="course_introduction" data-ftab-pane="ref" hidden>
+                <div class="note-empty" style="padding:48px 0;">暂无参考资料</div>
+              </div>
+              <div class="course_introduction" data-ftab-pane="discuss" hidden>
+                <div class="note-empty" style="padding:48px 0;">暂无讨论</div>
+              </div>
+            </div>
+            <div class="cpf-right">
+              <div class="cpf-right-title">相关推荐</div>
+              <button type="button" class="cpf-right-item">
+                <div class="thumb"></div>
+                <div>
+                  <div class="title">设备全生命周期管理实践</div>
+                  <div class="count">学习人次 1286</div>
+                </div>
+              </button>
+              <button type="button" class="cpf-right-item">
+                <div class="thumb" style="background:linear-gradient(135deg,#fff7e8,#ffe7ba);"></div>
+                <div>
+                  <div class="title">TPM 与智能运维入门</div>
+                  <div class="count">学习人次 956</div>
+                </div>
+              </button>
+              <button type="button" class="cpf-right-item">
+                <div class="thumb" style="background:linear-gradient(135deg,#e8ffea,#b7eb8f);"></div>
+                <div>
+                  <div class="title">工厂数字化指标看板搭建</div>
+                  <div class="count">学习人次 742</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 助手 side panel：对齐线上 ai-even 截图 -->
+  <aside class="tbc-sider-window-root chat-style-3" id="ai-side-panel" aria-hidden="true">
+    <div class="tbc-ai-kit-container">
+      <div class="__sider-window-header">
+        <div class="__header-title">
+          <span class="__header-title-img" aria-hidden="true">
+            <img src="./assets/icons/logo.svg?v=bj" width="22" height="22" alt="" />
+          </span>
+          <span class="__tbc-ai-session-robot-name" id="ai-panel-name">帮建</span>
+        </div>
+        <div class="__header-btn-group">
+          <div class="ai-agents-strip" id="ai-agents-strip" role="list" aria-label="参与本次课堂讨论的角色"></div>
+          <button type="button" class="__header-btn-rtr" id="btn-ai-rtr">AI企业智慧大脑</button>
+          <button type="button" class="__header-btn-new" id="btn-ai-header-new" title="新建会话" aria-label="新建会话">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 3.5v9M3.5 8h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button type="button" class="__header-icon-btn" id="btn-ai-close" title="关闭" aria-label="关闭">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai-panel-body" id="ai-panel-body">
+        <div class="__first-chat-show-msg" id="ai-first-tip">
+          你好，我是AI智能小助手，可以问我任何问题，也可切换回答来源提问企业知识库（需解析）。
+        </div>
+        <div class="ai-chat-log" id="ai-chat-log"></div>
+        <button type="button" class="ai-scroll-bottom" id="btn-ai-scroll" title="回到底部" aria-label="回到底部">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6.5 8 10.5l4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="ai-panel-footer">
+        <button type="button" class="bj-new-session" id="btn-bj-new" title="新建会话">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          新建会话
+        </button>
+        <div class="__btn-instruct-wrapper is-hidden" id="ai-parsed-badge">
+          <div class="__btn-instruct-action" title="当前课程已解析">
+            <span class="__btn-instruct-icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M3 2.5h7.5A1.5 1.5 0 0 1 12 4v9.5H4.5A1.5 1.5 0 0 1 3 12V2.5Z" stroke="#3872e0" stroke-width="1.2"/>
+                <path d="M5 5h5M5 7.5h5M5 10h3.5" stroke="#3872e0" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="__btn-instruct-txt">当前课程已解析</span>
+          </div>
+        </div>
+
+        <div class="ai-toolbar">
+          <button type="button" class="ai-toolbar-btn" id="btn-ai-new">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/>
+              <path d="M8 5.5v5M5.5 8h5" stroke-linecap="round"/>
+            </svg>
+            新建会话
+          </button>
+          <button type="button" class="ai-toolbar-btn" id="btn-ai-kefu">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+              <path d="M3.5 8a4.5 4.5 0 0 1 9 0v2.5a1.5 1.5 0 0 1-1.5 1.5h-.5"/>
+              <rect x="2" y="7" width="2.5" height="4" rx="1"/>
+              <rect x="11.5" y="7" width="2.5" height="4" rx="1"/>
+              <path d="M8 13.5h1.5a1.5 1.5 0 0 0 1.5-1.5" stroke-linecap="round"/>
+            </svg>
+            在线客服
+          </button>
+          <button type="button" class="ai-toolbar-btn" id="btn-ai-history">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="8" cy="8" r="5.5"/>
+              <path d="M8 5v3.2l2 1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            历史会话
+          </button>
+        </div>
+
+        <div class="ai-input-box">
+          <textarea id="ai-input" rows="2" placeholder="请输入你的需求，Enter 发送"></textarea>
+          <div class="ai-input-meta">
+            <button type="button" class="ai-kb-toggle" id="btn-ai-kb">
+              企业知识库优先
+              <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4">
+                <path d="M2 6.5L5 3.5l3 3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="ai-input-tools">
+              <div class="ai-composer-tools">
+                <button type="button" class="ai-attach-btn" id="btn-ai-attach" title="上传附件" aria-label="上传附件">
+                  <img src="./assets/icons/icon-attach.svg?v=bj" width="20" height="20" alt="" />
+                </button>
+                <button type="button" class="ai-mic-btn" id="btn-ai-mic" title="语音" aria-label="语音">
+                  <img src="./assets/icons/icon-mic.svg?v=bj" width="13" height="18" alt="" />
+                </button>
+              </div>
+              <button type="button" class="ai-send-btn" id="btn-ai-send" title="发送" aria-label="发送" disabled>
+                <img id="ai-send-icon" src="./assets/icons/send.svg?v=bj" width="32" height="32" alt="" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="ai-disclaimer">内容由AI生成，仅供参考</div>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    (function () {
+      document.querySelectorAll(".side-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          document.querySelectorAll(".side-tab").forEach(function (t) { t.classList.remove("active"); });
+          tab.classList.add("active");
+          var pane = tab.getAttribute("data-pane");
+          document.querySelectorAll(".rightList-container .side-pane").forEach(function (p) {
+            p.hidden = p.getAttribute("data-pane") !== pane;
+          });
+        });
+      });
+
+      document.querySelectorAll(".section-item").forEach(function (item) {
+        item.addEventListener("click", function () {
+          document.querySelectorAll(".section-item").forEach(function (i) {
+            i.classList.remove("active");
+            var tip = i.querySelector(".palying, .todo");
+            if (tip) { tip.className = "todo"; tip.textContent = "未学习"; }
+          });
+          item.classList.add("active");
+          var tip = item.querySelector(".todo, .palying");
+          if (tip) { tip.className = "palying"; tip.textContent = "学习中"; }
+          var name = item.querySelector(".first-line span").textContent;
+          document.querySelector(".player-stage-inner div:last-child").textContent = name;
+        });
+      });
+
+      document.querySelectorAll(".clh-item").forEach(function (item) {
+        item.addEventListener("click", function () {
+          document.querySelectorAll(".clh-item").forEach(function (i) { i.classList.remove("clh-item-active"); });
+          item.classList.add("clh-item-active");
+          var id = item.getAttribute("data-ftab");
+          document.querySelectorAll("[data-ftab-pane]").forEach(function (p) {
+            p.hidden = p.getAttribute("data-ftab-pane") !== id;
+          });
+        });
+      });
+
+      document.getElementById("btn-finish").addEventListener("click", function () {
+        document.querySelector(".progress > i").style.width = "100%";
+        document.querySelector(".progress-value").textContent = "100%";
+        this.textContent = "已完成学习";
+        this.style.background = "#00b42a";
+      });
+
+      /* AI side panel — 样式 3 + LangGraph 导演 */
+      var panel = document.getElementById("ai-side-panel");
+      var btnAssistant = document.getElementById("btn-ai-assistant");
+      var btnQa = document.getElementById("btn-ai-qa");
+      var btnClose = document.getElementById("btn-ai-close");
+      var btnNew = document.getElementById("btn-ai-new");
+      var btnSend = document.getElementById("btn-ai-send");
+      var btnScroll = document.getElementById("btn-ai-scroll");
+      var tip = document.getElementById("ai-first-tip");
+      var parsedBadge = document.getElementById("ai-parsed-badge");
+      // TTS 状态条已下线；保留 stub，避免改散落赋值
+      var ttsBar = { hidden: true, textContent: "" };
+      var bodyEl = document.getElementById("ai-panel-body");
+      var input = document.getElementById("ai-input");
+      var chatLog = document.getElementById("ai-chat-log");
+
+      var TIP_GENERIC = "你好，我是AI智能小助手，可以问我任何问题，也可切换回答来源提问企业知识库（需解析）。";
+      var TIP_COURSE = "提示：在课程详情页启用AI助手，AI解析当前课程后，优先基于当前课程进行回答。";
+      var CLASSROOM_API = "http://127.0.0.1:8768";
+      var ttsAudio = null;
+      var ttsSource = null;
+      var audioCtx = null;
+      var audioUnlocked = false;
+
+      function ensureTtsAudioEl() {
+        var el = document.getElementById("ai-tts-player");
+        if (!el) {
+          el = document.createElement("audio");
+          el.id = "ai-tts-player";
+          el.preload = "auto";
+          el.setAttribute("playsinline", "");
+          el.setAttribute("webkit-playsinline", "");
+          el.style.display = "none";
+          document.body.appendChild(el);
+        }
+        return el;
+      }
+
+      function unlockAudio() {
+        if (window.speechSynthesis) {
+          try { window.speechSynthesis.resume(); } catch (e0) {}
+          try { window.speechSynthesis.getVoices(); } catch (e1) {}
+        }
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) {
+          audioUnlocked = true;
+          return Promise.resolve(false);
+        }
+        if (!audioCtx) {
+          try { audioCtx = new AC(); } catch (e2) { return Promise.resolve(false); }
+        }
+        var done = function (ok) {
+          audioUnlocked = !!ok || audioCtx.state === "running";
+          return audioUnlocked;
+        };
+        if (audioCtx.state !== "suspended") {
+          return Promise.resolve(done(true));
+        }
+        return Promise.race([
+          audioCtx.resume().then(function () { return done(true); }).catch(function () { return done(false); }),
+          new Promise(function (resolve) {
+            setTimeout(function () { resolve(done(audioCtx.state === "running")); }, 600);
+          })
+        ]);
+      }
+      var classroomThreadId = null;
+      var DEFAULT_ROLES = [
+        { id: "teacher", name: "AI教师", type: "teacher", typeLabel: "教师", color: "#3b82f6", avatar: "师", voice: "沉稳男声", prompt: "你是本课主讲教师。讲解清晰、有温度；循序渐进，善用类比。" },
+        { id: "assistant", name: "AI助教", type: "assistant", typeLabel: "助教", color: "#00b42a", avatar: "助", voice: "亲和女声", prompt: "你是助教。补充老师未展开的细节，口语化复述难点。" }
+      ];
+      var history = [];
+      var ttsQueueToken = 0;
+
+      var ACTIONS_HTML =
+        '<div class="ai-msg-actions">' +
+        '<button type="button" class="ai-msg-action" data-action="copy" title="复制" aria-label="复制"><img src="./assets/icons/action-copy.svg?v=bj" width="24" height="24" alt="" /></button>' +
+        '<button type="button" class="ai-msg-action" data-action="regen" title="重新生成" aria-label="重新生成"><img src="./assets/icons/action-regenerate.svg?v=bj" width="24" height="24" alt="" /></button>' +
+        '<button type="button" class="ai-msg-action" data-action="speak" title="播放语音" aria-label="播放语音"><img src="./assets/icons/action-voice.svg?v=bj" width="24" height="24" alt="" /></button>' +
+        "</div>";
+
+      var streamToken = 0;
+      var STREAM_MS = 26;
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function loadClassroomRoles() {
+        try {
+          var raw = localStorage.getItem("21tb.prototype.aiClassroomRoles");
+          if (!raw) return DEFAULT_ROLES.slice();
+          var payload = JSON.parse(raw);
+          if (!payload || !Array.isArray(payload.roles) || !payload.roles.length) return DEFAULT_ROLES.slice();
+          var list = payload.roles.filter(function (r) {
+            return !(payload.selected && payload.selected[r.id] === false);
+          }).map(function (r) {
+            var copy = Object.assign({}, r);
+            if (!(copy.prompt || "").trim() || (copy.prompt || "").length < 40) {
+              copy.prompt = DEFAULT_ROLES.find(function (d) { return d.type === copy.type; })
+                ? (DEFAULT_ROLES.find(function (d) { return d.type === copy.type; }).prompt)
+                : copy.prompt;
+            }
+            return copy;
+          });
+          return list.length ? list : DEFAULT_ROLES.slice();
+        } catch (err) {
+          return DEFAULT_ROLES.slice();
+        }
+      }
+
+      function pickReplyRoles() {
+        var roles = loadClassroomRoles();
+        var teacher = roles.find(function (r) {
+          return r.type === "teacher" || /教师/.test(r.typeLabel || "") || /教师/.test(r.name || "");
+        }) || roles[0];
+        var others = roles.filter(function (r) { return r !== teacher; }).slice(0, 2);
+        if (!others.length) others = [DEFAULT_ROLES[1]];
+        return [teacher].concat(others);
+      }
+
+      function roleLabel(role) {
+        if (!role) return "角色";
+        return (role.name || "角色").replace(/\s+/g, "");
+      }
+
+      function answerTextFallback(role, question) {
+        var isTeacher = role.type === "teacher" || /教师/.test(role.typeLabel || "") || /教师/.test(role.name || "");
+        var q = question || "你好";
+        if (isTeacher) {
+          return "针对「" + q + "」：先锚定核心目标，再拆到可执行指标，并用数据闭环验证。";
+        }
+        if (role.type === "assistant" || /助教/.test(role.typeLabel || "")) {
+          return "补充：尽量对应可采集的过程数据，避免只写口号。";
+        }
+        return "可以简单记：先定总目标，再往下拆到班组动作和数据。";
+      }
+
+      function agentsPayload() {
+        return loadClassroomRoles().map(function (r) {
+          return {
+            id: r.id,
+            name: r.name || r.id,
+            type: r.type || "student",
+            typeLabel: r.typeLabel || r.type || "",
+            prompt: r.prompt || "",
+            color: r.color || "#1677ff",
+            avatar: r.avatar || "?",
+            voice: r.voice || ""
+          };
+        });
+      }
+
+      function ensureClassroomSession() {
+        if (classroomThreadId) return Promise.resolve(classroomThreadId);
+        return fetch(CLASSROOM_API + "/session/new", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agents: agentsPayload(), max_agent_turns: 3 })
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error("session " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            classroomThreadId = data.thread_id;
+            return classroomThreadId;
+          });
+      }
+
+      function buildRepliesFallback(question) {
+        var roles = pickReplyRoles();
+        return roles.map(function (role) {
+          return {
+            role: role,
+            label: roleLabel(role),
+            text: answerTextFallback(role, question)
+          };
+        });
+      }
+
+      function fetchDirectorReplies(question) {
+        return ensureClassroomSession()
+          .then(function (tid) {
+            return fetch(CLASSROOM_API + "/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                thread_id: tid,
+                message: question,
+                agents: agentsPayload(),
+                max_agent_turns: 3
+              })
+            });
+          })
+          .then(function (res) {
+            if (!res.ok) throw new Error("chat " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            var roles = loadClassroomRoles();
+            var list = (data.replies || []).map(function (r) {
+              var role =
+                roles.find(function (x) { return x.id === r.agent_id; }) ||
+                {
+                  id: r.agent_id,
+                  name: r.name,
+                  type: r.type || r.role || "student",
+                  color: "#1677ff",
+                  avatar: (r.name || "?").charAt(0)
+                };
+              return {
+                role: role,
+                label: r.name || roleLabel(role),
+                text: r.text || ""
+              };
+            }).filter(function (x) { return x.text; });
+            if (!list.length) throw new Error("empty replies");
+            if (data.terminal === "close_session") {
+              setTimeout(function () {
+                ttsBar.hidden = false;
+                ttsBar.textContent = "本轮问答已结束（" + (data.end_reason || "done") + "），可继续听课或新开提问。";
+              }, 400);
+            }
+            return list;
+          })
+          .catch(function (err) {
+            console.warn("[classroom] director fallback", err);
+            ttsBar.hidden = false;
+            ttsBar.textContent = "导演服务未连通，已用本地示例回复（请确认 8768 已启动）";
+            return buildRepliesFallback(question);
+          });
+      }
+
+      function stopTts() {
+        ttsQueueToken += 1;
+        streamToken += 1;
+        if (ttsSource) {
+          try { ttsSource.stop(0); } catch (e0) {}
+          ttsSource = null;
+        }
+        if (ttsAudio) {
+          try { ttsAudio.pause(); } catch (e) {}
+          try {
+            if (ttsAudio._blobUrl) URL.revokeObjectURL(ttsAudio._blobUrl);
+          } catch (e2) {}
+          try { ttsAudio.removeAttribute("src"); ttsAudio.load(); } catch (e3) {}
+          ttsAudio = null;
+        }
+        var el = document.getElementById("ai-tts-player");
+        if (el) {
+          try { el.pause(); } catch (e4) {}
+          try {
+            if (el._blobUrl) URL.revokeObjectURL(el._blobUrl);
+            el._blobUrl = null;
+          } catch (e5) {}
+          try { el.removeAttribute("src"); el.load(); } catch (e6) {}
+        }
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        ttsBar.hidden = true;
+        chatLog.querySelectorAll(".ai-msg.is-speaking, .ai-msg.is-talking").forEach(function (el2) {
+          el2.classList.remove("is-speaking", "is-talking");
+        });
+        chatLog.querySelectorAll(".ai-msg-action.is-playing").forEach(function (el3) {
+          el3.classList.remove("is-playing");
+        });
+        chatLog.querySelectorAll(".ai-cursor-blink").forEach(function (el4) {
+          el4.classList.remove("ai-cursor-blink");
+        });
+      }
+
+      function delay(ms, token) {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            resolve(token === streamToken);
+          }, ms);
+        });
+      }
+
+      function streamInto(el, text, token) {
+        return new Promise(function (resolve) {
+          var i = 0;
+          var chunk = 1;
+          el.textContent = "";
+          el.classList.add("ai-cursor-blink");
+          function tick() {
+            if (token !== streamToken) {
+              el.classList.remove("ai-cursor-blink");
+              resolve(false);
+              return;
+            }
+            i = Math.min(text.length, i + chunk);
+            el.textContent = text.slice(0, i);
+            scrollToBottom();
+            if (i >= text.length) {
+              el.classList.remove("ai-cursor-blink");
+              resolve(true);
+              return;
+            }
+            var ch = text.charAt(i - 1);
+            var wait = /[，。！？；、…]/.test(ch) ? STREAM_MS * 3.2 : STREAM_MS;
+            chunk = (text.length > 80 && i % 3 === 0) ? 2 : 1;
+            setTimeout(tick, wait);
+          }
+          tick();
+        });
+      }
+
+      function clearSpeakUi(node, btn) {
+        if (node) node.classList.remove("is-speaking");
+        if (btn) btn.classList.remove("is-playing");
+      }
+
+      function pickZhVoice() {
+        if (!window.speechSynthesis) return null;
+        var voices = window.speechSynthesis.getVoices() || [];
+        return (
+          voices.find(function (v) { return /zh(-|_|$)|Chinese|中文/i.test(v.lang + " " + v.name); }) ||
+          voices.find(function (v) { return (v.lang || "").toLowerCase().indexOf("zh") === 0; }) ||
+          null
+        );
+      }
+
+      function speakBrowser(item, node, btn) {
+        return new Promise(function (resolve) {
+          if (!window.speechSynthesis) {
+            resolve(false);
+            return;
+          }
+          try { window.speechSynthesis.cancel(); } catch (e) {}
+          try { window.speechSynthesis.resume(); } catch (e2) {}
+          var u = new SpeechSynthesisUtterance(item.text);
+          u.lang = "zh-CN";
+          var voice = pickZhVoice();
+          if (voice) u.voice = voice;
+          u.rate = item.role && item.role.type === "teacher" ? 0.95 : 1.05;
+          u.pitch = item.role && item.role.type === "teacher" ? 0.9 : (item.role && item.role.type === "assistant" ? 1.1 : 1.2);
+          u.onend = function () { resolve(true); };
+          u.onerror = function () { resolve(false); };
+          window.speechSynthesis.speak(u);
+        });
+      }
+
+      function base64ToBlob(b64, mime) {
+        var bin = atob(b64);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new Blob([bytes], { type: mime || "audio/mpeg" });
+      }
+
+      function playViaAudioElement(blob) {
+        return new Promise(function (resolve) {
+          var settled = false;
+          var finish = function (ok) {
+            if (settled) return;
+            settled = true;
+            resolve(!!ok);
+          };
+          var el = ensureTtsAudioEl();
+          try {
+            if (el._blobUrl) URL.revokeObjectURL(el._blobUrl);
+          } catch (e0) {}
+          var url = URL.createObjectURL(blob);
+          el._blobUrl = url;
+          ttsAudio = el;
+          el.onended = function () { finish(true); };
+          el.onerror = function () { finish(false); };
+          el.muted = false;
+          el.volume = 1;
+          el.src = url;
+          var p = el.play();
+          if (p && p.then) {
+            p.then(function () { /* playing */ }).catch(function () { finish(false); });
+          } else {
+            finish(false);
+          }
+        });
+      }
+
+      function playViaAudioContext(blob) {
+        if (!audioCtx || audioCtx.state !== "running") return Promise.resolve(false);
+        return blob.arrayBuffer().then(function (ab) {
+          var copy = ab.slice(0);
+          return new Promise(function (resolve, reject) {
+            var p = audioCtx.decodeAudioData(copy, resolve, reject);
+            if (p && p.then) p.then(resolve, reject);
+          });
+        }).then(function (buffer) {
+          return new Promise(function (resolve) {
+            var settled = false;
+            var finish = function (ok) {
+              if (settled) return;
+              settled = true;
+              if (ttsSource) {
+                try { ttsSource.disconnect(); } catch (e0) {}
+              }
+              ttsSource = null;
+              resolve(!!ok);
+            };
+            try {
+              if (ttsSource) {
+                try { ttsSource.stop(0); } catch (e1) {}
+                ttsSource = null;
+              }
+              var src = audioCtx.createBufferSource();
+              ttsSource = src;
+              src.buffer = buffer;
+              src.connect(audioCtx.destination);
+              src.onended = function () { finish(true); };
+              src.start(0);
+              var ms = Math.max(1500, Math.ceil((buffer.duration || 2) * 1000) + 800);
+              setTimeout(function () { finish(true); }, ms);
+            } catch (e2) {
+              finish(false);
+            }
+          });
+        }).catch(function () {
+          return false;
+        });
+      }
+
+      function playAudioBlob(blob) {
+        return unlockAudio().catch(function () { return false; }).then(function () {
+          // 优先 HTMLAudio（点击喇叭有用户手势时最稳），再试 AudioContext
+          return playViaAudioElement(blob).then(function (ok) {
+            if (ok) return true;
+            return playViaAudioContext(blob);
+          });
+        });
+      }
+
+      function fetchTtsBlob(item) {
+        var role = item.role || {};
+        return fetch(CLASSROOM_API + "/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: String(item.text || "").slice(0, 600),
+            voice: role.voice || "",
+            role_type: role.type || ""
+          })
+        }).then(function (r) {
+          if (!r.ok) throw new Error("tts HTTP " + r.status);
+          return r.json();
+        }).then(function (data) {
+          if (!data || !data.ok || !data.audio_base64) throw new Error("empty audio");
+          return {
+            blob: base64ToBlob(data.audio_base64, data.mime || "audio/mpeg"),
+            provider: data.provider || "tts"
+          };
+        });
+      }
+
+      function speakServerAudio(item, blobPromise) {
+        var packP = (blobPromise || Promise.resolve(null)).then(function (pack) {
+          if (pack && pack.blob) return pack;
+          return fetchTtsBlob(item);
+        });
+        return packP.then(function (pack) {
+          if (!pack || !pack.blob) throw new Error("empty audio");
+          ttsBar.hidden = false;
+          ttsBar.textContent = "正在播放（" + (pack.provider || "tts") + "）…";
+          return playAudioBlob(pack.blob);
+        });
+      }
+
+      function speakUtterance(item, node, opts) {
+        opts = opts || {};
+        var btn = node && node.querySelector('[data-action="speak"]');
+        if (node) {
+          node.classList.add("is-speaking", "is-talking");
+          if (btn) btn.classList.add("is-playing");
+        }
+        ttsBar.hidden = false;
+        ttsBar.textContent = "正在合成语音…";
+        // 先开始拉 TTS，解锁并行；避免 AudioContext.resume 卡住导致一直无声
+        var unlockP = unlockAudio();
+        var audioP = speakServerAudio(item, opts.blobPromise);
+        return Promise.all([unlockP, audioP])
+          .then(function (pair) {
+            var ok = !!pair[1];
+            if (ok) return { ok: true, via: "server" };
+            return speakBrowser(item, node, btn).then(function (bok) {
+              return { ok: !!bok, via: "browser" };
+            });
+          })
+          .catch(function (err) {
+            return speakBrowser(item, node, btn).then(function (bok) {
+              return { ok: !!bok, via: "browser", err: String((err && err.message) || err || "") };
+            });
+          })
+          .then(function (res) {
+            clearSpeakUi(node, btn);
+            if (!res || !res.ok) {
+              ttsBar.hidden = false;
+              ttsBar.textContent = "未能播放：请确认 8768 已启动、系统未静音，再点喇叭";
+              return false;
+            }
+            ttsBar.hidden = true;
+            return true;
+          });
+      }
+
+      function playRoleSequence(replies, withTts) {
+        streamToken += 1;
+        var token = streamToken;
+        // 出字同时预取 TTS，避免「字出完再等 5~7s 合成」
+        var blobPs = withTts
+          ? replies.map(function (item) {
+              return fetchTtsBlob(item).catch(function (err) {
+                console.warn("[classroom] tts prefetch", err);
+                return null;
+              });
+            })
+          : [];
+        var chain = Promise.resolve();
+        replies.forEach(function (item, idx) {
+          chain = chain.then(function () {
+            if (token !== streamToken) return;
+            var node = createRoleCard(item, { stream: true });
+            chatLog.appendChild(node);
+            scrollToBottom();
+            var p = node.querySelector(".ai-bot-md p");
+            setTalking(node, true);
+            if (withTts) {
+              ttsBar.hidden = false;
+              ttsBar.textContent = "正在合成并播报：" + item.label;
+            }
+            var streamP = streamInto(p, item.text, token);
+            var blobP = withTts ? blobPs[idx] : null;
+            // 出字与合成并行；两者都好再播（合成常可被出字时间盖住）
+            return Promise.all([streamP, blobP || Promise.resolve(null)]).then(function (pair) {
+              if (token !== streamToken || !pair[0]) return;
+              if (!withTts) {
+                setTalking(node, false);
+                return delay(380, token);
+              }
+              var pack = pair[1];
+              var ready = pack
+                ? Promise.resolve(pack)
+                : fetchTtsBlob(item).catch(function () { return null; });
+              return speakUtterance(item, node, { blobPromise: ready }).then(function () {
+                if (token !== streamToken) return;
+                setTalking(node, false);
+                return delay(180, token);
+              });
+            });
+          });
+        });
+        return chain.then(function () {
+          if (token === streamToken) ttsBar.hidden = true;
+        });
+      }
+
+      function setTalking(node, on) {
+        if (!node) return;
+        node.classList.toggle("is-talking", !!on);
+      }
+
+      function createRoleCard(item, opts) {
+        opts = opts || {};
+        var wrap = document.createElement("div");
+        wrap.className = "ai-msg bot role-card-msg";
+        wrap.setAttribute("data-role-id", item.role.id);
+        wrap.setAttribute("data-reply-text", item.text);
+        var body = opts.stream ? "" : escapeHtml(item.text);
+        wrap.innerHTML =
+          '<div class="ai-role-avatar-wrap">' +
+          '<div class="ai-talk-rings" aria-hidden="true"><span></span><span></span><span></span></div>' +
+          '<div class="ai-role-avatar" style="background:' + escapeHtml(item.role.color || "#3872e0") + '">' +
+          avatarHtml(item.role) +
+          "</div>" +
+          '<div class="ai-talk-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>' +
+          "</div>" +
+          '<div class="ai-role-main">' +
+          '<div class="ai-role-name-row"><span>' + escapeHtml(item.label) + '</span><span class="tts-dot" aria-hidden="true"></span></div>' +
+          '<div class="ai-bubble bot"><div class="ai-bot-md"><p>' + body + "</p></div></div>" +
+          ACTIONS_HTML +
+          "</div>";
+        return wrap;
+      }
+
+      function roleTypeLabel(role) {
+        if (!role) return "角色";
+        if (role.typeLabel) return role.typeLabel;
+        if (role.type === "teacher") return "教师";
+        if (role.type === "assistant") return "助教";
+        if (role.type === "student") return "学员";
+        return "角色";
+      }
+
+      function renderHeaderAgents() {
+        var strip = document.getElementById("ai-agents-strip");
+        if (!strip) return;
+        var roles = loadClassroomRoles();
+        var maxShow = 5;
+        var shown = roles.slice(0, maxShow);
+        var extra = roles.length - shown.length;
+        var html = shown.map(function (role, i) {
+          var name = roleLabel(role);
+          var typeL = roleTypeLabel(role);
+          var tip = name + " · " + typeL;
+          var bg = escapeHtml(role.color || "#1677ff");
+          return (
+            '<span class="ai-agent-chip" role="listitem" tabindex="0" style="background:' + bg + ';z-index:' + (i + 1) + '" data-tip="' + escapeHtml(tip) + '" aria-label="' + escapeHtml(tip) + '">' +
+            avatarHtml(role) +
+            "</span>"
+          );
+        }).join("");
+        if (extra > 0) {
+          html += '<span class="ai-agent-more" title="另有 ' + extra + ' 位角色" aria-label="另有 ' + extra + ' 位角色">+' + extra + "</span>";
+        }
+        strip.innerHTML = html;
+        strip.hidden = !roles.length;
+      }
+
+      function avatarHtml(role) {
+        if (role.avatarUrl) {
+          return '<img src="' + escapeHtml(role.avatarUrl) + '" alt="" />';
+        }
+        var ch = role.avatar || (role.name || "?").charAt(0);
+        return escapeHtml(ch);
+      }
+
+      function renderStyle1(replies) {
+        var html = '<div class="ai-bot-md">';
+        replies.forEach(function (item) {
+          html +=
+            '<div class="ai-role-block">' +
+            '<div class="ai-role-tag">【' + escapeHtml(item.label) + "】</div>" +
+            "<p>" + escapeHtml(item.text) + "</p>" +
+            "</div>";
+        });
+        html += "</div>";
+        var wrap = document.createElement("div");
+        wrap.className = "ai-msg bot";
+        wrap.innerHTML = '<div class="ai-bubble bot">' + html + "</div>" + ACTIONS_HTML;
+        chatLog.appendChild(wrap);
+      }
+
+      function renderRoleCards(replies) {
+        var nodes = [];
+        replies.forEach(function (item) {
+          var wrap = createRoleCard(item, { stream: false });
+          chatLog.appendChild(wrap);
+          nodes.push(wrap);
+        });
+        return nodes;
+      }
+
+      function appendUser(text) {
+        var wrap = document.createElement("div");
+        wrap.className = "ai-msg user";
+        wrap.innerHTML = '<div class="ai-bubble user"></div>';
+        wrap.querySelector(".ai-bubble").textContent = text;
+        chatLog.appendChild(wrap);
+      }
+
+      function appendTurn(question, opts) {
+        opts = opts || {};
+        appendUser(question);
+        syncChatChrome();
+        scrollToBottom();
+        ttsBar.hidden = false;
+        ttsBar.textContent = "导演调度中…";
+        return fetchDirectorReplies(question).then(function (replies) {
+          ttsBar.hidden = true;
+          return playRoleSequence(replies, opts.withTts !== false).then(function () {
+            syncChatChrome();
+            scrollToBottom();
+          });
+        });
+      }
+
+      function applyViewStyle() {
+        panel.classList.add("chat-style-3");
+        document.getElementById("ai-panel-name").textContent = "帮建";
+        if (input) input.placeholder = "请输入你的需求，Enter 发送";
+      }
+
+      function setPanelOpen(open) {
+        panel.classList.toggle("is-open", open);
+        panel.setAttribute("aria-hidden", open ? "false" : "true");
+        btnAssistant.classList.toggle("is-open", open);
+        btnQa.classList.toggle("is-open", open);
+        if (!open) stopTts();
+        if (open) {
+          renderHeaderAgents();
+          setTimeout(function () { input.focus(); syncScrollBtn(); }, 60);
+        }
+      }
+      function togglePanel() { setPanelOpen(!panel.classList.contains("is-open")); }
+      function openPanel() { setPanelOpen(true); }
+
+      var sendIcon = document.getElementById("ai-send-icon");
+      var SEND_ICON_IDLE = "./assets/icons/send.svg?v=bj";
+      var SEND_ICON_ACTIVE = "./assets/icons/sending-active.svg?v=bj";
+
+      function syncSendState() {
+        var has = !!(input.value || "").trim();
+        btnSend.classList.toggle("has-text", has);
+        btnSend.disabled = !has || sending;
+        if (sendIcon) sendIcon.src = has ? SEND_ICON_ACTIVE : SEND_ICON_IDLE;
+      }
+
+      function syncChatChrome() {
+        var hasChat = chatLog.children.length > 0;
+        tip.textContent = hasChat ? TIP_GENERIC : TIP_COURSE;
+        tip.hidden = false;
+        parsedBadge.classList.toggle("is-hidden", hasChat);
+      }
+
+      function syncScrollBtn() {
+        var gap = bodyEl.scrollHeight - bodyEl.scrollTop - bodyEl.clientHeight;
+        btnScroll.classList.toggle("is-visible", gap > 48);
+      }
+
+      function scrollToBottom() {
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+        syncScrollBtn();
+      }
+
+      var sending = false;
+      function sendQuestion(q) {
+        q = (q || "").trim();
+        if (!q || sending) return;
+        unlockAudio();
+        openPanel();
+        history.push({ q: q });
+        input.value = "";
+        sending = true;
+        syncSendState();
+        appendTurn(q, { withTts: true }).finally(function () {
+          sending = false;
+          syncSendState();
+        });
+      }
+
+      function resetChat() {
+        stopTts();
+        history = [];
+        classroomThreadId = null;
+        chatLog.innerHTML = "";
+        tip.hidden = false;
+        tip.textContent = TIP_COURSE;
+        parsedBadge.classList.remove("is-hidden");
+        ttsBar.hidden = true;
+        syncScrollBtn();
+        ensureClassroomSession().catch(function () {});
+      }
+
+      chatLog.addEventListener("click", function (e) {
+        var copyBtn = e.target.closest('[data-action="copy"]');
+        if (copyBtn && chatLog.contains(copyBtn)) {
+          var msg = copyBtn.closest(".ai-msg");
+          var textCopy = (msg && msg.getAttribute("data-reply-text")) || "";
+          if (!textCopy && msg) {
+            var pCopy = msg.querySelector(".ai-bot-md p");
+            textCopy = pCopy ? pCopy.textContent : "";
+          }
+          if (textCopy && navigator.clipboard) navigator.clipboard.writeText(textCopy);
+          return;
+        }
+        var btn = e.target.closest('[data-action="speak"]');
+        if (!btn || !chatLog.contains(btn)) return;
+        var msg = btn.closest(".ai-msg");
+        if (!msg) return;
+        var text = msg.getAttribute("data-reply-text") || "";
+        if (!text) {
+          var p = msg.querySelector(".ai-bot-md p");
+          text = p ? p.textContent : "";
+        }
+        if (!text) return;
+        e.stopPropagation();
+        if (btn.classList.contains("is-playing")) {
+          stopTts();
+          return;
+        }
+        stopTts();
+        unlockAudio();
+        var roleId = msg.getAttribute("data-role-id") || "";
+        var roleMeta = loadClassroomRoles().find(function (r) { return r.id === roleId; }) || {};
+        ttsBar.hidden = false;
+        ttsBar.textContent = "正在合成语音…";
+        speakUtterance(
+          {
+            text: text,
+            label: (msg.querySelector(".ai-role-name-row span") || {}).textContent || "",
+            role: {
+              type: roleMeta.type || (roleId === "teacher" ? "teacher" : "student"),
+              voice: roleMeta.voice || ""
+            }
+          },
+          msg
+        ).then(function (ok) {
+          setTalking(msg, false);
+          if (ok) ttsBar.hidden = true;
+        });
+      });
+
+      panel.addEventListener("pointerdown", function () { unlockAudio(); }, { once: false });
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = function () { pickZhVoice(); };
+      }
+
+
+      btnAssistant.addEventListener("click", togglePanel);
+      btnQa.addEventListener("click", openPanel);
+      btnClose.addEventListener("click", function () { setPanelOpen(false); });
+      btnNew.addEventListener("click", resetChat);
+      var btnBjNew = document.getElementById("btn-bj-new");
+      if (btnBjNew) btnBjNew.addEventListener("click", resetChat);
+      var btnHeaderNew = document.getElementById("btn-ai-header-new");
+      if (btnHeaderNew) btnHeaderNew.addEventListener("click", resetChat);
+      btnSend.addEventListener("click", function () { sendQuestion(input.value); });
+      btnScroll.addEventListener("click", scrollToBottom);
+      bodyEl.addEventListener("scroll", syncScrollBtn);
+      input.addEventListener("input", syncSendState);
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendQuestion(input.value);
+        }
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.ctrlKey && e.code === "KeyM") {
+          e.preventDefault();
+          togglePanel();
+        }
+      });
+
+      applyViewStyle();
+      syncSendState();
+      renderHeaderAgents();
+      window.__protoResetClassroomSession = function () {
+        classroomThreadId = null;
+      };
+      window.__protoRefreshHeaderAgents = renderHeaderAgents;
+
+  </div>
+
+  <script>
+    (function () {
+      var viewSettings = document.getElementById("view-settings");
+      var viewLearning = document.getElementById("view-learning");
+      function show(which) {
+        var isLearn = which === "learning";
+        viewSettings.classList.toggle("is-active", !isLearn);
+        viewLearning.classList.toggle("is-active", isLearn);
+        document.title = isLearn
+          ? "指标为锚，智能驭变：构建卓越设备管理目标体系"
+          : "系统设置 · 授权审核（含 AI 课堂角色）";
+        try {
+          history.replaceState(null, "", isLearn ? "#learning" : "#settings");
+        } catch (e) {}
+        if (isLearn && window.__protoRefreshHeaderAgents) window.__protoRefreshHeaderAgents();
+      }
+      window.__protoShowLearning = function () { show("learning"); };
+      window.__protoShowSettings = function () { show("settings"); };
+      var back = document.getElementById("proto-back-settings");
+      if (back) back.addEventListener("click", function () { show("settings"); });
+      show(location.hash === "#learning" ? "learning" : "settings");
+    })();
+  </script>
+
+</body>
+</html>
