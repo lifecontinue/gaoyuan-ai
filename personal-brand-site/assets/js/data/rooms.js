@@ -5,9 +5,9 @@ export const rooms = [
   {
     id: "study",
     name: "Study",
-    img: "assets/img/room.png",
+    img: "assets/img/room.webp",
     video: "assets/video/room-bg.mp4",
-    poster: "assets/img/room.png",
+    poster: "assets/img/room.webp",
     aspect: 1376 / 768,        // actual room image ratio 1.7917 (1376×768)
     width: 1376,              // native pixel width (used for SVG hotspot coordinate maths)
     height: 768,              // native pixel height

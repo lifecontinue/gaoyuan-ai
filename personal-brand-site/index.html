@@ -25,6 +25,8 @@
   <link rel="manifest" href="site.webmanifest" />
   <meta name="theme-color" content="#3a2c1c" />
 
+  <link rel="preload" as="image" href="assets/img/room.webp" fetchpriority="high" />
+
   <!-- Fonts: self-hosted locally (assets/fonts), no external dependencies -->
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
 
@@ -71,7 +73,7 @@
     <!-- Room stage -->
     <div class="room">
       <div class="room-stage">
-        <video class="room-video" autoplay muted loop playsinline preload="auto" aria-hidden="true" poster="assets/img/room.png"></video>
+        <video class="room-video" muted loop playsinline preload="none" aria-hidden="true" poster="assets/img/room.webp"></video>
         <div class="hotspots" aria-label="App hotspots"></div>
       </div>
       <div class="room-overlay"></div>
@@ -84,11 +86,12 @@
         <small class="topbar__title">AI 产品经理</small>
       </button>
 
-      <div class="topbar__actions">
-        <a class="topbar__btn" href="essay.html" aria-label="Essay — 文章" title="Essay">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V6a2 2 0 0 1 2-2h11.5"/><path d="M6 17h12v3H6a2 2 0 0 1 0-4h12"/><path d="M9.5 8.5h5"/></svg>
-        </a>
-      </div>
+      <nav class="topbar__actions" aria-label="主导航">
+        <a class="topbar__link" href="#works">作品</a>
+        <a class="topbar__link" href="essay.html">写作</a>
+        <a class="topbar__link" href="about.html">关于</a>
+        <button class="topbar__link ambience-toggle" type="button" aria-pressed="false">开启动态</button>
+      </nav>
     </header>
 
     <!-- Profile drawer -->
@@ -110,11 +113,11 @@
 
         <div class="profile__qrs">
           <figure class="profile__qr">
-            <img src="assets/img/qrcode.png" alt="WeChat Official Account QR code" onerror="this.classList.add('is-error')" />
+            <img data-src="assets/img/qrcode.png" decoding="async" alt="WeChat Official Account QR code" onerror="this.classList.add('is-error')" />
             <figcaption>Official Account<br />公众号</figcaption>
           </figure>
           <figure class="profile__qr">
-            <img src="assets/img/wechat-qrcode.jpg" alt="Personal WeChat QR code" onerror="this.classList.add('is-error')" />
+            <img data-src="assets/img/wechat-qrcode.jpg" decoding="async" alt="Personal WeChat QR code" onerror="this.classList.add('is-error')" />
             <figcaption>Personal WeChat<br />个人微信</figcaption>
           </figure>
         </div>
@@ -196,27 +199,18 @@
     </div>
   </div>
 
-  <!-- Work showcase: scroll-driven gradient background (Three.js) -->
+  <!-- Work showcase: lightweight CSS gradient, no WebGL dependency -->
   <section class="works" id="works" aria-label="Work showcase">
-    <canvas class="works-bg" aria-hidden="true"></canvas>
+    <div class="works-bg" aria-hidden="true"></div>
     <div class="works-inner">
       <header class="works-head">
         <p class="works-eyebrow">Selected Work</p>
         <h2 class="works-title">我构建的产品</h2>
-        <p class="works-sub">10 款 AI 原生应用，按方向分为三组。向下滚动，背景会随章节流动渐变。</p>
+        <p class="works-sub">从一个真实问题出发，把 AI 做成可以使用的产品。探索游戏、育儿、教育与日常生活中的实践。</p>
       </header>
       <div class="works-chapters" id="worksChapters"></div>
     </div>
   </section>
-
-  <!-- First-paint loading layer -->
-  <div class="loader">
-    <div class="loader__inner">
-      <div class="loader__title">Setting up the study…</div>
-      <div class="loader__bar"><div class="loader__fill"></div></div>
-      <div class="loader__pct">0%</div>
-    </div>
-  </div>
 
   <noscript>
     <div class="seo-noscript">
@@ -246,28 +240,6 @@
     </div>
   </noscript>
 
-  <!-- Fallback: if opened via file:// the browser blocks ES Modules, so after 6s show a hint instead of hanging on the loader -->
-  <script>
-    window.__bootFallback = setTimeout(function () {
-      var l = document.querySelector('.loader');
-      if (!l || l.classList.contains('is-hidden')) return;
-      if (location.protocol === 'file:') {
-        l.innerHTML = '<div class="loader__inner" style="max-width:340px;padding:0 22px">'
-          + '<div class="loader__title">Please open via a local server</div>'
-          + '<p style="margin-top:12px;color:#c4a882;font-size:13px;line-height:1.8">When opened directly (file://), browsers block ES Module scripts and the page stays stuck on loading.<br>Run a local server in this folder instead, e.g.:<br><code style="color:#f5ecd7">python -m http.server 8080</code><br>then open <code style="color:#f5ecd7">http://localhost:8080</code></p></div>';
-      } else {
-        l.classList.add('is-hidden');
-      }
-    }, 6000);
-  </script>
-  <!-- Three.js (zero-build): self-hosted locally, no CDN dependency; three-layer.js imports it dynamically and degrades silently on failure -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "./assets/vendor/three.module.min.js"
-    }
-  }
-  </script>
   <script type="module" src="assets/js/main.js"></script>
   <script type="module" src="assets/js/works.js"></script>
 </body>

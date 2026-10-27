@@ -11,6 +11,10 @@ function els() {
 export function openProfile() {
   if (!els()) return;
   lastFocused = document.activeElement;
+  profileEl.querySelectorAll("img[data-src]").forEach((img) => {
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+  });
   profileEl.classList.add("is-open");
   profileEl.setAttribute("aria-hidden", "false");
   scrimEl.classList.add("is-open");

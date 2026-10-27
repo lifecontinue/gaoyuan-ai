@@ -177,3 +177,25 @@ body.is-scrolled .chips {
   .work-card { transition: none; }
   .work-card:hover { transform: none; }
 }
+
+/* Clear hierarchy and wrapping for bilingual, variable-length product titles. */
+body.is-scrolled .works-bg { opacity: 1; }
+.works { scroll-margin-top: 88px; }
+.works-head { text-align: left; max-width: 700px; }
+.works-sub { margin-left: 0; }
+.chapter-grid { align-items: stretch; }
+.work-card { min-width: 0; padding: 28px; gap: 16px; background: rgba(24, 36, 55, .94); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.work-card__top { display: grid; gap: 9px; }
+.work-card__name { line-height: 1.3; overflow-wrap: anywhere; }
+.work-card__en, .work-card__tagline { white-space: normal; overflow-wrap: anywhere; line-height: 1.65; font-size: 13px; }
+.work-card__tagline { color: #d9b978; }
+.work-card__desc { color: #c7d3e3; }
+.work-card__cta { margin-top: auto; box-shadow: none; }
+.work-card:focus-within { border-color: #e7b860; }
+@media (max-width: 600px) {
+  .work-card { padding: 24px; }
+  .chapter-head { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .works-bg, body.is-scrolled .quote-ticker, body.is-scrolled .chips { transition: none; }
+}

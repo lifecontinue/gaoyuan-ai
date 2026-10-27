@@ -88,12 +88,11 @@ function extractGlassTheme() {
     sample(video).then((stats) => { if (stats) apply(stats); });
     return;
   }
-  // 回退：加载 poster 图（assets/img/room.png，与页面同源）
+  // 复用页面已预载的海报，不另行请求原始 PNG。
   const img = new Image();
-  img.crossOrigin = "anonymous";
   img.onload = () => sample(img).then((stats) => { if (stats) apply(stats); });
   img.onerror = () => { /* 保持兜底 */ };
-  img.src = "assets/img/room.png";
+  img.src = video?.poster || "assets/img/room.webp";
 }
 
 // 计算整体均值 + 最亮 15% 区域均值

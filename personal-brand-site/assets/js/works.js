@@ -1,5 +1,4 @@
-// works.js — 滚动式 Work 展示区：章节卡片 + Three.js 渐变背景（随滚动在章节间平滑过渡）
-// 与首页冷调液态玻璃同源；Three.js 不可用时降级为 CSS 渐变兜底。
+// works.js — 章节卡片 + 轻量 CSS 渐变背景，无 WebGL 下载或持续渲染。
 
 import { apps } from "./data/apps.js";
 
@@ -83,7 +82,7 @@ function buildChapters() {
 /* ── 滚动渐入 ── */
 function initReveal() {
   const els = document.querySelectorAll(".reveal");
-  if (reduceMotion) { els.forEach((e) => e.classList.add("in")); return; }
+  if (reduceMotion || !("IntersectionObserver" in window)) { els.forEach((e) => e.classList.add("in")); return; }
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
@@ -102,185 +101,25 @@ function initScrollChrome() {
   onScroll();
 }
 
-/* ── Three.js 渐变背景 ── */
-let THREE = null;
-let renderer, scene, camera, canvas, material, uniforms;
-let curA, curB, tgtA, tgtB;
-const clock = { last: 0 };
-let running = false, rafId = null;
-let scrollScheduled = false;
-
-const FRAG = `
-precision highp float;
-varying vec2 vUv;
-uniform float uTime;
-uniform vec3 uColorA;
-uniform vec3 uColorB;
-uniform float uAlpha;
-uniform float uScroll;
-
-float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
-float noise(vec2 p){
-  vec2 i=floor(p); vec2 f=fract(p);
-  float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.));
-  vec2 u=f*f*(3.-2.*f);
-  return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
-}
-float fbm(vec2 p){
-  float v=0., amp=0.5;
-  for(int i=0;i<5;i++){ v+=amp*noise(p); p*=2.02; amp*=0.5; }
-  return v;
-}
-void main(){
-  vec2 uv = vUv;
-  float flow = uTime*0.04;
-  float n = fbm(vec2(uv.x*2.2 + flow, uv.y*3.2 - flow*0.6 + uScroll*0.12));
-  float g = clamp(uv.y*0.72 + n*0.40 + 0.06, 0.0, 1.0);
-  vec3 col = mix(uColorA, uColorB, g);
-  float scan = abs(fract(uv.y*1.6 - uTime*0.05) - 0.5);
-  col += vec3(0.10,0.14,0.20) * smoothstep(0.5,0.0,scan) * 0.10;
-  float vig = smoothstep(1.25, 0.25, length((uv-0.5)*vec2(1.0,1.1)));
-  col *= mix(0.80, 1.08, vig);
-  gl_FragColor = vec4(col, uAlpha);
-}
-`;
-
-const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
-
-function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-
-async function initGradient() {
-  canvas = document.querySelector(".works-bg");
-  if (!canvas) return;
-  try {
-    THREE = await import("three");
-  } catch (e) {
-    console.warn("[works] Three.js unavailable — using CSS gradient fallback.", e);
-    canvas.style.opacity = "1";
-    return;
-  }
-
-  try {
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-
-    scene = new THREE.Scene();
-    camera = new THREE.Camera(); // 全屏 quad 不需要变换
-    const geo = new THREE.PlaneGeometry(2, 2);
-
-    curA = CHAPTERS[0].colorA.slice();
-    curB = CHAPTERS[0].colorB.slice();
-    tgtA = curA.slice();
-    tgtB = curB.slice();
-
-    uniforms = {
-      uTime: { value: 0 },
-      uColorA: { value: new THREE.Vector3(curA[0], curA[1], curA[2]) },
-      uColorB: { value: new THREE.Vector3(curB[0], curB[1], curB[2]) },
-      uAlpha: { value: 0.98 },
-      uScroll: { value: 0 }
-    };
-    material = new THREE.ShaderMaterial({
-      uniforms, transparent: true, vertexShader: VERT, fragmentShader: FRAG
-    });
-    scene.add(new THREE.Mesh(geo, material));
-
-    resize();
-    window.addEventListener("resize", debounce(resize, 150));
-    window.addEventListener("scroll", onScrollGradient, { passive: true });
-    updateChapterTarget();
-    onScrollGradient();
-
-    if (reduceMotion) {
-      renderer.render(scene, camera);
-      canvas.style.opacity = "1";
-    } else {
-      running = true;
-      clock.last = performance.now();
-      loop(clock.last);
+/* ── CSS 章节渐变：仅在可见章节变化时更新，无 WebGL / 持续渲染 ── */
+function initGradient() {
+  const canvas = document.querySelector(".works-bg");
+  if (!canvas || !("IntersectionObserver" in window)) return;
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const chapter = CHAPTERS[Number(entry.target.dataset.index)];
+      const rgb = (color) => `rgb(${color.map((v) => Math.round(v * 255)).join(",")})`;
+      canvas.style.background = `linear-gradient(160deg, ${rgb(chapter.colorA)}, ${rgb(chapter.colorB)})`;
     }
-  } catch (e) {
-    console.warn("[works] Gradient init failed — CSS fallback.", e);
-    canvas.style.opacity = "1";
-  }
+  }, { rootMargin: "-35% 0px -35% 0px", threshold: 0 });
+  document.querySelectorAll(".works-chapter").forEach((section) => observer.observe(section));
 }
 
-function resize() {
-  if (!renderer || !canvas) return;
-  const w = canvas.clientWidth || window.innerWidth;
-  const h = canvas.clientHeight || window.innerHeight;
-  renderer.setSize(w, h, false);
-}
-
-function onScrollGradient() {
-  if (scrollScheduled) return;
-  scrollScheduled = true;
-  requestAnimationFrame(() => {
-    scrollScheduled = false;
-    updateChapterTarget();
-    const vh = window.innerHeight || 1;
-    const y = window.scrollY || window.pageYOffset || 0;
-    const a = clamp((y - vh * 0.45) / (vh * 0.55), 0, 1);
-    if (canvas) canvas.style.opacity = String(a);
-    if (uniforms) uniforms.uScroll.value = y / vh;
-  });
-}
-
-// 找到视口中心最接近的章节 → 设定目标渐变色
-function updateChapterTarget() {
-  const secs = document.querySelectorAll(".works-chapter");
-  if (!secs.length) return;
-  const mid = (window.innerHeight || 1) / 2;
-  let active = 0, best = Infinity;
-  secs.forEach((sec, i) => {
-    const r = sec.getBoundingClientRect();
-    const d = Math.abs(r.top + r.height / 2 - mid);
-    if (d < best) { best = d; active = i; }
-  });
-  tgtA = CHAPTERS[active].colorA.slice();
-  tgtB = CHAPTERS[active].colorB.slice();
-}
-
-function loop(now) {
-  if (!running) return;
-  rafId = requestAnimationFrame(loop);
-  const dt = Math.min((now - clock.last) / 1000, 0.05);
-  clock.last = now;
-  if (uniforms) {
-    uniforms.uTime.value = now / 1000;
-    // 在章节目标色之间平滑插值 → 滚动切换时的「渐变过渡」
-    for (let i = 0; i < 3; i++) {
-      curA[i] += (tgtA[i] - curA[i]) * Math.min(1, dt * 2.2);
-      curB[i] += (tgtB[i] - curB[i]) * Math.min(1, dt * 2.2);
-    }
-    uniforms.uColorA.value.set(curA[0], curA[1], curA[2]);
-    uniforms.uColorB.value.set(curB[0], curB[1], curB[2]);
-  }
-  renderer.render(scene, camera);
-}
-
-function onVisibility() {
-  if (document.hidden) {
-    running = false;
-    if (rafId) cancelAnimationFrame(rafId);
-  } else if (!reduceMotion && !running && renderer) {
-    running = true;
-    clock.last = performance.now();
-    loop(clock.last);
-  }
-}
-
-function debounce(fn, ms) {
-  let id;
-  return (...a) => { clearTimeout(id); id = setTimeout(() => fn(...a), ms); };
-}
-
-/* ── 启动 ── */
 function init() {
   buildChapters();
   initReveal();
   initScrollChrome();
-  document.addEventListener("visibilitychange", onVisibility);
   initGradient();
 }
 

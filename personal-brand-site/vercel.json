@@ -4,5 +4,16 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "cleanUrls": false,
-  "trailingSlash": true
+  "trailingSlash": true,
+  "headers": [
+    {
+      "source": "/assets/img/room.webp",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ]
 }
