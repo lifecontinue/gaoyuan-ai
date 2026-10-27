@@ -1,17 +1,14 @@
 // main.js — 入口：装配各模块、初始化
-import { rooms } from "./data/rooms.js";
 import { apps } from "./data/apps.js";
 import { profile } from "./data/profile.js";
 import { renderRoom, getCurrentRoomId } from "./room.js";
-import { renderHotspots, initIdleAutoplay } from "./hotspots.js";
+import { renderHotspots } from "./hotspots.js";
 import { initPanel, openPanel } from "./panel.js";
 import { initControls } from "./controls.js";
 import { initProfilePanel } from "./profilePanel.js";
-import { runLoader } from "./loader.js";
 import { initCalibrate } from "./calibrate.js";
-import { initThreeLayer } from "./three-layer.js";
 import { initGlassTheme } from "./glass-theme.js";
-import { $, $$ } from "./utils.js";
+import { $ } from "./utils.js";
 
 function paintProfile() {
   const brand = $(".topbar__brand");
@@ -51,13 +48,13 @@ function paintProfile() {
       figure.className = "profile__qr";
       const img = document.createElement("img");
       img.alt = it.alt || "";
-      img.src = it.src;
+      img.dataset.src = it.src;
+      img.decoding = "async";
       img.addEventListener("error", () => {
         figure.style.display = "none";
         remaining--;
         if (remaining <= 0) qrHost.style.display = "none";
       });
-      img.addEventListener("load", () => { remaining--; });
       figure.appendChild(img);
       if (it.label) {
         const cap = document.createElement("figcaption");
@@ -99,27 +96,20 @@ function renderChips() {
   }
 }
 
-async function boot() {
-  // 模块已成功加载，撤销 file:// 兜底提示
-  if (window.__bootFallback) clearTimeout(window.__bootFallback);
-
+function boot() {
   // 任一初始化出错都不应让加载层卡死
   const safe = (fn) => { try { fn(); } catch (e) { console.error("[init]", e); } };
   safe(paintProfile);
   let room;
   safe(() => { room = renderRoom(0); });
   safe(() => renderHotspots(room ? room.id : getCurrentRoomId()));
-  safe(initIdleAutoplay);   // 空闲时自动轮播应用浮窗
   safe(renderChips);
   safe(initPanel);
   safe(initProfilePanel);
   safe(initControls);
   safe(initCalibrate);
   safe(initGlassTheme);
-  // 3D 增强层：异步、可降级，失败不影响主站
-  safe(() => { initThreeLayer(getCurrentRoomId()); });
-
-  try { await runLoader(); } catch (e) { console.error(e); }
+  // 内容与导航立即可用；视频仅在访客主动开启时加载。
 
   // 移动端底部 chips 索引条改由 CSS @media 控制显隐（支持窗口缩放自适应），此处无需 JS 干预
 }

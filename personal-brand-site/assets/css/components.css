@@ -712,3 +712,45 @@
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* A readable text navigation, sized for touch as well as pointer input. */
+.topbar__actions {
+  padding: 5px;
+  gap: 2px;
+  background: rgba(13, 23, 38, .9);
+  border: 1px solid rgba(220, 232, 248, .22);
+  border-radius: 999px;
+}
+.topbar__actions .topbar__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 999px;
+  color: #e5edf8;
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: .02em;
+}
+.topbar__actions .topbar__link:hover,
+.topbar__actions .topbar__link:focus-visible { background: #293c53; color: #fff; }
+.topbar__actions .ambience-toggle { color: #f0d48a; }
+.topbar__actions .ambience-toggle[hidden] { display: none; }
+body.is-scrolled .topbar { background: rgba(12, 21, 35, .96); }
+@media (max-width: 600px) {
+  .topbar { padding: 14px 12px; align-items: flex-start; gap: 8px; }
+  .topbar__name { font-size: 20px; }
+  .topbar__name i { display: none; }
+  .topbar__title { font-size: 9px; letter-spacing: .04em; }
+  .topbar__actions { flex-wrap: wrap; justify-content: flex-end; border-radius: 16px; }
+  .topbar__actions .topbar__link { font-size: 12px; padding: 0 9px; }
+}
+@media (max-width: 360px) {
+  .topbar__name { font-size: 18px; }
+  .topbar__brand { flex-shrink: 0; }
+  .topbar__title { font-size: 8px; }
+  .topbar__actions { padding: 3px; flex-wrap: nowrap; }
+  .topbar__actions .topbar__link { padding: 0 6px; }
+}
