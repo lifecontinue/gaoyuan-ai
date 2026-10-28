@@ -1,0 +1,62 @@
+[
+  {
+    "scene": "harvest",
+    "title": "Carefree",
+    "author": "Kevin MacLeod",
+    "isrc": "USUAN1400037",
+    "source": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3",
+    "sourcePage": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "startSeconds": 20,
+    "loopSeconds": 40.0,
+    "crossfadeSeconds": 0.2,
+    "targetLUFS": -23,
+    "edits": "Excerpt, wraparound crossfade, loudness normalization, MP3 encoding",
+    "sha256": "83875a04d17ed7638bb68cf1de5a4a1be7e630ed11d191be5fae294be0b25613"
+  },
+  {
+    "scene": "mail",
+    "title": "Easy Lemon",
+    "author": "Kevin MacLeod",
+    "isrc": "USUAN1200076",
+    "source": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Easy%20Lemon.mp3",
+    "sourcePage": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200076",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "startSeconds": 11.707317073170731,
+    "loopSeconds": 46.829268292682926,
+    "crossfadeSeconds": 0.2,
+    "targetLUFS": -23,
+    "edits": "Excerpt, wraparound crossfade, loudness normalization, MP3 encoding",
+    "sha256": "cf18505b2136e141f035aa67d165837365bc0ac238ffd050d9d8bf739afe861c"
+  },
+  {
+    "scene": "garden",
+    "title": "Dream Culture",
+    "author": "Kevin MacLeod",
+    "isrc": "USUAN1300046",
+    "source": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dream%20Culture.mp3",
+    "sourcePage": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300046",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "startSeconds": 13.714285714285714,
+    "loopSeconds": 54.857142857142854,
+    "crossfadeSeconds": 0.2,
+    "targetLUFS": -23,
+    "edits": "Excerpt, wraparound crossfade, loudness normalization, MP3 encoding",
+    "sha256": "d3d3dbff515864427a85f0ac063ed25d6d6a50930e05f234141ab7b345640d08"
+  },
+  {
+    "scene": "farm",
+    "title": "Fretless",
+    "author": "Kevin MacLeod",
+    "isrc": "USUAN1500074",
+    "source": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Fretless.mp3",
+    "sourcePage": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500074",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "startSeconds": 19.2,
+    "loopSeconds": 38.4,
+    "crossfadeSeconds": 0.2,
+    "targetLUFS": -23,
+    "edits": "Excerpt, wraparound crossfade, loudness normalization, MP3 encoding",
+    "sha256": "4cd9dd5e914b8ba176cbbfbcf36da755575a501c1f5d80544d3980af0d9ee5cc"
+  }
+]

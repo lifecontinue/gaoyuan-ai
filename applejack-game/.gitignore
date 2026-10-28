@@ -1,0 +1,5 @@
+node_modules/
+dist/
+applejack-play.html
+qa/music-sources/
+__pycache__/
