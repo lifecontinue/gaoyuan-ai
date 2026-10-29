@@ -1,12 +1,15 @@
 import {useEffect,useRef} from 'react';
 import Phaser from 'phaser';
+import {ponyClips} from './ponyAnimations';
 export function Scene({reducedMotion,celebrate,paused}:{reducedMotion:boolean;celebrate:number;paused:boolean}){
  const host=useRef<HTMLDivElement>(null); const game=useRef<Phaser.Game|null>(null);
- useEffect(()=>{if(!host.current)return;let pony:Phaser.GameObjects.Image;let bg:Phaser.GameObjects.Image;
+ useEffect(()=>{if(!host.current)return;let pony:Phaser.GameObjects.Sprite;let bg:Phaser.GameObjects.Image;
  class Orchard extends Phaser.Scene{
-  preload(){this.load.image('orchard','assets/orchard.webp');this.load.image('pony','assets/applejack.png');this.load.image('apple','assets/apple.png');}
-  create(){bg=this.add.image(0,0,'orchard').setOrigin(.5);pony=this.add.image(0,0,'pony').setOrigin(.5,1);const layout=()=>{const {width:w,height:h}=this.scale;const mobile=w<700;const ratio=Math.max(w/bg.width,h/bg.height);bg.setPosition(w/2,h/2).setScale(ratio);const height=Math.min(h*(mobile?.35:.51),w*(mobile?.52:.51));pony.setDisplaySize(height*pony.width/pony.height,height).setPosition(w*(mobile?.15:.15),h*(mobile?.69:.735));};layout();this.scale.on('resize',layout);this.events.once('shutdown',()=>this.scale.off('resize',layout));
-   this.game.events.on('celebrate',()=>{if(reducedMotion)return;this.tweens.add({targets:pony,y:pony.y-20,duration:180,yoyo:true,repeat:2,ease:'Sine.easeOut'});});
+  preload(){this.load.image('orchard','assets/orchard.webp');this.load.image('pony','assets/applejack.png');this.load.image('apple','assets/apple.png');for(const [key,c] of Object.entries(ponyClips))this.load.spritesheet('pony-'+key,c.url,{frameWidth:c.frameWidth,frameHeight:c.frameHeight});}
+  create(){bg=this.add.image(0,0,'orchard').setOrigin(.5);pony=this.add.sprite(0,0,'pony').setOrigin(.5,1);const layout=()=>{const {width:w,height:h}=this.scale;const mobile=w<700;const ratio=Math.max(w/bg.width,h/bg.height);bg.setPosition(w/2,h/2).setScale(ratio);const height=Math.min(h*(mobile?.35:.51),w*(mobile?.52:.51));pony.setDisplaySize(height*pony.width/pony.height,height).setPosition(w*(mobile?.15:.15),h*(mobile?.69:.735));};layout();this.scale.on('resize',layout);this.events.once('shutdown',()=>this.scale.off('resize',layout));
+   for(const [key,c] of Object.entries(ponyClips))if(this.textures.exists('pony-'+key))this.anims.create({key:'pony-'+key,frames:this.anims.generateFrameNumbers('pony-'+key,{start:0,end:c.frames-1}),frameRate:c.fps,repeat:0});
+   pony.on('animationcomplete',()=>{pony.setTexture('pony');layout();});
+   this.game.events.on('celebrate',()=>{if(reducedMotion||pony.anims.isPlaying)return;this.tweens.killTweensOf(pony);layout();pony.setAngle(0);if(this.anims.exists('pony-celebrate')){pony.play('pony-celebrate');layout();return;}this.tweens.add({targets:pony,y:pony.y-20,duration:180,yoyo:true,repeat:2,ease:'Sine.easeOut',onComplete:layout});});
    if(!reducedMotion)this.tweens.add({targets:pony,angle:1,duration:2300,yoyo:true,repeat:-1,ease:'Sine.easeInOut'});
   }
  }

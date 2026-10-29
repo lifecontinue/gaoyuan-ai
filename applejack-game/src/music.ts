@@ -94,7 +94,8 @@ export function useMusic(options:MusicOptions){
   const music=new MusicPlayer(setStatus);player.current=music;
   const key=(event:KeyboardEvent)=>{if(event.key==='Enter'||event.key===' ')music.unlock();};
   window.addEventListener('pointerdown',music.unlock,{capture:true});window.addEventListener('keydown',key,{capture:true});
-  return()=>{window.removeEventListener('pointerdown',music.unlock,{capture:true});window.removeEventListener('keydown',key,{capture:true});music.dispose();player.current=null;};
+  window.addEventListener('click',music.unlock,{capture:true});window.addEventListener('touchend',music.unlock,{capture:true,passive:true});
+  return()=>{window.removeEventListener('pointerdown',music.unlock,{capture:true});window.removeEventListener('click',music.unlock,{capture:true});window.removeEventListener('touchend',music.unlock,{capture:true});window.removeEventListener('keydown',key,{capture:true});music.dispose();player.current=null;};
  },[]);
  useEffect(()=>player.current?.update(options),[options.scene,options.enabled,options.muted,options.volume,options.paused,options.ducked]);
  return status;
