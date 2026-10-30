@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>心连心 · 培训考核实施流程（操作级甬道图）</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="page-head">
+    <div class="page-head-inner">
+      <div>
+        <p class="eyebrow">心连心 · 光谱落地 · 2026-10-30 · 操作级拆分</p>
+        <h1>培训考核全流程 · 操作级甬道图</h1>
+        <p class="lead">每个具体操作一步一框；同泳道顺序箭头；跨泳道红线+短标签。评委线下定短板 → 导入最终 L1–L5 → 分层培训验证 → 申请下一阶段认证。光谱不替代外部任职资格，不做领导干部线上打分。</p>
+        <p id="node-stats"></p>
+      </div>
+      <nav class="links" aria-label="真源链接">
+        <a href="https://docs.google.com/document/d/1KxtHP6LwpqPmIBAGVC4kj0--eGHanF2H0n2flAeXBBw/edit" target="_blank" rel="noopener">方案 Doc</a>
+        <a href="../feature-list/">Feature List HTML</a>
+        <a href="https://docs.google.com/document/d/1hCTGLB7volQNQVSoO8U6fIs0Tk-CM2O7IPFCizl3nhU/edit" target="_blank" rel="noopener">Feature List Doc</a>
+        <a href="https://www.figma.com/board/q89nQpkSCd9eY9cy0zqiji" target="_blank" rel="noopener">FigJam Journey</a>
+      </nav>
+    </div>
+    <p class="hint">横向滚动查看完整流 · 点击步骤或黄便签查看详情 · 打印友好</p>
+  </header>
+
+  <main>
+    <section class="pool-wrap" aria-label="操作级甬道图">
+      <div class="pool-scroll" id="pool-scroll">
+        <div class="pool" id="pool">
+          <!-- rendered by main.js -->
+        </div>
+      </div>
+
+      <aside class="stickies" id="stickies" aria-label="未决与 P0 便签"></aside>
+
+      <div class="legend">
+        <span><i class="lg lg-arrow"></i> 同泳道顺序</span>
+        <span><i class="lg lg-cross"></i> 跨甬道依赖（红标签）</span>
+        <span><i class="lg lg-green"></i> 类型带</span>
+        <span><i class="lg lg-yellow"></i> 建图/建议带</span>
+        <span><i class="lg lg-forbid"></i> 明确不做（不串主路径）</span>
+        <span><i class="lg lg-sticky"></i> 未决 / P0</span>
+        <span class="red-note">红线/红字 = 跨道门禁或边界</span>
+      </div>
+    </section>
+
+    <aside class="detail-panel" id="detail-panel" hidden>
+      <button type="button" class="detail-close" id="detail-close" aria-label="关闭">×</button>
+      <div id="detail-body"></div>
+    </aside>
+
+    <section class="bottom" id="tables">
+      <h2>A. 场景对照简表</h2>
+      <p class="table-note">来自 Feature List 摘要 · 光谱触达④–⑨；①–③为客户线下 · 节点已拆到操作级见上图</p>
+      <div class="table-scroll">
+        <table class="scene-table">
+          <thead>
+            <tr>
+              <th>场景</th>
+              <th>谁做</th>
+              <th>系统动作</th>
+              <th>产物</th>
+              <th>原型现状</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>① 任职资格建模</td>
+              <td>客户 HR / 标准负责人</td>
+              <td>标签批量导入（旁证）；字数/符号放宽跟生产</td>
+              <td>一/二/三级标、岗位序列</td>
+              <td>部分 · A01 P0</td>
+            </tr>
+            <tr>
+              <td>② 评委线下评价</td>
+              <td>3–5 评委</td>
+              <td><span class="red">明确不做线上打分</span></td>
+              <td>勾叉结果 / 证据</td>
+              <td>明确不做</td>
+            </tr>
+            <tr>
+              <td>③ 短板识别</td>
+              <td>客户业务</td>
+              <td>整理短板清单 → 交导入</td>
+              <td>短板项清单</td>
+              <td>系统外 · 衔接④</td>
+            </tr>
+            <tr>
+              <td>④ 能力等级导入</td>
+              <td>管理员 + Cloud 定规则</td>
+              <td>导入最终 L1–L5；不重算评委比例</td>
+              <td>各技能等级</td>
+              <td><span class="red">不满足</span> · A18/A20 P0</td>
+            </tr>
+            <tr>
+              <td>⑤ 图谱与资源绑定</td>
+              <td>管理员</td>
+              <td>建图按岗；三类绑定；上传→资料中心+可见范围；自动同步</td>
+              <td>可学资源就绪</td>
+              <td>部分满足 · A13–A16 P0</td>
+            </tr>
+            <tr>
+              <td>⑥ 学员学习验证</td>
+              <td>学员</td>
+              <td>突出短板；学资料；参考题；实际考核为准</td>
+              <td>学习/验证完成态</td>
+              <td>部分满足 · L04/L05/L07 P0</td>
+            </tr>
+            <tr>
+              <td>⑦ 胜任度更新</td>
+              <td>系统 + 导入修正</td>
+              <td>短板补齐 / L 变化后刷新胜任度</td>
+              <td>岗位胜任度</td>
+              <td>部分满足 · A24/L08 P0</td>
+            </tr>
+            <tr>
+              <td>⑧ 申请晋级认证</td>
+              <td>学员申请 · HR/评委裁定</td>
+              <td>提供完成状态；<span class="red">不裁定认证</span></td>
+              <td>可申请依据</td>
+              <td>弱 · L10 P1</td>
+            </tr>
+            <tr>
+              <td>⑨ 评委凭证/导出</td>
+              <td>产品建议</td>
+              <td>水印资料导出；远期学习情况导出</td>
+              <td>线下评价凭证</td>
+              <td>建议项 · 未承诺</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card sticky-card" id="open-items">
+          <h2>B. 未决 Top3 + P0 需调</h2>
+          <ol class="open-list">
+            <li><strong>能力导入低成本防错未锁</strong>（PRO-333）— 模板粒度、覆盖、校验；规则未锁不提开发</li>
+            <li><strong>「暂无资料」是否一期全量</strong> — 三类绑定可分期，视开发难度</li>
+            <li><strong>11/4 模拟依赖</strong> — 客户脱敏表 + Cloud 页面方案 / 模拟环境</li>
+          </ol>
+          <h3>P0 需调（摘要）</h3>
+          <ul class="p0-list">
+            <li>A18 导入改 L1–L5</li>
+            <li>A20 低成本防错草案</li>
+            <li>L04 学员端突出短板</li>
+            <li>A15+A16 末级上传 + 可见范围</li>
+            <li>A14+A13 三类绑定可演示</li>
+            <li>L07 题目参考 / 实际考核为准</li>
+            <li>A24+L08 胜任度与短板/L 联动</li>
+            <li>L05 按可见范围过滤</li>
+            <li>A01 标准表→标签树路径</li>
+          </ul>
+          <p class="card-foot">完整条目见 <a href="https://docs.google.com/document/d/1hCTGLB7volQNQVSoO8U6fIs0Tk-CM2O7IPFCizl3nhU/edit" target="_blank" rel="noopener">Feature List Doc</a></p>
+        </div>
+
+        <div class="card">
+          <h2>跨甬道关键箭头（操作级）</h2>
+          <ul class="arrow-list" id="cross-edge-list">
+            <!-- filled by main.js -->
+          </ul>
+          <h3>里程碑（方案摘）</h3>
+          <ul class="mile-list">
+            <li><strong>10-30</strong> 末级上传 + 资料中心（PRO-335）</li>
+            <li><strong>11-04 上午</strong> 郑州线下模拟</li>
+            <li><strong>11 月</strong> 同岗不同学员不同图谱</li>
+          </ul>
+          <h3>文档链接</h3>
+          <ul class="link-list">
+            <li><a href="https://docs.google.com/document/d/1KxtHP6LwpqPmIBAGVC4kj0--eGHanF2H0n2flAeXBBw/edit" target="_blank" rel="noopener">全流程实施方案 Doc</a></li>
+            <li><a href="https://docs.google.com/document/d/1hCTGLB7volQNQVSoO8U6fIs0Tk-CM2O7IPFCizl3nhU/edit" target="_blank" rel="noopener">Feature List Doc</a></li>
+            <li><a href="https://www.figma.com/board/q89nQpkSCd9eY9cy0zqiji" target="_blank" rel="noopener">FigJam User Journey</a></li>
+            <li><a href="https://drive.google.com/drive/folders/1S5emPb-gBB8jRHeHDIk6wCIGIYbhmvSo" target="_blank" rel="noopener">Drive · 21TB-产品文档</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-foot">
+    <p>真源：2026-10-30 心连心培训考核全流程实施方案 · Feature List 心连心对齐 · 会议 602636334（2026-10-29）</p>
+    <p>版式参考 ProcessOn 甬道图结构 · 内容拆至操作级节点 · 本地 file:// 可开</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
