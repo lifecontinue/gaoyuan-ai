@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
 
+# Work tools (shareable by URL; do not index)
+Disallow: /work/
+
 # 显式允许主流 AI 检索爬虫（提升被 ChatGPT / Claude / Perplexity / Gemini 等引用的概率）
 User-agent: GPTBot
 Allow: /

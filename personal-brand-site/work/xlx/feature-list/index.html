@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>光谱原型 Feature List · 心连心对齐 · 可标记</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="page-head">
+    <div class="page-head-inner">
+      <div>
+        <p class="eyebrow">Step 2 · Feature List 工具页 · localStorage 持久化</p>
+        <h1>光谱原型 Feature List · 心连心对齐</h1>
+        <p class="lead" id="pageSub">加载中…</p>
+      </div>
+      <nav class="links">
+        <a id="planLink" href="#" target="_blank" rel="noopener">方案 Doc</a>
+        <a id="docLink" href="#" target="_blank" rel="noopener">Feature List Doc</a>
+        <a id="driveLink" href="#" target="_blank" rel="noopener">Drive 文件夹</a>
+        <a id="swimLink" href="../flow/">甬道图</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="toolbar-row">
+      <label>角色
+        <select id="filterRole">
+          <option value="">全部</option>
+          <option value="admin">管理员</option>
+          <option value="learner">学员</option>
+        </select>
+      </label>
+      <label>优先级
+        <select id="filterPri">
+          <option value="">全部</option>
+          <option value="P0">P0</option>
+          <option value="P1">P1</option>
+          <option value="P2">P2</option>
+          <option value="建议">建议</option>
+          <option value="—">—</option>
+        </select>
+      </label>
+      <label>需调整
+        <select id="filterNeed">
+          <option value="">全部</option>
+          <option value="是">是</option>
+          <option value="否">否</option>
+          <option value="建议项">建议项</option>
+          <option value="明确不做">明确不做</option>
+        </select>
+      </label>
+      <label>我的判定
+        <select id="filterJudge">
+          <option value="">全部</option>
+          <option value="__empty__">（未判定）</option>
+          <option value="同意">同意</option>
+          <option value="需改建议">需改建议</option>
+          <option value="不调">不调</option>
+          <option value="明确不做">明确不做</option>
+          <option value="建议项">建议项</option>
+          <option value="待议">待议</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="filterNoNote" /> 仅未填备注</label>
+      <label><input type="checkbox" id="filterUnconfirm" /> 仅未确认</label>
+      <input type="search" id="filterSearch" placeholder="搜索 ID / 功能点 / 备注…" />
+      <span class="save-hint" id="saveHint">标记保存在本机浏览器</span>
+    </div>
+    <div class="toolbar-row">
+      <button type="button" class="btn btn-primary" id="btnExportJson">导出 JSON</button>
+      <button type="button" class="btn" id="btnExportMd">导出 Markdown</button>
+      <button type="button" class="btn" id="btnImportJson">导入 JSON</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden />
+      <button type="button" class="btn btn-danger" id="btnClear">清空本地标记</button>
+      <button type="button" class="btn" id="btnExpandAll">全部展开</button>
+      <button type="button" class="btn" id="btnCollapseAll">全部折叠</button>
+      <span id="visibleCount" class="stat" style="border:none;background:transparent;color:#5a5a5a;"></span>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <main>
+    <!-- Top 12 -->
+    <section class="block" data-section="top12">
+      <div class="block-head js-toggle">
+        <span class="chev">▼</span>
+        <h2>Top 需调整（12 条，置顶确认用）</h2>
+        <span class="count">点 ID 可跳转到明细行</span>
+      </div>
+      <div class="block-body">
+        <p class="block-note">与 Feature List Doc §4 一致。下方表格可改「我的判定 / 已阅 / 确认进 Step3 / 备注」；刷新不丢。</p>
+        <ul class="top-list" id="topList"></ul>
+      </div>
+    </section>
+
+    <!-- Skip OK -->
+    <section class="block collapsed" data-section="skip">
+      <div class="block-head js-toggle">
+        <span class="chev">▼</span>
+        <h2>原型已覆盖、可先不改</h2>
+        <span class="count">5 条摘要</span>
+      </div>
+      <div class="block-body">
+        <ol class="skip-list" id="skipList"></ol>
+      </div>
+    </section>
+
+    <!-- Feature sections -->
+    <div id="sectionsHost"></div>
+
+    <!-- Stages -->
+    <section class="block" data-section="stages">
+      <div class="block-head js-toggle">
+        <span class="chev">▼</span>
+        <h2>九阶段核对（光谱触达 ④–⑨）</h2>
+        <span class="count">可填阶段备注</span>
+      </div>
+      <div class="block-body">
+        <p class="block-note">总判：当前原型可演示通用路径；尚未满足心连心「短板培训闭环」。确认本 List 后再进 Step 3。</p>
+        <div class="table-wrap">
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>阶段</th>
+                <th>光谱是否满足（相对原型）</th>
+                <th>结论</th>
+                <th>我的备注</th>
+              </tr>
+            </thead>
+            <tbody id="stageBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Appendix -->
+    <section class="block collapsed" data-section="appendix">
+      <div class="block-head js-toggle">
+        <span class="chev">▼</span>
+        <h2>附录 · 系统外（①②③，只读 + 可选备注）</h2>
+        <span class="count">不进调整清单</span>
+      </div>
+      <div class="block-body">
+        <div class="table-wrap">
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>阶段</th>
+                <th>说明</th>
+                <th>可选备注</th>
+              </tr>
+            </thead>
+            <tbody id="appendixBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="footer-note">
+    真源：<code>2026-10-30-光谱原型FeatureList-心连心对齐.md</code> ·
+    标记键 <code>xlx-feature-list-marks-v1</code> ·
+    file:// 可开；导出 JSON/MD 后可贴回 Doc。不改 Linear/Jira、不改原型。
+  </p>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
