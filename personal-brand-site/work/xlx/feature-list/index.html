@@ -11,7 +11,7 @@
   <header class="page-head">
     <div class="page-head-inner">
       <div>
-        <p class="eyebrow">Step 2 · Feature List 工具页 · localStorage 持久化</p>
+        <p class="eyebrow">Step 2 · Feature List 工具页 · 云端同步 + 本机缓存</p>
         <h1>光谱原型 Feature List · 心连心对齐</h1>
         <p class="lead" id="pageSub">加载中…</p>
       </div>
@@ -67,14 +67,15 @@
       <label><input type="checkbox" id="filterNoNote" /> 仅未填备注</label>
       <label><input type="checkbox" id="filterUnconfirm" /> 仅未确认</label>
       <input type="search" id="filterSearch" placeholder="搜索 ID / 功能点 / 备注…" />
-      <span class="save-hint" id="saveHint">标记保存在本机浏览器</span>
+      <span class="save-hint" id="saveHint">标记云端同步 · 本机作缓存</span>
     </div>
     <div class="toolbar-row">
+      <button type="button" class="btn btn-sync" id="btnSyncToPm">同步给我</button>
       <button type="button" class="btn btn-primary" id="btnExportJson">导出 JSON</button>
       <button type="button" class="btn" id="btnExportMd">导出 Markdown</button>
       <button type="button" class="btn" id="btnImportJson">导入 JSON</button>
       <input type="file" id="importFile" accept=".json,application/json" hidden />
-      <button type="button" class="btn btn-danger" id="btnClear">清空本地标记</button>
+      <button type="button" class="btn btn-danger" id="btnClear">清空标记</button>
       <button type="button" class="btn" id="btnExpandAll">全部展开</button>
       <button type="button" class="btn" id="btnCollapseAll">全部折叠</button>
       <span id="visibleCount" class="stat" style="border:none;background:transparent;color:#5a5a5a;"></span>
@@ -163,7 +164,7 @@
   <p class="footer-note">
     真源：<code>2026-10-30-光谱原型FeatureList-心连心对齐.md</code> ·
     标记键 <code>xlx-feature-list-marks-v1</code> ·
-    file:// 可开；导出 JSON/MD 后可贴回 Doc。不改 Linear/Jira、不改原型。
+    云端 <code>/api/xlx-marks</code> + 本机缓存；导出 JSON/MD 后可贴回 Doc。不改 Linear/Jira、不改原型。
   </p>
 
   <script src="data.js"></script>

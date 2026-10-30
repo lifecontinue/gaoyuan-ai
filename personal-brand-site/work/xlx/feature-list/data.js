@@ -7,7 +7,7 @@ window.XLX_FEATURE_DATA = {
     docUrl: "https://docs.google.com/document/d/1hCTGLB7volQNQVSoO8U6fIs0Tk-CM2O7IPFCizl3nhU/edit",
     planUrl: "https://docs.google.com/document/d/1KxtHP6LwpqPmIBAGVC4kj0--eGHanF2H0n2flAeXBBw/edit",
     driveUrl: "https://drive.google.com/drive/folders/1S5emPb-gBB8jRHeHDIk6wCIGIYbhmvSo",
-    swimlaneRel: "../xlx-impl-flow-html/index.html",
+    swimlaneRel: "../flow/",
   },
   judgeOptions: [
     { value: "", label: "（未判定）" },
