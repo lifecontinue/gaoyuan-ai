@@ -143,6 +143,12 @@ h1 {
   color: #fff;
 }
 .btn-primary:hover { background: #0d47a1; }
+.btn-sync {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: #fff;
+}
+.btn-sync:hover { background: #1b5e20; }
 .btn-danger {
   border-color: var(--p0);
   color: var(--p0);
@@ -172,6 +178,7 @@ h1 {
   margin-left: auto;
 }
 .save-hint.saved { color: var(--ok); }
+.save-hint.save-error { color: var(--p0); }
 
 /* —— Main —— */
 main {

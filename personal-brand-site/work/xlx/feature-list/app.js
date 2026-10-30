@@ -1,8 +1,9 @@
-/* Feature List 标记 / 备注 · localStorage 持久化 */
+/* Feature List 标记 / 备注 · 云端同步 + 本机缓存 */
 (function () {
   "use strict";
 
   const STORAGE_KEY = "xlx-feature-list-marks-v1";
+  const MARKS_API = "/api/xlx-marks";
   const D = window.XLX_FEATURE_DATA;
   if (!D) {
     console.error("XLX_FEATURE_DATA missing");
@@ -11,24 +12,71 @@
 
   /** @type {Record<string, object>} */
   let marks = loadMarks();
+  let remotePushTimer = null;
+  let remotePushInFlight = null;
 
   const $ = (sel, el) => (el || document).querySelector(sel);
   const $$ = (sel, el) => Array.from((el || document).querySelectorAll(sel));
 
+  function emptyMarks() {
+    return { features: {}, stages: {}, appendix: {}, meta: {} };
+  }
+
+  function normalizeMarks(parsed) {
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptyMarks();
+    return {
+      features: parsed.features || {},
+      stages: parsed.stages || {},
+      appendix: parsed.appendix || {},
+      meta: parsed.meta || {},
+    };
+  }
+
   function loadMarks() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { features: {}, stages: {}, appendix: {}, meta: {} };
-      const parsed = JSON.parse(raw);
-      return {
-        features: parsed.features || {},
-        stages: parsed.stages || {},
-        appendix: parsed.appendix || {},
-        meta: parsed.meta || {},
-      };
+      if (!raw) return emptyMarks();
+      return normalizeMarks(JSON.parse(raw));
     } catch (e) {
       console.warn("loadMarks failed", e);
-      return { features: {}, stages: {}, appendix: {}, meta: {} };
+      return emptyMarks();
+    }
+  }
+
+  function persistLocal() {
+    marks.meta = marks.meta || {};
+    marks.meta.storageKey = STORAGE_KEY;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(marks));
+  }
+
+  function marksUpdatedAt(obj) {
+    const raw = obj && obj.meta && obj.meta.updatedAt;
+    if (!raw) return 0;
+    const t = Date.parse(raw);
+    return Number.isFinite(t) ? t : 0;
+  }
+
+  function isEffectivelyEmpty(obj) {
+    if (!obj) return true;
+    const featKeys = Object.keys(obj.features || {});
+    const stageKeys = Object.keys(obj.stages || {});
+    const appKeys = Object.keys(obj.appendix || {});
+    if (featKeys.length || stageKeys.length || appKeys.length) return false;
+    return !marksUpdatedAt(obj);
+  }
+
+  function setSaveHint(text, ok) {
+    const el = $("#saveHint");
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle("saved", !!ok);
+    el.classList.toggle("save-error", ok === false);
+    clearTimeout(setSaveHint._t);
+    if (ok === true || ok === false) {
+      setSaveHint._t = setTimeout(() => {
+        el.classList.remove("saved");
+        el.classList.remove("save-error");
+      }, 1800);
     }
   }
 
@@ -37,21 +85,52 @@
     marks.meta.updatedAt = new Date().toISOString();
     marks.meta.storageKey = STORAGE_KEY;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(marks));
-      flashSave();
+      persistLocal();
+      setSaveHint("本机已存 · 同步中…");
+      scheduleRemotePush();
     } catch (e) {
       toast("保存失败（localStorage 可能满或禁用）");
       console.error(e);
     }
   }
 
-  function flashSave() {
-    const el = $("#saveHint");
-    if (!el) return;
-    el.textContent = "已保存 · " + formatLocal(new Date());
-    el.classList.add("saved");
-    clearTimeout(flashSave._t);
-    flashSave._t = setTimeout(() => el.classList.remove("saved"), 1500);
+  function scheduleRemotePush() {
+    clearTimeout(remotePushTimer);
+    remotePushTimer = setTimeout(() => {
+      pushRemote();
+    }, 400);
+  }
+
+  function pushRemote(overrideMarks) {
+    clearTimeout(remotePushTimer);
+    const toSend = overrideMarks || marks;
+    const payload = JSON.stringify(toSend);
+    remotePushInFlight = fetch(MARKS_API, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+      cache: "no-store",
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("PUT " + res.status);
+        const data = await res.json();
+        if (data && data.updatedAt && toSend === marks) {
+          marks.meta = marks.meta || {};
+          marks.meta.updatedAt = data.updatedAt;
+          try {
+            persistLocal();
+          } catch (_) {}
+        }
+        const when = data && data.updatedAt ? new Date(data.updatedAt) : new Date();
+        setSaveHint("已同步云端 · " + formatLocal(when), true);
+        return data;
+      })
+      .catch((err) => {
+        console.warn("pushRemote failed", err);
+        setSaveHint("本机已存 · 云端失败", false);
+        return null;
+      });
+    return remotePushInFlight;
   }
 
   function formatLocal(d) {
@@ -590,6 +669,8 @@
     $("#btnImportJson").addEventListener("click", () => $("#importFile").click());
     $("#importFile").addEventListener("change", importJson);
     $("#btnClear").addEventListener("click", clearMarks);
+    const syncBtn = $("#btnSyncToPm");
+    if (syncBtn) syncBtn.addEventListener("click", syncToPm);
     $("#btnExpandAll").addEventListener("click", () => {
       $$(".block").forEach((b) => b.classList.remove("collapsed"));
     });
@@ -784,13 +865,85 @@
   }
 
   function clearMarks() {
-    if (!confirm("确定清空本机全部标记与备注？此操作不可撤销（可先导出 JSON 备份）。")) return;
-    marks = { features: {}, stages: {}, appendix: {}, meta: {} };
-    localStorage.removeItem(STORAGE_KEY);
+    if (
+      !confirm(
+        "确定清空本机与云端的全部标记与备注？product manager 之后读取到的也会是空记录。此操作不可撤销（可先导出 JSON 备份）。"
+      )
+    )
+      return;
+    clearTimeout(remotePushTimer);
+    const emptied = emptyMarks();
+    emptied.meta.updatedAt = new Date().toISOString();
+    emptied.meta.storageKey = STORAGE_KEY;
+    marks = emptied;
+    try {
+      persistLocal();
+    } catch (e) {
+      console.warn(e);
+    }
+    pushRemote(emptied).then((data) => {
+      toast(data ? "已清空本机与云端标记" : "本机已清空 · 云端失败");
+    });
+    marks = emptyMarks();
     ensureAllDefaults();
-    saveMarks();
     renderAll();
-    toast("已清空本地标记");
+  }
+
+  async function syncToPm() {
+    clearTimeout(remotePushTimer);
+    marks.meta = marks.meta || {};
+    marks.meta.updatedAt = new Date().toISOString();
+    try {
+      persistLocal();
+    } catch (e) {
+      toast("本机保存失败");
+      console.error(e);
+      return;
+    }
+    const data = await pushRemote();
+    if (data) toast("已同步，product manager 可读取");
+    else toast("云端同步失败，请稍后重试");
+  }
+
+  async function hydrateFromRemote() {
+    try {
+      const res = await fetch(MARKS_API, { cache: "no-store" });
+      if (!res.ok) throw new Error("GET " + res.status);
+      const remote = normalizeMarks(await res.json());
+      const remoteAt = marksUpdatedAt(remote);
+      const remoteEmpty = isEffectivelyEmpty(remote);
+      const localAt = marksUpdatedAt(marks);
+      const localEmpty = isEffectivelyEmpty(marks);
+
+      if (!remoteEmpty && (localEmpty || remoteAt > localAt)) {
+        marks = remote;
+        try {
+          persistLocal();
+        } catch (_) {}
+        setSaveHint(
+          "已同步云端 · " + formatLocal(new Date(remoteAt || Date.now()))
+        );
+        return;
+      }
+
+      if (!localEmpty && remoteEmpty) {
+        setSaveHint("本机已存 · 同步中…");
+        await pushRemote();
+        return;
+      }
+
+      if (localAt) {
+        setSaveHint("本机已存 · " + formatLocal(new Date(localAt)));
+      }
+    } catch (err) {
+      console.warn("hydrateFromRemote failed", err);
+      const localAt = marksUpdatedAt(marks);
+      if (localAt) {
+        setSaveHint("本机已存 · 云端未连");
+      } else {
+        setSaveHint("标记本机缓存 · 云端未连");
+      }
+    }
   }
 
   function renderAll() {
@@ -802,10 +955,6 @@
     renderAppendix();
     updateStats();
     applyFilters();
-    const hint = $("#saveHint");
-    if (hint && marks.meta && marks.meta.updatedAt) {
-      hint.textContent = "上次保存 · " + formatLocal(new Date(marks.meta.updatedAt));
-    }
   }
 
   function initMeta() {
@@ -821,6 +970,7 @@
     initMeta();
     renderAll();
     bindEvents();
+    hydrateFromRemote().then(() => renderAll());
   }
 
   if (document.readyState === "loading") {
