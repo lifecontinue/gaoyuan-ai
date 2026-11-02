@@ -163,6 +163,64 @@ function toggleSave(slug) {
   toast(state.saved.has(slug) ? '已收藏这一期' : '已从收藏移除');
 }
 
+function emphasize(root) {
+  decorateTokens(root);
+  for (const strong of root.querySelectorAll('strong')) {
+    const raw = strong.textContent.trim();
+    const head = raw.split(/[：:]/)[0].trim();
+    if (head === '本期判断' || (/[。！？]$/.test(raw) && raw.length >= 16 && !/[：:]/.test(raw))) {
+      strong.classList.add('wk-mark');
+    } else if (/^建议(?!门)/.test(head)) {
+      strong.classList.add('wk-line');
+    } else if (/^(发布日期|发布时间|原始来源|类型及等级|评分|证据等级|判断|事实摘要|功能与交互|交互与实现|比较|主指标|指标与建议门|交接与完成条件|依赖与风险|来源|研究|建议门)$/.test(head) || /^\d{1,2}\s*月/.test(head)) {
+      strong.classList.add('wk-meta');
+    } else if (/^(边界|本周空缺|风险|需要注意)/.test(head)) {
+      strong.classList.add('wk-quiet');
+    } else if (/^(战略研判|对时代光华的启示|研发建议|产品与实现启发|实现启发|机会与假设|假设与实验|评价启发|产品假设)/.test(head)) {
+      strong.classList.add('wk-label');
+    } else if (raw.length >= 8 && raw.length <= 48) {
+      strong.classList.add('wk-line');
+    }
+  }
+  for (const p of root.querySelectorAll('p, li')) {
+    const text = p.textContent.trim();
+    if (/^(研究窗口|阅读方式|证据等级按|每条信号按|去重规则|评分采用|本期检索|本方向本周没有|窗口内独立事件|报告说明)/.test(text)) {
+      p.classList.add('wk-aside');
+    }
+    const lead = [...p.childNodes].find((node) => node.nodeType === 1 && node.matches('strong.wk-mark, strong.wk-line'));
+    if (!lead) continue;
+    let sibling = lead.nextSibling;
+    while (sibling) {
+      const next = sibling.nextSibling;
+      if (sibling.nodeType === 3 && sibling.nodeValue.trim()) {
+        const span = document.createElement('span');
+        span.className = 'wk-aside';
+        span.textContent = sibling.nodeValue;
+        sibling.replaceWith(span);
+      }
+      sibling = next;
+    }
+  }
+}
+
+function decorateTokens(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    if (!/Explore|Watch|Act|〔背景〕|〔分析推断〕|窗口外/.test(node.nodeValue)) continue;
+    if (node.parentElement.closest('a, button, .wk-judge, .wk-note')) continue;
+    const html = escapeHtml(node.nodeValue)
+      .replace(/〔背景〕/g, '<span class="wk-note">背景</span>')
+      .replace(/〔分析推断〕/g, '<span class="wk-note">分析推断</span>')
+      .replace(/窗口外/g, '<span class="wk-note">窗口外</span>')
+      .replace(/\b(Explore|Watch|Act)\b/g, (word) => `<span class="wk-judge wk-judge--${word.toLowerCase()}">${word}</span>`);
+    const tpl = document.createElement('template');
+    tpl.innerHTML = html;
+    node.parentNode.replaceChild(tpl.content, node);
+  }
+}
+
 function syncSaveButton(button) {
   const on = state.saved.has(state.current.meta.slug);
   button.classList.toggle('is-on', on);
@@ -200,6 +258,7 @@ async function openIssue(issue) {
     </header>
     <div class="wk-body">${html}</div>
   `;
+  emphasize(articleEl.querySelector('.wk-body'));
   renderOutline(extractOutline(html).filter((item) => item.level === 2));
   setStatus('');
   document.title = `${meta.title || issue.title} · 周报`;
