@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>光谱 · 心连心汇报</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <p class="eyebrow">光谱（岗位图谱）· 心连心培训考核 · 2026-11-02</p>
+      <h1>光谱 · 心连心方案汇报</h1>
+      <p class="lead">评委线下定短板 → 业务导入最终能力等级 L1–L5 → 光谱建图绑资源 → 学员补短板学习。本期 11/4 模拟只演示：<b>创建图谱 · 人员下发 · L1–L5 导入 · 学员切换图谱</b>。</p>
+      <nav class="quick" id="quickLinks"></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card boundary">
+      <div>
+        <h2>光谱做</h2>
+        <ul>
+          <li>建标签树、建图谱、挂课程 / 考试 / 资料</li>
+          <li>按岗位下发，自动同步默认开、可关</li>
+          <li>导入业务定稿的 L1–L5 结果</li>
+          <li>学员按图学习、切换图谱</li>
+        </ul>
+      </div>
+      <div>
+        <h2>光谱不做</h2>
+        <ul class="no">
+          <li>替代外部任职资格</li>
+          <li>领导干部线上打分</li>
+          <li>按评委勾叉重算等级</li>
+          <li>系统内晋级裁定</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <h2>Timeline</h2>
+        <div class="legend">
+          <span class="kind demo">演示</span><span class="kind proto">原型</span><span class="kind check">与用户核对</span>
+        </div>
+      </div>
+      <p class="hint">每个节点下方可填反馈：选状态 + 写备注，自动存本机并同步。</p>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
+
+    <section class="card">
+      <h2>演示脚本 · 11/4</h2>
+      <h3>管理员段（15–20 分钟）<a class="doc" data-link="step3Doc">Step3 Doc</a></h3>
+      <div class="table-wrap"><table id="adminScript"><thead><tr><th>分钟</th><th>段落</th><th>要点</th></tr></thead><tbody></tbody></table></div>
+      <p class="hint" id="adminShortPath"></p>
+      <h3>学员段 · 只验切换图谱（5–8 分钟）<a class="doc" data-link="step4Doc">Step4 Doc</a></h3>
+      <div class="table-wrap"><table id="learnerScript"><thead><tr><th>分钟</th><th>段落</th><th>要点</th></tr></thead><tbody></tbody></table></div>
+      <p class="warn-note">两份脚本均为桌面推演，未在原型真机点验；H5 演示走生产或窄屏示意，不当作原型已验。</p>
+    </section>
+
+    <section class="card">
+      <h2>会挡 11/4 的卡点</h2>
+      <div class="table-wrap"><table id="blockers"><thead><tr><th>级别</th><th>问题</th><th>Feature</th><th>影响</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <div class="two-col">
+      <section class="card">
+        <h2>口径速查：别混 A–E / L1–L5 / 0–100<a class="doc" data-link="importDoc">F1–F6</a></h2>
+        <div class="table-wrap"><table id="glossary"><thead><tr><th>符号</th><th>含义</th><th>光谱里</th></tr></thead><tbody></tbody></table></div>
+      </section>
+      <section class="card">
+        <h2>Linear 状态（10-30 快照）</h2>
+        <div class="table-wrap"><table id="linear"><thead><tr><th>ID</th><th>一句</th><th>快照</th><th>Jira</th></tr></thead><tbody></tbody></table></div>
+        <p class="hint">快照未实时重拉，现网以 Linear 为准。</p>
+      </section>
+    </div>
+
+    <section class="card feedback">
+      <h2>整体反馈</h2>
+      <textarea id="generalNote" rows="4" placeholder="对整份方案的意见、遗漏、需要补的材料…"></textarea>
+      <div class="actions">
+        <button type="button" class="btn primary" id="btnSync">同步给我</button>
+        <button type="button" class="btn" id="btnExportMd">复制 Markdown</button>
+        <span class="save-hint" id="saveHint">反馈本机缓存 · 连接云端中…</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    反馈存本机（<code>guangpu-report-feedback-v1</code>）并同步 <code>/api/guangpu-report-feedback</code>，助理可 GET 读回。不改 Linear / Jira。
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
