@@ -1,0 +1,22 @@
+{
+  "title": "企业学习 AI 战略研判周报",
+  "description": "每周一份。新一期放到 content/weekly/，再把这条记录加到 issues 最前面。",
+  "issues": [
+    {
+      "slug": "2026-10-30",
+      "title": "企业学习与 AI 产品战略研判周报",
+      "volume": "Vol. 002",
+      "period": "2026-10-23 — 2026-10-30",
+      "summary": "竞争正在从更快生成课程，转向把企业知识、岗位能力、AI 实践和真实工作表现连接起来。",
+      "markdown": "content/weekly/2026-10-30.md"
+    },
+    {
+      "slug": "2026-10-22",
+      "title": "企业学习与 AI 产品战略研判周报",
+      "volume": "Vol. 001",
+      "period": "2026-10-16 — 2026-10-22",
+      "summary": "优先投入能验证训练效果的岗位任务，同时测试语音体验与模型成本。",
+      "markdown": "content/weekly/2026-10-22.md"
+    }
+  ]
+}

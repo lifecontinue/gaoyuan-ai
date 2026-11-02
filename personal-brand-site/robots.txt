@@ -1,8 +1,10 @@
 User-agent: *
 Allow: /
 
-# Work tools (shareable by URL; do not index)
+# Work tools and weekly strategy notes (shareable by URL; do not index)
 Disallow: /work/
+Disallow: /weekly/
+Disallow: /content/weekly/
 
 # 显式允许主流 AI 检索爬虫（提升被 ChatGPT / Claude / Perplexity / Gemini 等引用的概率）
 User-agent: GPTBot
