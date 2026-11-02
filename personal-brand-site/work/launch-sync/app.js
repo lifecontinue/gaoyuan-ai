@@ -43,14 +43,21 @@
       list.push(cloneSeedFeature(seed));
       have.add(String(seed.id));
     });
-    return applySeedStatusFixes(list);
+    applySeedStatusFixes(list);
+    applySeedDetailFields(list);
+    return list;
+  }
+
+  function seedByIdMap() {
+    const map = new Map();
+    (SEED.features || []).forEach((seed) => {
+      if (seed && seed.id) map.set(String(seed.id), seed);
+    });
+    return map;
   }
 
   function applySeedStatusFixes(features) {
-    const seedById = new Map();
-    (SEED.features || []).forEach((seed) => {
-      if (seed && seed.id) seedById.set(String(seed.id), seed);
-    });
+    const seedById = seedByIdMap();
     features.forEach((f) => {
       const seed = seedById.get(String(f.id || ""));
       if (!seed) return;
@@ -60,6 +67,27 @@
       }
     });
     return features;
+  }
+
+  function applySeedDetailFields(features) {
+    const seedById = seedByIdMap();
+    features.forEach((f) => {
+      const seed = seedById.get(String(f.id || ""));
+      if (!seed) return;
+      if (!dash(f.description) && dash(seed.description)) f.description = seed.description;
+      if (!dash(f.desc) && dash(seed.desc) && !dash(f.description)) f.description = seed.desc;
+      if (!dash(f.feishuUrl) && dash(seed.feishuUrl)) f.feishuUrl = seed.feishuUrl;
+      if (!dash(f.jiraUrl) && dash(seed.jiraUrl)) f.jiraUrl = seed.jiraUrl;
+      if (!dash(f.jiraUrl)) f.jiraUrl = jiraBrowseUrl(f.jiraId);
+    });
+    return features;
+  }
+
+  function jiraBrowseUrl(jiraId) {
+    const id = dash(jiraId);
+    if (!id) return "";
+    if (/^https?:\/\//i.test(id)) return id;
+    return "https://21tb-jira.21tb.com/browse/" + id;
   }
 
   function normalize(data) {
@@ -582,7 +610,14 @@
 
   function featureSig(list) {
     return (list || [])
-      .map((f) => (f && f.id ? String(f.id) : "") + ":" + (f && f.status ? String(f.status) : ""))
+      .map((f) => {
+        const id = f && f.id ? String(f.id) : "";
+        const status = f && f.status ? String(f.status) : "";
+        const desc = f && f.description ? String(f.description).length : 0;
+        const feishu = f && f.feishuUrl ? "1" : "0";
+        const jira = f && (f.jiraUrl || f.jiraId) ? "1" : "0";
+        return id + ":" + status + ":" + desc + ":" + feishu + ":" + jira;
+      })
       .join("|");
   }
 
@@ -662,12 +697,26 @@
     });
   }
 
-  function detailRow(label, value) {
-    const empty = !dash(value);
+  function detailRow(label, valueHtml, empty) {
     return (
       `<div class="drawer-row"><dt>${escapeHtml(label)}</dt>` +
-      `<dd class="${empty ? "empty" : ""}">${escapeHtml(empty ? "—" : value)}</dd></div>`
+      `<dd class="${empty ? "empty" : ""}">${empty ? escapeHtml(valueHtml) : valueHtml}</dd></div>`
     );
+  }
+
+  function detailTextRow(label, value, emptyLabel) {
+    const text = dash(value);
+    if (!text) return detailRow(label, emptyLabel || "—", true);
+    return detailRow(label, escapeHtml(text), false);
+  }
+
+  function feishuLabel(url) {
+    try {
+      const u = new URL(url);
+      const last = decodeURIComponent((u.pathname || "").split("/").filter(Boolean).pop() || "");
+      if (last && last.length <= 24 && !/^[A-Za-z0-9]{10,}$/.test(last)) return last;
+    } catch (_) {}
+    return "打开飞书文档";
   }
 
   function openDetail(id) {
@@ -678,19 +727,32 @@
     const bucket = BUCKETS.find((b) => b.id === ddlBucket(feat));
     const note = dash(feat.note) || dash(feat.notes);
     const desc = dash(feat.description) || dash(feat.desc);
+    const feishu = dash(feat.feishuUrl);
+    const jiraUrl = dash(feat.jiraUrl) || jiraBrowseUrl(feat.jiraId);
+    const jiraId = dash(feat.jiraId);
+    const descHtml = desc
+      ? `<div class="drawer-desc">${escapeHtml(desc)}</div>`
+      : "暂无描述";
+    const feishuHtml = feishu
+      ? `<a class="drawer-link" href="${escapeAttr(feishu)}" target="_blank" rel="noopener noreferrer">${escapeHtml(feishuLabel(feishu))}</a>`
+      : "暂无飞书文档";
+    const jiraHtml = jiraUrl
+      ? `<a class="drawer-link" href="${escapeAttr(jiraUrl)}" target="_blank" rel="noopener noreferrer">打开 Jira${jiraId ? " · " + escapeHtml(jiraId) : ""}</a>`
+      : "暂无 Jira";
     $("#detailBody").innerHTML =
-      detailRow("Jira", feat.jiraId) +
-      detailRow("应用", feat.app) +
-      detailRow("状态", feat.status) +
-      detailRow("开始", feat.start) +
-      detailRow("结束", feat.end) +
-      detailRow("DDL", feat.ddl) +
-      detailRow("里程碑", bucket ? bucket.label : "") +
-      detailRow("前端", feat.frontend) +
-      detailRow("后端", feat.backend) +
-      detailRow("测试", feat.qa) +
-      (desc ? detailRow("描述", desc) : "") +
-      detailRow("备注", note);
+      detailRow("Jira", jiraHtml, !jiraUrl) +
+      detailTextRow("应用", feat.app) +
+      detailTextRow("状态", feat.status) +
+      detailTextRow("开始", feat.start) +
+      detailTextRow("结束", feat.end) +
+      detailTextRow("DDL", feat.ddl) +
+      detailTextRow("里程碑", bucket ? bucket.label : "") +
+      detailTextRow("前端", feat.frontend) +
+      detailTextRow("后端", feat.backend) +
+      detailTextRow("测试", feat.qa) +
+      detailRow("需求描述", descHtml, !desc) +
+      detailRow("飞书文档", feishuHtml, !feishu) +
+      detailTextRow("备注", note);
     const overlay = $("#detailOverlay");
     overlay.hidden = false;
     $("#detailClose").focus();

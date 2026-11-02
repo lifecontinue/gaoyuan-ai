@@ -1,7 +1,7 @@
 /* Launch Sync seed data · Asia/Shanghai 2026-11-02 */
 window.LAUNCH_SYNC_SEED = {
-  "version": 3,
-  "seededAt": "2026-11-02T10:10:00+08:00",
+  "version": 4,
+  "seededAt": "2026-11-02T10:30:00+08:00",
   "ganttStart": "2026-11-02",
   "ganttEnd": "2026-12-15",
   "apps": [
@@ -26,7 +26,9 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "张奥",
       "qa": "",
-      "note": "DDL 明日；导入偏差持续修"
+      "note": "DDL 明日；导入偏差持续修",
+      "description": "## 客户诉求\n* BIP 人事系统不显示初级工/中级工等职级，需在云大学新增「岗位序列」字段，由管理员提前设定员工职级\n* 同一技能项复用标签，按初级工/中级工/高级工/技师拆分：培训资料相同，验证难度不同\n* 10-21 结论：领导评估打分、第三方数据初始化进度都走导入，可以做；需明确导入规则后整体提交开发",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/MyHfdpvpXoDFb2xkBIJcvZHMntb"
     },
     {
       "id": "f-8159",
@@ -40,7 +42,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "郑蓉蓉",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "提测中，盯 11-06 上线"
+      "note": "提测中，盯 11-06 上线",
+      "description": "场景:客户举行评比大赛，需要对多个参赛作品、人员进行多个维度的打分。传统的打分题入太适用于多人、多维度的场景。如果参赛人员几十人、评价维度几十项，那么一题题打分工作量非常大。\n需求:希望能像矩阵填空那样设计，限制只能输入分数，且会实时显示每人的总分。信息栏能插入超链接和批注。附件有图",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8159"
     },
     {
       "id": "f-8399",
@@ -54,7 +59,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "张奥",
       "qa": "",
-      "note": "上限 50 + 特殊符号"
+      "note": "上限 50 + 特殊符号",
+      "description": "## 背景\n客户批量导入/维护三级标签时，因字数上限过紧（现状 ≤20）、特殊符号被拦截导致报错。\n\n## 需求说明\n1. **字数**：仅三级标签名称，上限由 20 调整为 **50**；按字符计；保存/导入前 trim；超限拦截并提示。\n2. **特殊符号**：放宽白名单（中英文数字、中间空格及常用括号/标点等）；仍禁止控制字符；非法字符拦截并提示。\n3. 页面新建/编辑与 Excel 导入同一套规则；一、二级标签本单不改。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8399"
     },
     {
       "id": "f-eval-jira",
@@ -68,7 +76,9 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "待定",
       "backend": "待定",
       "qa": "待定",
-      "note": "DDL 下周五"
+      "note": "DDL 下周五",
+      "description": "## 决策\n评估并入调查管理（方向 A，非并入 360）。范围：加讲师库关联与评估关系；结果回传讲师。依据：题型/模板调查已有；360 仍在排约 100 条。\n\n## 当前\n飞书方案与来源清单挂在父单 PRO-289；方向已拍板；Jira 未建，DDL 补 Jira → 2026-11-06。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/CMp4doVo0oX1eRxCB7VcoZo2ntc"
     },
     {
       "id": "f-8412",
@@ -82,7 +92,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "中旬"
+      "note": "中旬",
+      "description": "【背景/问题】\n双人 PK 试题设置的题目下限目前写死为 7 题。部分企业题库量少，实际约 5 题即可办赛，硬性下限导致无法按真实运营配置。\n\n来源：飞书需求池「PK竞赛规则优化」（约 2026-10-19）；2026-10-20 需求评审纳入：下限从固定 7 改为可配置。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8412"
     },
     {
       "id": "f-8413",
@@ -96,7 +109,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "中旬"
+      "note": "中旬",
+      "description": "【背景/问题】\nPK「最后一题双倍得分」当前写死开启，部分客户不需要且无法关闭。\n\n来源：飞书需求池「PK竞赛得分规则优化」；2026-10-20 评审纳入可配置开关。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8413"
     },
     {
       "id": "f-8414",
@@ -110,7 +126,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "中旬"
+      "note": "中旬",
+      "description": "## 痛点\n双人 PK 匹配到机器人时，对手出答忽快忽慢、有时长等，不像真人陪练。反应时间不应跟「单题答题时长」上限一起被拉长，也不应写成与学员无关的固定短区间随机。\n\n## 需求目标\n1. 机器人出答节奏贴近**当前学员自己的答题速度**。\n2. 有自然波动，但不出现长时间空等或明显「秒答」穿帮。\n3. 与「单题答题时长」配置脱钩。\n4. 只影响机器人对局；在线真人、历史回放不变。\n\n## 产品规则\n* 基准：当前学员平均单题答题时间（本场滚动平均优先）。\n* 机器人出答时间：学员均值 × (1±20%)，即 **80%～120%**。\n* 无学员数据（冷启动）：初始参考值 T0（建议默认 **3 秒**）再 ±20%。\n* 计算结果 >0 且不超过该题学员答题时长；不做固定 1–3 秒/5 秒帽类截断。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8414"
     },
     {
       "id": "f-8415",
@@ -124,7 +143,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "王硕",
       "qa": "邵红",
-      "note": "中旬；对照竞赛开关"
+      "note": "中旬；对照竞赛开关",
+      "description": "## 诉求\n运营工具增加**可隐藏排行榜**能力：管理员可配置学员端不展示排行榜。\n\n## 目标（草案）\n1. 管理端活动配置增加「是否显示学员端排行榜」（默认保持现状：显示，避免存量行为变化）。\n2. 关闭后：学员端入口/页面不展示排行榜（含入口入口隐藏或占位策略，PRD 定）。\n3. 管理端数据统计 / 导出不受影响（仅学员端隐藏）。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8415"
     },
     {
       "id": "f-8264",
@@ -138,7 +160,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "中旬"
+      "note": "中旬",
+      "description": "学员在练习的过程当中，答完题之后跳转到下一题的速度过快，无法及时看清提干内容及选项的正确答案，由于该竞赛项目是加到时光易培项目里边儿其中的一个任务，无法便利的看到错题本，所以说想在练习答题的过程当中这个速度稍微可以减慢一点或者说可以能够添加一个下一题的按钮",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/wiki/XNhIwnsUKifbAOkxm7QcA58jnLb?table=tblbw4NvXfnJmWKU&view=vew79sl0bA",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8264"
     },
     {
       "id": "f-8280",
@@ -152,7 +177,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "王程壮",
       "qa": "",
-      "note": "中旬；研发主跟王程壮"
+      "note": "中旬；研发主跟王程壮",
+      "description": "## 背景\n新功能涉及积分时，新规则随发版同步给存量客户并直接生效，企业管理员无感知，事后发现学员多出额外积分。\n\n## 范围\n* **D01** 存量客户发版同步的新增积分规则，未标记 ruleStatus 时默认关闭（规则查询中为「停用」，不发分）。\n* **D02** 标记 ruleStatus=\"true\" 的新增规则同步给存量客户时为「启用」。\n* **D03** 全新增量客户沿用现有部署流程，全部规则默认开启。\n* **D04** 老规则不作调整：开关状态、积分值、次数上限、发分行为不变。\n* **D05** 每次发版后存量客户同步获取新规则。\n* **D06** 上线告知后，管理员在规则查询筛选「停用」再启用（或批量启用）。\n* **D07** 服务人员可代客户开启。\n\n## 不做\n不回收已多发积分；不改老规则/增量客户默认；不做学员端通知；不新做开关入口；不做自动开启。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/WZzgdgzxooyid3x4UZQcBuirnjh",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8280"
     },
     {
       "id": "f-rank-col",
@@ -166,7 +194,9 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "赵凯",
       "qa": "",
-      "note": "需求变动待改写后再建 Jira；原 mid-Nov 批次"
+      "note": "需求变动待改写后再建 Jira；原 mid-Nov 批次",
+      "description": "## 背景\n后台竞赛「数据查看」按玩法 Tab 切换时，人员分析表字段不一致：部分玩法第一列有「名次」，部分没有。\n\n## 目标\n1. 各玩法人员分析表统一在**第一列**展示「名次」，与计时竞赛一致。\n2. 表中每一个数据字段都要能看清**对应规则**（怎么算、受哪些后台设置影响）。\n\n## 范围\n只管后台数据查看 · 人员分析；学员端排行榜另走 PRO-347 / SDGH-8376。当前缺失名次列的玩法包括：个人练习、双人PK、每日答题、闯关竞赛、一战到底、智能练习、AI陪练等。",
+      "feishuUrl": ""
     },
     {
       "id": "f-8377",
@@ -180,7 +210,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "月底"
+      "note": "月底",
+      "description": "客户：和黄药\n\n需求\n现在的「每天增加指定次数」会把没用完的次数累积到第二天。客户希望改成每天刷新：比如设成每天 2 次，不管前一天用了几次，第二天都是 2 次，没用完的不留到第二天。\n\n解决思路\n # 管理端「每天增加指定次数」旁边加一个次数规则，可选「累积」或「每日刷新（不累积）」。默认选「累积」，已有竞赛的行为不变。\n # 选「每日刷新」时，学员当天剩余次数 = 每日次数 − 当天已用次数，每天 0 点重新计算。\n # 学员端剩余次数的地方增加提示「每日 0 点刷新次数」。\n # 竞赛开始后能不能改这个规则：不能改。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8377"
     },
     {
       "id": "f-8379",
@@ -194,7 +227,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "月底"
+      "note": "月底",
+      "description": "现状\n\n ## 管理员开启错题反馈后，学员端每道题下面会出现「反馈」入口。学员点开后填写描述提交，最多 500 字。\n ## 每个学员每道题只能反馈一次。再点会提示「您已提交过本题反馈，无法再次提交」。\n ## 后台「反馈统计」按题目汇总，显示题型、题干、反馈人数、反馈人次，支持按题型和题干查询。\n ## 点「查看详情」会打开反馈明细，每条记录有工号、姓名、部门、反馈时间、题干和反馈描述。\n ## 现在没有处理状态，也没有入口跳去改题。学员提交后看不到任何处理结果。\n \n\n  需求\n管理员要能标记每条反馈的处理结果，并且能直接去改题。处理完之后，同一道题如果还有问题，学员要能再次反馈。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8379"
     },
     {
       "id": "f-8282",
@@ -208,7 +244,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "郑蓉蓉",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "月底"
+      "note": "月底",
+      "description": "## 诉求\n参考问卷星，支持隐藏/显示题型（答题逻辑）；一线提到调查 + 考试都要。\n\n相关：问卷星加题型见 PRO-22，勿混。\n\n## 需求描述（2026-10-09 产品补充）\n* **做什么**：增加一个「是否显示题型」的**全局设置**。关闭后，学员作答、预览、查看答卷时，题干旁的题型标签（如「（单选题）」）不再显示；开启时与现网一致。\n* **本质**：只控制前端一个字段是否显示，不改题型能力、不改答案和统计，**调整较小**。\n* **默认**：开启（存量行为不变）。\n* **不影响**：管理端问卷编辑器仍显示题型；管理员导出仍带题型。\n* **优先级**：靠后（Low），计划 **11 月底**（2026-11-30）上线。\n* 参考：老版 PRD P0-1 （当时设想为调查级字段，现按全局设置口径）。待确认：「全局」是租户级系统设置还是调查管理模块设置；考试是否同步（池评估已定「考试后续考虑」）。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8282"
     },
     {
       "id": "f-8304",
@@ -222,7 +261,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "郑蓉蓉",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "月底"
+      "note": "月底",
+      "description": "## 诉求\n对标问卷星，增加：排序题、矩阵滑动、矩阵多选、表格文本题、表格数值题、签名题。\n\n相关（勿混）：隐藏显示题型另见 triage 单；矩阵打分见 PRO-13。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/PU6gdpOgBoYeoqxFkDjcev3Cnne",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8304"
     },
     {
       "id": "f-score-analytics",
@@ -236,7 +278,9 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "",
       "qa": "",
-      "note": "月末批次；未建 Jira"
+      "note": "月末批次；未建 Jira",
+      "description": "## 来源（飞书产品需求池）\n\n* 标题：【调查管理】打分题数据监控支持数据分析\n* 申请日期：2026-10-26\n* 应用模块：调查管理\n* **产品负责人：高源**\n* 产品评估结论：纳入优化\n* Granola 2026-10-27：调查数据分析与评估合并后统一优化（含分值维度）— 方案侧仍走评估并入调查既有单\n\n## 状态\n\n缺 PRD；与评估并入调查方案对齐后再挂 Jira。",
+      "feishuUrl": ""
     },
     {
       "id": "f-multi-jump",
@@ -250,7 +294,9 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "",
       "qa": "",
-      "note": "任一选择即可跳转；月末批次；未建 Jira"
+      "note": "任一选择即可跳转；月末批次；未建 Jira",
+      "description": "## 诉求\n当前跳题需完全匹配选项才能跳转；需支持关系配置（任一选择即可跳转、多选命中若干项等）。",
+      "feishuUrl": ""
     },
     {
       "id": "f-8186",
@@ -264,7 +310,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "月底"
+      "note": "月底",
+      "description": "## 诉求\n编辑竞赛关联试题后，增加同步校验流程，避免关联试题变更与竞赛侧缓存/展示不一致（涉及 Redis/缓存）。\n\n## 说明\n方案见飞书文档；排期 Later，预计 11-30。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/CDpcdC7aAoNWU6xy3CRcJQ94n3e",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8186"
     },
     {
       "id": "f-8263",
@@ -278,7 +327,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "赵笑笑",
       "backend": "王硕",
       "qa": "邵红",
-      "note": "月底；主跟王硕/赵笑笑"
+      "note": "月底；主跟王硕/赵笑笑",
+      "description": "答题不限制次数，但抽奖次数可配置限制；活动期内同一学员仅能中奖一次。\n  已抽中实物/虚拟奖品：后续答题不再获得抽奖机会（或不再进入抽奖流程）。\n  未抽中：活动期内可继续答题并继续抽奖。\n\n免得某些人重复抽中浪费奖品。",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8263"
     },
     {
       "id": "f-8266",
@@ -292,7 +344,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "王程壮",
       "qa": "邵红",
-      "note": "月底"
+      "note": "月底",
+      "description": "## 问题\n实际抽奖转盘配置含未中奖「谢谢参与」扇区，但**学员端转盘页当前只展示奖品项**，易被理解为 100% 中奖。\n\n## 诉求\n转盘 UI 与真实奖池一致：**未中奖的「谢谢参与」也展示在转盘上**（与后台/抽奖逻辑一致）。\n\n答题抽奖的模板1，活动抽奖的模板四, 需要相同操作",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/YkKqdr1q7oVCKtxKLn0cheVgnTW",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8266"
     },
     {
       "id": "f-8398",
@@ -306,7 +361,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "张奥",
       "qa": "",
-      "note": "12月+"
+      "note": "12月+",
+      "description": "## 方案（最新口径）\n* 目标态流程为**四步**：基本信息 → 编辑标签 → 配置标签内容 → 关联学员；保存后启用再向学员开放。\n* 第一步部门／岗位／群组**非必选**；可无范围直接手动选人。\n* 末级评分导入不在本需求。\n\n## 自动同步开关\n* **开（默认）**：岗位↔图谱强绑定；岗位人员变动按原规则自动下发/回收。\n* **关（手动）**：创建时若选岗位，仅首次一次性灌名单后纯手动；改岗位不再同步人。\n* 首期关联维度只做岗位；勿反复切换开关。\n* 学员端多图谱：PC+H5 左上角切换（沿用现网）。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/NZt0dZD9MoEuHhxsyVdcsSPUnDd",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8398"
     },
     {
       "id": "f-8352",
@@ -320,7 +378,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "",
       "qa": "",
-      "note": "7 应用；DDL 12-18"
+      "note": "7 应用；DDL 12-18",
+      "description": "跟进人：各模块产研测负责人 主跟进，及时同步各模块开发进展。\n\n【总需求说明】因导入导出模板模块内字段等差异，可模块产品自行评估并需求下发\n\n1、应用覆盖范围：公网主要使用版本为主（前期适配过国际化的应用）；根据模块自身情况决定；不清楚问模块产品经理；\n\n2、DDL完成时间：各模块自行确认上线时间并填入表格：DDL为4季度底，总体按照12月18为期限进行\n\nhttps://shuiiiiqqq.feishu.cn/wiki/JhWmwtnZxiybTVk93JYcFhNNnSR?from=fromcopylink\n\n3、导入导出国际化方案可以参考下方会议结论：\n\n（1）建议按应用开发方式归类，同类模块统一开发方案，降低后续维护成本。选定方案后，各模块实施改造优化。---各模块组长商议决策！！！\n\n（如光年配置、原生开发等，可结合模块自身特性落地，但同类型模块建议保持处理方案一致性）\n\n（2）同时需兼顾定制化业务与现有业务的兼容性。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/wiki/JhWmwtnZxiybTVk93JYcFhNNnSR",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8352"
     },
     {
       "id": "f-8213",
@@ -334,7 +395,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "10/30 批 · In Review"
+      "note": "10/30 批 · In Review",
+      "description": "## 诉求\n每日答题增加「是否限制每道题目答题时间」配置能力（客户：诚志永清）。\n\n## 说明\n需收口 PK 秒数与超时策略等问题；方案见飞书文档。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/I7ePdIG2coZGaux0vpGcDzkanpI",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8213"
     },
     {
       "id": "f-8185",
@@ -348,7 +412,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "10/30 批；经办苏茂荣"
+      "note": "10/30 批；经办苏茂荣",
+      "description": "竞赛管理—系统设置中，有个积分设置，客户在积分管理中自定义了一个维度，默认的没启用，现在的情况是客户设置了积分，但是在学员端是0分，原因是竞赛管理只看维度1，没有跟着积分管理的维度去走，麻烦优化下",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8185"
     },
     {
       "id": "f-8160",
@@ -362,7 +429,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "王硕",
       "qa": "邵红",
-      "note": "10/30 批"
+      "note": "10/30 批",
+      "description": "客户有40个视频，需要上传到平台做投票评选。运营工具的投票评选中不能直接上传视频，需要先把视频上传到知识管理，在运营工具-投票评选中 添加候选项时 将知识管理中的链接复制粘贴过来，并且还必须要写候选宣言、必须上传候选图片。学员在PC端进行投票时，不能直观的先看到作品。\n学员PC端，进入投票评选页面，点击图片不能直接查看视频作品，需要点击“为TA投票”，才会打开一个新页面右下角有“查看作品”，这个“查看作品”的字样隐藏太深，学员一般找不到。希望可以点击图片就可以直接查看视频作品。点击“为TA投票”就直接投票成功了，不需要再出现一个页面，再点一次“投TA一票”。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/wiki/UEJhwK5cViY5gokCvi0c4HVenYd",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8160"
     },
     {
       "id": "f-8162",
@@ -376,7 +446,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "王亚雷",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "10/30 批"
+      "note": "10/30 批",
+      "description": "1. 需求背景与业务影响​​\n  ​​安全合规要求​​：因公司需满足3级等保要求，且客户运营存在初始账号密码泄露风险，需在小程序端增加密码修改校验。\n  ​​业务现状调整​​：客户已放弃使用当前竞赛功能，但明确要求产品方完成安全改造后方可继续使用；同时基于等保角度也需提前规范安全风险。\n\n​​2. 技术实施方案​​\n  ​​登录校验逻辑​​：在现有的独立登录结构中追加UC异常码校验，包含首次登录、管理员重置密码、弱密码等场景，直接返回前端错误码以触发提示或跳转，暂不开发完整的忘记密码流程。\n  ​​密码保存逻辑​​：修改密码时直接调用平台的通用密码保存接口，无需新增后台改动，确保前后端交互一致。\n  ​​覆盖范围限制​​：考虑到其他小程序（如宇通定制版）的稳定性与年审问题，本次改造仅针对易培和竞赛相关的小程序生效。\n  竞赛小程序（我司达人）：纳入本次改造范围，需跑通新用户进入后重置密码的完整流程。\n  宇通小程序：属于定制化版本，严禁改动，避免影响其正常使用。\n  其余小程序：暂不纳入本次改造，待后续评估是否适配。\n\n \n\n产品需求文档：https://shuiiiiqqq.feishu.cn/docx/Bbe2d1Lj6oy513xQGuGc3l8NnQc?from=fromcopylink",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/Bbe2d1Lj6oy513xQGuGc3l8NnQc",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8162"
     },
     {
       "id": "f-8214",
@@ -390,7 +463,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "10/30 批"
+      "note": "10/30 批",
+      "description": "针对扫描二维码参与竞赛的 直接会到这个页面 包括单点进去的 直接到练习竞赛的页面 这个页面也不好返回到首页 所以能不能直接在这个页面加上错题本",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8214"
     },
     {
       "id": "f-8376",
@@ -404,7 +480,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "10/30 批 · 仅练习PK+计时"
+      "note": "10/30 批 · 仅练习PK+计时",
+      "description": "长沙团队新签客户长沙移动，组织全国各地2000+学员线上知识竞赛，当前在组织双人PK赛前，发现排行榜问题，双人pk，按照规则设置 优先胜场数，第二胜率，第三最高分，但是学员端排行榜显示固定字段最高分和耗时，导致学员无法知道离前面的同学差距有多大，客户也提出疑虑，本意是让学员之间你追我赶形成竞争意识，现有产品显示，完全无法让学员知道，所以建议把排行榜学员端显示字段改为与后台设置的排行规则一致。当前的产品学员端排行榜显示字段不会随后台排行规则而变化。因当前问题，导致项目无法推动项目开展，客户希望我司能尽快有个解决方案和回复",
+      "feishuUrl": "",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8376"
     },
     {
       "id": "f-8368",
@@ -418,7 +497,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "",
       "backend": "张奥",
       "qa": "",
-      "note": "10/30 批"
+      "note": "10/30 批",
+      "description": "## 客户诉求\n* 匹配三级标签的课程、培训资料、试题时新增「本地上传」按钮，支持 PPT/Word/Excel/视频\n* 更新资料：后台删除旧文件重传，或随课程体系变动同步\n* 会上待办：内部确认实现时间并回复客户（冯园圆）",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/PJV9dtup4o9Fc5xxxqXcE9XWnw3",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8368"
     },
     {
       "id": "f-8204",
@@ -432,7 +514,10 @@ window.LAUNCH_SYNC_SEED = {
       "frontend": "李晓瑞",
       "backend": "赵凯",
       "qa": "刘兰兰",
-      "note": "10/30 批 · 抽检已完"
+      "note": "10/30 批 · 抽检已完",
+      "description": "## 诉求\n优化竞赛管理防作弊功能。\n\n## 说明\n方案见飞书文档；后端接口已写好，前端进度跟进。",
+      "feishuUrl": "https://shuiiiiqqq.feishu.cn/docx/CsHqdeletodSvQxZblYck52mnec",
+      "jiraUrl": "https://21tb-jira.21tb.com/browse/SDGH-8204"
     }
   ],
   "hiddenApps": [],
