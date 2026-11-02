@@ -25,7 +25,11 @@
     <aside class="wk-index" aria-label="周报目录">
       <p class="wk-index__eyebrow">Weekly</p>
       <h1>企业学习 AI 战略研判</h1>
-      <p class="wk-index__note">每周一份。点左侧期次即可阅读。</p>
+      <p class="wk-index__note">每周一份。收藏只存在这台浏览器里。</p>
+      <div class="wk-filters" role="group" aria-label="目录筛选">
+        <button class="wk-filter is-on" type="button" data-filter="all" aria-pressed="true">全部</button>
+        <button class="wk-filter" type="button" data-filter="saved" aria-pressed="false">收藏</button>
+      </div>
       <nav class="wk-list" data-weekly-list></nav>
       <div class="wk-outline" data-weekly-outline hidden></div>
     </aside>
@@ -35,6 +39,7 @@
       <article data-weekly-article></article>
     </main>
   </div>
+  <p class="wk-toast" data-toast hidden role="status"></p>
   <script type="module" src="../assets/js/weekly.js"></script>
 </body>
 </html>
