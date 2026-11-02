@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Handoff · 光谱汇报 → Claude Code</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f5f7;
+      --card: #fff;
+      --ink: #1a1a1a;
+      --muted: #5a5a5a;
+      --line: #e5e7eb;
+      --accent: #1d4ed8;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --warn: #b45309;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    header.top {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 28px 20px 24px;
+    }
+    header.top .wrap { max-width: 920px; margin: 0 auto; }
+    .eyebrow { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .75; margin: 0 0 8px; }
+    h1 { font-size: 1.55rem; margin: 0 0 8px; font-weight: 650; }
+    .lead { margin: 0; opacity: .9; max-width: 52rem; }
+    .meta-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+    }
+    main { max-width: 920px; margin: 0 auto; padding: 24px 20px 80px; }
+    section.card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin: 0 0 16px;
+    }
+    h2 { font-size: 1.1rem; margin: 0 0 12px; }
+    h3 { font-size: .98rem; margin: 18px 0 8px; }
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 0 0 10px; padding-left: 1.25rem; }
+    li { margin: 4px 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border-top: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #fafafa; font-weight: 600; }
+    code, .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; background: #f1f5f9; padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+    .callout {
+      background: var(--accent-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 10px 0 0;
+    }
+    .callout.warn { background: #fffbeb; border-color: #fde68a; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+    .do, .dont { border-radius: 10px; padding: 12px 14px; border: 1px solid var(--line); }
+    .do { background: #ecfdf5; border-color: #a7f3d0; }
+    .dont { background: #fef2f2; border-color: #fecaca; }
+    .do h3, .dont h3 { margin-top: 0; }
+    .tl { border-left: 3px solid #93c5fd; margin: 8px 0 0 6px; padding-left: 16px; }
+    .tl .node { position: relative; margin: 0 0 14px; }
+    .tl .node::before {
+      content: ""; position: absolute; left: -23px; top: 7px; width: 10px; height: 10px;
+      border-radius: 50%; background: var(--accent); border: 2px solid #fff; box-shadow: 0 0 0 1px #93c5fd;
+    }
+    .tl .when { font-size: 12px; color: var(--muted); }
+    .tl .what { font-weight: 600; }
+    .checklist label { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0; font-size: 14px; }
+    footer.note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .btn {
+      display: inline-block; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line);
+      background: #fff; color: var(--ink); font-size: 13px;
+    }
+    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <p class="eyebrow">Claude Code handoff · 2026-11-02 Asia/Shanghai</p>
+      <h1>光谱汇报项目 · 交给你继续完善</h1>
+      <p class="lead">把演示、原型、与用户核对收成一条 timeline，落在一个 gaoyuan-ai.xyz 页面：介绍故事、收反馈、Sync 回写。不是从零再写 PRD。</p>
+      <div class="meta-row">
+        <span class="chip">产品：光谱（岗位图谱）</span>
+        <span class="chip">客户主线：心连心</span>
+        <span class="chip">样板 Sync：xlx-marks / launch-sync</span>
+        <span class="chip">明天：郑州 · 开发沟通（11-03）</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>0. 先打开这些</h2>
+      <div class="btnrow">
+        <a class="btn primary" href="/work/xlx/feature-list/" target="_blank" rel="noopener">Feature List 可标记</a>
+        <a class="btn" href="/work/xlx/flow/" target="_blank" rel="noopener">甬道图</a>
+        <a class="btn" href="/work/launch-sync/" target="_blank" rel="noopener">上线同步（Sync UX）</a>
+        <a class="btn" href="https://docs.google.com/document/d/1hCTGLB7volQNQVSoO8U6fIs0Tk-CM2O7IPFCizl3nhU/edit" target="_blank" rel="noopener">Feature List Doc</a>
+        <a class="btn" href="https://docs.google.com/document/d/1w7PRyCmpv2mKbEP6li7B0RKVJZlSPyDw3ZMIxXcPJ8k/edit" target="_blank" rel="noopener">Step3 Doc</a>
+        <a class="btn" href="https://docs.google.com/document/d/19q1JrKT6pgUoRuvZVvbqwlQabquQgceZKC9giPvyAaQ/edit" target="_blank" rel="noopener">Step4 Doc</a>
+        <a class="btn" href="https://docs.google.com/document/d/1P2FQrgL9MBOnwxuuUvGeokG0rb3q5_W9FVuvqi72uIs/edit" target="_blank" rel="noopener">能力导入 F1–F6</a>
+      </div>
+      <p class="footer note" style="margin-top:12px">Markdown 真源：<span class="path">/workspace/21tb-cross-agent/agent-deposits/core/2026-11-02-guangpu-report-claude-handoff.md</span>（盒上另有镜像 <span class="path">/workspace/agent-deposits/core/</span>）</p>
+    </section>
+
+    <section class="card">
+      <h2>1. 背景</h2>
+      <p><strong>光谱</strong> = 岗位图谱（时代光华 / 云大学）。手册角色：<strong>PC管理端 / 学员端 / 驾驶舱</strong>。</p>
+      <p>当前推心连心培训考核：评委线下定短板 → 业务导入最终能力等级 <strong>L1–L5</strong> → 光谱建图绑资源 → 学员补短板学习。光谱<strong>不做</strong>：替代外部任职资格、领导干部线上打分、按勾叉重算、系统内晋级裁定。</p>
+      <ul>
+        <li>10-26 导入客户沟通 · 10-27 创建/自动同步口径 · 10-29 调整计划 · 10-30 客户介绍与 Feature List</li>
+        <li>记忆口径：自动同步<strong>默认开</strong>可关；首期关联<strong>只岗位</strong>；L5=高级技师；A–E ≠ L1–L5 ≠ 0–100</li>
+        <li><strong>2026-11-03</strong> 郑州与开发线下沟通光谱（中午对齐补充）。11-04 客户模拟以日历为准 → 冲突标待确认</li>
+      </ul>
+      <h3>Linear（10-30 短表快照 · 现网以 Linear 为准 · 勿编造）</h3>
+      <table>
+        <thead><tr><th>ID</th><th>一句</th><th>快照</th></tr></thead>
+        <tbody>
+          <tr><td>PRO-290</td><td>光谱优化总包</td><td>In Progress</td></tr>
+          <tr><td>PRO-339</td><td>创建流程 / 人与图谱解绑</td><td>In Progress · SDGH-8398</td></tr>
+          <tr><td>PRO-333</td><td>岗位序列 / 胜任力导入</td><td>In Progress · Jira 未建</td></tr>
+          <tr><td>PRO-348</td><td>三级标字数/符号</td><td>In Progress · SDGH-8399</td></tr>
+          <tr><td>PRO-335</td><td>末级本地上传</td><td>曾 In Review · SDGH-8368</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>2. 你要交付什么</h2>
+      <div class="grid2">
+        <div class="do">
+          <h3>要</h3>
+          <ul>
+            <li>一条 <strong>Timeline</strong> 串：演示脚本 / 原型 / 与用户核对</li>
+            <li>单页统一介绍（建议 <span class="path">/work/guangpu-report/</span>）</li>
+            <li>反馈可填 + <strong>Sync</strong> 回助理</li>
+            <li>口吻：光谱、提测、yufa、暂无</li>
+          </ul>
+        </div>
+        <div class="dont">
+          <h3>不要</h3>
+          <ul>
+            <li>从零再写合同 PRD</li>
+            <li>规划能力写成可签</li>
+            <li>页面塞 Bridge webhook key</li>
+            <li>编造 Linear/Jira 状态（未知写待确认）</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <strong>Sync 模式（照抄）：</strong> localStorage + 同源 <code>GET/PUT /api/guangpu-report-feedback</code>（名称可微调）· Vercel Blob · 可选 write-key header · 参考 <code>api/xlx-marks.js</code> / <code>api/launch-sync-state.js</code> · 仓 <code>lifecontinue/gaoyuan-ai</code> → <code>personal-brand-site/</code>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. 建议 Timeline 骨架（三类必须编在一起）</h2>
+      <div class="tl">
+        <div class="node">
+          <div class="when">2026-10-21 · 背景</div>
+          <div class="what">旧 Codex 方案 handoff（创建五步/人图解绑）— 范围已演进，只作背景</div>
+          <div><span class="path">/workspace/handoff-光谱方案.md</span></div>
+        </div>
+        <div class="node">
+          <div class="when">10-26 → 10-27 · 口径</div>
+          <div class="what">导入规则仍开放；自动同步默认开/关；首期只岗位</div>
+          <div>meetings：光谱数据导入 · 图谱创建与查看</div>
+        </div>
+        <div class="node">
+          <div class="when">10-29 → 10-30 · 心连心对齐</div>
+          <div class="what">调整计划 + 九阶段方案 + Feature List（可标记页已上线并有 marks）</div>
+          <div><a href="/work/xlx/feature-list/">/work/xlx/feature-list/</a> · 需求池短表</div>
+        </div>
+        <div class="node">
+          <div class="when">10-30 · 演示 / 客户介绍</div>
+          <div class="what">光谱沟通会：小岗位试点；横向标签 / 养员规划仍开放</div>
+        </div>
+        <div class="node">
+          <div class="when">11-02 · 模拟脚本 + 导入定稿</div>
+          <div class="what">Step3 管理端（创建/下发/L 导入）；Step4 <strong>只做切换图谱</strong>；能力导入 F1–F6 已定</div>
+        </div>
+        <div class="node">
+          <div class="when">11-03 / 11-04 · 下一步</div>
+          <div class="what">郑州开发沟通；客户线下模拟（日历为准）— 页上标待确认与风险</div>
+        </div>
+      </div>
+      <p>每个节点挂：Doc / 原型路径 <span class="path">D:\21TB\50-ai-product\prototypes\guangpu-five-step\</span> / 线上工具 / 开放题。</p>
+    </section>
+
+    <section class="card">
+      <h2>4. 已完成资产清单</h2>
+      <h3>文档</h3>
+      <ul>
+        <li>调整计划 · 实施方案 · Feature List · 需求池短表</li>
+        <li>Step3 / Step4 · 岗位序列与胜任力导入业务流程 · 能力导入 template（F1–F6）</li>
+        <li>Drive：<a href="https://drive.google.com/drive/folders/1S5emPb-gBB8jRHeHDIk6wCIGIYbhmvSo" target="_blank" rel="noopener">21TB-产品文档</a></li>
+      </ul>
+      <h3>线上</h3>
+      <ul>
+        <li><a href="/work/xlx/feature-list/">Feature List</a> · Sync <code>/api/xlx-marks/</code></li>
+        <li><a href="/work/xlx/flow/">实施甬道图</a> · <a href="/work/xlx/">XLX 索引</a></li>
+        <li><a href="/work/launch-sync/">Launch Sync</a> · Sync <code>/api/launch-sync-state/</code></li>
+      </ul>
+      <h3>原型</h3>
+      <ul>
+        <li><span class="path">guangpu-five-step</span>：四步建图可演示；心连心 L 导入 / 短板突出等仍有缺口（见 Feature List §6）</li>
+        <li>盒：<span class="path">/workspace/uploads/guangpu-five-step-README.md</span> · <span class="path">/workspace/graph-tools/guangpu-intro.html</span>（是否已挂域名：待确认）</li>
+      </ul>
+      <div class="callout warn">Step3/Step4 文档写明：<strong>未点</strong>本机原型真机，属桌面推演。演示勿伪装已验 H5。</div>
+    </section>
+
+    <section class="card">
+      <h2>5. 成功标准（验收勾选）</h2>
+      <div class="checklist">
+        <label><input type="checkbox" disabled /> 生产 URL 在 <code>/work/guangpu-report/</code>（或约定 ASCII 路径）可打开，noindex</label>
+        <label><input type="checkbox" disabled /> Timeline 同时覆盖演示、原型、与用户核对</label>
+        <label><input type="checkbox" disabled /> 关键素材可点（Doc / Feature List / 原型说明 / 会议要点）</label>
+        <label><input type="checkbox" disabled /> 反馈可编辑并写入 localStorage</label>
+        <label><input type="checkbox" disabled /> Sync：PUT/GET <code>/api/guangpu-report-feedback</code>（或同等），助理可读回；无 webhook key</label>
+        <label><input type="checkbox" disabled /> 未知票状态标「待确认」；VOICE 用词正确</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6. 缺口</h2>
+      <ul>
+        <li>本回合未实时重拉 Linear 状态（表为 10-30 快照）</li>
+        <li>介绍 HTML 是否已部署到域名：待确认</li>
+        <li>11-03 vs 11-04 日程以日历为准</li>
+      </ul>
+      <p class="footer note">仓：github.com/lifecontinue/gaoyuan-ai · Vercel 项目 gaoyuan-ai · 根目录 personal-brand-site/</p>
+    </section>
+  </main>
+</body>
+</html>
