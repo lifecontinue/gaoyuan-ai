@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>上线同步 · Launch Sync</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>上线需求同步会</h1>
+      <div class="meta">Demands · DDL · Gantt · 人员 · 优先级拖拽 · 应用过滤</div>
+    </div>
+    <div class="spacer"></div>
+    <span id="saveHint" class="hint">本机缓存</span>
+    <button type="button" class="btn" id="btnResetSeed">恢复种子数据</button>
+    <button type="button" class="btn btn-primary" id="btnSync">同步给我</button>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-hd">
+        <h2>应用过滤</h2>
+        <span class="meta">点亮 = 显示；再次点击可 filter out</span>
+        <div class="spacer"></div>
+        <button type="button" class="btn btn-ghost" id="btnShowAllApps">全部显示</button>
+      </div>
+      <div class="chips" id="appChips"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-hd">
+        <h2>Demands list</h2>
+        <span class="meta" id="listCount"></span>
+        <div class="spacer"></div>
+        <span class="meta">拖左侧 ⋮⋮ 调整优先级（上 = 高）</span>
+      </div>
+      <div class="table-wrap">
+        <table class="demands">
+          <thead>
+            <tr>
+              <th style="width:36px"></th>
+              <th style="width:44px">#</th>
+              <th>需求</th>
+              <th>应用</th>
+              <th>状态</th>
+              <th>开始</th>
+              <th>结束</th>
+              <th>DDL</th>
+              <th>前端</th>
+              <th>后端</th>
+              <th>测试</th>
+            </tr>
+          </thead>
+          <tbody id="demandBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-hd">
+        <h2>Gantt</h2>
+        <span class="meta">拖动色条改期；左右边缘改起止 · 今日红线</span>
+      </div>
+      <div class="gantt-wrap">
+        <div class="gantt" id="gantt"></div>
+      </div>
+    </section>
+
+    <p class="footer-note">路径 <code>/work/launch-sync/</code> · Sync 写入 <code>/api/launch-sync-state</code>（Vercel Blob）· 不展示 Linear PRO 号 · 时区 Asia/Shanghai</p>
+  </main>
+
+  <div class="sync-dock">
+    <span id="dockHint" class="hint">改完点同步</span>
+    <button type="button" class="btn btn-primary" id="btnSyncDock">同步给我</button>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
