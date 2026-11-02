@@ -38,7 +38,7 @@ window.LAUNCH_SYNC_SEED = {
       "status": "已提测",
       "start": "2026-10-20",
       "end": "2026-11-06",
-      "ddl": "2026-11-06",
+      "ddl": "2026-11-13",
       "frontend": "郑蓉蓉",
       "backend": "赵凯",
       "qa": "刘兰兰",
