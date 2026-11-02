@@ -27,13 +27,48 @@
     };
   }
 
+  function cloneSeedFeature(seed) {
+    return JSON.parse(JSON.stringify(seed));
+  }
+
+  function mergeMissingSeedFeatures(features) {
+    const list = Array.isArray(features) ? features.filter((f) => f && typeof f === "object") : [];
+    const have = new Set();
+    list.forEach((f) => {
+      if (f.id) have.add(String(f.id));
+    });
+    (SEED.features || []).forEach((seed) => {
+      if (!seed || !seed.id) return;
+      if (have.has(String(seed.id))) return;
+      list.push(cloneSeedFeature(seed));
+      have.add(String(seed.id));
+    });
+    return applySeedStatusFixes(list);
+  }
+
+  function applySeedStatusFixes(features) {
+    const seedById = new Map();
+    (SEED.features || []).forEach((seed) => {
+      if (seed && seed.id) seedById.set(String(seed.id), seed);
+    });
+    features.forEach((f) => {
+      const seed = seedById.get(String(f.id || ""));
+      if (!seed) return;
+      const cur = String(f.status || "").trim();
+      if (seed.status === "Done（已上线）" && /^(待关单|已完成|已关闭|In Review)?$/.test(cur)) {
+        f.status = seed.status;
+      }
+    });
+    return features;
+  }
+
   function normalize(data) {
     if (!data || typeof data !== "object" || Array.isArray(data)) return emptyState();
-    const features = Array.isArray(data.features) && data.features.length
+    const incoming = Array.isArray(data.features) && data.features.length
       ? data.features
       : JSON.parse(JSON.stringify(SEED.features));
     return {
-      features,
+      features: mergeMissingSeedFeatures(incoming),
       hiddenApps: Array.isArray(data.hiddenApps) ? data.hiddenApps.map(String) : [],
       meta: data.meta && typeof data.meta === "object" ? data.meta : { storageKey: STORAGE_KEY },
     };
@@ -184,7 +219,7 @@
 
   function visibleFeatures() {
     const hidden = new Set(state.hiddenApps || []);
-    return state.features.filter((f) => !hidden.has(f.app));
+    return state.features.filter((f) => f && !hidden.has(f.app));
   }
 
   function allApps() {
@@ -201,6 +236,54 @@
     if (diff < 0) return "ddl-over";
     if (diff <= 3) return "ddl-soon";
     return "";
+  }
+
+  const BUCKETS = [
+    { id: "d1103", label: "11-03" },
+    { id: "d1106", label: "11-06" },
+    { id: "mid", label: "中旬 11-13~15" },
+    { id: "eom", label: "月底 11-27~30" },
+    { id: "dec", label: "12月+" },
+    { id: "done", label: "已上线/逾期" },
+  ];
+  const STATUS_OPTIONS = ["待方案", "待开发", "进行中", "已提测", "In Review", "Done（已上线）"];
+  const LAUNCHED_STATUS = /待关单|已上线|已完成|已关闭|Done/;
+
+  function statusSelectHtml(value) {
+    const cur = String(value || "");
+    const opts = STATUS_OPTIONS.slice();
+    if (cur && opts.indexOf(cur) < 0) opts.unshift(cur);
+    const options = opts
+      .map((o) => {
+        const selected = o === cur ? " selected" : "";
+        return `<option value="${escapeAttr(o)}"${selected}>${escapeHtml(o)}</option>`;
+      })
+      .join("");
+    return `<select class="cell" data-field="status">${options}</select>`;
+  }
+
+  function ddlBucket(feat) {
+    const status = String((feat && feat.status) || "");
+    const d = parseYMD(feat && feat.ddl);
+    const today = todayShanghai();
+    if (LAUNCHED_STATUS.test(status) || (d && d < today)) return "done";
+    if (!d) return "none";
+    const md = toYMD(d).slice(5);
+    if (d.getFullYear() > today.getFullYear() || d.getMonth() + 1 >= 12) return "dec";
+    if (md === "11-03") return "d1103";
+    if (md === "11-06") return "d1106";
+    if (md >= "11-13" && md <= "11-15") return "mid";
+    if (md >= "11-27" && md <= "11-30") return "eom";
+    if (md <= "11-04") return "d1103";
+    if (md <= "11-12") return "d1106";
+    if (md <= "11-20") return "mid";
+    if (md <= "11-30") return "eom";
+    return "dec";
+  }
+
+  function dash(v) {
+    const s = String(v == null ? "" : v).trim();
+    return s || "";
   }
 
   function renderChips() {
@@ -229,17 +312,21 @@
     const body = $("#demandBody");
     const list = visibleFeatures();
     $("#listCount").textContent = "显示 " + list.length + " / 共 " + state.features.length;
+    ensureLegend();
     body.innerHTML = list
       .map((f) => {
         const pri = state.features.findIndex((x) => x.id === f.id) + 1;
-        return `<tr draggable="true" data-id="${escapeAttr(f.id)}">
+        const bucket = ddlBucket(f);
+        return `<tr draggable="true" data-id="${escapeAttr(f.id)}" data-bucket="${escapeAttr(bucket)}">
           <td><span class="drag-handle" title="拖拽排序">⋮⋮</span></td>
           <td>${pri}</td>
-          <td class="name-cell"><span class="title">${escapeHtml(f.name)}</span>${
-            f.jiraId ? `<span class="jira">${escapeHtml(f.jiraId)}</span>` : ""
+          <td class="name-cell"><button type="button" class="title" data-open-id="${escapeAttr(f.id)}">${escapeHtml(f.name)}</button>${
+            dash(f.jiraId)
+              ? `<span class="jira">${escapeHtml(f.jiraId)}</span>`
+              : `<span class="jira empty">无 Jira</span>`
           }</td>
           <td><span class="app-badge app-${escapeAttr(f.app)}">${escapeHtml(f.app)}</span></td>
-          <td><input class="cell" data-field="status" value="${escapeAttr(f.status || "")}" /></td>
+          <td>${statusSelectHtml(f.status)}</td>
           <td><input class="cell" type="date" data-field="start" value="${escapeAttr(f.start || "")}" /></td>
           <td><input class="cell" type="date" data-field="end" value="${escapeAttr(f.end || "")}" /></td>
           <td><input class="cell ${ddlClass(f.ddl)}" type="date" data-field="ddl" value="${escapeAttr(f.ddl || "")}" /></td>
@@ -252,6 +339,10 @@
 
     $$("tr", body).forEach((tr) => {
       tr.addEventListener("dragstart", (e) => {
+        if (e.target.closest("input, select, button, textarea")) {
+          e.preventDefault();
+          return;
+        }
         dragId = tr.getAttribute("data-id");
         tr.classList.add("dragging");
         e.dataTransfer.effectAllowed = "move";
@@ -277,7 +368,8 @@
       });
     });
 
-    $$("input.cell", body).forEach((input) => {
+    $$("input.cell, select.cell", body).forEach((input) => {
+      input.addEventListener("pointerdown", (e) => e.stopPropagation());
       input.addEventListener("change", () => {
         const id = input.closest("tr").getAttribute("data-id");
         const field = input.getAttribute("data-field");
@@ -289,6 +381,31 @@
         renderAll();
       });
     });
+
+    $$(".title", body).forEach((btn) => {
+      btn.addEventListener("pointerdown", (e) => e.stopPropagation());
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openDetail(btn.getAttribute("data-open-id"));
+      });
+    });
+  }
+
+  function ensureLegend() {
+    const host = $("#listCount") && $("#listCount").closest(".panel-hd");
+    if (!host) return;
+    let el = $("#bucketLegend");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bucketLegend";
+      el.className = "bucket-legend";
+      host.appendChild(el);
+    }
+    el.innerHTML = BUCKETS.map(
+      (b) =>
+        `<span class="swatch ${b.id}"><i class="dot"></i>${escapeHtml(b.label)}</span>`
+    ).join("");
   }
 
   function reorder(fromId, toId) {
@@ -341,15 +458,16 @@
         }
         if (left + width > days) width = days - left;
         const todayLeft = dayDiff(start, today);
+        const bucket = ddlBucket(f);
         return (
-          `<div class="gantt-row" data-id="${escapeAttr(f.id)}">` +
-          `<div class="gantt-label"><span class="pri">${pri}</span><span>${escapeHtml(f.name)}</span></div>` +
+          `<div class="gantt-row" data-id="${escapeAttr(f.id)}" data-bucket="${escapeAttr(bucket)}">` +
+          `<div class="gantt-label"><span class="pri">${pri}</span><button type="button" class="gantt-name" data-open-id="${escapeAttr(f.id)}">${escapeHtml(f.name)}</button></div>` +
           `<div class="gantt-track-cell"><div class="gantt-days" style="grid-template-columns:repeat(${days}, ${dayWidth}px);position:relative">` +
           axisDays.map((d) => `<div class="gantt-day ${toYMD(d) === toYMD(today) ? "today" : ""}"></div>`).join("") +
           (todayLeft >= 0 && todayLeft < days
             ? `<div class="today-line" style="left:${todayLeft * dayWidth + dayWidth / 2}px"></div>`
             : "") +
-          `<div class="bar ${escapeAttr(f.app)}" data-id="${escapeAttr(f.id)}" style="left:${left * dayWidth}px;width:${Math.max(width, 1) * dayWidth - 4}px" title="${escapeAttr(
+          `<div class="bar bucket-${escapeAttr(bucket)}" data-id="${escapeAttr(f.id)}" style="left:${left * dayWidth}px;width:${Math.max(width, 1) * dayWidth - 4}px" title="${escapeAttr(
             (f.start || "") + " → " + (f.end || "") + " DDL " + (f.ddl || "")
           )}"><span class="handle l" data-edge="start"></span>${escapeHtml(f.jiraId || f.app)}<span class="handle r" data-edge="end"></span></div>` +
           `</div></div></div>`
@@ -359,6 +477,9 @@
 
     root.innerHTML = axisHtml + rows;
     bindGanttDrag(dayWidth, start);
+    $$(".gantt-name", root).forEach((btn) => {
+      btn.addEventListener("click", () => openDetail(btn.getAttribute("data-open-id")));
+    });
   }
 
   function bindGanttDrag(dayWidth, rangeStart) {
@@ -459,11 +580,33 @@
     else toast("云端同步失败，请稍后重试");
   }
 
+  function featureSig(list) {
+    return (list || [])
+      .map((f) => (f && f.id ? String(f.id) : "") + ":" + (f && f.status ? String(f.status) : ""))
+      .join("|");
+  }
+
+  async function persistIfSeedPatched(beforeCount, beforeSig) {
+    const patched =
+      (state.features || []).length !== beforeCount ||
+      featureSig(state.features) !== beforeSig;
+    if (!patched) return false;
+    try {
+      persistLocal();
+    } catch (_) {}
+    await pushRemote();
+    return true;
+  }
+
   async function hydrateFromRemote() {
     try {
       const res = await fetch(STATE_API, { cache: "no-store" });
       if (!res.ok) throw new Error("GET " + res.status);
-      const remote = normalize(await res.json());
+      const raw = await res.json();
+      const rawList = Array.isArray(raw && raw.features) ? raw.features : [];
+      const rawCount = rawList.length;
+      const rawSig = featureSig(rawList);
+      const remote = normalize(raw);
       const remoteAt = remote.meta && remote.meta.updatedAt ? Date.parse(remote.meta.updatedAt) : 0;
       const localAt = state.meta && state.meta.updatedAt ? Date.parse(state.meta.updatedAt) : 0;
       const remoteEmpty = !remote.features || !remote.features.length;
@@ -471,10 +614,12 @@
 
       if (!remoteEmpty && (localEmpty || remoteAt > localAt)) {
         state = remote;
-        try {
-          persistLocal();
-        } catch (_) {}
-        setSaveHint("已同步云端 · " + formatLocal(new Date(remoteAt || Date.now())), true);
+      } else {
+        state.features = mergeMissingSeedFeatures(state.features);
+      }
+
+      if (await persistIfSeedPatched(rawCount, rawSig)) {
+        setSaveHint("已同步云端 · 已补种子需求", true);
         return;
       }
       if (!localEmpty && (remoteEmpty || !remoteAt)) {
@@ -482,16 +627,83 @@
         await pushRemote();
         return;
       }
-      if (localAt) setSaveHint("本机已存 · " + formatLocal(new Date(localAt)), true);
+      if (remoteAt) setSaveHint("已同步云端 · " + formatLocal(new Date(remoteAt)), true);
+      else if (localAt) setSaveHint("本机已存 · " + formatLocal(new Date(localAt)), true);
     } catch (err) {
       console.warn("hydrateFromRemote failed", err);
+      state.features = mergeMissingSeedFeatures(state.features);
+      try {
+        persistLocal();
+      } catch (_) {}
       const localAt = state.meta && state.meta.updatedAt ? Date.parse(state.meta.updatedAt) : 0;
       if (localAt) setSaveHint("本机已存 · 云端未连", false);
       else setSaveHint("标记本机缓存 · 云端未连", false);
     }
   }
 
+  function ensureDrawer() {
+    if ($("#detailOverlay")) return;
+    const wrap = document.createElement("div");
+    wrap.id = "detailOverlay";
+    wrap.className = "drawer-overlay";
+    wrap.hidden = true;
+    wrap.innerHTML =
+      `<aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="detailTitle">` +
+      `<div class="drawer-hd"><h2 id="detailTitle"></h2>` +
+      `<button type="button" class="drawer-close" id="detailClose" aria-label="关闭">×</button></div>` +
+      `<div class="drawer-body" id="detailBody"></div></aside>`;
+    document.body.appendChild(wrap);
+    wrap.addEventListener("click", (e) => {
+      if (e.target === wrap) closeDetail();
+    });
+    $("#detailClose", wrap).addEventListener("click", closeDetail);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !wrap.hidden) closeDetail();
+    });
+  }
+
+  function detailRow(label, value) {
+    const empty = !dash(value);
+    return (
+      `<div class="drawer-row"><dt>${escapeHtml(label)}</dt>` +
+      `<dd class="${empty ? "empty" : ""}">${escapeHtml(empty ? "—" : value)}</dd></div>`
+    );
+  }
+
+  function openDetail(id) {
+    ensureDrawer();
+    const feat = state.features.find((x) => x.id === id);
+    if (!feat) return;
+    $("#detailTitle").textContent = feat.name || "需求";
+    const bucket = BUCKETS.find((b) => b.id === ddlBucket(feat));
+    const note = dash(feat.note) || dash(feat.notes);
+    const desc = dash(feat.description) || dash(feat.desc);
+    $("#detailBody").innerHTML =
+      detailRow("Jira", feat.jiraId) +
+      detailRow("应用", feat.app) +
+      detailRow("状态", feat.status) +
+      detailRow("开始", feat.start) +
+      detailRow("结束", feat.end) +
+      detailRow("DDL", feat.ddl) +
+      detailRow("里程碑", bucket ? bucket.label : "") +
+      detailRow("前端", feat.frontend) +
+      detailRow("后端", feat.backend) +
+      detailRow("测试", feat.qa) +
+      (desc ? detailRow("描述", desc) : "") +
+      detailRow("备注", note);
+    const overlay = $("#detailOverlay");
+    overlay.hidden = false;
+    $("#detailClose").focus();
+  }
+
+  function closeDetail() {
+    const overlay = $("#detailOverlay");
+    if (!overlay) return;
+    overlay.hidden = true;
+  }
+
   function bindChrome() {
+    ensureDrawer();
     $("#btnSync").addEventListener("click", syncToPm);
     $("#btnSyncDock").addEventListener("click", syncToPm);
     $("#btnShowAllApps").addEventListener("click", () => {
