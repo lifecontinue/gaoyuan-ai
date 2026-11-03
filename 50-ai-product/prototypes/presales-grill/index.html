@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>售前需求助手原型</title>
+<style>
+:root{
+  --primary:#0152D9;--primary-hover:#2A6BDD;--primary-active:#003EAA;--primary-soft:#EEF4FF;
+  --text:#1F1F1F;--text-2:#595959;--text-3:#8C8C8C;--text-dis:#BFBFBF;
+  --border:#D9D9D9;--border-strong:#B9D0F7;--divider:#E5E5E5;
+  --page:#F8F8F8;--card:#FFFFFF;--block:#F5F5F5;
+  --green-bg:#E9F7EF;--green-tx:#18794E;
+  --blue-bg:#EEF4FF;--blue-tx:#0D4AB8;
+  --amber-bg:#FFF6E0;--amber-tx:#946200;
+  --red-bg:#FDECEC;--red-tx:#C22F2F;
+  --hair:.5px solid var(--border);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --primary:#3B7BF0;--primary-hover:#5A90F3;--primary-active:#2A63CC;--primary-soft:#14264A;
+  --text:#EDEDED;--text-2:#B4B4B4;--text-3:#8C8C8C;--text-dis:#5C5C5C;
+  --border:#3A3A3A;--border-strong:#2E4E8A;--divider:#2E2E2E;
+  --page:#111111;--card:#1B1B1B;--block:#242424;
+  --green-bg:#13301F;--green-tx:#6FD39A;--blue-bg:#14264A;--blue-tx:#8FB4FF;
+  --amber-bg:#3A2C08;--amber-tx:#F2C55C;--red-bg:#3D1616;--red-tx:#FF8A8A;
+}}
+:root[data-theme="dark"]{
+  --primary:#3B7BF0;--primary-hover:#5A90F3;--primary-active:#2A63CC;--primary-soft:#14264A;
+  --text:#EDEDED;--text-2:#B4B4B4;--text-3:#8C8C8C;--text-dis:#5C5C5C;
+  --border:#3A3A3A;--border-strong:#2E4E8A;--divider:#2E2E2E;
+  --page:#111111;--card:#1B1B1B;--block:#242424;
+  --green-bg:#13301F;--green-tx:#6FD39A;--blue-bg:#14264A;--blue-tx:#8FB4FF;
+  --amber-bg:#3A2C08;--amber-tx:#F2C55C;--red-bg:#3D1616;--red-tx:#FF8A8A;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--page);color:var(--text);font:14px/22px "PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+button{font:inherit;cursor:pointer}
+h1{font-size:20px;line-height:28px;font-weight:500;margin:0}
+h2{font-size:16px;line-height:24px;font-weight:500;margin:0}
+.note{font-size:12px;line-height:20px;color:var(--text-3)}
+.muted{color:var(--text-2)}
+
+.shell{display:flex;min-height:100vh}
+.side{width:148px;flex:none;background:var(--card);border-right:var(--hair);padding:16px 8px}
+.brand{white-space:nowrap;font-weight:500;padding:4px 8px 16px}
+.nav button{white-space:nowrap;display:block;width:100%;text-align:left;border:0;background:none;padding:8px;border-radius:4px;color:var(--text-2)}
+.nav button:hover{background:var(--block)}
+.nav button[aria-current="page"]{background:var(--primary-soft);color:var(--primary)}
+.main{flex:1;min-width:0;padding:24px}
+.card{background:var(--card);border-radius:8px;padding:24px}
+.row{display:flex;gap:12px;align-items:center}
+.between{justify-content:space-between}
+.stack>*+*{margin-top:16px}
+.demo{display:inline-block;margin-left:8px;padding:0 6px;border-radius:4px;background:var(--amber-bg);color:var(--amber-tx);font-size:12px;line-height:20px;vertical-align:middle}
+
+.btn{border:var(--hair);background:var(--card);color:var(--text);border-radius:4px;padding:5px 16px;min-height:32px}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover);color:#fff}
+.btn-primary:active{background:var(--primary-active)}
+.btn-link{border:0;background:none;color:var(--primary);padding:0}
+.btn:focus-visible,.chip:focus-visible,.nav button:focus-visible,.step:focus-visible,.btn-link:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:12px;border-bottom:var(--hair);vertical-align:top}
+th{font-weight:500;background:var(--block);color:var(--text-2)}
+.tag{display:inline-block;padding:0 8px;border-radius:4px;font-size:12px;line-height:22px;white-space:nowrap}
+.t-can{background:var(--green-bg);color:var(--green-tx)}
+.t-alt{background:var(--blue-bg);color:var(--blue-tx)}
+.t-plan{background:var(--amber-bg);color:var(--amber-tx)}
+.t-no{background:var(--red-bg);color:var(--red-tx)}
+.t-neutral{background:var(--block);color:var(--text-2)}
+
+/* stepper */
+.steps{display:flex;align-items:center;gap:16px;margin:12px 0}
+.track{flex:1;display:flex;align-items:center;min-width:0}
+.seg{flex:none;width:28px;height:28px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;font-size:12px;line-height:1;background:var(--card);color:var(--text-dis);box-shadow:inset 0 0 0 .5px var(--border)}
+.seg.done{background:var(--primary);color:#fff;box-shadow:none}
+.seg.current{background:var(--primary-soft);color:var(--primary);font-weight:500;box-shadow:inset 0 0 0 2px var(--primary)}
+.seg.reached{color:var(--primary);box-shadow:inset 0 0 0 1px var(--border-strong)}
+.seg:disabled{cursor:default}
+.seg:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.link{flex:1;min-width:12px;height:4px;margin:0 2px;border-radius:2px;background:var(--divider)}
+.link.done{background:var(--primary)}
+.steps-now{flex:none;font-size:12px;line-height:20px;color:var(--text-2);white-space:nowrap}
+@media (max-width:480px){
+  .steps{gap:12px}
+  .seg{width:24px;height:24px}
+  .steps-now .lab{display:none}
+}
+
+/* flow */
+.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.flow .node{flex:1;min-width:150px;background:var(--block);border-radius:8px;padding:12px}
+.flow .arrow{align-self:center;color:var(--text-3)}
+.flow .node b{display:block;font-weight:500}
+
+/* chat */
+.grill{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+.chat{display:flex;flex-direction:column;min-height:560px}
+.msgs{flex:1}
+.msg{max-width:80%;margin-bottom:16px}
+.msg .who{font-size:12px;line-height:20px;color:var(--text-3)}
+.bubble{padding:12px 16px;border-radius:8px;background:var(--block);white-space:pre-wrap}
+.msg.me{margin-left:auto}
+.msg.me .who{text-align:right}
+.msg.me .bubble{background:var(--primary-soft)}
+.ask{border:.5px solid var(--border-strong);border-radius:8px;padding:20px;margin-top:16px;background:var(--card)}
+.brief{background:var(--block);border-radius:8px;padding:12px 16px;margin-bottom:8px}
+.qa{display:grid;grid-template-columns:24px 1fr;gap:12px;padding:12px 0;border-top:var(--hair)}
+.qa .num{width:24px;height:24px;border-radius:50%;background:var(--block);color:var(--text-2);font-size:12px;line-height:24px;text-align:center}
+.qa .q{color:var(--text-2)}
+.qa .a{margin-top:4px;font-weight:500}
+.sys{display:flex;gap:8px;padding:4px 0 8px 36px;font-size:12px;line-height:20px;color:var(--green-tx)}
+.ask-head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.ask-no{font-size:12px;line-height:20px;color:var(--primary);font-weight:500}
+.ask-q{margin-bottom:16px}
+.opts{display:grid;gap:8px;margin-bottom:12px}
+.opt{display:grid;grid-template-columns:24px 1fr auto;gap:12px;align-items:center;text-align:left;border:var(--hair);background:var(--card);color:var(--text);border-radius:6px;padding:10px 12px}
+.opt:hover{border-color:var(--primary);background:var(--primary-soft)}
+/* 候选回答一行显示；放不下时省略，完整内容悬停可见 */
+.opt-text{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt .tag{flex:none}
+.opt:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.opt kbd{font:inherit;font-size:12px;width:24px;height:24px;line-height:22px;text-align:center;border:var(--hair);border-radius:4px;color:var(--text-2)}
+.done-ask .ask-q{margin-bottom:4px}
+.ask .free{flex-wrap:wrap;align-items:center}
+.ask .free input{min-width:180px}
+.v-select{margin-top:8px}
+/* 追问页顶部固定任务卡 */
+.task-card{position:sticky;top:0;z-index:5;background:var(--card);border-radius:8px;margin-bottom:12px;box-shadow:0 1px 0 var(--divider)}
+.task-head{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px 16px;text-align:left;color:var(--text)}
+.task-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:8px}
+.task-title{font-weight:500;white-space:nowrap}
+.task-meter{flex:0 1 160px;height:6px;border-radius:3px;background:var(--divider);overflow:hidden}
+.task-meter span{display:block;height:100%;background:var(--green-tx);transition:width 250ms ease-out}
+.task-count{font-size:12px;color:var(--text-2)}
+.task-now{flex:1;min-width:0;font-size:12px;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-caret{font-size:12px;color:var(--text-3);white-space:nowrap}
+.task-body{padding:0 16px 8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));column-gap:16px;border-top:var(--hair)}
+.task-body[hidden]{display:none}
+.task-tip{grid-column:1/-1;padding:8px 0 4px;color:var(--green-tx)}
+.gap.flash{background:var(--green-bg);border-radius:4px;padding-left:4px;animation:gap-flash 250ms ease-out}
+@keyframes gap-flash{from{opacity:.4}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.gap.flash{animation:none}}
+@media (max-width:700px){.task-head{padding:8px 12px;gap:8px}.task-meter{flex-basis:60px}.task-body{padding:0 12px 8px}}
+@media (prefers-reduced-motion:reduce){.task-meter span{transition:none}}
+/* 追问页：手机端省空间 */
+.m-bar,.fold-btn{display:none}
+@media (max-width:700px){
+  .main{padding:12px}
+  .grill>aside{display:none}
+  .chat.card{padding:12px;min-height:0}
+  .brief{padding:8px 12px}
+  .brief-text{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .msgs.expanded .brief-text{display:block}
+  .msgs:not(.expanded) .old{display:none}
+  .fold-btn{display:block;margin:4px 0 8px;font-size:12px}
+  .qa{padding:8px 0}
+  .ask{padding:12px;margin-top:8px}
+  .ask-head{margin-bottom:4px}
+  .ask-q{margin-bottom:8px}
+  .opts{gap:6px;margin-bottom:8px}
+  .opt{padding:8px 10px;grid-template-columns:1fr auto}
+  .opt kbd,.key-hint{display:none}
+  .opt .tag{grid-column:auto}
+  .ask .free{flex-wrap:nowrap}
+  .ask .free input{min-width:0}
+  .m-bar{display:flex;gap:8px;align-items:flex-start;position:sticky;bottom:0;margin:8px -12px -12px;padding:8px 12px;background:var(--card);border-top:var(--hair)}
+  .m-bar details{flex:1;min-width:0}
+  .m-bar summary{cursor:pointer;line-height:32px;color:var(--text-2)}
+  .m-detail{max-height:40vh;overflow:auto;padding-bottom:8px}
+  .m-reqs{border-top:var(--hair);margin-top:4px;padding-top:4px;font-size:12px;line-height:20px;color:var(--text-2)}
+  .m-bar .btn{flex:none}
+}
+.scan{max-width:560px;margin:0 auto}
+.scan-list{margin-top:16px}
+.scan-row{display:grid;grid-template-columns:20px 140px 1fr;gap:8px;padding:8px 0;border-top:var(--hair)}
+.scan-row.new{animation:scan-in 250ms ease-out}
+.scan-row .mark{text-align:center}
+.scan-row.got .mark{color:var(--green-tx)}
+.scan-row.miss .mark{color:var(--text-dis)}
+.scan-label{color:var(--text-2)}
+@keyframes scan-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (max-width:600px){.scan-row{grid-template-columns:20px 1fr}.scan-row>span:last-child{grid-column:2}}
+@media (prefers-reduced-motion:reduce){.scan-row.new{animation:none}}
+.fb-row{display:grid;grid-template-columns:minmax(0,1fr) 140px minmax(0,1fr);gap:12px;align-items:center;padding:12px 0;border-top:var(--hair)}
+@media (max-width:700px){.fb-row{grid-template-columns:1fr}}
+/* 窄屏：判定表每条需求变成一张卡片，不再横向滚动 */
+@media (max-width:700px){
+  table.vtable{min-width:0}
+  .vtable thead{display:none}
+  .vtable,.vtable tbody,.vtable tr,.vtable td{display:block;width:auto}
+  .vtable tr{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;padding:16px 0;border-bottom:var(--hair)}
+  .vtable td{padding:0;border:0}
+  .vtable .v-id{grid-column:1;color:var(--text-3)}
+  .vtable .v-quote{grid-column:2}
+  .vtable .v-verdict{grid-column:3;text-align:right}
+  .vtable .v-how,.vtable .v-ev,.vtable .v-contract{grid-column:1/-1}
+  .vtable .v-how{margin-top:8px}
+  .vtable .v-how::before,.vtable .v-contract::before{content:attr(data-label);display:block;font-size:12px;line-height:20px;color:var(--text-3)}
+  .vtable .v-ev,.vtable .v-contract{margin-top:4px}
+  .card .bar{position:static;margin:16px 0 0;padding:16px 0 0;flex-wrap:wrap}
+}
+@media (max-width:600px){
+  .ask{padding:16px}
+}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{border:var(--hair);background:var(--card);border-radius:4px;padding:5px 12px}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+.chip.rec{border-color:var(--border-strong);background:var(--primary-soft);color:var(--primary)}
+.free{display:flex;gap:8px}
+.free input{flex:1}
+input,textarea{font:inherit;border:var(--hair);border-radius:4px;padding:5px 12px;width:100%;color:var(--text)}
+input:focus,textarea:focus{outline:none;border-color:var(--primary)}
+textarea{min-height:200px;resize:vertical}
+label.field{display:block;font-weight:500;margin-bottom:8px}
+.panel h2{margin-bottom:12px}
+.gap{display:flex;gap:8px;padding:6px 0}
+.gap .mark{width:20px;flex:none;text-align:center}
+.gap.ok{color:var(--text-2)}
+.gap.ok .mark{color:var(--green-tx)}
+.gap.todo .mark{color:var(--text-dis)}
+.gap.now{color:var(--primary)}
+.req{padding:8px 0;border-top:var(--hair)}
+.warn{background:var(--amber-bg);color:var(--amber-tx);border-radius:4px;padding:8px 12px}
+.err{color:var(--red-tx);font-size:12px;line-height:20px}
+
+/* verdict */
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filters .chip[aria-pressed="true"]{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+select{font:inherit;border:var(--hair);border-radius:4px;padding:4px 8px;background:var(--card)}
+.bar{position:sticky;bottom:0;background:var(--card);border-top:var(--hair);padding:16px 24px;margin:24px -24px -24px;border-radius:0 0 8px 8px}
+
+/* drawer */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none}
+.mask.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100%;background:var(--card);padding:24px;transform:translateX(100%);transition:transform 250ms ease-out}
+.drawer.open{transform:none}
+.quote{background:var(--block);border-radius:4px;padding:12px;margin:8px 0}
+
+/* output */
+.tabs{display:flex;gap:24px;border-bottom:var(--hair);margin-bottom:16px}
+.tabs button{border:0;background:none;padding:8px 0;color:var(--text-2);border-bottom:2px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--primary);border-color:var(--primary)}
+pre.copy{white-space:pre-wrap;background:var(--block);border-radius:4px;padding:16px;margin:0;font:inherit;max-height:520px;overflow:auto}
+iframe{width:100%;height:620px;border:var(--hair);border-radius:8px;background:#fff}
+.toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:var(--text);color:#fff;padding:8px 16px;border-radius:4px;display:none}
+.toast.show{display:block}
+
+@media (max-width:900px){
+  .shell{flex-direction:column}
+  .side{width:auto;border-right:0;border-bottom:var(--hair);display:flex;align-items:center;gap:8px;padding:8px 16px}
+  .brand{padding:0 8px 0 0}
+  .nav{display:flex;gap:4px}
+  .main{padding:16px}
+  .grill{grid-template-columns:1fr}
+  .tbl-wrap{overflow-x:auto}
+  table{min-width:760px}
+}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">售前需求助手</div>
+    <nav class="nav" aria-label="主导航">
+      <button data-nav="flow">流程总览</button>
+      <button data-nav="list">我的客户</button>
+    </nav>
+  </aside>
+  <main class="main" id="app"></main>
+</div>
+
+<div class="mask" id="mask"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" tabindex="-1"></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- 示例数据（不是真实客户） ---------- */
+const CUSTOMER = {name:'华北某化工集团', brief:'化工制造，约 3000 人'};
+
+const VERDICT = {
+  can:{label:'现在能做',cls:'t-can'},
+  alt:{label:'换个方式能做',cls:'t-alt'},
+  plan:{label:'规划中',cls:'t-plan'},
+  no:{label:'做不到',cls:'t-no'}
+};
+
+const REQS = {
+  R1:{quote:'每个岗位要有自己的技能图谱',scene:'管理员在后台给岗位配图谱，员工在手机上查看自己的图谱',verdict:'can',
+      how:'能直接满足。管理员在光谱后台建图谱时关联岗位，这个岗位的员工就能在学员端看到要掌握的技能和自己的进度。要注意一个岗位只能挂一张图谱，同岗不同工段要分开配，这一点现在做不到（见 R2）。',src:'00-os/context/gp-spectrum-handoff.md',excerpt:'一岗一图是硬约束',
+      story:{who:'车间培训管理员',want:'给每个岗位配一张技能图谱',so:'员工一眼看到本岗位要掌握的技能'},
+      cx:{title:'每个岗位有自己的技能图谱',scene:'培训管理员在电脑上给每个岗位配好技能清单。一线员工打开手机，就能看到自己岗位要会哪些技能、已经学到哪一步。',how:'这部分现在就能用，上线时按岗位直接配置即可。'}},
+  R2:{quote:'同一岗位不同工段要用不同图谱',scene:'同一个操作岗，在不同工段要求的技能不一样',verdict:'plan',
+      how:'现在做不到：现网一个岗位只能关联一张图谱。一岗多图已经确定要做，但还没有上线时间，不能写进合同。跟客户可以讲方向，过渡期先把各工段共有的技能配在岗位图谱里。',src:'30-prd/guangpu-five-step/prd-guangpu-five-step-2026-10-21.md',excerpt:'岗位可关联多张图谱，一张图谱可供多个岗位共用',
+      dir:'同一个岗位在不同工段，技能要求不一样，需要分开配。这正是我们产品已经确定要做的改进，具体时间定下来后第一时间告诉您。在那之前，可以先按岗位把共性的技能配起来。',
+      cx:{title:'同一岗位，不同工段分开配技能'}},
+  R3:{quote:'分卷主操、副操、助手三个岗位共用一张图谱',scene:'同工序的几个岗位技能要求相同，希望只维护一份',verdict:'alt',
+      how:'能满足，但要变通。现网没有「几个岗位共用一张图谱」的设置，做法是给主操、副操、助手各建一张内容相同的图谱分别关联。代价是以后改内容要同步改三份；有没有一键复制图谱还要找产品确认。',src:'20-intake/2026-09/guangpu-position-graph-eval/00-judgment.md',excerpt:'权宜用多份图谱手工复制',
+      story:{who:'车间培训管理员',want:'让主操、副操、助手用同样的技能要求',so:'同工序的人按同一标准学习和评估'},altNote:'做法：为每个岗位各建一份内容相同的图谱。',
+      cx:{title:'主操、副操、助手按同一套标准培养',scene:'分卷工序的主操、副操、助手技能要求基本一致，三个岗位的员工按同一套标准学习和考核。',how:'现在的做法是给三个岗位各配一份同样的内容，上线时我们帮您一起配好。之后内容有调整，需要三份同步改一下。'}},
+  R4:{quote:'竞赛时怕员工切屏查资料',scene:'员工在手机上参加技能竞赛答题',verdict:'can',
+      how:'能满足。10 月起竞赛支持切屏监测：每日答题和个人练习不计，其他竞赛类型会累计切屏次数，管理员事后人工复核，系统不会自动判作弊或取消成绩。后台开关位置和提醒阈值还待产品确认，合同里只写「支持切屏次数监测」，不写「杜绝作弊」。',src:'竞赛管理操作手册「诚信 / 防切屏」',excerpt:'2026-10 起上线竞赛诚信能力首期：切屏监测。每日答题、个人练习不计切屏；其他类型累计切屏次数。',
+      cx:{title:'竞赛时防止切屏查资料',scene:'员工在手机上答题时，切出去查资料会被记下次数，管理员事后能看到并核实。',how:'这部分现在就能用。'}},
+  R5:{quote:'竞赛要全程视频监考',scene:'考试全程录像，事后可回看',verdict:'no',
+      how:'做不到：产品已明确不做全程视频监考，也不提供安全考试浏览器。能给的是切屏次数监测加人工复核（见 R4）。客户如果坚持要视频监考，就发给产品评估。',src:'PS-23 竞赛防作弊分层表（agent-app 仓）',excerpt:'不做：全程视频监考 / SEB'},
+  R6:{quote:'想看员工跨图谱的综合总分',scene:'一个人关联多张图谱时，合成一个总分做排名',verdict:'no',
+      how:'做不到：跨图谱合成一个综合总分，已经明确列为不做。现在只能分别看每张图谱的得分。客户如果需要综合排名，要先问清楚是用来考核还是只做参考，再发给产品评估。',src:'30-prd/guangpu-five-step/prd-guangpu-five-step-2026-10-21.md §1.3',excerpt:'不做：跨图合成总分'},
+  R7:{quote:'组织架构要从 SAP HR 自动同步过来',scene:'人员入离职、调岗后，系统里的岗位自动更新',verdict:'no',pending:true,
+      how:'暂时不能承诺：手册和能力分层表里都没有和 SAP HR 等外部系统同步组织架构的说明。已经放进发给产品的清单，请产品确认现网支不支持、用什么方式对接、要不要实施评估。',src:'未找到',excerpt:''}
+};
+
+const GAPS = [
+  {id:'Q1',label:'行业和规模'},
+  {id:'Q2',label:'现有系统和对接'},
+  {id:'Q3',label:'具体问题（客户原话）'},
+  {id:'Q4',label:'谁用、在哪用'},
+  {id:'Q5',label:'时间要求'},
+  {id:'Q6',label:'决策人和采购方式'}
+];
+
+const HISTORY = [
+  {me:true,text:'华北某化工集团，约 3000 人。想按岗位做技能图谱，再搞技能竞赛，要防作弊，年底前想用上。'},
+  {me:false,text:'收到。先记下 1 条需求：每个岗位一张技能图谱。\n还缺几项信息，我一次问一个。'},
+  {me:false,text:'他们现在用什么系统管人员和组织？需要和我们对接吗？'},
+  {me:true,text:'用 SAP HR 管组织，希望能自动同步过来。'}
+];
+
+const CONFIRM_QS = [
+  '您提到的「工段」，是组织架构里的部门，还是同一个岗位在不同环节要求不一样？',
+  '主操、副操、助手这三个岗位，是技能要求完全一样，还是有人同时兼着几个岗位？'
+];
+
+const QUESTIONS = [
+  {gap:'Q4',text:'图谱和竞赛主要给谁用、在哪用？',
+   options:[{t:'员工用手机，管理员用电脑',adds:[],rec:true},{t:'只在电脑上用',adds:[]},{t:'还不清楚',adds:[]}]},
+  {gap:'Q3',text:'「防作弊」客户具体担心什么？有原话最好。',
+   options:[{t:'怕切屏查资料，还想视频监考',adds:['R4','R5'],rec:true},{t:'只是怕切屏查资料',adds:['R4']},{t:'怕别人代考',adds:[]}]},
+  {gap:'Q3',text:'按岗位做图谱：同一岗位在不同工段，技能要求一样吗？有没有几个岗位想共用一张图谱？',
+   options:[{t:'工段要求不同，三岗想共用一张',adds:['R2','R3'],rec:true},{t:'一岗一张就够了',adds:[]},{t:'只有几个岗位想共用',adds:['R3']}]},
+  {gap:'Q3',text:'竞赛成绩和图谱要不要打通？比如看一个人跨几张图谱的综合总分。',
+   options:[{t:'要看跨图谱综合总分',adds:['R6'],rec:true},{t:'不需要',adds:[]}]},
+  {gap:'Q5',text:'「年底前想用上」是硬要求吗？哪部分最急？',
+   options:[{t:'图谱年底前要上，竞赛可以晚一点',adds:[],rec:true},{t:'都要年底前',adds:[]},{t:'没有硬要求',adds:[]}]},
+  {gap:'Q6',text:'谁拍板？要不要走招标？',
+   options:[{t:'生产副总拍板，不招标',adds:[],rec:true},{t:'要走招标',adds:[]},{t:'还不清楚',adds:[]}]}
+];
+
+/* ---------- 状态 ---------- */
+const S = {
+  view:'flow', step:1,
+  qIndex:0, log:[...HISTORY], gapsDone:new Set(['Q1','Q2']),
+  reqIds:['R1','R7'], verdicts:{}, contract:{}, filter:'all',
+  approved:false, maxStep:2, outTab:'product', input:'',
+  round:1, fb:{cust:{},prod:{},raw:'',answers:{}},
+  gapNotes:{Q1:'化工制造，约 3000 人',Q2:'SAP HR，希望自动同步'}, justGot:null
+};
+function resetVerdicts(){
+  S.reqIds.forEach(id=>{
+    if(!(id in S.verdicts)) S.verdicts[id]=REQS[id].verdict;
+    if(!(id in S.contract)) S.contract[id]=REQS[id].verdict==='can';
+  });
+}
+
+/* ---------- 渲染入口 ---------- */
+const app = document.getElementById('app');
+function render(){
+  document.querySelectorAll('[data-nav]').forEach(b=>{
+    b.toggleAttribute('aria-current', b.dataset.nav===(S.view==='flow'?'flow':'list'));
+    if(b.hasAttribute('aria-current')) b.setAttribute('aria-current','page');
+  });
+  if(S.view==='flow') app.innerHTML = viewFlow();
+  else if(S.view==='list') app.innerHTML = viewList();
+  else app.innerHTML = viewCase();
+  bind();
+}
+
+/* ---------- 流程总览 ---------- */
+function viewFlow(){
+  return `
+  <div class="stack">
+    <div><h1>流程总览</h1><p class="muted">售前把客户信息交给助手，助手追问补齐，逐条判断能不能满足，最后给产品和客户各出一份东西。</p></div>
+    <section class="card stack">
+      <h2>主流程</h2>
+      <div class="flow">
+        <div class="node"><b>1 录入客户信息</b><span class="note">粘贴会议记录、聊天或自己写几句</span></div><span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>2 追问补齐</b><span class="note">一次问一个，给推荐答案；右侧实时出需求清单</span></div><span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>3 逐条判定</b><span class="note">每条需求四档之一，附证据；合同可写受检查</span></div><span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>4 批准</b><span class="note">售前确认判定；驳回就回到追问</span></div><span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>5 两份产出</b><span class="note">发给产品的清单（复制）；客户版场景说明（HTML）</span></div><span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>6 回填反馈</b><span class="note">客户、产品按编号回复；填进来后开启下一轮</span></div>
+      </div>
+      <p class="note">下一轮怎么走：产品回复「现网已支持」「已列入规划」直接改判；客户有异议的条目变成助手的追问，回到第 2 步；之后重新判定、批准、出新一版产出。轮次显示在客户名后面。</p>
+    </section>
+    <section class="card stack">
+      <h2>判定四档</h2>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>档</th><th>含义</th><th>能写进合同</th><th>去向</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag t-can">现在能做</span></td><td>现网已有</td><td>可以</td><td>判定表、客户版</td></tr>
+          <tr><td><span class="tag t-alt">换个方式能做</span></td><td>靠配置或权宜做法实现，不是产品能力</td><td>不可以</td><td>判定表、客户版（写清做法）</td></tr>
+          <tr><td><span class="tag t-plan">规划中</span></td><td>原型或已确认方向，没有上线时间</td><td>不可以</td><td>判定表、客户版（只讲方向）</td></tr>
+          <tr><td><span class="tag t-no">做不到</span></td><td>已明确不做，或找不到证据</td><td>不可以</td><td>判定表、发给产品清单</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section class="card stack">
+      <h2>页面清单</h2>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>页面</th><th>售前在这里做什么</th><th>主要操作</th><th>对应卡片</th></tr></thead>
+        <tbody>
+          <tr><td>我的客户</td><td>看每个客户走到哪一步</td><td>新建客户需求、继续</td><td>PS-25</td></tr>
+          <tr><td>录入客户信息</td><td>把手上的信息丢进来</td><td>开始追问</td><td>PS-25</td></tr>
+          <tr><td>追问补齐</td><td>回答助手的问题，看需求清单成形</td><td>选推荐答案、自己填、跳过、需求已清楚</td><td>PS-25</td></tr>
+          <tr><td>逐条判定</td><td>核对每条判定和证据，必要时改判</td><td>查看证据、改判、批准判定、驳回并补问</td><td>PS-25</td></tr>
+          <tr><td>产出：发给产品</td><td>把做不到的打包发产品</td><td>复制全部</td><td>PS-26</td></tr>
+          <tr><td>产出：客户版场景说明</td><td>给客户回报和确认</td><td>预览、下载 HTML</td><td>PS-27</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <div><button class="btn btn-primary" data-go="list">查看原型</button></div>
+  </div>`;
+}
+
+/* ---------- 我的客户 ---------- */
+function stageLabel(){
+  if(S.approved) return ['已产出','t-can'];
+  if(S.step>=3) return ['待批准','t-plan'];
+  return ['追问中','t-alt'];
+}
+function viewList(){
+  const [lab,cls]=stageLabel();
+  const noCount=S.reqIds.filter(id=>(S.verdicts[id]||REQS[id].verdict)==='no').length;
+  return `
+  <div class="stack">
+    <div class="row between"><h1>我的客户<span class="demo">示例数据</span></h1><button class="btn btn-primary" data-new>新建客户需求</button></div>
+    <section class="card tbl-wrap">
+      <table>
+        <thead><tr><th>客户</th><th>进度</th><th>需求</th><th>做不到</th><th>更新时间</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>${CUSTOMER.name}<div class="note">${CUSTOMER.brief}</div></td><td><span class="tag ${cls}">${lab}</span></td><td>${S.reqIds.length} 条</td><td>${noCount} 条</td><td>2026-11-02 15:20</td><td><button class="btn-link" data-open>继续</button></td></tr>
+          <tr><td>江苏某银行分行<div class="note">金融，约 800 人</div></td><td><span class="tag t-can">已产出</span></td><td>5 条</td><td>1 条</td><td>2026-10-30 11:02</td><td><button class="btn-link" data-open>查看</button></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>`;
+}
+
+/* ---------- 客户详情（四步） ---------- */
+function viewCase(){
+  // 短名常显，完整名称悬停时出现
+  const names=[['录入','录入客户信息'],['追问','追问补齐'],['判定','逐条判定'],['产出','产出：发给产品、客户版'],['回填','回填客户和产品的回复，开启下一轮']];
+  const maxStep = S.approved?5:S.maxStep;
+  // 关卡式进度条：圆点 + 连线，走过的填满；只在右侧显示当前这一关的短名，完整名称悬停可见
+  const steps = `<div class="track">${names.map(([short,full],i)=>{
+    const k=i+1, cur=k===S.step, passed=k<S.step, reached=k<=maxStep;
+    const seg=`<button class="seg ${cur?'current':passed?'done':reached?'reached':''}" data-step="${k}" title="${k} ${full}" aria-label="第 ${k} 步 ${full}" ${reached?'':'disabled'} ${cur?'aria-current="step"':''}>${passed?'✓':k}</button>`;
+    return (i?`<span class="link ${k<=S.step?'done':''}" aria-hidden="true"></span>`:'')+seg;
+  }).join('')}</div><span class="steps-now">${S.step}/${names.length}<span class="lab">　${names[S.step-1][0]}</span></span>`;
+  const body = S.analyzing ? viewAnalyze() : [null,stepInput,stepGrill,stepVerdict,stepOutput,stepFeedback][S.step]();
+  return `
+    <div class="row between"><div><button class="btn-link" data-go="list">我的客户</button><span class="note">　/　${CUSTOMER.name}　第 ${S.round} 轮</span></div><span class="demo">示例数据</span></div>
+    <nav class="steps" aria-label="进度">${steps}</nav>
+    ${body}`;
+}
+
+function stepInput(){
+  return `
+  <section class="card stack">
+    <h1>录入客户信息</h1>
+    <div>
+      <label class="field" for="cname">客户名称</label>
+      <input id="cname" value="${CUSTOMER.name}">
+      <p class="note">内容会发给外部大模型。客户名、人名可以写成「某某集团」「张总」。</p>
+    </div>
+    <div>
+      <label class="field" for="cinfo">客户信息</label>
+      <textarea id="cinfo" placeholder="会议记录、聊天截图里的文字、邮件，或者你自己写几句都可以">${HISTORY[0].text}</textarea>
+    </div>
+    <div class="row"><button class="btn btn-primary" data-analyze>开始追问</button><span class="note">不需要填全，缺的助手会问</span></div>
+  </section>`;
+}
+
+/* ---------- 进入追问前：逐项显示从客户信息里读到了什么 ---------- */
+// 示例：从录入的那段话里能读到的内容；没读到的标「还缺」，进入追问后助手会问
+const EXTRACTED = [
+  {label:'行业和规模', value:'化工制造，约 3000 人'},
+  {label:'现有系统和对接', value:''},
+  {label:'具体问题（客户原话）', value:'按岗位做技能图谱，搞技能竞赛，要防作弊'},
+  {label:'谁用、在哪用', value:''},
+  {label:'时间要求', value:'年底前想用上'},
+  {label:'决策人和采购方式', value:''},
+  {label:'拆出需求', value:'1 条：每个岗位一张技能图谱', req:true}
+];
+function viewAnalyze(){
+  // 每次重绘整块，只让最新出现的一行做入场动画
+  const rows = EXTRACTED.slice(0, S.analyzeShown).map((e,i) => `<div class="scan-row ${e.value?'got':'miss'} ${i===S.analyzeShown-1?'new':''}">
+      <span class="mark" aria-hidden="true">${e.value?'✓':'○'}</span><span class="scan-label">${e.label}</span>
+      <span class="${e.value?'':'note'}">${e.value || '还缺，待会儿问'}</span></div>`).join('');
+  const done = S.analyzeShown >= EXTRACTED.length;
+  const got = EXTRACTED.filter(e=>e.value && !e.req).length, miss = EXTRACTED.filter(e=>!e.value).length;
+  return `<section class="card scan" aria-live="polite">
+    <h1>${done ? '读完了' : '正在读客户信息…'}</h1>
+    <p class="muted">${done ? `读到 ${got} 项，还缺 ${miss} 项，马上开始追问` : '逐项核对需要了解的信息'}</p>
+    <div class="scan-list">${rows}</div>
+  </section>`;
+}
+function startAnalyze(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  S.analyzing = true; S.analyzeShown = reduce ? EXTRACTED.length : 0; render();
+  const tick = () => {
+    if(S.analyzeShown < EXTRACTED.length){ S.analyzeShown++; render(); setTimeout(tick, 380); return; }
+    setTimeout(() => { S.analyzing = false; S.step = 2; S.maxStep = Math.max(S.maxStep, 2); render(); window.scrollTo(0,0); }, reduce ? 300 : 900);
+  };
+  setTimeout(tick, reduce ? 0 : 300);
+}
+
+function stepGrill(){
+  const msgs = transcript();
+  const q = QUESTIONS[S.qIndex];
+  const qNo = S.log.filter((m,i)=>!m.me && S.log[i+1]?.me).length + 1;
+  const gapLabel = id => (GAPS.find(g=>g.id===id)||{}).label || (REQS[id] ? `${id} 客户异议` : id);
+  const ask = q ? `
+    <div class="ask">
+      <div class="ask-head"><span class="ask-no">第 ${qNo} 问</span><span class="tag t-neutral">${gapLabel(q.gap)}</span></div>
+      <h2 class="ask-q">${q.text}</h2>
+      <div class="opts" role="list">${q.options.map((o,i)=>`<button class="opt" role="listitem" data-ans="${i}" title="${o.t}"><kbd>${i+1}</kbd><span class="opt-text">${o.t}</span>${o.rec?'<span class="tag t-can">推荐</span>':''}</button>`).join('')}</div>
+      <div class="free"><input id="freeAns" placeholder="都不对？直接写客户怎么说的" aria-label="自己填写回答"><button class="btn" data-free>回答</button><button class="btn-link" data-skip>先跳过</button></div>
+      <p class="note key-hint">按数字键 1～${q.options.length} 也可以直接选</p>
+    </div>` : `<div class="ask done-ask"><h2 class="ask-q">信息问齐了</h2><p class="muted">共整理出 ${S.reqIds.length} 条需求，可以开始判定。</p></div>`;
+  const left = GAPS.filter(g=>!S.gapsDone.has(g.id));
+  const gaps = GAPS.map(g=>{
+    const ok=S.gapsDone.has(g.id), now=q&&q.gap===g.id&&!ok;
+    const note=S.gapNotes[g.id];
+    return `<div class="gap ${ok?'ok':now?'now':'todo'} ${S.justGot===g.id?'flash':''}"><span class="mark" aria-hidden="true">${ok?'✓':now?'●':'○'}</span><span>${g.label}${ok?(note?`<div class="note">${note}</div>`:''):now?'（正在问）':'（还缺）'}</span></div>`;
+  }).join('');
+  const reqs = S.reqIds.map(id=>`<div class="req"><div>${id}　${REQS[id].quote}</div><div class="note">${REQS[id].scene}</div></div>`).join('');
+  // 顶部固定的任务卡：收起时一行进度，点开看六项明细
+  const doneN = GAPS.length - left.length, nowGap = q && GAPS.find(g=>g.id===q.gap && !S.gapsDone.has(g.id));
+  const task = `
+  <section class="task-card ${S.taskOpen?'open':''}">
+    <button class="task-head" data-task aria-expanded="${!!S.taskOpen}" aria-controls="task-body">
+      <span class="task-title">信息收集</span>
+      <span class="task-meter" aria-hidden="true"><span style="width:${doneN/GAPS.length*100}%"></span></span>
+      <span class="task-count">${doneN}/${GAPS.length}</span>
+      <span class="task-now">${nowGap?`正在问：${nowGap.label}`:left.length?`还缺 ${left.length} 项`:'已问齐'}</span>
+      <span class="task-caret" aria-hidden="true">${S.taskOpen?'收起':'展开'}</span>
+    </button>
+    <div class="task-body" id="task-body" ${S.taskOpen?'':'hidden'}>
+      ${S.justGot?`<div class="task-tip" role="status">✓ 刚收集到：${gapLabel(S.justGot)}　<span class="note">3 秒后自动收起，点标题或上滑可立即收起</span></div>`:''}
+      ${gaps}
+    </div>
+  </section>`;
+  return `
+  ${task}
+  <div class="grill">
+    <section class="card chat">
+      <div class="msgs ${S.expandLog?'expanded':''}" aria-live="polite">${msgs}</div>
+      ${ask}
+    </section>
+    <div class="m-bar">
+      <details>
+        <summary>需求清单 ${S.reqIds.length} 条</summary>
+        <div class="m-detail"><div class="m-reqs">${S.reqIds.map(id=>`<div>${id}　${REQS[id].quote}</div>`).join('')}</div></div>
+      </details>
+      <button class="btn btn-primary" data-step="3">开始判定</button>
+    </div>
+    <aside class="stack">
+      <section class="card panel"><h2>需求清单（${S.reqIds.length}）</h2>${reqs}</section>
+      <section class="card stack">
+        ${left.length?`<div class="warn">还有 ${left.length} 项没补，判定表会列出来。</div>`:''}
+        <button class="btn btn-primary" data-step="3" style="width:100%">需求已清楚，开始判定</button>
+      </section>
+    </aside>
+  </div>`;
+}
+
+// 对话按「访谈记录」排：开头是客户信息，之后每组一问一答编号；助手的旁白（记下需求等）作为小注
+function transcript(){
+  const log = S.log, items = [];
+  let n = 0;
+  for(let i=0;i<log.length;i++){
+    const m = log[i];
+    if(i===0 && m.me){ items.push({kind:'brief', html:`<div class="brief"><div class="note">客户信息</div><div class="brief-text">${m.text}</div></div>`}); continue; }
+    if(!m.me && log[i+1]?.me){
+      n++;
+      items.push({kind:'qa', html:`<div class="qa"><span class="num">${n}</span><div><div class="q">${m.text}</div><div class="a">${log[i+1].text}</div></div></div>`});
+      i++; continue;
+    }
+    items.push({kind:'sys', html:`<div class="sys"><span aria-hidden="true">✓</span><span>${m.text.replace(/\n/g,'　')}</span></div>`});
+  }
+  // 手机上只留最近 2 问，更早的收起（桌面照常全显示）
+  const qaIdx = items.map((it,i)=>it.kind==='qa'?i:-1).filter(i=>i>=0);
+  const cut = qaIdx.length > 2 ? qaIdx[qaIdx.length-2] : 0;
+  const hidden = qaIdx.filter(i=>i<cut).length;
+  const html = items.map((it,i)=> i>0 && i<cut ? it.html.replace(/^<div class="/,'<div class="old ') : it.html);
+  if(hidden) html.splice(1,0,`<button class="fold-btn btn-link" data-fold>${S.expandLog?'收起前面的问答':`前面还有 ${hidden} 问，展开`}</button>`);
+  return html.join('');
+}
+
+function stepVerdict(){
+  resetVerdicts();
+  const counts = {all:S.reqIds.length};
+  Object.keys(VERDICT).forEach(k=>counts[k]=S.reqIds.filter(id=>S.verdicts[id]===k).length);
+  const filters = [['all','全部'],...Object.entries(VERDICT).map(([k,v])=>[k,v.label])]
+    .map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${S.filter===k}">${l} ${counts[k]}</button>`).join('');
+  const left = GAPS.filter(g=>!S.gapsDone.has(g.id));
+  const rows = S.reqIds.filter(id=>S.filter==='all'||S.verdicts[id]===S.filter).map(id=>{
+    const r=REQS[id], v=S.verdicts[id];
+    const opts=Object.entries(VERDICT).map(([k,o])=>`<option value="${k}" ${k===v?'selected':''}>${o.label}</option>`).join('');
+    return `<tr>
+      <td class="v-id">${id}</td>
+      <td class="v-quote">「${r.quote}」<div class="note">${r.scene}</div></td>
+      <td class="v-verdict"><span class="tag ${VERDICT[v].cls}">${VERDICT[v].label}</span>${r.pending&&v==='no'?'<div class="note">待产品确认</div>':''}
+          <div class="v-select"><select data-verdict="${id}" aria-label="${id} 改判">${opts}</select></div></td>
+      <td class="v-how" data-label="怎么满足或为什么不行">${r.how}</td>
+      <td class="v-ev" data-label="证据">${r.src==='未找到'?'<span class="note">未找到证据</span>':`<button class="btn-link" data-ev="${id}">查看证据</button>`}</td>
+      <td class="v-contract" data-label="能写进合同"><label class="row"><input type="checkbox" style="width:auto" data-contract="${id}" ${S.contract[id]?'checked':''}> ${S.contract[id]?'可以':'不可以'}</label><div class="err" id="err-${id}"></div></td>
+    </tr>`;
+  }).join('');
+  return `
+  <section class="card">
+    <div class="row between"><h1>逐条判定</h1><span class="note">判定由助手生成，批准前可改</span></div>
+    ${left.length?`<div class="warn" style="margin-top:16px">追问时没补的信息：${left.map(g=>g.label).join('、')}。相关判定可能不准。</div>`:''}
+    <div class="filters" style="margin:16px 0">${filters}</div>
+    <div class="tbl-wrap"><table class="vtable">
+      <thead><tr><th style="width:48px">编号</th><th>客户原话和场景</th><th style="width:150px">判定</th><th>怎么满足或为什么不行</th><th style="width:96px">证据</th><th style="width:110px">能写进合同</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="6" class="note">这一档没有需求</td></tr>'}</tbody>
+    </table></div>
+    <div class="bar row between">
+      <button class="btn" data-reject>驳回并补问</button>
+      <button class="btn btn-primary" data-approve>批准判定，生成产出</button>
+    </div>
+  </section>`;
+}
+
+/* ---------- 产出 ---------- */
+function productText(){
+  const items=S.reqIds.filter(id=>S.verdicts[id]==='no');
+  if(!items.length) return '';
+  const lines=items.map((id,i)=>{
+    const r=REQS[id];
+    return `${id}　${r.quote}\n   客户原话：「${r.quote}」\n   场景：${r.scene}\n   现在做不到的原因：${r.how}${r.pending?'\n   需要产品确认：现网是否已有这个能力':''}`;
+  }).join('\n\n');
+  return `【售前需求反馈】${CUSTOMER.name}（${CUSTOMER.brief}）第 ${S.round} 轮\n共 ${items.length} 条现在做不到的需求，请产品评估：\n\n${lines}\n\n请按编号回复：现网已支持／已列入规划／确认不做／需要更多信息，可附一句说明。\n售前：（姓名）　日期：2026-11-02`;
+}
+// 客户版里的编号：只给客户看得到的条目按 1、2、3 编，回填页用同一套编号对照
+function custNumbers(){
+  const ready=S.reqIds.filter(id=>['can','alt'].includes(S.verdicts[id])), plan=S.reqIds.filter(id=>S.verdicts[id]==='plan');
+  return Object.fromEntries([...ready,...plan].map((id,i)=>[id,i+1]));
+}
+// 客户版按客户自己的工作场景来写：先说「您那边会是什么样」，再说「我们怎么做」，不出现内部判定词和编号
+function customerHTML(){
+  const no=custNumbers();
+  const ready=S.reqIds.filter(id=>['can','alt'].includes(S.verdicts[id]));
+  const plan=S.reqIds.filter(id=>S.verdicts[id]==='plan');
+  const scene=id=>{const c=REQS[id].cx||{title:REQS[id].quote,scene:REQS[id].scene,how:''};
+    return `<li><h3>${no[id]}. ${c.title}</h3><p>${c.scene}</p><p class="how">${c.how}</p></li>`;};
+  const dirs=plan.map(id=>`<li><h3>${no[id]}. ${(REQS[id].cx||{}).title||REQS[id].quote}</h3><p>${REQS[id].dir}</p></li>`).join('');
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${CUSTOMER.name} 方案要点</title>
+<style>body{margin:0;background:#F8F8F8;color:#1F1F1F;font:14px/24px "PingFang SC","Microsoft YaHei",sans-serif}main{max-width:720px;margin:0 auto;padding:32px 16px}h1{font-size:20px;font-weight:500;margin:0 0 4px}h2{font-size:16px;font-weight:500;margin:0 0 12px}h3{font-size:14px;font-weight:500;margin:0 0 4px}section{background:#fff;border-radius:8px;padding:24px;margin-top:16px}ol,ul{list-style:none;padding:0;margin:0}li+li{margin-top:20px}p{margin:0}p+p{margin-top:4px}.how{color:#595959}.note{color:#8C8C8C;font-size:12px}</style></head>
+<body><main>
+<h1>${CUSTOMER.name}　岗位技能图谱与技能竞赛方案要点</h1><p class="note">初稿　2026 年 11 月 2 日</p>
+<section><p>您好，感谢上次的沟通。我们把您提到的情况整理成下面几个使用场景，想请您看看和实际是否一致。不对的地方直接告诉我们，我们再调整。</p></section>
+<section><h2>我们的理解</h2><p>贵司一线员工约 3000 人。这次最想先解决的，是把各岗位要掌握的技能理清楚，让员工在车间用手机就能学；技能竞赛可以放在图谱之后。图谱希望年底前能用起来。</p></section>
+<section><h2>上线后，大家会这样用</h2><ol>${ready.map(scene).join('')}</ol></section>
+${dirs?`<section><h2>您关心、我们正在推进的</h2><ol>${dirs}</ol></section>`:''}
+<section><h2>还想跟您确认两件事</h2><ul>${CONFIRM_QS.map(q=>`<li>${q}</li>`).join('')}</ul></section>
+<section><p>回复时直接说第几条就行，比如「第 2 条我们其实是……」，或者「都没问题」。</p><p class="note" style="margin-top:12px">时代光华　售前　（姓名、电话）</p></section>
+</main></body></html>`;
+}
+function stepOutput(){
+  const txt=productText();
+  const noCount=S.reqIds.filter(id=>S.verdicts[id]==='no').length;
+  const tab=S.outTab==='product'
+    ? (txt?`<div class="row between" style="margin-bottom:12px"><span class="muted">${noCount} 条现在做不到，复制后发到产品群或私聊即可</span><button class="btn btn-primary" data-copy>复制全部</button></div><pre class="copy" id="ptext">${txt}</pre>`
+           :`<p class="muted">这个客户没有做不到的需求，不用发产品。</p>`)
+    : `<div class="row between" style="margin-bottom:12px"><span class="muted">只包含能做和换个方式能做的需求；规划中的只讲方向，不写时间</span><button class="btn btn-primary" data-dl>下载 HTML</button></div><iframe title="客户版场景说明预览" id="preview"></iframe>`;
+  return `
+  <section class="card">
+    <h1>产出</h1>
+    <div class="tabs" role="tablist" style="margin-top:16px">
+      <button role="tab" aria-selected="${S.outTab==='product'}" data-tab="product">发给产品（${noCount}）</button>
+      <button role="tab" aria-selected="${S.outTab==='customer'}" data-tab="customer">客户版场景说明</button>
+    </div>
+    ${tab}
+    <div class="bar row between"><span class="note">发出去以后，客户或产品回复了，到「回填」录入结果</span><button class="btn" data-step="5">去回填反馈</button></div>
+  </section>`;
+}
+
+/* ---------- 回填：客户和产品的回复进来，开启下一轮 ---------- */
+const CUST_FB = {pending:'待回复', ok:'确认', dispute:'有异议'};
+const PROD_FB = {pending:'待回复', have:'现网已支持', plan:'已列入规划', nodo:'确认不做', more:'需要更多信息'};
+function fbRow(id, kind){
+  const r=REQS[id], map=kind==='cust'?CUST_FB:PROD_FB, f=S.fb[kind][id]||{status:'pending',note:''};
+  const opts=Object.entries(map).map(([k,l])=>`<option value="${k}" ${k===f.status?'selected':''}>${l}</option>`).join('');
+  return `<div class="fb-row">
+    <div><span class="note">${kind==='cust'?`客户版第 ${custNumbers()[id]} 条`:id}</span>　${r.quote}<div><span class="tag ${VERDICT[S.verdicts[id]].cls}">${VERDICT[S.verdicts[id]].label}</span></div></div>
+    <select data-fb="${kind}" data-id="${id}" aria-label="${id} ${kind==='cust'?'客户':'产品'}回复">${opts}</select>
+    <input data-fb-note="${kind}" data-id="${id}" value="${f.note}" placeholder="${kind==='cust'?'客户原话或异议点':'产品的说明'}" aria-label="${id} 补充说明">
+  </div>`;
+}
+function stepFeedback(){
+  const cust=S.reqIds.filter(id=>S.verdicts[id]!=='no'), prod=S.reqIds.filter(id=>S.verdicts[id]==='no');
+  const filled=[...Object.values(S.fb.cust),...Object.values(S.fb.prod)].filter(f=>f.status!=='pending').length;
+  const disputes=Object.values(S.fb.cust).filter(f=>f.status==='dispute').length;
+  return `
+  <section class="card stack">
+    <div class="row between"><h1>回填反馈</h1><span class="note">第 ${S.round} 轮</span></div>
+    <p class="muted">客户和产品都按编号回复。把结果填在这里，点「开始下一轮」：产品的回复会直接改判，客户有异议的条目会变成助手的追问，然后重新判定、重新出产出。</p>
+    <h2>客户回复</h2>
+    <div>${cust.map(id=>fbRow(id,'cust')).join('')}</div>
+    <div class="stack">${CONFIRM_QS.map((q,i)=>`<div><label class="field" for="ans${i}">${q}</label><input id="ans${i}" data-fb-ans="${i}" value="${S.fb.answers[i]||''}" placeholder="客户的回答"></div>`).join('')}</div>
+    <div><label class="field" for="fbraw">客户回复原文（可选，直接粘贴）</label><textarea id="fbraw" data-fb-raw style="min-height:96px" placeholder="微信、邮件里客户的原话">${S.fb.raw}</textarea></div>
+    <h2>产品回复</h2>
+    <div>${prod.length?prod.map(id=>fbRow(id,'prod')).join(''):'<p class="note">这一轮没有发给产品的需求</p>'}</div>
+    <div class="bar row between">
+      <span class="note">已填 ${filled} 条${disputes?`，${disputes} 条客户有异议`:''}</span>
+      <button class="btn btn-primary" data-next-round ${filled?'':'disabled'}>开始第 ${S.round+1} 轮</button>
+    </div>
+  </section>`;
+}
+function nextRound(){
+  const notes=[];
+  Object.entries(S.fb.prod).forEach(([id,f])=>{
+    if(f.status==='have'){S.verdicts[id]='can';REQS[id].pending=false;REQS[id].how=`产品回复现网已支持${f.note?`：${f.note}`:''}`;notes.push(`${id} 改判「现在能做」（合同可写请你确认后再勾）`);}
+    if(f.status==='plan'){S.verdicts[id]='plan';REQS[id].pending=false;notes.push(`${id} 改判「规划中」`);}
+    if(f.status==='nodo'){REQS[id].pending=false;REQS[id].how=`产品确认不做${f.note?`：${f.note}`:''}`;notes.push(`${id} 产品确认不做`);}
+  });
+  const disputes=Object.entries(S.fb.cust).filter(([,f])=>f.status==='dispute');
+  const ok=Object.values(S.fb.cust).filter(f=>f.status==='ok').length;
+  S.round++;
+  S.log.push({me:false,text:`第 ${S.round} 轮：客户确认 ${ok} 条${disputes.length?`，对 ${disputes.map(([id])=>id).join('、')} 有异议`:''}。${notes.join('；')}`});
+  CONFIRM_QS.forEach((q,i)=>{ if(S.fb.answers[i]) S.log.push({me:false,text:q},{me:true,text:S.fb.answers[i]}); });
+  if(S.fb.raw) S.log.push({me:false,text:`客户回复原文已记录：${S.fb.raw}`});
+  const followUps=disputes.map(([id,f])=>({gap:id,text:`客户对「${REQS[id].quote}」有异议${f.note?`（${f.note}）`:''}，具体哪里不符合？`,
+    options:[{t:'我们理解偏了，需求要改',adds:[],rec:true},{t:'需求没变，客户不接受这个做法',adds:[]}]}));
+  QUESTIONS.splice(S.qIndex,0,...followUps);
+  S.fb={cust:{},prod:{},raw:'',answers:{}};
+  S.approved=false; S.maxStep=3; S.step=followUps.length?2:3;
+  render(); window.scrollTo(0,0);
+  toast(followUps.length?'已带着反馈回到追问':'已按产品回复改判，请重新批准');
+}
+
+/* ---------- 交互 ---------- */
+function bind(){
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{S.view=b.dataset.go;render();});
+  app.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{S.view='case';S.step=S.approved?4:Math.max(S.step,2);render();});
+  app.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>{S.view='case';S.step=1;render();});
+  app.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=+b.dataset.step;S.maxStep=Math.max(S.maxStep,S.step);render();window.scrollTo(0,0);});
+  const az=app.querySelector('[data-analyze]'); if(az) az.onclick=startAnalyze;
+  const tk=app.querySelector('[data-task]'); if(tk) tk.onclick=()=>{ if(S.taskOpen) collapseTask(); else {S.taskOpen=true;render();} };
+  // 任务卡上滑收起（触屏）
+  const tc=app.querySelector('.task-card');
+  if(tc){ let y0=null;
+    tc.ontouchstart=e=>{y0=e.touches[0].clientY;};
+    tc.ontouchend=e=>{ if(y0!==null && S.taskOpen && y0-e.changedTouches[0].clientY>30) collapseTask(); y0=null; };
+  }
+  const fold=app.querySelector('[data-fold]'); if(fold) fold.onclick=()=>{S.expandLog=!S.expandLog;render();};
+  app.querySelectorAll('[data-ans]').forEach(b=>b.onclick=()=>answer(QUESTIONS[S.qIndex].options[+b.dataset.ans]));
+  const free=app.querySelector('[data-free]'); if(free) free.onclick=()=>{const v=document.getElementById('freeAns').value.trim(); if(v) answer({t:v,adds:[]});};
+  const skip=app.querySelector('[data-skip]'); if(skip) skip.onclick=()=>{S.log.push({me:false,text:QUESTIONS[S.qIndex].text},{me:true,text:'（跳过）'});S.qIndex++;render();};
+  app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.filter;render();});
+  app.querySelectorAll('[data-verdict]').forEach(s=>s.onchange=()=>{const id=s.dataset.verdict;S.verdicts[id]=s.value;if(s.value!=='can')S.contract[id]=false;render();});
+  app.querySelectorAll('[data-contract]').forEach(c=>c.onchange=()=>{
+    const id=c.dataset.contract;
+    if(c.checked&&S.verdicts[id]!=='can'){c.checked=false;document.getElementById('err-'+id).textContent=`「${VERDICT[S.verdicts[id]].label}」不能写进合同`;return;}
+    S.contract[id]=c.checked;render();
+  });
+  app.querySelectorAll('[data-ev]').forEach(b=>b.onclick=()=>openEvidence(b.dataset.ev,b));
+  const rej=app.querySelector('[data-reject]'); if(rej) rej.onclick=()=>{S.step=2;S.log.push({me:false,text:'判定被驳回。哪条需求理解错了？直接告诉我，我接着问。'});render();toast('已回到追问');};
+  const ap=app.querySelector('[data-approve]'); if(ap) ap.onclick=()=>{S.approved=true;S.step=4;render();toast('已批准，产出已生成');};
+  app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.outTab=b.dataset.tab;render();});
+  const cp=app.querySelector('[data-copy]'); if(cp) cp.onclick=()=>{navigator.clipboard.writeText(productText()).then(()=>toast('已复制，可直接粘贴发送'),()=>toast('复制失败，请手动选中文字复制'));};
+  const pv=document.getElementById('preview'); if(pv) pv.srcdoc=customerHTML();
+  app.querySelectorAll('[data-fb]').forEach(s=>s.onchange=()=>{const k=s.dataset.fb,id=s.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{note:''}),status:s.value};render();});
+  app.querySelectorAll('[data-fb-note]').forEach(i=>i.oninput=()=>{const k=i.dataset.fbNote,id=i.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{status:'pending'}),note:i.value};});
+  app.querySelectorAll('[data-fb-ans]').forEach(i=>i.oninput=()=>{S.fb.answers[i.dataset.fbAns]=i.value;});
+  const raw=app.querySelector('[data-fb-raw]'); if(raw) raw.oninput=()=>{S.fb.raw=raw.value;};
+  const nr=app.querySelector('[data-next-round]'); if(nr) nr.onclick=nextRound;
+  const dl=app.querySelector('[data-dl]'); if(dl) dl.onclick=saveCustomerHTML;
+}
+function answer(opt){
+  const q=QUESTIONS[S.qIndex];
+  S.log.push({me:false,text:q.text},{me:true,text:opt.t});
+  const added=opt.adds.filter(id=>!S.reqIds.includes(id));
+  S.reqIds.push(...added);
+  const isNewGap = GAPS.some(g=>g.id===q.gap) && !S.gapsDone.has(q.gap);
+  S.gapsDone.add(q.gap);
+  if(isNewGap) S.gapNotes[q.gap]=opt.t;
+  if(added.length) S.log.push({me:false,text:`记下 ${added.length} 条需求：${added.map(id=>REQS[id].quote).join('；')}。`});
+  S.qIndex++;
+  if(isNewGap) announceGap(q.gap); else render();
+}
+// 某项信息刚收集到：任务卡自动展开提示，3 秒后自动收起；手动点击或上滑可提前收起
+let gapTimer;
+function announceGap(id){
+  S.justGot=id; S.taskOpen=true; render();
+  clearTimeout(gapTimer);
+  gapTimer=setTimeout(()=>{ if(S.justGot===id){ S.justGot=null; S.taskOpen=false; if(S.view==='case'&&S.step===2) render(); } },3000);
+}
+function collapseTask(){ clearTimeout(gapTimer); S.justGot=null; S.taskOpen=false; render(); }
+// 在 claude.ai 里打开时走平台下载（普通下载链接会被拦）；本地直接打开时用浏览器下载
+async function saveCustomerHTML(){
+  const filename=`${CUSTOMER.name}-场景说明.html`, data=customerHTML();
+  if(window.claude){
+    const downloads=await window.claude.use('downloads');
+    if(!downloads){toast('当前页面不支持下载');return;}
+    try{await downloads.save({filename,data});toast('已下载');}
+    catch(e){if(e.code!=='declined')toast('下载失败，请稍后重试');}
+    return;
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/html'}));a.download=filename;a.click();URL.revokeObjectURL(a.href);
+}
+let lastFocus=null;
+function openEvidence(id,trigger){
+  const r=REQS[id]; lastFocus=trigger;
+  const d=document.getElementById('drawer'), m=document.getElementById('mask');
+  d.innerHTML=`<div class="row between"><h2 id="drawerTitle">${id} 的证据</h2><button class="btn" data-close>关闭</button></div>
+    <div class="stack" style="margin-top:16px">
+      <div><div class="note">来源</div><div>${r.src}</div></div>
+      <div><div class="note">原文摘录</div><div class="quote">${r.excerpt}</div></div>
+      <div><div class="note">据此判定</div><span class="tag ${VERDICT[S.verdicts[id]].cls}">${VERDICT[S.verdicts[id]].label}</span></div>
+      <p class="note">证据来自已入库的手册和能力分层表。来源过期时以产品最新答复为准。</p>
+    </div>`;
+  d.classList.add('open');m.classList.add('open');d.focus();
+  const close=()=>{d.classList.remove('open');m.classList.remove('open');lastFocus&&lastFocus.focus();};
+  d.querySelector('[data-close]').onclick=close; m.onclick=close;
+  d.onkeydown=e=>{if(e.key==='Escape')close();};
+}
+let tt;
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2000);}
+document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{S.view=b.dataset.nav;render();});
+// 追问页：按数字键直接选候选回答（在输入框里打字时不触发）
+document.addEventListener('keydown',e=>{
+  if(S.view!=='case'||S.step!==2||e.target.matches('input,textarea,select')) return;
+  const q=QUESTIONS[S.qIndex], i=+e.key-1;
+  if(q&&q.options[i]) answer(q.options[i]);
+});
+render();
+</script>
+</body>
+</html>
