@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>产品线 Milestone 总览 · 2026-11-04</title>
+<style>
+:root {
+  --bg:#f4f6f9; --card:#fff; --ink:#1a1d26; --muted:#5c6578; --line:#e2e6ef;
+  --brand:#1f4b99; --brand-soft:#e8eef8;
+  --ok:#0d7a4f; --ok-bg:#e6f6ee; --wip:#b45309; --wip-bg:#fff7ed;
+  --review:#6d28d9; --review-bg:#f3e8ff; --backlog:#475569; --backlog-bg:#f1f5f9;
+  --board:#0369a1; --board-bg:#e0f2fe; --warn:#b91c1c; --warn-bg:#fef2f2;
+  --cur:#c2410c; --cur-bg:#ffedd5; --cur-ring:#ea580c;
+  --shadow:0 1px 2px rgba(26,29,38,.06),0 8px 24px rgba(26,29,38,.04);
+  --radius:12px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.55;font-size:14.5px}
+a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 64px}
+header.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;box-shadow:var(--shadow);margin-bottom:18px}
+header.hero h1{margin:0 0 8px;font-size:26px;letter-spacing:-.02em}
+header.hero .sub{margin:0 0 12px;color:var(--muted);font-size:14px}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:#fafbfd;color:var(--muted)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 18px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:#eef2f7;padding:4px;border-radius:10px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--muted);font-family:inherit}
+.seg button.on{background:#fff;color:var(--ink);font-weight:650;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.btn{border:1px solid var(--line);background:#fff;padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.hint{font-size:12.5px;color:var(--muted);margin-left:auto}
+.hint.ok{color:var(--ok)}.hint.bad{color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.badge{display:inline-block;font-size:11px;font-weight:650;padding:2px 8px;border-radius:999px;vertical-align:middle;white-space:nowrap}
+.b-done{background:var(--ok-bg);color:var(--ok)}
+.b-wip{background:var(--wip-bg);color:var(--wip)}
+.b-cur{background:var(--cur-bg);color:var(--cur);box-shadow:0 0 0 2px var(--cur-ring)}
+.b-next{background:var(--board-bg);color:var(--board)}
+.b-later{background:var(--backlog-bg);color:var(--backlog)}
+.b-base{background:#f8fafc;color:#64748b;border:1px solid var(--line)}
+
+.matrix-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow);margin-bottom:22px}
+table.matrix{border-collapse:separate;border-spacing:0;min-width:1100px;width:100%;font-size:12.5px}
+table.matrix th,table.matrix td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:0;vertical-align:top}
+table.matrix th:last-child,table.matrix td:last-child{border-right:0}
+table.matrix thead th{background:#0f1c33;color:#d7e0f0;font-weight:650;padding:10px 12px;position:sticky;top:0;z-index:2;text-align:left;font-size:12px}
+table.matrix thead th.stage{min-width:132px;font-weight:600}
+table.matrix tbody th.prod{background:#f0f3f8;position:sticky;left:0;z-index:1;min-width:150px;max-width:180px;padding:12px;border-right:1px solid var(--line);text-align:left}
+table.matrix tbody tr:hover td .cell{background:#fafbfd}
+table.matrix tbody tr.hide{display:none}
+.cell{display:block;padding:10px 11px;min-height:86px;cursor:pointer;transition:background .12s,box-shadow .12s}
+.cell:hover{background:#f5f8ff}
+.cell .sid{font-size:10px;color:var(--muted);letter-spacing:.03em;font-weight:650}
+.cell .name{font-size:12.5px;font-weight:650;margin:2px 0 4px;line-height:1.3;color:var(--ink)}
+.cell .goal{font-size:11.5px;color:var(--muted);line-height:1.4}
+.cell.current{background:var(--cur-bg);box-shadow:inset 0 0 0 2px var(--cur-ring)}
+.cell.current .sid{color:var(--cur)}
+.cell.done{background:var(--ok-bg)}
+.cell.done .sid{color:var(--ok)}
+.cell.empty{min-height:48px;cursor:default;background:#fcfcfd;color:#94a3b8;font-size:11px;display:flex;align-items:center;justify-content:center}
+.cell.empty:hover{background:#fcfcfd}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;font-size:15px}
+.card .row{font-size:13px;margin:4px 0;color:var(--muted)}
+.card .row strong{color:var(--ink);font-weight:650}
+.card .links{margin-top:10px;font-size:12.5px}
+.select-cur{margin-top:8px;width:100%;font-size:12.5px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);font-family:inherit;background:#fff}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);margin-bottom:18px}
+.panel h2{margin:0 0 8px;font-size:16px}
+.panel p,.panel li{font-size:13.5px;color:var(--muted)}
+.panel code{font-family:var(--mono);font-size:12px;background:#f1f5f9;padding:1px 5px;border-radius:4px}
+pre.export{background:#0f1c33;color:#d7e0f0;padding:12px 14px;border-radius:10px;overflow:auto;font-size:11.5px;line-height:1.45;max-height:220px}
+.note-api{background:#eef6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#1e3a5f;margin-top:10px}
+footer{text-align:center;color:var(--muted);font-size:12.5px;padding:12px}
+@media print{
+  body{background:#fff}
+  .toolbar .btn,.hint,#exportBox{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .matrix-wrap{box-shadow:none;overflow:visible}
+  table.matrix{min-width:0;font-size:9.5pt}
+  .cell{min-height:0}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>产品线 Milestone 总览</h1>
+  <p class="sub">把 gaoyuan 负责的各产品线拆成对应 Milestone，用<strong>一张阶段表</strong>定位「目前所处阶段」与「各阶段要达到的状态」。阶段位置为<strong>产品管理视图</strong>，可本机/云端 Sync 调整；<strong>不自动改 Linear / Jira</strong>。</p>
+  <div class="pill-row">
+    <span class="pill">口径日期 · 2026-11-04 Asia/Shanghai</span>
+    <span class="pill">真源 · catchup 11-02 + 光谱/调查评估 milestones</span>
+    <span class="pill">默认当前：光谱 M1 · 调查 S1 · 评估方案 · 竞赛 C1 · 运营 O1 · 积分 P1 · 开放平台待排</span>
+  </div>
+</header>
+
+<div class="toolbar no-print">
+  <div class="seg" id="filterSeg" role="tablist" aria-label="按产品线筛选"></div>
+  <button type="button" class="btn btn-primary" id="btnSync">同步给我</button>
+  <button type="button" class="btn" id="btnReset">恢复默认当前阶段</button>
+  <button type="button" class="btn" id="btnExport">导出 JSON</button>
+  <span class="hint" id="saveHint">未同步</span>
+</div>
+
+<div class="legend">
+  <span><span class="badge b-cur">当前阶段</span>（可点单元格或卡片下拉改）</span>
+  <span><span class="badge b-done">已完成基线</span></span>
+  <span><span class="badge b-next">下一阶段</span></span>
+  <span><span class="badge b-later">后续</span></span>
+  <span>点击单元格 = 将该产品线「当前」设到该 Milestone</span>
+</div>
+
+<div class="matrix-wrap" id="matrixWrap">
+  <table class="matrix" id="matrix">
+    <thead><tr id="matrixHead"></tr></thead>
+    <tbody id="matrixBody"></tbody>
+  </table>
+</div>
+
+<h2 style="font-size:16px;margin:0 0 10px">各产品线定位卡</h2>
+<div class="cards" id="cards"></div>
+
+<div class="panel">
+  <h2>口径与挂站</h2>
+  <ul>
+    <li>光谱详情：<a href="https://www.gaoyuan-ai.xyz/work/guangpu-milestones/" target="_blank" rel="noopener">/work/guangpu-milestones/</a></li>
+    <li>调查评估详情：<a href="/work/survey-milestones/">/work/survey-milestones/</a></li>
+    <li>本总览：<code>/work/product-milestones/</code></li>
+  </ul>
+  <div class="note-api">
+    <strong>Sync 约定：</strong>优先 <code>localStorage</code> 键 <code>product-milestones-state-v1</code>；若同站已部署 API，则 <code>GET/PUT /api/product-milestones-state</code>（对齐 xlx-marks / launch-sync-state 模式，Vercel Blob）。API 未部署时仍可本机保存，并用「导出 JSON」备份；云端 PUT 失败会提示「本机已存 · 云端失败」，不阻断使用。
+  </div>
+  <pre class="export" id="exportBox" hidden></pre>
+</div>
+
+<footer>product-manager · 产品线 milestones 总览 · 2026-11-04 Asia/Shanghai · 管理视图 ≠ Linear 状态机</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const STORAGE_KEY = "product-milestones-state-v1";
+  const STATE_API = "/api/product-milestones-state";
+
+  /** @typedef {{id:string,name:string,goal:string,due?:string}} Stage */
+  /** @typedef {{id:string,name:string,detail:string,detailLabel:string,defaultCurrent:string,note?:string,stages:Stage[]}} Product */
+
+  const PRODUCTS = /** @type {Product[]} */ ([
+    {
+      id: "spectrum",
+      name: "光谱",
+      detail: "https://www.gaoyuan-ai.xyz/work/guangpu-milestones/",
+      detailLabel: "光谱 milestones",
+      defaultCurrent: "M1",
+      note: "双焦点外：主包 PRO-333 due 11-13",
+      stages: [
+        { id: "M0", name: "基线对照", goal: "末级本地上传资料已上线；多文件待点验", due: "Done 11-03" },
+        { id: "M1", name: "批量导入与建图提效", goal: "Excel 灌标 + L1–L5 导入 + 页内报错 + 匹配度细则", due: "~11-13" },
+        { id: "M2", name: "人·岗·图关系重构", goal: "自动同步可关、一岗多图、学员多图切换", due: "~12-15" },
+        { id: "M3", name: "资源弹性与启用松绑", goal: "考试/资料非必需 + 未挂资源提示 + 多文件", due: "Backlog" },
+        { id: "M4", name: "一图多岗与标签树", goal: "一图多岗 + 批量移动/分类可删", due: "待排" },
+        { id: "M5", name: "验证与题库进阶", goal: "难度×试题管理；按职级验证（先拍板）", due: "待拍板" },
+        { id: "M6", name: "AI 建图与体验收尾", goal: "AI zip、入口体验、i18n", due: "~12-18 旁支" }
+      ]
+    },
+    {
+      id: "survey",
+      name: "调查",
+      detail: "/work/survey-milestones/",
+      detailLabel: "调查评估 milestones",
+      defaultCurrent: "S1",
+      note: "双焦点：S1 验收窗 + S2 方案周五；默认当前标 S1",
+      stages: [
+        { id: "S0", name: "基线对照", goal: "10/30 已上线勿当未做；删人重加=运营路径", due: "对照" },
+        { id: "S1", name: "矩阵打分落地", goal: "多人多维矩阵打分上线（已提测）", due: "~11-13" },
+        { id: "S2", name: "评估并入调查", goal: "方案/Jira 齐套；单一管理面方向落地", due: "~11-06 方案" },
+        { id: "S3", name: "题型治理", goal: "隐藏显示题型 + 打分题数据分析", due: "~11-30" },
+        { id: "S4", name: "跨题型跳题 P0", goal: "多选三档 + 矩阵多选/打分NPS 条件源", due: "~11-30" },
+        { id: "S5", name: "对标问卷星题型", goal: "排序/滑动/矩阵多选/表格/签名等", due: "~12-13" },
+        { id: "S6", name: "跳题 P1/P2 + AI", goal: "单选矩阵 P1；排序/滑动 P2；AI 帮建", due: "后续" }
+      ]
+    },
+    {
+      id: "eval",
+      name: "评估",
+      detail: "/work/survey-milestones/#s2",
+      detailLabel: "评估并入 S2",
+      defaultCurrent: "E1",
+      note: "子泳道：主轴=并入调查；目标态=单一管理面",
+      stages: [
+        { id: "E0", name: "方向拍板", goal: "走 A 并入调查，不并 360", due: "Done 口径" },
+        { id: "E1", name: "方案 / 验证 / 补 Jira", goal: "PRO-289/306/338；子任务 307–309", due: "~11-06" },
+        { id: "E2", name: "开发跟进", goal: "排期后提测（PRO-308）", due: "待排期" },
+        { id: "E3", name: "测试上线验收", goal: "测→部署→正式走查（PRO-309）", due: "待定" },
+        { id: "E4", name: "合并后单一管理面", goal: "客户只在调查内完成评估配置与回传", due: "目标态" }
+      ]
+    },
+    {
+      id: "contest",
+      name: "竞赛",
+      detail: "",
+      detailLabel: "见 catchup 清单",
+      defaultCurrent: "C1",
+      stages: [
+        { id: "C0", name: "10/30 已上线基线", goal: "单题限时/积分维度/达人密码/H5/PK排行榜字段(本次)/防作弊", due: "Done" },
+        { id: "C1", name: "练习下一题 / PK 三项", goal: "下一题按钮 + PK 下限/双倍/机器人反应", due: "~11-13" },
+        { id: "C2", name: "一战刷新 / 反馈 / 名次", goal: "刷新次数、反馈已处理、后台名次统一", due: "~11-27" },
+        { id: "C3", name: "题库同步校验", goal: "关联试题同步校验", due: "~11-30" },
+        { id: "C4", name: "排行榜字段低优", goal: "闯关 + 一战到底排行榜字段", due: "低优" }
+      ]
+    },
+    {
+      id: "ops",
+      name: "运营工具",
+      detail: "",
+      detailLabel: "见 catchup",
+      defaultCurrent: "O1",
+      stages: [
+        { id: "O0", name: "投票评选已上线", goal: "SDGH-8160 不进未完成清单", due: "Done" },
+        { id: "O1", name: "隐藏学员端排行榜", goal: "活动可关学员端排行榜", due: "~11-13" },
+        { id: "O2", name: "抽奖两项", goal: "仅中奖一次 + 转盘谢谢参与", due: "~11-30" }
+      ]
+    },
+    {
+      id: "points",
+      name: "积分",
+      detail: "",
+      detailLabel: "见 catchup",
+      defaultCurrent: "P1",
+      stages: [
+        { id: "P0", name: "换算规则统一（对照）", goal: "10/30 积分换算统一已上线批", due: "对照" },
+        { id: "P1", name: "规则默认停用", goal: "新规则默认停用，避免误开", due: "~11-13" }
+      ]
+    },
+    {
+      id: "openplat",
+      name: "开放平台",
+      detail: "",
+      detailLabel: "PRO-327 / 322",
+      defaultCurrent: "OP1",
+      note: "待排 · due 约 12-18",
+      stages: [
+        { id: "OP1", name: "导入导出国际化", goal: "多应用模板/校验文案 i18n（含光谱侧）", due: "~12-18" }
+      ]
+    }
+  ]);
+
+  const MAX_STAGES = Math.max.apply(null, PRODUCTS.map(function (p) { return p.stages.length; }));
+
+  /** @type {{current: Record<string,string>, filter: string, meta: object}} */
+  let state = loadLocal();
+
+  function defaultState() {
+    const current = {};
+    PRODUCTS.forEach(function (p) { current[p.id] = p.defaultCurrent; });
+    return { current: current, filter: "all", meta: { storageKey: STORAGE_KEY, asOf: "2026-11-04" } };
+  }
+
+  function normalize(data) {
+    const base = defaultState();
+    if (!data || typeof data !== "object") return base;
+    const current = Object.assign({}, base.current, data.current || {});
+    PRODUCTS.forEach(function (p) {
+      if (!p.stages.some(function (s) { return s.id === current[p.id]; })) current[p.id] = p.defaultCurrent;
+    });
+    return {
+      current: current,
+      filter: typeof data.filter === "string" ? data.filter : "all",
+      meta: data.meta && typeof data.meta === "object" ? data.meta : base.meta
+    };
+  }
+
+  function loadLocal() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return defaultState();
+      return normalize(JSON.parse(raw));
+    } catch (e) {
+      return defaultState();
+    }
+  }
+
+  function persistLocal() {
+    state.meta = state.meta || {};
+    state.meta.storageKey = STORAGE_KEY;
+    state.meta.updatedAt = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function formatLocal(d) {
+    try {
+      return d.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false });
+    } catch (_) {
+      return d.toISOString();
+    }
+  }
+
+  function setHint(msg, ok) {
+    const el = document.getElementById("saveHint");
+    el.textContent = msg;
+    el.className = "hint " + (ok ? "ok" : (ok === false ? "bad" : ""));
+  }
+
+  function stageIndex(product, stageId) {
+    return product.stages.findIndex(function (s) { return s.id === stageId; });
+  }
+
+  function nextStage(product) {
+    const i = stageIndex(product, state.current[product.id]);
+    if (i < 0 || i >= product.stages.length - 1) return null;
+    return product.stages[i + 1];
+  }
+
+  function renderFilter() {
+    const seg = document.getElementById("filterSeg");
+    const items = [{ id: "all", name: "全部" }].concat(PRODUCTS.map(function (p) { return { id: p.id, name: p.name }; }));
+    seg.innerHTML = items.map(function (it) {
+      return '<button type="button" data-f="' + it.id + '" class="' + (state.filter === it.id ? "on" : "") + '">' + it.name + "</button>";
+    }).join("");
+    seg.querySelectorAll("button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.filter = btn.getAttribute("data-f");
+        persistLocal();
+        render();
+      });
+    });
+  }
+
+  function renderMatrix() {
+    const head = document.getElementById("matrixHead");
+    let headHtml = "<th>产品线 \\ 阶段</th>";
+    for (let i = 0; i < MAX_STAGES; i++) {
+      headHtml += '<th class="stage">阶段 ' + (i + 1) + "</th>";
+    }
+    head.innerHTML = headHtml;
+
+    const body = document.getElementById("matrixBody");
+    body.innerHTML = PRODUCTS.map(function (p) {
+      const cur = state.current[p.id];
+      const ci = stageIndex(p, cur);
+      const hide = state.filter !== "all" && state.filter !== p.id ? " hide" : "";
+      let cells = "";
+      for (let i = 0; i < MAX_STAGES; i++) {
+        const s = p.stages[i];
+        if (!s) {
+          cells += '<td><div class="cell empty">—</div></td>';
+          continue;
+        }
+        let cls = "cell";
+        if (s.id === cur) cls += " current";
+        else if (i < ci && (s.id === "M0" || s.id === "S0" || s.id === "C0" || s.id === "O0" || s.id === "P0" || s.id === "E0" || (s.due || "").indexOf("Done") >= 0)) cls += " done";
+        cells += '<td><div class="' + cls + '" data-pid="' + p.id + '" data-sid="' + s.id + '" title="设为当前：' + s.id + '">'
+          + '<div class="sid">' + s.id + (s.due ? " · " + s.due : "") + "</div>"
+          + '<div class="name">' + s.name + "</div>"
+          + '<div class="goal">' + s.goal + "</div>"
+          + "</div></td>";
+      }
+      return '<tr class="' + hide.trim() + '" data-pid="' + p.id + '"><th class="prod"><div style="font-weight:700;font-size:14px">' + p.name + "</div>"
+        + '<div style="font-size:11px;color:var(--muted);margin-top:4px">当前 <span class="badge b-cur">' + cur + "</span></div>"
+        + (p.note ? '<div style="font-size:11px;color:var(--muted);margin-top:6px">' + p.note + "</div>" : "")
+        + "</th>" + cells + "</tr>";
+    }).join("");
+
+    body.querySelectorAll(".cell[data-sid]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        const pid = el.getAttribute("data-pid");
+        const sid = el.getAttribute("data-sid");
+        state.current[pid] = sid;
+        persistLocal();
+        setHint("本机已存 · " + formatLocal(new Date()), true);
+        render();
+      });
+    });
+  }
+
+  function renderCards() {
+    const root = document.getElementById("cards");
+    root.innerHTML = PRODUCTS.filter(function (p) {
+      return state.filter === "all" || state.filter === p.id;
+    }).map(function (p) {
+      const curId = state.current[p.id];
+      const cur = p.stages.find(function (s) { return s.id === curId; });
+      const nxt = nextStage(p);
+      const opts = p.stages.map(function (s) {
+        return '<option value="' + s.id + '"' + (s.id === curId ? " selected" : "") + ">" + s.id + " · " + s.name + "</option>";
+      }).join("");
+      var linkParts = [];
+      if (p.detail) {
+        linkParts.push('<a href="' + p.detail + '"' + (p.detail.indexOf("http") === 0 ? ' target="_blank" rel="noopener"' : "") + ">" + p.detailLabel + "</a>");
+      }
+      if (Array.isArray(p.detailAlts)) {
+        p.detailAlts.forEach(function (a) {
+          linkParts.push('<a href="' + a.href + '"' + (a.href.indexOf("http") === 0 ? ' target="_blank" rel="noopener"' : "") + ">" + a.label + "</a>");
+        });
+      }
+      const link = linkParts.length
+        ? linkParts.join(" · ")
+        : "<span style=\"color:var(--muted)\">" + (p.detailLabel || "无独立详页") + "</span>";
+      return '<div class="card" data-pid="' + p.id + '">'
+        + "<h3>" + p.name + "</h3>"
+        + '<div class="row">当前阶段：<strong>' + (cur ? cur.id + " · " + cur.name : curId) + "</strong></div>"
+        + '<div class="row">本阶段目标态：' + (cur ? cur.goal : "—") + "</div>"
+        + '<div class="row">下一阶段：' + (nxt ? '<span class="badge b-next">' + nxt.id + "</span> " + nxt.name + " — " + nxt.goal : "<span class=\"badge b-later\">已无后续 / 目标态</span>") + "</div>"
+        + '<label class="row" style="display:block">改当前阶段<select class="select-cur" data-pid="' + p.id + '">' + opts + "</select></label>"
+        + '<div class="links">详情：' + link + "</div>"
+        + "</div>";
+    }).join("");
+
+    root.querySelectorAll("select.select-cur").forEach(function (sel) {
+      sel.addEventListener("change", function () {
+        state.current[sel.getAttribute("data-pid")] = sel.value;
+        persistLocal();
+        setHint("本机已存 · " + formatLocal(new Date()), true);
+        render();
+      });
+    });
+  }
+
+  function render() {
+    renderFilter();
+    renderMatrix();
+    renderCards();
+  }
+
+  function pushRemote() {
+    return fetch(STATE_API, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(state),
+      cache: "no-store"
+    }).then(function (res) {
+      if (!res.ok) throw new Error("PUT " + res.status);
+      return res.json().catch(function () { return {}; });
+    }).then(function (data) {
+      const when = data && data.updatedAt ? new Date(data.updatedAt) : new Date();
+      setHint("已同步云端 · " + formatLocal(when), true);
+      return data;
+    }).catch(function (err) {
+      console.warn(err);
+      setHint("本机已存 · 云端失败（API 可能未部署）", false);
+      return null;
+    });
+  }
+
+  function pullRemote() {
+    return fetch(STATE_API, { method: "GET", cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("GET " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        if (data && data.current) {
+          state = normalize(data);
+          persistLocal();
+          setHint("已从云端拉取 · " + formatLocal(new Date()), true);
+          render();
+        }
+      })
+      .catch(function () { /* API optional */ });
+  }
+
+  document.getElementById("btnSync").addEventListener("click", function () {
+    persistLocal();
+    setHint("本机已存 · 正在同步…", true);
+    pushRemote();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function () {
+    state = defaultState();
+    persistLocal();
+    setHint("已恢复默认当前阶段 · " + formatLocal(new Date()), true);
+    render();
+  });
+
+  document.getElementById("btnExport").addEventListener("click", function () {
+    const box = document.getElementById("exportBox");
+    box.hidden = false;
+    box.textContent = JSON.stringify(state, null, 2);
+    try {
+      navigator.clipboard.writeText(box.textContent);
+      setHint("JSON 已复制到剪贴板", true);
+    } catch (_) {
+      setHint("请手动复制下方 JSON", true);
+    }
+  });
+
+  // boot
+  render();
+  pullRemote();
+})();
+</script>
+</body>
+</html>
