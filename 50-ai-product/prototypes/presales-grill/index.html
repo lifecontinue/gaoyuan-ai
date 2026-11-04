@@ -128,47 +128,58 @@ th{font-weight:500;background:var(--block);color:var(--text-2)}
 .ask .free{flex-wrap:wrap;align-items:center}
 .ask .free input{min-width:180px}
 .v-select{margin-top:8px}
-/* 判定页：卡片列表 */
+/* 判定页：卡片列表
+   元素：状态图标、原话、结论行（短名+一句话）、右侧标记（待确认/可签，最多一个）、展开箭头；
+   展开后：说明、场景、依据、调整判定（分段按钮）、能写进合同（开关行） */
 .filters.vfilters{margin:12px 0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-.vcard.open .vquote{white-space:normal}
-.seg-opt.on{background:var(--card);box-shadow:0 0 0 .5px var(--border)}
-.seg-opt.on.t-can{color:var(--green-tx)}.seg-opt.on.t-alt{color:var(--blue-tx)}.seg-opt.on.t-plan{color:var(--amber-tx)}.seg-opt.on.t-no{color:var(--red-tx)}
 .vfilters::-webkit-scrollbar{display:none}
-.vfilters .chip{flex:none;white-space:nowrap}
+.vfilters .chip{flex:none;white-space:nowrap;border-radius:16px;padding:4px 12px}
 .vlist{display:grid;gap:8px}
-.vcard{border:var(--hair);border-radius:8px;background:var(--card)}
-.vcard.open{border-color:var(--border-strong)}
-.vcard-head{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;min-height:56px;padding:10px 12px;border:0;background:none;text-align:left;color:var(--text)}
-.vcard-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:8px}
-.vicon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:500}
-.vmain{min-width:0;display:grid}
-.vquote{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard{border:var(--hair);border-radius:8px;background:var(--card);overflow:hidden}
+.vcard.open{border-color:var(--border-strong);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.vcard-head{display:grid;grid-template-columns:28px minmax(0,1fr) auto 12px;gap:12px;align-items:center;width:100%;min-height:60px;padding:10px 14px;border:0;background:none;text-align:left;color:var(--text)}
+.vcard-head:hover{background:var(--block)}
+.vcard-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+.vicon{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:500}
+.vmain{min-width:0;display:grid;gap:2px}
+.vquote{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard.open .vquote{white-space:normal}
 .vsub{font-size:12px;line-height:20px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vmeta{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-.mini{font-size:12px;line-height:20px;padding:0 6px;border-radius:4px;white-space:nowrap}
-.mini.sign{background:var(--green-bg);color:var(--green-tx);box-shadow:inset 0 0 0 .5px var(--green-tx)}
-.mini.wait{background:var(--block);color:var(--text-2)}
-.vcard-body{padding:0 12px 12px 56px;display:grid;gap:8px}
-.vcard-body .quote{margin:4px 0 0}
-.vact{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.segbar{display:flex;background:var(--block);border-radius:6px;padding:2px}
-.seg-opt{border:0;background:none;padding:6px 10px;min-height:32px;border-radius:4px;color:var(--text-2);display:flex;gap:4px;align-items:center;white-space:nowrap}
-.seg-opt.on{font-weight:500}
-.switch{display:flex;align-items:center;gap:8px;border:0;background:none;padding:6px 0;color:var(--text);min-height:32px}
-.switch .knob{width:32px;height:18px;border-radius:9px;background:var(--border);position:relative;transition:background 250ms ease-out}
-.switch .knob::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform 250ms ease-out}
+.vsub b{font-weight:500}
+.t-can-tx{color:var(--green-tx)}.t-alt-tx{color:var(--blue-tx)}.t-plan-tx{color:var(--amber-tx)}.t-no-tx{color:var(--red-tx)}
+.vbadge{font-size:12px;line-height:20px;padding:0 8px;border-radius:10px;white-space:nowrap}
+.vbadge.sign{color:var(--green-tx);box-shadow:inset 0 0 0 .5px var(--green-tx)}
+.vbadge.wait{color:var(--text-2);background:var(--block)}
+.vchev{color:var(--text-dis);font-size:16px;transition:transform 250ms ease-out;justify-self:end}
+.vcard.open .vchev{transform:rotate(90deg)}
+.vcard-body{border-top:var(--hair);padding:12px 14px 14px 54px;display:grid;gap:12px}
+.vsec{display:grid;gap:4px}
+.vlabel{font-size:12px;line-height:20px;font-weight:400;color:var(--text-3);margin:0}
+.vsec p{margin:0}
+.vid{margin-left:8px;font-size:12px;color:var(--text-3)}
+.vquote-block{margin:0;padding:8px 12px;background:var(--block);border-radius:6px;color:var(--text-2)}
+.vquote-block cite{display:block;margin-top:4px;font-style:normal;font-size:12px;line-height:20px;color:var(--text-3)}
+.segbar{display:flex;background:var(--block);border-radius:8px;padding:2px}
+.seg-opt{flex:1;border:0;background:none;padding:6px 8px;min-height:36px;border-radius:6px;color:var(--text-2);display:flex;gap:4px;align-items:center;justify-content:center;white-space:nowrap}
+.seg-opt.on{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:500}
+.seg-opt.on.t-can{color:var(--green-tx)}.seg-opt.on.t-alt{color:var(--blue-tx)}.seg-opt.on.t-plan{color:var(--amber-tx)}.seg-opt.on.t-no{color:var(--red-tx)}
+.vrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:var(--hair)}
+.vrow > span{display:grid}
+.vrow-title{color:var(--text)}
+.switch{border:0;background:none;padding:4px 0;min-height:32px;display:flex;align-items:center}
+.switch .knob{width:40px;height:24px;border-radius:12px;background:var(--border);position:relative;transition:background 250ms ease-out}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform 250ms ease-out}
 .switch.on .knob{background:var(--green-tx)}
-.switch.on .knob::after{transform:translateX(14px)}
+.switch.on .knob::after{transform:translateX(16px)}
 .switch:disabled{opacity:.45;cursor:not-allowed}
 @media (max-width:700px){
   .vpage.card{padding:12px}
-  .vcard-body{padding:0 12px 12px}
-  .segbar{width:100%}
-  .seg-opt{flex:1;justify-content:center;padding:8px 4px;min-height:40px}
+  .vcard-body{padding:12px 14px 14px}
+  .seg-opt{min-height:40px;padding:8px 4px}
   .vpage.card .bar{position:sticky;bottom:0;margin:12px -12px -12px;padding:8px 12px;background:var(--card);border-top:var(--hair);flex-wrap:nowrap}
   .vpage.card .bar .btn{flex:1;min-height:44px}
 }
-@media (prefers-reduced-motion:reduce){.switch .knob,.switch .knob::after{transition:none}}
+@media (prefers-reduced-motion:reduce){.switch .knob,.switch .knob::after,.vchev{transition:none}}
 /* 追问页顶部固定任务卡 */
 .task-card{position:sticky;top:0;z-index:5;background:var(--card);border-radius:8px;margin-bottom:12px;box-shadow:0 1px 0 var(--divider)}
 .task-head{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px 16px;text-align:left;color:var(--text)}
@@ -661,21 +672,23 @@ function stepVerdict(){
     const r=REQS[id], v=S.verdicts[id], m=V_ICON[v], open=S.openCard===id;
     const seg=Object.entries(V_ICON).map(([k,o])=>`<button class="seg-opt ${k===v?'on '+o.cls:''}" data-set="${id}:${k}" aria-pressed="${k===v}" title="${VERDICT[k].label}"><span aria-hidden="true">${o.icon}</span>${o.short}</button>`).join('');
     const canSign=v==='can';
-    return `<article class="vcard ${open?'open':''}">
-      <button class="vcard-head" data-card="${id}" aria-expanded="${open}">
+    // 右侧只放一个最要紧的标记：待产品确认 > 可签
+    const badge = r.pending&&v==='no' ? '<span class="vbadge wait">待确认</span>' : S.contract[id] ? '<span class="vbadge sign">可签</span>' : '';
+    return `<article class="vcard ${m.cls}-card ${open?'open':''}">
+      <button class="vcard-head" data-card="${id}" aria-expanded="${open}" aria-label="${id} ${VERDICT[v].label}：${r.quote}">
         <span class="vicon ${m.cls}" aria-hidden="true">${m.icon}</span>
-        <span class="vmain"><span class="vquote">${r.quote}</span><span class="vsub">${r.how.split(/[。：:]/)[0]}</span></span>
-        <span class="vmeta"><span class="mini ${m.cls}">${m.short}</span>${S.contract[id]?'<span class="mini sign" title="能写进合同">可签</span>':''}${r.pending&&v==='no'?'<span class="mini wait" title="待产品确认">待确认</span>':''}</span>
+        <span class="vmain"><span class="vquote">${r.quote}</span><span class="vsub"><b class="${m.cls}-tx">${m.short}</b>　${r.how.split(/[。：:]/)[0]}</span></span>
+        ${badge}<span class="vchev" aria-hidden="true">›</span>
       </button>
       ${open?`<div class="vcard-body">
-        <p>${r.how}</p>
-        <p class="note">${id}　${r.scene}</p>
-        <div class="vev">${r.src==='未找到'?'<span class="note">没找到依据</span>':`<span class="note">依据</span><div class="quote">${r.excerpt}<div class="note">${r.src}</div></div>`}</div>
-        <div class="vact">
-          <div class="segbar" role="group" aria-label="${id} 改判">${seg}</div>
-          <button class="switch ${S.contract[id]?'on':''}" data-csw="${id}" role="switch" aria-checked="${!!S.contract[id]}" ${canSign?'':'disabled'}><span class="knob"></span>能写进合同</button>
+        <section class="vsec"><h3 class="vlabel">说明</h3><p>${r.how}</p></section>
+        <section class="vsec"><h3 class="vlabel">场景</h3><p class="muted">${r.scene}<span class="vid">${id}</span></p></section>
+        <section class="vsec"><h3 class="vlabel">依据</h3>${r.src==='未找到'?'<p class="muted">知识库里没找到，已放进发给产品的清单</p>':`<blockquote class="vquote-block">${r.excerpt}<cite>${r.src}</cite></blockquote>`}</section>
+        <section class="vsec"><h3 class="vlabel">调整判定</h3><div class="segbar" role="group" aria-label="${id} 改判">${seg}</div></section>
+        <div class="vrow">
+          <span><span class="vrow-title">能写进合同</span>${canSign?'':'<span class="note">只有「能做」的条目可以</span>'}</span>
+          <button class="switch ${S.contract[id]?'on':''}" data-csw="${id}" role="switch" aria-checked="${!!S.contract[id]}" aria-label="能写进合同" ${canSign?'':'disabled'}><span class="knob"></span></button>
         </div>
-        ${canSign?'':'<p class="note">只有「能做」的条目能写进合同</p>'}
       </div>`:''}
     </article>`;
   }).join('');
