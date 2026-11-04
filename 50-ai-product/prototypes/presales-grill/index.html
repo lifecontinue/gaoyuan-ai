@@ -180,6 +180,56 @@ th{font-weight:500;background:var(--block);color:var(--text-2)}
   .vpage.card .bar .btn{flex:1;min-height:44px}
 }
 @media (prefers-reduced-motion:reduce){.switch .knob,.switch .knob::after,.vchev{transition:none}}
+/* 手机 App 化：首页、底部导航、详情页顶栏 */
+.card{border-radius:12px}
+.nav button{display:flex;align-items:center;gap:8px}
+.nav svg{width:16px;height:16px;flex:none}
+.home{display:grid;gap:16px;max-width:720px}
+.home-head .note{margin:0}
+.stat-card{display:grid;grid-template-columns:repeat(3,1fr);background:#16335F;color:#fff;border-radius:16px;padding:16px 8px}
+.stat{display:grid;justify-items:center;gap:2px}
+.stat b{font-size:20px;line-height:28px;font-weight:500}
+.stat span{font-size:12px;line-height:20px;opacity:.75}
+.stat+.stat{box-shadow:inset .5px 0 0 rgba(255,255,255,.25)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:grid;gap:2px;align-content:start;text-align:left;border:0;border-radius:16px;padding:16px;min-height:112px;background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tile b{font-weight:500}
+.tile .tile-sub{font-size:12px;line-height:20px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-icon{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);margin-bottom:8px}
+.tile-primary{background:var(--primary);color:#fff}
+.tile-primary .tile-sub{color:rgba(255,255,255,.8)}
+.tile-primary .tile-icon{background:rgba(255,255,255,.18);color:#fff}
+.tile:focus-visible,.ccard-main:focus-visible,.cdel:focus-visible,.back:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-top:4px}
+.clist{display:grid;gap:8px}
+.ccard{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ccard-main{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;border:0;background:none;padding:12px 4px 12px 14px;text-align:left;color:var(--text);border-radius:12px;min-width:0}
+.cavatar{width:40px;height:40px;border-radius:12px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-weight:500}
+.cinfo{min-width:0;display:grid;gap:2px}
+.cname{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.csub{font-size:12px;line-height:20px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cprog{height:4px;border-radius:2px;background:var(--divider);overflow:hidden;margin-top:4px}
+.cprog span{display:block;height:100%;background:var(--primary)}
+.cside{display:grid;justify-items:end;gap:2px;white-space:nowrap}
+.mini-chip{font-size:12px;line-height:20px;padding:0 8px;border-radius:10px}
+.cdel{width:40px;height:40px;margin-right:6px;border:0;border-radius:50%;background:none;color:var(--text-3);display:grid;place-items:center}
+.cdel:hover{background:var(--block);color:var(--red-tx)}
+.cdel svg{width:18px;height:18px}
+.case-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.back{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--card);color:var(--text);font-size:20px;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.case-title{font-size:16px;line-height:24px;font-weight:500;margin:0}
+@media (max-width:700px){
+  .side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;padding:4px 8px calc(4px + env(safe-area-inset-bottom));border-top:var(--hair);border-bottom:0}
+  .side .brand{display:none}
+  .nav{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+  .nav button{flex-direction:column;justify-content:center;gap:2px;font-size:12px;line-height:16px;padding:6px 0;min-height:48px;background:none}
+  .nav button:hover{background:none}
+  .nav svg{width:22px;height:22px}
+  .nav button[aria-current="page"]{background:none;color:var(--primary)}
+  .main{padding-bottom:84px}
+  body.in-case .side{display:none}
+  body.in-case .main{padding-bottom:12px}
+}
 /* 追问页顶部固定任务卡 */
 .task-card{position:sticky;top:0;z-index:5;background:var(--card);border-radius:8px;margin-bottom:12px;box-shadow:0 1px 0 var(--divider)}
 .task-head{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px 16px;text-align:left;color:var(--text)}
@@ -319,8 +369,8 @@ iframe{width:100%;height:620px;border:var(--hair);border-radius:8px;background:#
   <aside class="side">
     <div class="brand">售前需求助手</div>
     <nav class="nav" aria-label="主导航">
-      <button data-nav="flow">流程总览</button>
-      <button data-nav="list">我的客户</button>
+      <button data-nav="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.8a3.3 3.3 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.2 3.6 5.2"/></svg><span>客户</span></button>
+      <button data-nav="flow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 11h6M9 15h6M9 7h3"/></svg><span>流程</span></button>
     </nav>
   </aside>
   <main class="main" id="app"></main>
@@ -424,6 +474,7 @@ function render(){
     b.toggleAttribute('aria-current', b.dataset.nav===(S.view==='flow'?'flow':'list'));
     if(b.hasAttribute('aria-current')) b.setAttribute('aria-current','page');
   });
+  document.body.classList.toggle('in-case', S.view==='case');
   if(S.view==='flow') app.innerHTML = viewFlow();
   else if(S.view==='list') app.innerHTML = viewList();
   else app.innerHTML = viewCase();
@@ -483,21 +534,32 @@ function stageLabel(){
   if(S.step>=3) return ['待批准','t-plan'];
   return ['追问中','t-alt'];
 }
+// 首页：概览卡 + 两个快捷入口 + 客户卡片列表（示例数据）
 function viewList(){
   const [lab,cls]=stageLabel();
-  const noCount=S.reqIds.filter(id=>(S.verdicts[id]||REQS[id].verdict)==='no').length;
-  return `
-  <div class="stack">
-    <div class="row between"><h1>我的客户<span class="demo">示例数据</span></h1><button class="btn btn-primary" data-new>新建客户需求</button></div>
-    <section class="card tbl-wrap">
-      <table>
-        <thead><tr><th>客户</th><th>进度</th><th>需求</th><th>做不到</th><th>更新时间</th><th>操作</th></tr></thead>
-        <tbody>
-          <tr><td>${CUSTOMER.name}<div class="note">${CUSTOMER.brief}</div></td><td><span class="tag ${cls}">${lab}</span></td><td>${S.reqIds.length} 条</td><td>${noCount} 条</td><td>2026-11-02 15:20</td><td><button class="btn-link" data-open>继续</button></td></tr>
-          <tr><td>江苏某银行分行<div class="note">金融，约 800 人</div></td><td><span class="tag t-can">已产出</span></td><td>5 条</td><td>1 条</td><td>2026-10-30 11:02</td><td><button class="btn-link" data-open>查看</button></td></tr>
-        </tbody>
-      </table>
+  const step=S.approved?5:S.step, pending=S.reqIds.filter(id=>(S.verdicts[id]||REQS[id].verdict)==='no'&&REQS[id].pending).length;
+  const names=['录入','追问','判定','产出','回填'];
+  const card=(name,sub,lab,cls,round,st,attr)=>`<article class="ccard"><button class="ccard-main" ${attr}>
+      <span class="cavatar" aria-hidden="true">${name[0]}</span>
+      <span class="cinfo"><span class="cname">${name}</span><span class="csub">${sub}</span><span class="cprog" aria-hidden="true"><span style="width:${st/5*100}%"></span></span></span>
+      <span class="cside"><span class="mini-chip ${cls}">${lab}</span><span class="note">第 ${round} 轮　${names[st-1]}</span></span>
+    </button></article>`;
+  return `<div class="home">
+    <header class="home-head row between"><div><p class="note">11 月 4 日　周三</p><h1>售前需求助手</h1></div><span class="demo">示例数据</span></header>
+    <section class="stat-card" aria-label="概览">
+      <div class="stat"><b>${S.approved?0:1}</b><span>进行中</span></div>
+      <div class="stat"><b>${S.step>=3&&!S.approved?1:0}</b><span>待批准</span></div>
+      <div class="stat"><b>${pending}</b><span>待产品确认</span></div>
     </section>
+    <div class="tiles">
+      <button class="tile tile-primary" data-new><span class="tile-icon" aria-hidden="true">＋</span><b>新建客户需求</b><span class="tile-sub">贴进会议记录就能开始</span></button>
+      <button class="tile" data-open><span class="tile-icon" aria-hidden="true">↺</span><b>继续上次</b><span class="tile-sub">${CUSTOMER.name}　${names[step-1]}</span></button>
+    </div>
+    <div class="sec-head"><h2>客户</h2><span class="note">2 个</span></div>
+    <div class="clist">
+      ${card(CUSTOMER.name,CUSTOMER.brief,lab,cls,S.round,step,'data-open')}
+      ${card('江苏某银行分行','金融，约 800 人','已产出','t-can',1,5,'data-open')}
+    </div>
   </div>`;
 }
 
@@ -514,7 +576,7 @@ function viewCase(){
   }).join('')}</div><span class="steps-now">${S.step}/${names.length}<span class="lab">　${names[S.step-1][0]}</span></span>`;
   const body = S.analyzing ? viewAnalyze() : [null,stepInput,stepGrill,stepVerdict,stepOutput,stepFeedback][S.step]();
   return `
-    <div class="row between"><div><button class="btn-link" data-go="list">我的客户</button><span class="note">　/　${CUSTOMER.name}　第 ${S.round} 轮</span></div><span class="demo">示例数据</span></div>
+    <header class="case-top"><button class="back" data-go="list" aria-label="返回客户列表">‹</button><div style="flex:1"><h1 class="case-title">${CUSTOMER.name}</h1><span class="note">第 ${S.round} 轮</span></div><span class="demo">示例数据</span></header>
     <nav class="steps" aria-label="进度">${steps}</nav>
     ${body}`;
 }
