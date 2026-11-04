@@ -428,7 +428,7 @@ function viewFlow(){
       <h2>主流程</h2>
       <div class="flow">
         <div class="node"><b>1 录入客户信息</b><span class="note">粘贴会议记录、聊天或自己写几句</span></div><span class="arrow" aria-hidden="true">→</span>
-        <div class="node"><b>2 追问补齐</b><span class="note">一次问一个，给推荐答案；右侧实时出需求清单</span></div><span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>2 追问补齐</b><span class="note">一次问一个，给候选回答；右侧实时出需求清单</span></div><span class="arrow" aria-hidden="true">→</span>
         <div class="node"><b>3 逐条判定</b><span class="note">每条需求四档之一，附证据；合同可写受检查</span></div><span class="arrow" aria-hidden="true">→</span>
         <div class="node"><b>4 批准</b><span class="note">售前确认判定；驳回就回到追问</span></div><span class="arrow" aria-hidden="true">→</span>
         <div class="node"><b>5 两份产出</b><span class="note">发给产品的清单（复制）；客户版场景说明（HTML）</span></div><span class="arrow" aria-hidden="true">→</span>
@@ -455,7 +455,7 @@ function viewFlow(){
         <tbody>
           <tr><td>我的客户</td><td>看每个客户走到哪一步</td><td>新建客户需求、继续</td><td>PS-25</td></tr>
           <tr><td>录入客户信息</td><td>把手上的信息丢进来</td><td>开始追问</td><td>PS-25</td></tr>
-          <tr><td>追问补齐</td><td>回答助手的问题，看需求清单成形</td><td>选推荐答案、自己填、跳过、需求已清楚</td><td>PS-25</td></tr>
+          <tr><td>追问补齐</td><td>回答助手的问题，看需求清单成形</td><td>选候选回答、自己填、跳过、需求已清楚</td><td>PS-25</td></tr>
           <tr><td>逐条判定</td><td>核对每条判定和证据，必要时改判</td><td>查看证据、改判、批准判定、驳回并补问</td><td>PS-25</td></tr>
           <tr><td>产出：发给产品</td><td>把做不到的打包发产品</td><td>复制全部</td><td>PS-26</td></tr>
           <tr><td>产出：客户版场景说明</td><td>给客户回报和确认</td><td>预览、下载 HTML</td><td>PS-27</td></tr>
@@ -568,7 +568,7 @@ function stepGrill(){
     <div class="ask">
       <div class="ask-head"><span class="ask-no">第 ${qNo} 问</span><span class="tag t-neutral">${gapLabel(q.gap)}</span></div>
       <h2 class="ask-q">${q.text}</h2>
-      <div class="opts" role="list">${q.options.map((o,i)=>`<button class="opt" role="listitem" data-ans="${i}" title="${o.t}"><kbd>${i+1}</kbd><span class="opt-text">${o.t}</span>${o.rec?'<span class="tag t-can">推荐</span>':''}</button>`).join('')}</div>
+      <div class="opts" role="list">${q.options.map((o,i)=>`<button class="opt" role="listitem" data-ans="${i}" title="${o.t}"><kbd>${i+1}</kbd><span class="opt-text">${o.t}</span></button>`).join('')}</div>
       <div class="free"><input id="freeAns" placeholder="都不对？直接写客户怎么说的" aria-label="自己填写回答"><button class="btn" data-free>回答</button><button class="btn-link" data-skip>先跳过</button></div>
       <p class="note key-hint">按数字键 1～${q.options.length} 也可以直接选</p>
     </div>` : `<div class="ask done-ask"><h2 class="ask-q">信息问齐了</h2><p class="muted">共整理出 ${S.reqIds.length} 条需求，可以开始判定。</p></div>`;
