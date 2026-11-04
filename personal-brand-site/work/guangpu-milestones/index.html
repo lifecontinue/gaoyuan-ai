@@ -173,6 +173,9 @@
     letter-spacing: -.01em;
   }
   section.ms > .ms-body { padding: 20px 24px 26px; }
+  /* 窄屏时详表在卡片内横向滚动，不撑宽整页 */
+  section.ms > .ms-body { overflow-x: auto; }
+  table.req { min-width: 560px; }
   .goal {
     background: var(--brand-soft);
     border-left: 4px solid var(--brand);
@@ -255,7 +258,24 @@
   .b-review { background: var(--review-bg); color: var(--review); }
   .b-backlog { background: var(--backlog-bg); color: var(--backlog); }
   .b-board { background: var(--board-bg); color: var(--board); }
-  .b-none { background: var(--warn-bg); color: var(--warn); }
+  .b-none { background: transparent; color: var(--warn); border: 1px dashed var(--warn); }
+  .b-ticket { background: var(--backlog-bg); color: var(--backlog); border: 1px solid var(--backlog); }
+  nav.toc a small { display: block; font-family: var(--mono); font-size: 10.5px; color: #8fa3c4; margin-top: 1px; }
+  nav.toc .sib { margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); }
+  .xlinks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 13px; }
+  .xlinks a { padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: #fafbfd; }
+  .flow { margin: 8px 0 10px; padding-left: 1.4em; }
+  .flow li { margin-bottom: 4px; }
+  .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
+  .split > div { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fafbfd; font-size: 13.5px; }
+  .split b { display: block; font-family: var(--mono); font-size: 12.5px; color: var(--brand); margin-bottom: 2px; }
+  .callout { border: 1px solid #fde68a; background: #fffbeb; border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin: 10px 0; }
+  details.fold > summary { cursor: pointer; font-weight: 650; font-size: 15px; margin: 22px 0 10px; list-style-position: inside; }
+  details.fold > summary .cnt { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 6px; }
+  .fold-ctl { display: flex; gap: 8px; margin: -6px 0 16px; }
+  .fold-ctl button { font: inherit; font-size: 12.5px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer; }
+  .roadmap .r .w a { color: var(--muted); }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
   .legend {
     display: flex; flex-wrap: wrap; gap: 8px 14px;
     font-size: 12.5px; color: var(--muted); margin: 0 0 18px;
@@ -285,7 +305,8 @@
       height: auto;
       max-height: none;
     }
-    main { padding: 18px 14px 40px; }
+    main { padding: 18px 14px 40px; min-width: 0; }
+    section.ms > .ms-body { padding: 16px 14px 20px; }
   }
   @media print {
     body { background: #fff; font-size: 11.5pt; }
@@ -297,6 +318,8 @@
       break-inside: avoid;
     }
     a { color: inherit; text-decoration: none; }
+    details.fold > summary { list-style: none; }
+    .fold-ctl { display: none; }
   }
 </style>
 </head>
@@ -308,13 +331,18 @@
   <div class="meta">口径 2026-11-04 · Asia/Shanghai<br/>给 gaoyuan</div>
   <a href="#overview">总览与路线</a>
   <a href="#m0">M0 基线对照 <span class="tag b-done">已上线</span></a>
-  <a href="#m1">M1 批量导入与建图提效 <span class="tag b-wip">当前</span></a>
-  <a href="#m2">M2 人·岗·图关系重构 <span class="tag b-wip">进行中</span></a>
-  <a href="#m3">M3 资源弹性与启用松绑 <span class="tag b-backlog">Backlog</span></a>
-  <a href="#m4">M4 一图多岗与标签树维护 <span class="tag b-board">待排期</span></a>
-  <a href="#m5">M5 验证与题库进阶 <span class="tag b-board">待拍板</span></a>
-  <a href="#m6">M6 AI 建图与体验收尾 <span class="tag b-backlog">远期</span></a>
+  <a href="#m1">M1 批量导入与建图提效 <span class="tag b-wip">当前</span><small>PRO-333 · 385 · 348</small></a>
+  <a href="#m2">M2 人·岗·图关系重构 <span class="tag b-wip">进行中</span><small>PRO-339</small></a>
+  <a href="#m3">M3 资源弹性与启用松绑 <span class="tag b-backlog">Backlog</span><small>PRO-382 · 384</small></a>
+  <a href="#m4">M4 一图多岗与标签树维护 <span class="tag b-board">待排期</span><small>池 A1 · A5 · A6 · 无票</small></a>
+  <a href="#m5">M5 验证与题库进阶 <span class="tag b-board">待拍板</span><small>PRO-387</small></a>
+  <a href="#m6">M6 AI 建图与体验收尾 <span class="tag b-backlog">远期</span><small>PRO-386 · 327</small></a>
   <a href="#oos">明确不做</a>
+  <div class="sib">
+  <a href="/work/product-milestones/">← 产品线总览</a>
+  <a href="/work/survey-milestones/">调查 · 评估 Milestone</a>
+  <a href="/guangpu/">光谱需求总览</a>
+  </div>
 </nav>
 
 <main>
@@ -324,15 +352,18 @@
   <div class="pill-row">
     <span class="pill">口径日期 · 2026-11-04 Asia/Shanghai</span>
     <span class="pill">受众 · gaoyuan（时代光华 AI PM）</span>
-    <span class="pill">Linear 未完成 6 条 · 池约 12 主题 · 11-04 新诉求 4 条未建票 + B-match 1 条</span>
+    <span class="pill">Linear 光谱未完成 10 条（含 11-04 晚新建 PRO-384–387）</span>
+    <span class="pill">池开放无票：A1 · A2 · A4 · A5 · A6 · A7 · A8 · A9 · A03 · B-match</span>
   </div>
+  <div class="xlinks" aria-label="同站页面"><a href="/work/product-milestones/">产品线总览（光谱当前 M1）</a><a href="/work/survey-milestones/">调查 · 评估 Milestone</a><a href="/guangpu/">光谱需求总览与原型</a></div>
   <div class="sources">
     <strong>真源：</strong>
     未上线清单 <code>2026-11-04-光谱未上线需求清单.md</code> ·
     demand-analysis 同步件 <code>2026-11-04-光谱未上线开放项-给PM同步.md</code> ·
     11-04 intake / 客户会后开环 ·
     10-30 资料非必需拍板 ·
-    11-02 岗位序列与胜任力导入业务流程 / 能力等级导入定稿。
+    11-02 岗位序列与胜任力导入业务流程 / 能力等级导入定稿 ·
+    Linear SDGH 需求板（2026-11-04 晚读取）。
   </div>
 </header>
 
@@ -340,19 +371,20 @@
   <span><span class="badge b-done">已上线</span> 仅对照</span>
   <span><span class="badge b-wip">进行中</span> In Progress</span>
   <span><span class="badge b-review">评审中</span> In Review</span>
-  <span><span class="badge b-backlog">Backlog</span> 已建票未排紧</span>
+  <span><span class="badge b-ticket">Backlog</span> 已建票，未排期</span>
   <span><span class="badge b-board">待拍板 / 待排期</span> 方案或票未齐</span>
-  <span><span class="badge b-none">无独立票</span> 建议挂靠现有包</span>
+  <span><span class="badge b-none">池开放 · 无票</span> 尚未建票，挂靠现有包或待拍板</span>
 </div>
+<div class="fold-ctl no-print"><button type="button" data-fold="open">展开全部详表</button><button type="button" data-fold="close">收起全部详表</button></div>
 
 <div class="roadmap" aria-label="路线图摘要">
   <div class="r"><div class="n">M0</div><div class="t">基线对照</div><div class="w">PRO-335 Done · 11-03</div></div>
-  <div class="r"><div class="n">M1 · 当前</div><div class="t">批量导入与建图提效</div><div class="w">约至 11-13 · PRO-333 主包</div></div>
+  <div class="r"><div class="n">M1 · 当前</div><div class="t">批量导入与建图提效</div><div class="w">约至 11-13 · PRO-333 主包 · PRO-385 · PRO-348</div></div>
   <div class="r"><div class="n">M2</div><div class="t">人·岗·图关系重构</div><div class="w">约 11 底–12 中 · PRO-339</div></div>
-  <div class="r"><div class="n">M3</div><div class="t">资源弹性与启用松绑</div><div class="w">PRO-382 + N1</div></div>
-  <div class="r"><div class="n">M4</div><div class="t">一图多岗与标签树</div><div class="w">池 A1 / A5 / A6</div></div>
-  <div class="r"><div class="n">M5</div><div class="t">验证与题库进阶</div><div class="w">须先拍板 N5 / A03</div></div>
-  <div class="r"><div class="n">M6</div><div class="t">AI 建图与体验收尾</div><div class="w">N4 · A2/A4/A7/A8 · PRO-327</div></div>
+  <div class="r"><div class="n">M3</div><div class="t">资源弹性与启用松绑</div><div class="w">PRO-382 · PRO-384</div></div>
+  <div class="r"><div class="n">M4</div><div class="t">一图多岗与标签树</div><div class="w">池 A1 / A5 / A6 · 无票</div></div>
+  <div class="r"><div class="n">M5</div><div class="t">验证与题库进阶</div><div class="w">PRO-387 · A03 无票 · 先拍板</div></div>
+  <div class="r"><div class="n">M6</div><div class="t">AI 建图与体验收尾</div><div class="w">PRO-386 · PRO-327 · 池 A2/A4/A7/A8</div></div>
 </div>
 
 <!-- ========== M0 ========== -->
@@ -375,7 +407,7 @@
       <p class="gain">收益：建标与挂资料可同屏完成；为 M3「非必需启用」与「多文件一次传」打底。</p>
     </div>
 
-    <h3>需求点与开发功能</h3>
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">2 条</span></summary>
     <table class="req">
       <thead>
         <tr><th>需求点</th><th>需开发 / 已交付功能</th><th>关联票 / 来源</th><th>状态</th></tr>
@@ -384,17 +416,18 @@
         <tr>
           <td>三级（末级）标签支持本地上传资料</td>
           <td>配资源步骤上传入口；文件进资料中心并可被该末级引用；格式与可见范围按现网规则</td>
-          <td class="mono">PRO-335 / SDGH-8368</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-335" target="_blank" rel="noopener">PRO-335</a> / SDGH-8368</td>
           <td><span class="badge b-done">Done</span></td>
         </tr>
         <tr>
           <td>多份资料一次同步上传（验收缺口）</td>
-          <td>现网点验是否已支持多选/多文件；若仅单文件 → 小增强（见 M3 · N1）</td>
-          <td class="mono">N1 · 挂 PRO-335 验收</td>
-          <td><span class="badge b-board">待点验</span></td>
+          <td>PRO-335 只覆盖单文件；多选 / 多文件已单独建票，落在 M3</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-384" target="_blank" rel="noopener">PRO-384</a>（N1 · 关联 PRO-335）</td>
+          <td><span class="badge b-ticket">Backlog</span></td>
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号（对照）</h3>
     <ul class="accept">
@@ -405,7 +438,7 @@
     <div class="meta-bar">
       <span>关联：PRO-335 Done（2026-11-03）</span>
       <span>Jira：SDGH-8368</span>
-      <span>不做：本 M 不覆盖启用规则松绑（→ M3）</span>
+      <span>不做：本 M 不覆盖启用规则松绑与多文件上传（→ M3）</span>
     </div>
   </div>
 </section>
@@ -420,93 +453,109 @@
     <span class="badge b-wip">当前周期</span>
   </div>
   <div class="ms-body">
-    <p class="goal"><strong>目标一句话：</strong>让客户把线下 Excel 里的岗位序列 / 分层分类标签树与学员末级能力等级 L1–L5 低成本灌进光谱；导入失败时管理员在<strong>页面内一次看清行级错误</strong>；标签名不再被长度与常用符号卡死；能力结果可进入能岗匹配度计算（含线下考试分比例口径）。</p>
+    <p class="goal"><strong>目标一句话：</strong>管理员能<strong>选学员下载模板 → 填新成绩 → 同页上传 → 页内一次看全错误并直接改 → 确认提交</strong>，把业务线下定稿的能力等级 L1–L5 低成本灌进光谱；标签树可批量建，标签名不再被长度与常用符号卡死。</p>
 
-    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
-    <div class="scene">
-      <div class="who">场景 1 · 管理员 · 供应链 / 心连心岗位序列灌标</div>
-      <p>客户 HR / 业务已在线下整理《分层分类目录》《任职资格标准》。管理员下载标签/标准树模板，按一/二/三级标填入后导入，生成光谱标签树并可选填写适用层级（L1–L5，仅控制展示）。随后建图、挂资源、关联岗位、启用下发。</p>
-      <p class="pain">痛点：手工逐条建标极慢；导入体验不友好；特殊符号或超长三级标名直接失败；错误只靠下载 xls，定位慢。</p>
-      <p class="gain">收益：批量建标可复用客户原表结构；PRO-348 放宽名称约束后，「含括号/破折号/较长技能名」的真实岗位项可入库。</p>
-    </div>
-    <div class="scene">
-      <div class="who">场景 2 · 管理员 · 线下评委定稿后导入能力等级</div>
-      <p>评委线下完成勾叉与评议后，业务整理各学员各末级的<strong>最终 L1–L5</strong>（可选显式「待提升=是」）。管理员走「能力等级导入」：导出预填模板 → 填 L → 页内预览（行号/状态色/原因）→ 确认写入。光谱不重算评委比例，不替代外部任职资格。</p>
-      <p class="pain">痛点：旧「评分/胜任力指数」语义与客户 L 职级不对齐；误把 A–E 标准要求当学员结果导入。</p>
-      <p class="gain">收益：入口改名与双模板隔离概念；写入即最终结果，短板学习可基于「待提升」与 L 结果展开。</p>
-    </div>
-    <div class="scene">
-      <div class="who">场景 3 · 管理员 · 导入报错一次看全（N2 / 开环）</div>
-      <p>无论是能力等级导入还是图谱/标签 Excel 导入，管理员上传后若有校验失败，<strong>不必先下错误表</strong>也能在后端页面看到全部（或本批收齐的）行级错误：哪一行、哪个字段、什么原因。错误量过大时可分页/筛选；下载明细可作为可选保留。</p>
-      <p class="pain">痛点：现网图谱导入写 errorList 后落文件再下载；分段遇错即提前 return，难以「一次看全」。</p>
-      <p class="gain">收益：客户试点（如供应链中心真实岗位数据）迭代速度明显提高；与领导演示时失败可当场解释。</p>
-    </div>
-    <div class="scene">
-      <div class="who">场景 4 · 产品/实施 · 能岗匹配度（B-match）</div>
-      <p>光谱侧合并「线上考试/末级测评」与「线下面试分」时，需明确分值比例与录入模板/说明，避免实施口头约定不一致。可与 PRO-333 旁支同迭代给开发细则。</p>
-      <p class="pain">痛点：开环已点名，但尚无独立票与成文规则。</p>
-      <p class="gain">收益：匹配度展示与导入字段有据可依，试点汇报页口径统一。</p>
+    <h3>三张票怎么分工</h3>
+    <div class="split">
+      <div><b><a href="https://linear.app/product-randd-and-production/issue/PRO-333" target="_blank" rel="noopener">PRO-333</a> · 父包</b>岗位序列 / 职级字段；L1–L5 与职级对应、职级差异化可见验证；标签树导入模板字段（类型、适用层级）。</div>
+      <div><b><a href="https://linear.app/product-randd-and-production/issue/PRO-385" target="_blank" rel="noopener">PRO-385</a> · 333 子项 · High</b>能力等级<strong>导入导出全流程</strong>：选学员 → 模板 → 同页上传 → 页内预览全部错误 → 后台改错 → 确认提交。11-04 客户确认。</div>
+      <div><b><a href="https://linear.app/product-randd-and-production/issue/PRO-348" target="_blank" rel="noopener">PRO-348</a> · 独立</b>只管名称规则：三级标签名 50 字 + 常用特殊符号，手工建标与所有导入共用。</div>
     </div>
 
-    <h3>需求点与开发功能（详表）</h3>
+    <h3>达到后可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 1（主）· 管理员 · 评委定稿后批量录入能力等级（PRO-385）</div>
+      <ol class="flow">
+        <li><strong>选学员再下载：</strong>下载模板前可选学员，默认是图谱全部关联学员，也可只选一部分。</li>
+        <li><strong>模板内容：</strong>学员基本信息 + 一 / 二 / 三级标签名 + 该标签<strong>最新录入成绩</strong> + 末列<strong>新成绩</strong>（管理员只填这一列）。</li>
+        <li><strong>同页上传、页内改错：</strong>上传后在同一页预览，一次展示全部错误（行、字段、原因），可在后台直接改错，改完确认后提交。错误表下载只是可选旁路。</li>
+      </ol>
+      <p class="pain">痛点：现网错误只能下载 xls 看；遇错提前停，改一处传一次。</p>
+      <p class="gain">收益：一次上传就能改完提交；写入即业务最终结果，系统不重算评委比例。</p>
+    </div>
+    <div class="scene">
+      <div class="who">场景 2 · 管理员 · 按客户原表批量灌标签树（PRO-333 + PRO-348）</div>
+      <p>按一 / 二 / 三级标填客户《分层分类目录》后导入，生成标签树并可选填适用层级（L1–L5，只控制展示）。含括号、破折号、较长技能名的真实岗位项可入库。</p>
+      <p class="pain">痛点：逐条手工建标慢；特殊符号或超长标名直接导入失败。</p>
+    </div>
+    <div class="scene">
+      <div class="who">场景 3 · 产品 / 实施 · 能岗匹配度口径（B-match，无票）</div>
+      <p>线上考试 / 末级测评分与线下面试分合并时，分值比例、录入字段和说明文案要成文，避免实施各说各话。可作为 PRO-333 旁支给开发细则。</p>
+    </div>
+
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">8 条</span></summary>
     <table class="req">
       <thead>
         <tr><th style="width:22%">需求点</th><th>需开发的功能（详细）</th><th style="width:22%">关联票 / 来源</th><th style="width:12%">状态</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>岗位序列 / 职级与标签树批量导入体验</td>
-          <td>标签/标准树 Excel 模板（一/二/三级标、类型、可选适用层级）；导入校验与禁止写入 A–E 为结果；管理端导入引导与失败可读性；对齐 Feature A01 / A20 低成本防错</td>
-          <td class="mono">PRO-333 · Feature A01/A20</td>
+          <td>选学员下载能力等级模板</td>
+          <td>下载前选学员（默认全部关联学员，可部分选）；模板列：学员基本信息、一/二/三级标签名、该标签最新录入成绩、末列新成绩；后台生成，按钮「生成中 / 下载 / 失败重试」沿用 11-02 定稿</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-385" target="_blank" rel="noopener">PRO-385</a> · 11-04 客户确认 · 11-02 定稿 F1–F6</td>
+          <td><span class="badge b-ticket">Backlog · High</span></td>
+        </tr>
+        <tr>
+          <td>同页上传 · 页内一次展示全部错误（N2）</td>
+          <td>上传后同页预览；一次跑完全部校验再展示，按行 / 字段 / 原因列出，可筛选只看错误；不再遇错提前 return；下载错误明细为可选旁路</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-385" target="_blank" rel="noopener">PRO-385</a>（承接 N2）</td>
+          <td><span class="badge b-ticket">Backlog · High</span></td>
+        </tr>
+        <tr>
+          <td>后台直接改错并确认提交</td>
+          <td>预览内可修改出错单元格并即时重新校验；确认后整批写入（失败整批撤回）；能力等级不低于学员最低等级；写入即最终结果，不重算评委比例</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-385" target="_blank" rel="noopener">PRO-385</a></td>
+          <td><span class="badge b-ticket">Backlog · High</span></td>
+        </tr>
+        <tr>
+          <td>岗位序列 / 职级字段与 L1–L5 对应</td>
+          <td>职级与适用层级对应关系；多职级取最低等级；职级差异化可见验证；入口改名「能力等级导入」（A21），心连心路径隐藏旧 0–100 评分主入口</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-333" target="_blank" rel="noopener">PRO-333</a> · Feature A18 / A21</td>
           <td><span class="badge b-wip">In Progress</span></td>
         </tr>
         <tr>
-          <td>能力等级 L1–L5 结果导入</td>
-          <td>「能力等级导入」入口（A21 文案）；双模板中的结果轨字段（工号、图谱ID、末级标签ID、L1–L5、待提升等）；预览表 D.1（行号/状态色/原因）；确认写入；心连心路径隐藏旧 0–100 评分主入口</td>
-          <td class="mono">PRO-333 · Feature A18 · 11-02 定稿 F1–F6</td>
+          <td>标签 / 标准树批量导入</td>
+          <td>模板（一/二/三级标、类型、可选适用层级）；禁止把 A–E 写成结果；导入引导与失败可读性；建图导入是否复用 PRO-385 的页内预览组件，在 PRO-385 评审时一并定</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-333" target="_blank" rel="noopener">PRO-333</a> · Feature A01 / A20</td>
           <td><span class="badge b-wip">In Progress</span></td>
         </tr>
         <tr>
           <td>三级标签名 50 字 + 常用特殊符号</td>
-          <td>放宽末级/导入名称长度与字符集校验；覆盖图谱名/标签名导入路径；与池 A10 对账</td>
-          <td class="mono">PRO-348 / SDGH-8399 · A10</td>
+          <td>放宽末级 / 导入名称长度与字符集校验；覆盖图谱名 / 标签名导入路径；与池 A10 对账</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-348" target="_blank" rel="noopener">PRO-348</a> / SDGH-8399 · A10</td>
           <td><span class="badge b-review">In Review</span></td>
         </tr>
         <tr>
-          <td>导入报错页内一次性展示（不要只靠导出表）</td>
-          <td>页内错误列表（跨 Sheet 尽量收齐后再展示）；行/子表定位文案；可选保留「下载错误明细」；评估改现网分段提前 return。范围需锁：能力等级轨 / 图谱导入轨 / 两者皆要</td>
-          <td class="mono">N2 · 开环 B-open · <strong>无独立票</strong>（建议并 PRO-333）</td>
-          <td><span class="badge b-none">无独立票 · P0</span></td>
-        </tr>
-        <tr>
           <td>能岗匹配度：考试 vs 线下面试分值比例与录入模板</td>
-          <td>产品细则成文（比例、字段、说明文案）；导入或录入模板；匹配度计算读取约定字段；与「末级测评分 + 线下分合并」话术一致</td>
-          <td class="mono">B-match · 11-04 开环 · <strong>无独立票</strong>（可并 PRO-333 旁支）</td>
-          <td><span class="badge b-none">无独立票</span></td>
+          <td>产品细则成文（比例、字段、说明文案）；导入或录入模板；匹配度计算读取约定字段</td>
+          <td class="mono">B-match · 11-04 开环 · 无票（可并 PRO-333 旁支）</td>
+          <td><span class="badge b-none">池开放 · 无票</span></td>
         </tr>
         <tr>
           <td>光谱优化总包跟踪</td>
-          <td>不单独交付功能；作为 PRO-290 父项跟踪本周期切片与汇报材料</td>
-          <td class="mono">PRO-290 · due 约 11-06</td>
+          <td>不单独交付功能；作为父项跟踪本周期切片与汇报材料</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-290" target="_blank" rel="noopener">PRO-290</a> · due 约 11-06</td>
           <td><span class="badge b-wip">In Progress</span></td>
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号</h3>
     <ul class="accept">
-      <li>用客户脱敏表可走通：标签树导入 → 建图启用 → 能力等级导入预览写入。</li>
-      <li>故意造错的 Excel：页内可见行级原因；不必依赖导出表才能继续改。</li>
+      <li>只选 3 名学员下载，模板只含这 3 人；每行带该标签最新录入成绩，末列为空待填。</li>
+      <li>故意造错的文件上传后，页内一次看到全部错误；在页内改完即可确认提交，不用下载重传。</li>
+      <li>用客户脱敏表走通：标签树导入 → 建图启用 → 能力等级导入写入。</li>
       <li>含常用符号、偏长三级标名的样例可入库（PRO-348）。</li>
-      <li>匹配度规则一页纸已交给开发，试点数据可按同一比例解释。</li>
-      <li>明确不做项未被本 M 偷偷带回（打分/晋级/勾叉重算）。</li>
+      <li>明确不做项未被本 M 带回（打分 / 晋级 / 勾叉重算）。</li>
     </ul>
 
     <div class="meta-bar">
       <span>主票：PRO-333 due <strong>11-13</strong></span>
+      <span>PRO-385（333 子项 · High · Backlog）</span>
       <span>PRO-348 / SDGH-8399 due 约 11-06 · In Review</span>
-      <span>Feature：A01 · A18 · A20（及 A21 入口文案）</span>
-      <span>汇报旁证：guangpu-report</span>
+      <span>Feature：A01 · A18 · A20 · A21</span>
+      <span>汇报旁证：<a href="/work/guangpu-report/">guangpu-report</a></span>
     </div>
   </div>
 </section>
@@ -543,7 +592,7 @@
       <p class="gain">收益：人发/光谱列表体验可理解；为后续「同岗不同学员不同图」打下交互基础。</p>
     </div>
 
-    <h3>需求点与开发功能（详表）</h3>
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">5 条</span></summary>
     <table class="req">
       <thead>
         <tr><th style="width:22%">需求点</th><th>需开发的功能（详细）</th><th style="width:22%">关联票 / 来源</th><th style="width:12%">状态</th></tr>
@@ -552,7 +601,7 @@
         <tr>
           <td>自动同步开关（默认开，客户可关）</td>
           <td>创建向导 / 图谱设置中的开关；开=岗图强绑定自动下发回收；关=首次灌入后固定名单，后续「关联学员」维护；文案明确两种语义</td>
-          <td class="mono">PRO-339 / SDGH-8398</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-339" target="_blank" rel="noopener">PRO-339</a> / SDGH-8398</td>
           <td><span class="badge b-wip">In Progress</span></td>
         </tr>
         <tr>
@@ -581,6 +630,7 @@
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号</h3>
     <ul class="accept">
@@ -608,7 +658,7 @@
     <span class="badge b-backlog">Backlog · 应推进</span>
   </div>
   <div class="ms-body">
-    <p class="goal"><strong>目标一句话：</strong>末级考试/资料改为<strong>非必需</strong>；管理员在第三步一眼看到「未挂资源」的标签；支持三类绑定（仅资料 / 有资料+题 / 暂无）；并确认或补齐「多份资料一次上传」。</p>
+    <p class="goal"><strong>目标一句话：</strong>末级考试/资料改为<strong>非必需</strong>；管理员在第三步一眼看到「未挂资源」的标签；支持三类绑定（仅资料 / 有资料+题 / 暂无）；由 PRO-384 补齐「多份资料一次上传」。</p>
 
     <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
     <div class="scene">
@@ -624,13 +674,14 @@
       <p class="gain">收益：配资源步骤成为质量门，而不是事后排错。</p>
     </div>
     <div class="scene">
-      <div class="who">场景 3 · 管理员 · 一次挂多份资料到资料中心（N1）</div>
-      <p>在 M0 单文件/已有上传能力基础上，若现网不支持多选，则补：一次选择多份文件并行上传并绑定到当前末级（或进入资料中心再绑）。格式上限与「同步」语义（进资料中心 vs 进度条）在验收时写死。</p>
+      <div class="who">场景 3 · 管理员 · 一次挂多份资料（N1 · PRO-384）</div>
+      <p>PRO-335 只支持单文件。PRO-384 补：一次选择多份文件并行上传，逐个显示进度与失败原因，全部绑定到当前末级。单文件上限、格式白名单、进资料中心还是图谱私有，验收前写死。</p>
       <p class="pain">痛点：几十份应知 PPT 逐个点上传。</p>
       <p class="gain">收益：与三类绑定中的「仅资料」场景配套，试点材料准备更快。</p>
     </div>
+    <div class="callout"><strong>对外口径（PRO-384 旁注）：</strong>PRO-384 上线前，批量上传资料可先按「资料 → 新增资料 → 上传资料包」向客户解释。周五（11-07 前）客户汇报会用到。</div>
 
-    <h3>需求点与开发功能（详表）</h3>
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">4 条</span></summary>
     <table class="req">
       <thead>
         <tr><th style="width:22%">需求点</th><th>需开发的功能（详细）</th><th style="width:22%">关联票 / 来源</th><th style="width:12%">状态</th></tr>
@@ -639,7 +690,7 @@
         <tr>
           <td>末级考试 / 资料非必需</td>
           <td>调整启用校验：去掉或软化「必须 COURSE+EXAM」；处理「至少一门必修课」等连带规则；企业白名单与通用逻辑收敛策略</td>
-          <td class="mono">PRO-382 · 池 A3 · N3 · 10-30 拍板</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-382" target="_blank" rel="noopener">PRO-382</a> · 池 A3 · N3 · 10-30 拍板</td>
           <td><span class="badge b-backlog">Backlog</span></td>
         </tr>
         <tr>
@@ -656,24 +707,26 @@
         </tr>
         <tr>
           <td>多份资料一次同步上传</td>
-          <td>先点验 PRO-335；若仅单文件 → 多选上传、进度、绑定多 resource；勿阻塞 PRO-333</td>
-          <td class="mono">N1 · 无独立票 · 挂 PRO-335 验收</td>
-          <td><span class="badge b-none">待点验 / P1</span></td>
+          <td>多选上传、逐个进度与失败原因、绑定多 resource；勿阻塞 PRO-333</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-384" target="_blank" rel="noopener">PRO-384</a>（N1 · 父 PRO-290 · 关联 PRO-335）</td>
+          <td><span class="badge b-ticket">Backlog · Medium</span></td>
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号</h3>
     <ul class="accept">
       <li>无考试、仅资料的末级可按拍板策略完成启用或给出可理解的强提示（不再只有硬错误）。</li>
       <li>第三步可见未挂资源清单。</li>
-      <li>N1 点验结论回写入 intake；若需开发则一次可选多文件成功绑定。</li>
+      <li>PRO-384：一次选择多个文件，逐个显示进度，全部绑定到当前末级；失败项可单独重试。</li>
     </ul>
 
     <div class="meta-bar">
       <span>主票：PRO-382（父 PRO-290）· 无 Jira · 无 due</span>
+      <span>PRO-384（N1 · Backlog · Medium）</span>
       <span>勿再当「新需求」评审；推进落地即可</span>
-      <span>11-04 客户 N3 = 同族重申</span>
+      <span>11-04 客户 N3 = 同族重申，未新建票</span>
     </div>
   </div>
 </section>
@@ -705,7 +758,7 @@
       <p class="gain">收益：小工具高杠杆，尤其服务频繁改标的试点客户。</p>
     </div>
 
-    <h3>需求点与开发功能（详表）</h3>
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">3 条</span></summary>
     <table class="req">
       <thead>
         <tr><th style="width:22%">需求点</th><th>需开发的功能（详细）</th><th style="width:22%">关联票 / 来源</th><th style="width:12%">状态</th></tr>
@@ -715,7 +768,7 @@
           <td>一图多岗（创建可多选岗 / 群组下发）</td>
           <td>图谱关联岗位多选；下发与回收按各岗同步策略执行；列表展示多岗；群组是否一期做需另锁</td>
           <td class="mono">池 A1 · 无独立 PRO · ≠ PRO-339</td>
-          <td><span class="badge b-none">无独立票 · P1</span></td>
+          <td><span class="badge b-none">池开放 · 无票 · P1</span></td>
         </tr>
         <tr>
           <td>自建标签批量移动分类</td>
@@ -731,6 +784,7 @@
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号</h3>
     <ul class="accept">
@@ -759,7 +813,7 @@
 
     <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
     <div class="scene">
-      <div class="who">场景 1 · 管理员 / 教研 · 题目难度与试题管理统一</div>
+      <div class="who">场景 1 · 管理员 / 教研 · 题目难度与试题管理统一（N5 · PRO-387）</div>
       <p>客户要求给题目打难度标签，并最好直接用现有「试题管理」的难度字段，而不是在光谱图谱里再维护一套题。拍板后的目标态：光谱挂题时读取/同步平台难度；抽题或展示可按难度筛选；存量图谱题迁移策略单独定。</p>
       <p class="pain">痛点：光谱 <code>ElsQuestion</code> 无难度字段；图谱题与平台题库分轨，重复维护。</p>
       <p class="gain">收益：一套题库多处复用；难度语义与职级验证可组合。</p>
@@ -775,7 +829,7 @@
       <p>360、问卷、易培等非考试验证形态与光谱短板闭环的耦合面大，本 Milestone 只登记为远期，不承诺本期交付。</p>
     </div>
 
-    <h3>需求点与开发功能（详表）</h3>
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">3 条</span></summary>
     <table class="req">
       <thead>
         <tr><th style="width:22%">需求点</th><th>需开发的功能（详细）</th><th style="width:22%">关联票 / 来源</th><th style="width:12%">状态</th></tr>
@@ -784,14 +838,14 @@
         <tr>
           <td>题目难度标签 + 打通试题管理</td>
           <td>难度枚举是否复用试题管理；光谱题模型扩展或只读同步；抽题/筛选；存量迁移；禁止图谱另起一套题库的产品约束</td>
-          <td class="mono">N5 · 无票 · 拍板后挂 PRO-290 子项或独立票</td>
-          <td><span class="badge b-board">方案未锁 · P1</span></td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-387" target="_blank" rel="noopener">PRO-387</a>（N5 · 父 PRO-290）</td>
+          <td><span class="badge b-ticket">Backlog · 方案未锁</span></td>
         </tr>
         <tr>
           <td>按职级显示不同验证难度</td>
           <td>职级/L → 试卷或题集映射；学员侧抽题策略；与适用层级展示逻辑解耦说明</td>
-          <td class="mono">Feature A03 · P1</td>
-          <td><span class="badge b-board">待拍板后排期</span></td>
+          <td class="mono">Feature A03 · 无票 · P1</td>
+          <td><span class="badge b-none">池开放 · 无票</span></td>
         </tr>
         <tr>
           <td>验证不止考试（360/问卷等）</td>
@@ -801,6 +855,7 @@
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号（拍板后）</h3>
     <ul class="accept">
@@ -809,7 +864,7 @@
     </ul>
 
     <div class="meta-bar">
-      <span>11-04 intake：⑤ 先拍板再开发</span>
+      <span>主票：PRO-387（Backlog · Medium）· 已建票仍须先拍板再开发</span>
       <span>勿与 PRO-333 L 结果导入混包</span>
     </div>
   </div>
@@ -825,25 +880,25 @@
     <span class="badge b-backlog">远期 / 收尾</span>
   </div>
   <div class="ms-body">
-    <p class="goal"><strong>目标一句话：</strong>在导入与人岗图主路径稳定后，补齐 AI 压缩包→草稿图谱、学员入口与列表体验、以及导入导出国际化；人发与光谱入口分离标为架构探索。</p>
+    <p class="goal"><strong>目标一句话：</strong>在导入与人岗图主路径稳定后，补齐 AI 压缩包→草稿图谱、学员入口与列表体验、以及导入导出国际化。</p>
 
     <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
     <div class="scene">
-      <div class="who">场景 1 · 管理员 · AI 上传压缩包生成图谱草稿（N4）</div>
+      <div class="who">场景 1 · 管理员 · AI 上传压缩包生成图谱草稿（N4 · PRO-386）</div>
       <p>管理员上传约定结构的压缩包（目录≈标签树、文件≈资料、或内含标准表——结构待锁），系统解析后生成<strong>草稿图谱</strong>进入四步向导，而不是直接启用。与现有「AI 帮建解析文档/xlsx 建议标签」区分：本条是 zip→成图增强。</p>
       <p class="pain">痛点：新岗位探索时从零点选建图慢；涉密资料进模型的合规未清。</p>
       <p class="gain">收益：新岗冷启动更快；存量已建完三级标的客户可不强依赖此能力。</p>
     </div>
     <div class="scene">
       <div class="who">场景 2 · 学员 / 管理员 · 入口与列表体验收尾</div>
-      <p>前测统一入口（岗位能力测评一次列全）；图书馆式预览（弱化强制必修语气）；PC 课程封面比例；岗位课程列表排序纠正；不用光谱时隐藏人发里的空白光谱模块。共同目标：学员「找得到、看得懂、不误点」。</p>
+      <p>前测统一入口（岗位能力测评一次列全）；图书馆式预览（弱化强制必修语气）；PC 课程封面比例；岗位课程列表排序纠正。共同目标：学员「找得到、看得懂、不误点」。</p>
     </div>
     <div class="scene">
       <div class="who">场景 3 · 实施 / 海外或多语言企业 · 导入导出国际化</div>
       <p>光谱导入导出文案与模板随 PRO-322 国际化包推进，降低多语言企业实施成本。</p>
     </div>
 
-    <h3>需求点与开发功能（详表）</h3>
+    <details class="fold" open><summary>需求点与开发功能<span class="cnt">5 条</span></summary>
     <table class="req">
       <thead>
         <tr><th style="width:22%">需求点</th><th>需开发的功能（详细）</th><th style="width:22%">关联票 / 来源</th><th style="width:12%">状态</th></tr>
@@ -852,14 +907,14 @@
         <tr>
           <td>AI 压缩包解析生成图谱</td>
           <td>zip 结构约定、解析流水线、草稿落盘、与现有 AI 帮建入口关系、涉密合规开关；先出范围一页纸</td>
-          <td class="mono">N4 · 无票 · P2 · 勿塞本周导入包</td>
-          <td><span class="badge b-board">方案未锁</span></td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-386" target="_blank" rel="noopener">PRO-386</a>（N4 · Low · 勿塞本周导入包）</td>
+          <td><span class="badge b-ticket">Backlog · 方案未锁</span></td>
         </tr>
         <tr>
           <td>前测统一入口</td>
           <td>岗位能力测评聚合入口；一次列全待测项</td>
           <td class="mono">池 A2 · 无票</td>
-          <td><span class="badge b-board">仍不确定</span></td>
+          <td><span class="badge b-none">池开放 · 无票</span></td>
         </tr>
         <tr>
           <td>图书馆式预览（勿强制必修语气）</td>
@@ -874,36 +929,26 @@
           <td><span class="badge b-board">体验小改</span></td>
         </tr>
         <tr>
-          <td>不用光谱时隐藏人发空白光谱模块</td>
-          <td>人发侧模块显隐策略；先查是否已部分上线</td>
-          <td class="mono">池 A′1 · 无票</td>
-          <td><span class="badge b-board">仍不确定</span></td>
-        </tr>
-        <tr>
-          <td>人发搭建与光谱数据入口分离</td>
-          <td>架构级入口拆分；探索项，不作本季度硬承诺</td>
-          <td class="mono">池 A′2</td>
-          <td><span class="badge b-backlog">架构探索</span></td>
-        </tr>
-        <tr>
           <td>导入导出国际化 · 光谱</td>
           <td>模板与校验文案 i18n；挂国际化总包</td>
-          <td class="mono">PRO-327（挂 PRO-322）· due 12-18</td>
+          <td class="mono"><a href="https://linear.app/product-randd-and-production/issue/PRO-327" target="_blank" rel="noopener">PRO-327</a>（挂 PRO-322）· due 12-18</td>
           <td><span class="badge b-backlog">Backlog</span></td>
         </tr>
       </tbody>
     </table>
+    </details>
 
     <h3>验收信号</h3>
     <ul class="accept">
       <li>N4：范围一页纸评审通过后，zip→草稿可演示；直接启用不在一期。</li>
-      <li>体验项：逐条有前后截图或用例；A′1 先确认现网是否已部分满足。</li>
+      <li>体验项：逐条有前后截图或用例。</li>
       <li>PRO-327：关键导入导出路径在目标语言下无硬编码中文阻断。</li>
     </ul>
 
     <div class="meta-bar">
       <span>开环原则：平滑过渡优先于新功能叠加</span>
-      <span>PRO-327 due 12-18</span>
+      <span>已移出：池 A′1（不用光谱时隐藏人发空白模块）、A′2（人发与光谱入口分离）属人才发展，不在本人负责范围，交人才发展负责人跟进</span>
+      <span>PRO-386（Low）· PRO-327 due 12-18</span>
     </div>
   </div>
 </section>
@@ -961,9 +1006,16 @@
 
 <footer>
   光谱 Milestone 拆分 · 2026-11-04 Asia/Shanghai · 时代光华 AI PM（gaoyuan）· 自包含 HTML · 非飞书 PRD · 未改 Linear/Jira<br/>
+  2026-11-04 晚更新：N1/N2/N4/N5 挂 PRO-384 / 385 / 386 / 387；M1 以 PRO-385 流程为主场景；人才发展两项移出<br/>
   落盘：<code>agent-deposits/product-manager/prototypes/2026-11-04-光谱-milestones/index.html</code>
 </footer>
 </main>
 </div>
+<script>
+document.querySelector('.fold-ctl')?.addEventListener('click', e => {
+  const v = e.target.closest('[data-fold]')?.dataset.fold; if (!v) return;
+  document.querySelectorAll('details.fold').forEach(d => { d.open = v === 'open'; });
+});
+</script>
 </body>
 </html>
