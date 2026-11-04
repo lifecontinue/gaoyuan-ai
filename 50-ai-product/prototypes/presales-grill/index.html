@@ -294,7 +294,7 @@ const REQS = {
       how:'能直接满足。管理员在光谱后台建图谱时关联岗位，这个岗位的员工就能在学员端看到要掌握的技能和自己的进度。要注意一个岗位只能挂一张图谱，同岗不同工段要分开配，这一点现在做不到（见 R2）。',src:'00-os/context/gp-spectrum-handoff.md',excerpt:'一岗一图是硬约束',
       story:{who:'车间培训管理员',want:'给每个岗位配一张技能图谱',so:'员工一眼看到本岗位要掌握的技能'},
       cx:{title:'每个岗位有自己的技能图谱',scene:'培训管理员在电脑上给每个岗位配好技能清单。一线员工打开手机，就能看到自己岗位要会哪些技能、已经学到哪一步。',how:'这部分现在就能用，上线时按岗位直接配置即可。'}},
-  R2:{quote:'同一岗位不同工段要用不同图谱',scene:'同一个操作岗，在不同工段要求的技能不一样',verdict:'plan',
+  R2:{quote:'同一岗位不同工段要用不同图谱',scene:'同一个操作岗分布在几个工段，各工段要掌握的技能不同，希望员工看到的是自己工段的图谱',verdict:'plan',
       how:'现在做不到：现网一个岗位只能关联一张图谱。一岗多图已经确定要做，但还没有上线时间，不能写进合同。跟客户可以讲方向，过渡期先把各工段共有的技能配在岗位图谱里。',src:'30-prd/guangpu-five-step/prd-guangpu-five-step-2026-10-21.md',excerpt:'岗位可关联多张图谱，一张图谱可供多个岗位共用',
       dir:'同一个岗位在不同工段，技能要求不一样，需要分开配。这正是我们产品已经确定要做的改进，具体时间定下来后第一时间告诉您。在那之前，可以先按岗位把共性的技能配起来。',
       cx:{title:'同一岗位，不同工段分开配技能'}},
@@ -302,10 +302,10 @@ const REQS = {
       how:'能满足，但要变通。现网没有「几个岗位共用一张图谱」的设置，做法是给主操、副操、助手各建一张内容相同的图谱分别关联。代价是以后改内容要同步改三份；有没有一键复制图谱还要找产品确认。',src:'20-intake/2026-09/guangpu-position-graph-eval/00-judgment.md',excerpt:'权宜用多份图谱手工复制',
       story:{who:'车间培训管理员',want:'让主操、副操、助手用同样的技能要求',so:'同工序的人按同一标准学习和评估'},altNote:'做法：为每个岗位各建一份内容相同的图谱。',
       cx:{title:'主操、副操、助手按同一套标准培养',scene:'分卷工序的主操、副操、助手技能要求基本一致，三个岗位的员工按同一套标准学习和考核。',how:'现在的做法是给三个岗位各配一份同样的内容，上线时我们帮您一起配好。之后内容有调整，需要三份同步改一下。'}},
-  R4:{quote:'竞赛时怕员工切屏查资料',scene:'员工在手机上参加技能竞赛答题',verdict:'can',
+  R4:{quote:'竞赛时怕员工切屏查资料',scene:'员工在手机上参加技能竞赛，客户担心有人切出去查资料，影响成绩公平',verdict:'can',
       how:'能满足。10 月起竞赛支持切屏监测：每日答题和个人练习不计，其他竞赛类型会累计切屏次数，管理员事后人工复核，系统不会自动判作弊或取消成绩。后台开关位置和提醒阈值还待产品确认，合同里只写「支持切屏次数监测」，不写「杜绝作弊」。',src:'竞赛管理操作手册「诚信 / 防切屏」',excerpt:'2026-10 起上线竞赛诚信能力首期：切屏监测。每日答题、个人练习不计切屏；其他类型累计切屏次数。',
       cx:{title:'竞赛时防止切屏查资料',scene:'员工在手机上答题时，切出去查资料会被记下次数，管理员事后能看到并核实。',how:'这部分现在就能用。'}},
-  R5:{quote:'竞赛要全程视频监考',scene:'考试全程录像，事后可回看',verdict:'no',
+  R5:{quote:'竞赛要全程视频监考',scene:'竞赛全程打开摄像头录像，事后可以回看核查',verdict:'no',
       how:'做不到：产品已明确不做全程视频监考，也不提供安全考试浏览器。能给的是切屏次数监测加人工复核（见 R4）。客户如果坚持要视频监考，就发给产品评估。',src:'PS-23 竞赛防作弊分层表（agent-app 仓）',excerpt:'不做：全程视频监考 / SEB'},
   R6:{quote:'想看员工跨图谱的综合总分',scene:'一个人关联多张图谱时，合成一个总分做排名',verdict:'no',
       how:'做不到：跨图谱合成一个综合总分，已经明确列为不做。现在只能分别看每张图谱的得分。客户如果需要综合排名，要先问清楚是用来考核还是只做参考，再发给产品评估。',src:'30-prd/guangpu-five-step/prd-guangpu-five-step-2026-10-21.md §1.3',excerpt:'不做：跨图合成总分'},
@@ -324,8 +324,8 @@ const GAPS = [
 
 const HISTORY = [
   {me:true,text:'华北某化工集团，约 3000 人。想按岗位做技能图谱，再搞技能竞赛，要防作弊，年底前想用上。'},
-  {me:false,text:'收到。先记下 1 条需求：每个岗位一张技能图谱。\n还缺几项信息，我一次问一个。'},
-  {me:false,text:'他们现在用什么系统管人员和组织？需要和我们对接吗？'},
+  {me:false,text:'好，先记下一条：客户想按岗位建技能图谱。要判断哪些能做，还得再了解几件事，我一个一个问。'},
+  {me:false,text:'客户现在用什么系统管人员和组织架构？希望和我们打通吗？'},
   {me:true,text:'用 SAP HR 管组织，希望能自动同步过来。'}
 ];
 
@@ -335,17 +335,17 @@ const CONFIRM_QS = [
 ];
 
 const QUESTIONS = [
-  {gap:'Q4',text:'图谱和竞赛主要给谁用、在哪用？',
+  {gap:'Q4',text:'图谱和竞赛主要是谁在用？在车间用手机，还是在办公室用电脑？',
    options:[{t:'员工用手机，管理员用电脑',adds:[],rec:true},{t:'只在电脑上用',adds:[]},{t:'还不清楚',adds:[]}]},
-  {gap:'Q3',text:'「防作弊」客户具体担心什么？有原话最好。',
+  {gap:'Q3',text:'客户说要防作弊，具体担心的是什么？他们原话是怎么说的？',
    options:[{t:'怕切屏查资料，还想视频监考',adds:['R4','R5'],rec:true},{t:'只是怕切屏查资料',adds:['R4']},{t:'怕别人代考',adds:[]}]},
-  {gap:'Q3',text:'按岗位做图谱：同一岗位在不同工段，技能要求一样吗？有没有几个岗位想共用一张图谱？',
+  {gap:'Q3',text:'同一个岗位在不同工段，技能要求一样吗？有没有几个岗位想用同一套标准？',
    options:[{t:'工段要求不同，三岗想共用一张',adds:['R2','R3'],rec:true},{t:'一岗一张就够了',adds:[]},{t:'只有几个岗位想共用',adds:['R3']}]},
-  {gap:'Q3',text:'竞赛成绩和图谱要不要打通？比如看一个人跨几张图谱的综合总分。',
+  {gap:'Q3',text:'竞赛成绩要不要和图谱挂钩？比如一个人有几张图谱时，算一个综合总分来排名？',
    options:[{t:'要看跨图谱综合总分',adds:['R6'],rec:true},{t:'不需要',adds:[]}]},
-  {gap:'Q5',text:'「年底前想用上」是硬要求吗？哪部分最急？',
+  {gap:'Q5',text:'客户说年底前要用上，这是硬性要求吗？图谱和竞赛哪个更急？',
    options:[{t:'图谱年底前要上，竞赛可以晚一点',adds:[],rec:true},{t:'都要年底前',adds:[]},{t:'没有硬要求',adds:[]}]},
-  {gap:'Q6',text:'谁拍板？要不要走招标？',
+  {gap:'Q6',text:'这个项目最后谁拍板？需要走招标吗？',
    options:[{t:'生产副总拍板，不招标',adds:[],rec:true},{t:'要走招标',adds:[]},{t:'还不清楚',adds:[]}]}
 ];
 
@@ -643,9 +643,9 @@ function productText(){
   if(!items.length) return '';
   const lines=items.map((id,i)=>{
     const r=REQS[id];
-    return `${id}　${r.quote}\n   客户原话：「${r.quote}」\n   场景：${r.scene}\n   现在做不到的原因：${r.how}${r.pending?'\n   需要产品确认：现网是否已有这个能力':''}`;
+    return `${id}　客户原话：「${r.quote}」\n   使用场景：${r.scene}\n   我们这边的判断：${r.how}${r.pending?'\n   想请你们确认：现网有没有这个能力，或者有没有别的做法':''}`;
   }).join('\n\n');
-  return `【售前需求反馈】${CUSTOMER.name}（${CUSTOMER.brief}）第 ${S.round} 轮\n共 ${items.length} 条现在做不到的需求，请产品评估：\n\n${lines}\n\n请按编号回复：现网已支持／已列入规划／确认不做／需要更多信息，可附一句说明。\n售前：（姓名）　日期：2026-11-02`;
+  return `【售前需求反馈】${CUSTOMER.name}（${CUSTOMER.brief}）第 ${S.round} 轮\n产品同学好，这个客户聊下来有 ${items.length} 条需求我们判断现在做不到，麻烦帮忙看一下：\n\n${lines}\n\n回复时按编号说就行：现网已支持／已列入规划／确认不做／需要更多信息，能附一句说明更好。我会据此回复客户，谢谢！\n售前：（姓名）　2026-11-02`;
 }
 // 客户版里的编号：只给客户看得到的条目按 1、2、3 编，回填页用同一套编号对照
 function custNumbers(){
@@ -705,7 +705,7 @@ function fbRow(id, kind){
 }
 function stepFeedback(){
   const cust=S.reqIds.filter(id=>S.verdicts[id]!=='no'), prod=S.reqIds.filter(id=>S.verdicts[id]==='no');
-  const filled=[...Object.values(S.fb.cust),...Object.values(S.fb.prod)].filter(f=>f.status!=='pending').length;
+  const filled=fbFilled();
   const disputes=Object.values(S.fb.cust).filter(f=>f.status==='dispute').length;
   return `
   <section class="card stack">
@@ -723,6 +723,13 @@ function stepFeedback(){
     </div>
   </section>`;
 }
+// 选了状态、写了说明、回答了确认问题、贴了原文，任何一项都算填了
+function fbFilled(){
+  const rows=[...Object.values(S.fb.cust),...Object.values(S.fb.prod)].filter(f=>f.status!=='pending'||(f.note||'').trim()).length;
+  return rows+Object.values(S.fb.answers).filter(a=>(a||'').trim()).length+((S.fb.raw||'').trim()?1:0);
+}
+// 打字时只刷新按钮，不重绘整页（重绘会换掉正要点击的按钮）
+function refreshNextBtn(){ const b=app.querySelector('[data-next-round]'); if(b) b.disabled=!fbFilled(); }
 function nextRound(){
   const notes=[];
   Object.entries(S.fb.prod).forEach(([id,f])=>{
@@ -777,9 +784,9 @@ function bind(){
   const cp=app.querySelector('[data-copy]'); if(cp) cp.onclick=()=>{navigator.clipboard.writeText(productText()).then(()=>toast('已复制，可直接粘贴发送'),()=>toast('复制失败，请手动选中文字复制'));};
   const pv=document.getElementById('preview'); if(pv) pv.srcdoc=customerHTML();
   app.querySelectorAll('[data-fb]').forEach(s=>s.onchange=()=>{const k=s.dataset.fb,id=s.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{note:''}),status:s.value};render();});
-  app.querySelectorAll('[data-fb-note]').forEach(i=>i.oninput=()=>{const k=i.dataset.fbNote,id=i.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{status:'pending'}),note:i.value};});
-  app.querySelectorAll('[data-fb-ans]').forEach(i=>i.oninput=()=>{S.fb.answers[i.dataset.fbAns]=i.value;});
-  const raw=app.querySelector('[data-fb-raw]'); if(raw) raw.oninput=()=>{S.fb.raw=raw.value;};
+  app.querySelectorAll('[data-fb-note]').forEach(i=>i.oninput=()=>{const k=i.dataset.fbNote,id=i.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{status:'pending'}),note:i.value};refreshNextBtn();});
+  app.querySelectorAll('[data-fb-ans]').forEach(i=>i.oninput=()=>{S.fb.answers[i.dataset.fbAns]=i.value;refreshNextBtn();});
+  const raw=app.querySelector('[data-fb-raw]'); if(raw) raw.oninput=()=>{S.fb.raw=raw.value;refreshNextBtn();};
   const nr=app.querySelector('[data-next-round]'); if(nr) nr.onclick=nextRound;
   const dl=app.querySelector('[data-dl]'); if(dl) dl.onclick=saveCustomerHTML;
 }
@@ -791,7 +798,7 @@ function answer(opt){
   const isNewGap = GAPS.some(g=>g.id===q.gap) && !S.gapsDone.has(q.gap);
   S.gapsDone.add(q.gap);
   if(isNewGap) S.gapNotes[q.gap]=opt.t;
-  if(added.length) S.log.push({me:false,text:`记下 ${added.length} 条需求：${added.map(id=>REQS[id].quote).join('；')}。`});
+  if(added.length) S.log.push({me:false,text:`明白，又记下 ${added.length} 条：${added.map(id=>REQS[id].quote).join('；')}。`});
   S.qIndex++;
   if(isNewGap) announceGap(q.gap); else render();
 }
