@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>调查 · 评估 · Milestone 拆分 · 2026-11-04</title>
+<style>
+
+:root {
+  --bg:#f4f6f9; --card:#fff; --ink:#1a1d26; --muted:#5c6578; --line:#e2e6ef;
+  --brand:#1f4b99; --brand-soft:#e8eef8;
+  --ok:#0d7a4f; --ok-bg:#e6f6ee; --wip:#b45309; --wip-bg:#fff7ed;
+  --review:#6d28d9; --review-bg:#f3e8ff; --backlog:#475569; --backlog-bg:#f1f5f9;
+  --board:#0369a1; --board-bg:#e0f2fe; --warn:#b91c1c; --warn-bg:#fef2f2;
+  --cur:#c2410c; --cur-bg:#ffedd5; --cur-ring:#ea580c;
+  --shadow:0 1px 2px rgba(26,29,38,.06),0 8px 24px rgba(26,29,38,.04);
+  --radius:12px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.65;font-size:15px}
+a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
+.badge{display:inline-block;font-size:11px;font-weight:650;padding:3px 8px;border-radius:999px;vertical-align:middle;white-space:nowrap}
+.b-done{background:var(--ok-bg);color:var(--ok)}
+.b-wip{background:var(--wip-bg);color:var(--wip)}
+.b-review{background:var(--review-bg);color:var(--review)}
+.b-backlog{background:var(--backlog-bg);color:var(--backlog)}
+.b-board{background:var(--board-bg);color:var(--board)}
+.b-none{background:var(--warn-bg);color:var(--warn)}
+.b-cur{background:var(--cur-bg);color:var(--cur);box-shadow:0 0 0 2px var(--cur-ring)}
+.b-dev{background:#ecfeff;color:#0e7490}
+
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;background:#0f1c33;color:#d7e0f0;padding:20px 14px 32px}
+nav.toc .brand{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#8fa3c4;margin-bottom:6px}
+nav.toc h1{font-size:16px;margin:0 0 4px;color:#fff;font-weight:650;line-height:1.35}
+nav.toc .meta{font-size:12px;color:#8fa3c4;margin-bottom:18px}
+nav.toc a{display:block;color:#c9d5ea;padding:7px 10px;border-radius:8px;font-size:13px;margin-bottom:2px}
+nav.toc a:hover{background:rgba(255,255,255,.08);text-decoration:none;color:#fff}
+nav.toc a.cur{background:rgba(234,88,12,.25);color:#ffd7b5}
+main{padding:28px 36px 64px;max-width:1100px}
+header.doc-head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px;box-shadow:var(--shadow);margin-bottom:22px}
+header.doc-head h1{margin:0 0 10px;font-size:26px;letter-spacing:-.02em}
+header.doc-head .sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:#fafbfd;color:var(--muted)}
+.sources{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted)}
+.sources strong{color:var(--ink)}
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0 28px}
+.roadmap .r{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;box-shadow:var(--shadow)}
+.roadmap .r.current{border-color:var(--cur-ring);box-shadow:0 0 0 2px rgba(234,88,12,.25),var(--shadow)}
+.roadmap .r .n{font-size:11px;color:var(--muted);letter-spacing:.03em}
+.roadmap .r .t{font-size:13px;font-weight:650;margin-top:4px;line-height:1.35}
+.roadmap .r .w{font-size:11px;color:var(--muted);margin-top:6px}
+section.ms{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden}
+section.ms>.ms-head{padding:18px 24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fbfcfe,#f5f7fb);display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;justify-content:space-between}
+section.ms>.ms-head h2{margin:0;font-size:20px;letter-spacing:-.01em}
+section.ms>.ms-body{padding:20px 24px 26px}
+.goal{background:var(--brand-soft);border-left:4px solid var(--brand);padding:12px 14px;border-radius:0 8px 8px 0;margin:0 0 18px;font-size:14.5px}
+.goal strong{color:var(--brand)}
+h3{margin:22px 0 10px;font-size:15px}
+h3:first-child{margin-top:0}
+.scene{background:#fafbfd;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.scene .who{font-size:12px;font-weight:650;color:var(--brand);margin-bottom:4px}
+.scene p{margin:0 0 8px}.scene p:last-child{margin-bottom:0}
+.scene .pain{color:var(--warn);font-size:13.5px}.scene .gain{color:var(--ok);font-size:13.5px}
+table.req{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0 4px}
+table.req th,table.req td{border:1px solid var(--line);padding:10px 12px;vertical-align:top;text-align:left}
+table.req th{background:#f0f3f8;font-weight:650;font-size:12.5px;white-space:nowrap}
+table.req td.mono,.mono{font-family:var(--mono);font-size:12px}
+table.req tr:nth-child(even) td{background:#fcfdff}
+ul.accept{margin:8px 0 0;padding-left:1.2em}ul.accept li{margin-bottom:4px}
+.meta-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12.5px;color:var(--muted);margin:0 0 18px}
+.out-of-scope{border-color:#fecaca}
+.out-of-scope>.ms-head{background:linear-gradient(180deg,#fff8f8,#fef2f2)}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+.dual{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;margin:0 0 18px;font-size:13.5px}
+footer{margin-top:8px;font-size:12.5px;color:var(--muted);text-align:center;padding:12px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}nav.toc{position:relative;height:auto}main{padding:18px 14px 40px}}
+@media print{body{background:#fff;font-size:11.5pt}nav.toc{display:none}.layout{display:block}main{max-width:none;padding:0}section.ms,header.doc-head,.roadmap .r{box-shadow:none;break-inside:avoid}a{color:inherit;text-decoration:none}.no-print{display:none!important}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+  <div class="brand">Product · Survey / Eval</div>
+  <h1>调查 · 评估<br/>Milestone</h1>
+  <div class="meta">2026-11-04 · Asia/Shanghai<br/>规划页 · 不改 Linear/Jira</div>
+  <a href="#top">总览</a>
+  <a href="#s0">S0 基线对照</a>
+  <a class="cur" href="#s1">S1 矩阵打分落地 · 当前</a>
+  <a href="#s2">S2 评估并入调查</a>
+  <a href="#s3">S3 题型治理</a>
+  <a href="#s4">S4 跨题型跳题 P0</a>
+  <a href="#s5">S5 对标问卷星题型</a>
+  <a href="#s6">S6 跳题 P1/P2 + AI 帮建</a>
+  <a href="#oos">明确不做 / 边界</a>
+  <a href="/work/product-milestones/">← 产品线总览</a>
+</nav>
+<main id="top">
+<header class="doc-head">
+  <h1>调查 · 评估 · Milestone 拆分</h1>
+  <p class="sub">把调查与评估（oem→qsm 并入）未完成诉求按可交付切片拆开：每个 Milestone 写清<strong>达到后能解决什么业务问题</strong>，以及<strong>要做哪些需求点 / 开发功能</strong>。评估以「并入调查」为主轴，不单独另开产品线叙事；本页为自包含规划页，不改 Linear / Jira 状态。</p>
+  <div class="pill-row">
+    <span class="pill">口径日期 · 2026-11-04 Asia/Shanghai</span>
+    <span class="pill">受众 · gaoyuan</span>
+    <span class="pill">catchup 调查窗 · 11-06 → 12-13</span>
+    <span class="pill">评估方案 DDL · 11-06</span>
+  </div>
+  <div class="sources"><strong>真源：</strong> catchup 按应用清单 · 跨题型跳题确认稿精简 / 多选方案 · 删人重加无法填写 · Linear 核对 10-29 · PRO-289/306/338 及子任务 307–309 · PRO-13/29/22/354/358/18</div>
+</header>
+
+<div class="legend">
+  <span><span class="badge b-done">已上线 / Done</span></span>
+  <span><span class="badge b-dev">已提测 / In Dev</span></span>
+  <span><span class="badge b-wip">进行中</span></span>
+  <span><span class="badge b-review">评审中</span></span>
+  <span><span class="badge b-backlog">Backlog / Todo</span></span>
+  <span><span class="badge b-board">待拍板 / 方案</span></span>
+  <span><span class="badge b-none">无独立票 / 运营路径</span></span>
+  <span><span class="badge b-cur">当前焦点</span></span>
+</div>
+
+<div class="roadmap">
+  <div class="r"><div class="n">S0</div><div class="t">基线对照</div><div class="w">10/30 已上线勿当未做</div></div>
+  <div class="r current"><div class="n">S1 · 当前</div><div class="t">矩阵打分落地</div><div class="w">~11-13 · PRO-13 / 8159</div></div>
+  <div class="r"><div class="n">S2 · 双焦点</div><div class="t">评估并入调查</div><div class="w">方案~11-06 · PRO-289</div></div>
+  <div class="r"><div class="n">S3</div><div class="t">题型治理</div><div class="w">~11-30 · PRO-29 / 358</div></div>
+  <div class="r"><div class="n">S4</div><div class="t">跨题型跳题 P0</div><div class="w">~11-30 · PRO-354</div></div>
+  <div class="r"><div class="n">S5</div><div class="t">对标问卷星题型</div><div class="w">~12-13 · PRO-22</div></div>
+  <div class="r"><div class="n">S6</div><div class="t">跳题 P1/P2 + AI</div><div class="w">后续 · PRO-18</div></div>
+</div>
+
+<!-- S0 -->
+<section class="ms" id="s0">
+  <div class="ms-head">
+    <h2>S0 · 基线对照（已上线 / 已提测，仅作对照）</h2>
+    <span class="badge b-done">对照</span>
+  </div>
+  <div class="ms-body">
+    <p class="goal"><strong>目标一句话：</strong>划清「已经交付或已进测」的边界，避免把 10/30 批次与运营可解路径当成未开发承诺；后续 Milestone 都建立在调查现网能力之上。</p>
+    <h3>达到后可实现的业务场景（对照）</h3>
+    <div class="scene">
+      <div class="who">场景 · 产品 / 实施 · 盘点「别再当新需求」</div>
+      <p>客户高峰期前，调查已具备常规题型、监控导出、重复参与开关等能力。矩阵打分（PRO-13）在 catchup 口径为<strong>已提测</strong>、上线窗约 11-13——进入 S1 验收而非从零排期。</p>
+      <p class="pain">痛点：删人再加员工无法填写——根因是删人<strong>不清答卷</strong>；现网可用「重复参与 / 复制调查 / 运维清答卷」绕过，<strong>不是</strong>默认产品开发承诺。</p>
+      <p class="gain">收益：S1–S6 排期不被运营路径噪音挤占；对外话术一致。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发 / 已交付功能</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>10/30 相关已上线项（对照）</td><td>不进本页开发清单；竞赛/运营等同批上线项见总览 C0/O 备注</td><td>catchup 备注 · Linear 核对</td><td><span class="badge b-done">已上线</span></td></tr>
+        <tr><td>矩阵打分量表（进入 S1）</td><td>题型组件 + 数值单元格 + 实时总分；UI icon/示意图依赖</td><td>PRO-13 / SDGH-8159</td><td><span class="badge b-dev">已提测·待上线</span></td></tr>
+        <tr><td>删人重加无法填写</td><td>产品缺口：监控侧「重置/删除单个学员答卷」；本期<strong>不承诺开发</strong>，走运营路径</td><td>2026-11-04 删人重加纪要</td><td><span class="badge b-none">运营路径</span></td></tr>
+      </tbody>
+    </table>
+    <h3>验收信号（对照）</h3>
+    <ul class="accept">
+      <li>对外材料不再把「删人=重置答卷」写成产品能力。</li>
+      <li>矩阵打分以 S1 验收清单为准，不重复开「新需求评审」。</li>
+    </ul>
+    <div class="meta-bar">对照日：2026-11-04 · 不做：把删人清答卷当默认产品行为（→ 明确不做）</div>
+  </div>
+</section>
+
+<!-- S1 -->
+<section class="ms" id="s1">
+  <div class="ms-head">
+    <h2>S1 · 矩阵打分落地</h2>
+    <div><span class="badge b-cur">当前焦点</span> <span class="badge b-dev">已提测</span></div>
+  </div>
+  <div class="ms-body">
+    <div class="dual"><strong>双焦点说明：</strong>本周同时推进 S1（矩阵打分验收/上线窗）与 S2（评估并入方案/补 Jira · 周五 11-06）。总览默认「当前」标在 <strong>S1</strong>；S2 在评估泳道单独标「方案/验证」。</div>
+    <p class="goal"><strong>目标一句话：</strong>让客户在评比大赛等「多人 × 多维度打分」场景，用矩阵打分量表一次完成录入与总分汇总，并在 11 月调查高峰前稳定上线。</p>
+    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 · 管理员 / 评委 · 作品或人员多维打分</div>
+      <p>客户举办评比大赛：几十个参赛作品、几十个评价维度。传统一题题打分工作量过大。管理员配置矩阵打分量表（限制分数输入、实时显示每人总分；信息栏可插超链接/批注；附件有图），评委一次填完。</p>
+      <p class="pain">痛点：普通打分题不适合多人多维；手算总分易错。</p>
+      <p class="gain">收益：高峰期可用；为后续打分题数据分析（S3）与评估并入后的分值维度统一（S2）打底。表格数值题（PRO-22）计划复用本需求数值单元格组件。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发的功能（详细）</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>新增矩阵打分量表题型</td><td>编辑器题型入口（依赖 UI icon/示意图）；矩阵数值单元格；分数校验；实时总分；信息栏超链/批注；附件图</td><td class="mono">PRO-13 / SDGH-8159</td><td><span class="badge b-dev">In Dev · 已提测</span></td></tr>
+        <tr><td>跟进 / 验收子任务</td><td>提测邮件闭环、测环境用例、正式环境走查；Linear 子任务按现网 WBS</td><td class="mono">#跟进 / #验收（挂 PRO-13）</td><td><span class="badge b-wip">验收窗</span></td></tr>
+        <tr><td>上线窗对齐</td><td>catchup：上线约 <strong>11-13</strong>；Linear due 11-13；里程碑名「11月初 · 11-06」为计划切片名，以 due/上线窗为准</td><td>catchup · Linear</td><td><span class="badge b-board">~11-13</span></td></tr>
+      </tbody>
+    </table>
+    <h3>验收信号</h3>
+    <ul class="accept">
+      <li>测环境：多行多列打分可保存；总分实时正确；非法分数拦截。</li>
+      <li>正式环境走查通过；需求池/飞书状态可回写。</li>
+      <li>PRO-22 表格数值题复用约定写进对接说明（组件复用，不重复造轮）。</li>
+    </ul>
+    <div class="meta-bar">主票：PRO-13 · due <strong>2026-11-13</strong> · Jira SDGH-8159 · catchup P2 11-13（已提测）</div>
+  </div>
+</section>
+
+<!-- S2 -->
+<section class="ms" id="s2">
+  <div class="ms-head">
+    <h2>S2 · 评估并入调查</h2>
+    <div><span class="badge b-wip">方案双焦点</span> <span class="badge b-board">DDL 11-06</span></div>
+  </div>
+  <div class="ms-body">
+    <p class="goal"><strong>目标一句话：</strong>客户不再维护两套「调查 / 评估」管理入口——评估能力收敛进调查（方向 A，非并入 360）：补齐讲师库关联与评估关系，结果回传讲师；方案与 Jira 在 11-06 前齐套。</p>
+    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 · 管理员 · 单一管理面配置「课评 / 讲师评估」</div>
+      <p>培训后要对讲师或课程做评估。方向拍板后：管理员在<strong>调查管理</strong>内配置评估问卷/关系，关联讲师库，评估结果回传讲师侧；不必再开独立「评估管理」应用学两套题型与模板。</p>
+      <p class="pain">痛点：oem 评估与 qsm 调查能力重叠；题型/模板调查已有，却仍两套入口；360 另有约 100 条优化在排，不宜并入 360。</p>
+      <p class="gain">收益：实施与客户培训成本下降；后续打分数据分析可与调查监控统一优化（PRO-358 对齐本方案后再挂 Jira）。</p>
+    </div>
+    <div class="scene">
+      <div class="who">场景 · 产品 · 验证 AI 整理的整合内容</div>
+      <p>飞书方案文档由 AI 整理过，需人工逐项核对偏差表与来源清单，记录修正点，再作为补 Jira / 排期输入。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发的功能（详细）</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>评估并入调查总方案</td><td>方向 A 定稿；范围：讲师库关联、评估关系、结果回传讲师；不选并入 360 / 百分制 B</td><td class="mono">PRO-289</td><td><span class="badge b-wip">In Progress</span></td></tr>
+        <tr><td>方案齐套 + 补 Jira</td><td>飞书需求文档与原型齐套；按 A 字段草稿建 Jira（待项目 key/经办人/组件）</td><td class="mono">PRO-306 · 飞书方案</td><td><span class="badge b-wip">DDL 11-06</span></td></tr>
+        <tr><td>验证 AI 整理内容</td><td>逐项核对飞书整合文档；记录需修正处</td><td class="mono">PRO-338（父 289）</td><td><span class="badge b-wip">due 11-06</span></td></tr>
+        <tr><td>排期</td><td>与开发确认排期 / Jira 预计上线日</td><td class="mono">PRO-307</td><td><span class="badge b-wip">In Progress</span></td></tr>
+        <tr><td>跟进开发</td><td>开发提测（邮件给测试）</td><td class="mono">PRO-308</td><td><span class="badge b-wip">In Progress</span></td></tr>
+        <tr><td>测试和上线验收</td><td>测环境通过 → 部署 → 正式走查；需求池回写</td><td class="mono">PRO-309</td><td><span class="badge b-wip">In Progress</span></td></tr>
+      </tbody>
+    </table>
+    <h3>验收信号</h3>
+    <ul class="accept">
+      <li>11-06 前：Jira 已建或书面阻塞原因（缺 key/经办人）已记录。</li>
+      <li>PRO-338 核对清单有结论（通过 / 待改点列表）。</li>
+      <li>目标态话术可对外：「评估能力在调查内配置；单一管理面」——开发交付可后置，但方案边界清晰。</li>
+    </ul>
+    <div class="meta-bar">父单 PRO-289 · due <strong>2026-11-06</strong> · 飞书：评估管理优化方案 · catchup P1 11-06 · 目标态=合并后单一管理面</div>
+  </div>
+</section>
+
+<!-- S3 -->
+<section class="ms" id="s3">
+  <div class="ms-head">
+    <h2>S3 · 题型治理</h2>
+    <span class="badge b-wip">~11-30</span>
+  </div>
+  <div class="ms-body">
+    <p class="goal"><strong>目标一句话：</strong>管理员可按企业需要隐藏/显示题型入口；打分题在数据监控侧支持分析（与评估并入后的分值维度对齐），降低无效题型噪音与「有分无数」的运营困境。</p>
+    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 · 管理员 · 精简编辑器题型栏</div>
+      <p>企业只用部分题型。管理员（或租户配置）隐藏不需要的题型名称/入口，编辑器更干净；≠ 答题端显示逻辑/配额（跳题边界另见 S4）。</p>
+      <p class="pain">痛点：题型过多，实施易配错；与「对标问卷星加题型」并行时噪音更大。</p>
+      <p class="gain">收益：加题型（S5）与藏题型可同窗治理。</p>
+    </div>
+    <div class="scene">
+      <div class="who">场景 · 运营 / 教研 · 打分题数据分析</div>
+      <p>打分题需要在监控侧做分布、均分、分值维度等分析。Granola 结论：与评估并入调查后统一优化——故 PRD/Jira 对齐 S2 后再挂。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发的功能（详细）</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>隐藏 / 显示题型</td><td>题型名称开关配置；编辑器入口显隐；存量问卷兼容策略</td><td class="mono">PRO-29 / SDGH-8282</td><td><span class="badge b-dev">In Dev</span></td></tr>
+        <tr><td>打分题数据分析</td><td>监控侧分析视图/导出；分值维度；与评估并入方案对齐后挂 Jira</td><td class="mono">PRO-358 · 暂无 Jira</td><td><span class="badge b-backlog">Todo</span></td></tr>
+      </tbody>
+    </table>
+    <h3>验收信号</h3>
+    <ul class="accept">
+      <li>关闭某题型后，新建问卷编辑器不可见该入口；已用该题型的存量问卷仍可编辑说明清晰。</li>
+      <li>打分分析：至少一种约定报表（分布/均分）可演示；Jira 在 S2 对齐后存在或明确延期原因。</li>
+    </ul>
+    <div class="meta-bar">catchup P3 · 11-30 · PRO-29 开发中 · PRO-358 待开发</div>
+  </div>
+</section>
+
+<!-- S4 -->
+<section class="ms" id="s4">
+  <div class="ms-head">
+    <h2>S4 · 跨题型跳题逻辑 P0</h2>
+    <span class="badge b-backlog">~11-30 · P0</span>
+  </div>
+  <div class="ms-body">
+    <p class="goal"><strong>目标一句话：</strong>落地「条件选项 × 匹配关系 × 跳转目标」通用三元组：P0 覆盖单选（维持增强）+ 多选三档关系 + 矩阵多选作条件源 + 打分/NPS 作条件源；只能向后跳，不做跨题且/或与显示逻辑。</p>
+    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 · 管理员 · 多选分支问卷</div>
+      <p>学员多选命中「任一 / 全部包含 / 完全相等」不同档时跳到不同后续题或直接提交。被跳过题不进必答、不进统计分母。</p>
+      <p class="pain">痛点：现网多选关系固定 EXACT；「任意选项」≠ ANY（指定列表任一命中）；矩阵多选/打分不能作条件源。</p>
+      <p class="gain">收益：复杂调研少拆多份问卷；与问卷星对标（S5）的条件源扩展共用一套 matchRelation。</p>
+    </div>
+    <div class="scene">
+      <div class="who">场景 · 教研 · 打分/NPS 阈值分支</div>
+      <p>例如 NPS ≥9 跳表扬题，≤6 跳改进题；匹配关系用 ≥ / ≤ / =，数值范围与现网打分控件一致（待确认 Q4）。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发的功能（详细）</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>多选跳题三档关系</td><td>EXACT / ANY / CONTAINS_ALL + 任意作答；配置 UI；引擎一套枚举</td><td class="mono">PRO-354</td><td><span class="badge b-backlog">Todo · 无 Jira</span></td></tr>
+        <tr><td>矩阵多选作条件源（P0）</td><td>行×列或简化「某行/任一列」；三档 relation（Q3 待拍）</td><td>确认稿 · 挂 SDGH-8304 / 354</td><td><span class="badge b-board">待确认</span></td></tr>
+        <tr><td>打分 / NPS 作条件源（P0）</td><td>阈值条件；≥/≤/=；与控件精度一致</td><td>确认稿</td><td><span class="badge b-board">待确认</span></td></tr>
+        <tr><td>单选维持增强展示</td><td>条件选项/任意作答；向后跳硬约束不变</td><td>确认稿 As-Is</td><td><span class="badge b-wip">P0</span></td></tr>
+        <tr><td>确认稿 / 原型</td><td>Cloud 确认稿 Doc；本机 survey-skip-logic 原型</td><td><a href="https://docs.google.com/document/d/10rB1wLWeIZn2S2sr3jbP1_sGLUA05Pls1MAH_4gUcSs/edit" target="_blank" rel="noopener">Google Doc</a> · prototypes/调查-跨题型跳题配置</td><td><span class="badge b-board">确认中</span></td></tr>
+      </tbody>
+    </table>
+    <p class="note">挡研发待确认：Q1 多规则首条生效；Q2 P0 挂 354 还是与 8304 同迭代；Q3 矩阵多选简化 vs 三档；Q4 打分小数位；Q5 不可作条件源题型是否默认可作目标。</p>
+    <h3>验收信号</h3>
+    <ul class="accept">
+      <li>多选三档各有可演示用例；被跳过题不进必答与统计分母。</li>
+      <li>矩阵多选、打分/NPS 至少各 1 条条件源跳转用例通过。</li>
+      <li>禁止两套 matchRelation 枚举；不做跨题且/或、不做显示逻辑（≠ PRO-29）。</li>
+    </ul>
+    <div class="meta-bar">catchup「多选题逻辑跳转」· ~11-30 · PRO-354 · 确认稿 2026-11-02</div>
+  </div>
+</section>
+
+<!-- S5 -->
+<section class="ms" id="s5">
+  <div class="ms-head">
+    <h2>S5 · 对标问卷星题型</h2>
+    <span class="badge b-wip">~12-13</span>
+  </div>
+  <div class="ms-body">
+    <p class="goal"><strong>目标一句话：</strong>补齐对标问卷星的题型包：排序、矩阵滑动、矩阵多选、表格文本、表格数值、签名等，使客户少因「缺题型」流失到外部问卷工具。</p>
+    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 · 管理员 · 复杂调研一次配齐</div>
+      <p>需要排序偏好、矩阵滑动量尺、矩阵多选、表格填空（文本/数值）、签名确认时，在调查编辑器内直接选用，不必外挂问卷星再导回。</p>
+      <p class="pain">痛点：题型缺口导致实施用外部工具，数据回流成本高。</p>
+      <p class="gain">收益：与 S4 条件源扩展衔接（矩阵多选/滑动等）；表格数值复用 S1 数值单元格。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发的功能（详细）</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>对标问卷星题型包</td><td>排序题、矩阵滑动、矩阵多选、表格文本、表格数值、签名题；编辑/答题/统计全链路</td><td class="mono">PRO-22 / SDGH-8304</td><td><span class="badge b-wip">In Progress</span></td></tr>
+        <tr><td>与隐藏题型 / 矩阵打分边界</td><td>勿与 PRO-29、PRO-13 混单；数值单元格复用约定</td><td>enrichment 描述</td><td><span class="badge b-board">边界</span></td></tr>
+      </tbody>
+    </table>
+    <h3>验收信号</h3>
+    <ul class="accept">
+      <li>清单内每种题型：可配、可答、可出基础统计。</li>
+      <li>签名/表格等不可作跳题条件源的题型，默认可作跳转目标（若 Q5 确认）。</li>
+    </ul>
+    <div class="meta-bar">catchup P4 · 12-13 · PRO-22 / SDGH-8304</div>
+  </div>
+</section>
+
+<!-- S6 -->
+<section class="ms" id="s6">
+  <div class="ms-head">
+    <h2>S6 · 跳题 P1/P2 + AI 帮建</h2>
+    <span class="badge b-backlog">后续</span>
+  </div>
+  <div class="ms-body">
+    <p class="goal"><strong>目标一句话：</strong>在 P0 稳定后扩展单选矩阵（P1）、排序/矩阵滑动作条件源（P2）；并视开放情况推进调查侧 AI 帮建（PRO-18），降低从 0 搭问卷成本。</p>
+    <h3>达到后预期解决的问题 / 可实现的业务场景</h3>
+    <div class="scene">
+      <div class="who">场景 · 管理员 · 更细的矩阵/排序分支</div>
+      <p>单选矩阵按选项跳转；排序按「第 K 名」；矩阵滑动按行阈值阈值。规则仍服从通用三元组与向后跳约束。</p>
+    </div>
+    <div class="scene">
+      <div class="who">场景 · 管理员 · AI 帮建问卷草稿</div>
+      <p>若 PRO-18 仍开放：上传/描述业务场景后生成问卷草稿题干与选项，人工修订后发布——与光谱 AI zip 建图区分产品线。</p>
+    </div>
+    <h3>需求点与开发功能</h3>
+    <table class="req">
+      <thead><tr><th>需求点</th><th>需开发的功能（详细）</th><th>关联票 / 来源</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>单选矩阵作条件源</td><td>等于某选项 / 任意作答；P1</td><td>确认稿分期</td><td><span class="badge b-backlog">P1</span></td></tr>
+        <tr><td>排序 / 矩阵滑动作条件源</td><td>第 K 名（v1 默认 K=1）；行+阈值 ≥/≤/=；P2</td><td>确认稿分期</td><td><span class="badge b-backlog">P2</span></td></tr>
+        <tr><td>AI 帮建（若仍开放）</td><td>草稿生成、人工确认、与现网编辑器衔接</td><td class="mono">PRO-18</td><td><span class="badge b-wip">In Progress（待确认是否仍开）</span></td></tr>
+      </tbody>
+    </table>
+    <h3>验收信号</h3>
+    <ul class="accept">
+      <li>P1/P2 各至少 1 条端到端跳转用例；不回退 P0 约束。</li>
+      <li>AI 帮建：有「草稿不可直接启用」或等价人工确认门。</li>
+    </ul>
+    <div class="meta-bar">依赖 S4 P0 关闭待确认项 · PRO-18 due 历史 10-30，是否仍开需再确认</div>
+  </div>
+</section>
+
+<!-- OOS -->
+<section class="ms out-of-scope" id="oos">
+  <div class="ms-head">
+    <h2>明确不做 / 边界</h2>
+    <span class="badge b-none">Out of scope</span>
+  </div>
+  <div class="ms-body">
+    <table class="req">
+      <thead><tr><th>不做 / 边界项</th><th>说明</th><th>来源</th></tr></thead>
+      <tbody>
+        <tr><td>删人清答卷当产品默认</td><td>删除学员不清 QuestionnaireAnswer；重置走重复参与/复制调查/运维，不默认开发「一键清空」除非单独立项</td><td>2026-11-04 删人重加</td></tr>
+        <tr><td>跨题且 / 或</td><td>本期跳题不做多题条件组合</td><td>确认稿硬约束</td></tr>
+        <tr><td>显示逻辑 / 配额</td><td>≠ PRO-29 题型名称开关；≠ 跳题引擎</td><td>确认稿</td></tr>
+        <tr><td>评估并入 360</td><td>已拍板走 A（并入调查），不选并入 360 / 百分制 B</td><td>PRO-289</td></tr>
+        <tr><td>向前跳 / 同条件双目标</td><td>只能向后跳或提交；同条件不可指向两道不同题</td><td>确认稿</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>product-manager · 调查评估 milestones · 2026-11-04 Asia/Shanghai · /work/survey-milestones/</footer>
+</main>
+</div>
+</body>
+</html>
