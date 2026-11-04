@@ -3,6 +3,7 @@ Allow: /
 
 # Work tools and weekly strategy notes (shareable by URL; do not index)
 Disallow: /work/
+Disallow: /survey-evaluation/
 Disallow: /weekly/
 Disallow: /content/weekly/
 
