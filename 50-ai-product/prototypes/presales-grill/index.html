@@ -128,6 +128,47 @@ th{font-weight:500;background:var(--block);color:var(--text-2)}
 .ask .free{flex-wrap:wrap;align-items:center}
 .ask .free input{min-width:180px}
 .v-select{margin-top:8px}
+/* 判定页：卡片列表 */
+.filters.vfilters{margin:12px 0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.vcard.open .vquote{white-space:normal}
+.seg-opt.on{background:var(--card);box-shadow:0 0 0 .5px var(--border)}
+.seg-opt.on.t-can{color:var(--green-tx)}.seg-opt.on.t-alt{color:var(--blue-tx)}.seg-opt.on.t-plan{color:var(--amber-tx)}.seg-opt.on.t-no{color:var(--red-tx)}
+.vfilters::-webkit-scrollbar{display:none}
+.vfilters .chip{flex:none;white-space:nowrap}
+.vlist{display:grid;gap:8px}
+.vcard{border:var(--hair);border-radius:8px;background:var(--card)}
+.vcard.open{border-color:var(--border-strong)}
+.vcard-head{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;min-height:56px;padding:10px 12px;border:0;background:none;text-align:left;color:var(--text)}
+.vcard-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:8px}
+.vicon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:500}
+.vmain{min-width:0;display:grid}
+.vquote{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vsub{font-size:12px;line-height:20px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vmeta{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.mini{font-size:12px;line-height:20px;padding:0 6px;border-radius:4px;white-space:nowrap}
+.mini.sign{background:var(--green-bg);color:var(--green-tx);box-shadow:inset 0 0 0 .5px var(--green-tx)}
+.mini.wait{background:var(--block);color:var(--text-2)}
+.vcard-body{padding:0 12px 12px 56px;display:grid;gap:8px}
+.vcard-body .quote{margin:4px 0 0}
+.vact{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.segbar{display:flex;background:var(--block);border-radius:6px;padding:2px}
+.seg-opt{border:0;background:none;padding:6px 10px;min-height:32px;border-radius:4px;color:var(--text-2);display:flex;gap:4px;align-items:center;white-space:nowrap}
+.seg-opt.on{font-weight:500}
+.switch{display:flex;align-items:center;gap:8px;border:0;background:none;padding:6px 0;color:var(--text);min-height:32px}
+.switch .knob{width:32px;height:18px;border-radius:9px;background:var(--border);position:relative;transition:background 250ms ease-out}
+.switch .knob::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform 250ms ease-out}
+.switch.on .knob{background:var(--green-tx)}
+.switch.on .knob::after{transform:translateX(14px)}
+.switch:disabled{opacity:.45;cursor:not-allowed}
+@media (max-width:700px){
+  .vpage.card{padding:12px}
+  .vcard-body{padding:0 12px 12px}
+  .segbar{width:100%}
+  .seg-opt{flex:1;justify-content:center;padding:8px 4px;min-height:40px}
+  .vpage.card .bar{position:sticky;bottom:0;margin:12px -12px -12px;padding:8px 12px;background:var(--card);border-top:var(--hair);flex-wrap:nowrap}
+  .vpage.card .bar .btn{flex:1;min-height:44px}
+}
+@media (prefers-reduced-motion:reduce){.switch .knob,.switch .knob::after{transition:none}}
 /* 追问页顶部固定任务卡 */
 .task-card{position:sticky;top:0;z-index:5;background:var(--card);border-radius:8px;margin-bottom:12px;box-shadow:0 1px 0 var(--divider)}
 .task-head{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px 16px;text-align:left;color:var(--text)}
@@ -324,7 +365,7 @@ const GAPS = [
 
 const HISTORY = [
   {me:true,text:'华北某化工集团，约 3000 人。想按岗位做技能图谱，再搞技能竞赛，要防作弊，年底前想用上。'},
-  {me:false,text:'好，先记下一条：客户想按岗位建技能图谱。要判断哪些能做，还得再了解几件事，我一个一个问。'},
+  {me:false,text:'记下：按岗位建技能图谱'},
   {me:false,text:'客户现在用什么系统管人员和组织架构？希望和我们打通吗？'},
   {me:true,text:'用 SAP HR 管组织，希望能自动同步过来。'}
 ];
@@ -601,38 +642,52 @@ function transcript(){
   return html.join('');
 }
 
+// 判定状态的图标和短名（完整名称在悬停提示里）
+const V_ICON = {
+  can:{icon:'✓', short:'能做', cls:'t-can'},
+  alt:{icon:'↻', short:'变通', cls:'t-alt'},
+  plan:{icon:'◷', short:'规划', cls:'t-plan'},
+  no:{icon:'✕', short:'不行', cls:'t-no'}
+};
 function stepVerdict(){
   resetVerdicts();
   const counts = {all:S.reqIds.length};
   Object.keys(VERDICT).forEach(k=>counts[k]=S.reqIds.filter(id=>S.verdicts[id]===k).length);
-  const filters = [['all','全部'],...Object.entries(VERDICT).map(([k,v])=>[k,v.label])]
-    .map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${S.filter===k}">${l} ${counts[k]}</button>`).join('');
+  const filters = [['all','全部',''],...Object.entries(V_ICON).map(([k,o])=>[k,o.short,o.icon])]
+    .map(([k,l,ic])=>`<button class="chip" data-filter="${k}" aria-pressed="${S.filter===k}">${ic?`<span aria-hidden="true">${ic}</span> `:''}${l} ${counts[k]}</button>`).join('');
   const left = GAPS.filter(g=>!S.gapsDone.has(g.id));
-  const rows = S.reqIds.filter(id=>S.filter==='all'||S.verdicts[id]===S.filter).map(id=>{
-    const r=REQS[id], v=S.verdicts[id];
-    const opts=Object.entries(VERDICT).map(([k,o])=>`<option value="${k}" ${k===v?'selected':''}>${o.label}</option>`).join('');
-    return `<tr>
-      <td class="v-id">${id}</td>
-      <td class="v-quote">「${r.quote}」<div class="note">${r.scene}</div></td>
-      <td class="v-verdict"><span class="tag ${VERDICT[v].cls}">${VERDICT[v].label}</span>${r.pending&&v==='no'?'<div class="note">待产品确认</div>':''}
-          <div class="v-select"><select data-verdict="${id}" aria-label="${id} 改判">${opts}</select></div></td>
-      <td class="v-how" data-label="怎么满足或为什么不行">${r.how}</td>
-      <td class="v-ev" data-label="证据">${r.src==='未找到'?'<span class="note">未找到证据</span>':`<button class="btn-link" data-ev="${id}">查看证据</button>`}</td>
-      <td class="v-contract" data-label="能写进合同"><label class="row"><input type="checkbox" style="width:auto" data-contract="${id}" ${S.contract[id]?'checked':''}> ${S.contract[id]?'可以':'不可以'}</label><div class="err" id="err-${id}"></div></td>
-    </tr>`;
+  // 每条需求一张卡：收起时只有「状态图标 + 原话 + 一句结论」，点开看说明、依据和改判
+  const cards = S.reqIds.filter(id=>S.filter==='all'||S.verdicts[id]===S.filter).map(id=>{
+    const r=REQS[id], v=S.verdicts[id], m=V_ICON[v], open=S.openCard===id;
+    const seg=Object.entries(V_ICON).map(([k,o])=>`<button class="seg-opt ${k===v?'on '+o.cls:''}" data-set="${id}:${k}" aria-pressed="${k===v}" title="${VERDICT[k].label}"><span aria-hidden="true">${o.icon}</span>${o.short}</button>`).join('');
+    const canSign=v==='can';
+    return `<article class="vcard ${open?'open':''}">
+      <button class="vcard-head" data-card="${id}" aria-expanded="${open}">
+        <span class="vicon ${m.cls}" aria-hidden="true">${m.icon}</span>
+        <span class="vmain"><span class="vquote">${r.quote}</span><span class="vsub">${r.how.split(/[。：:]/)[0]}</span></span>
+        <span class="vmeta"><span class="mini ${m.cls}">${m.short}</span>${S.contract[id]?'<span class="mini sign" title="能写进合同">可签</span>':''}${r.pending&&v==='no'?'<span class="mini wait" title="待产品确认">待确认</span>':''}</span>
+      </button>
+      ${open?`<div class="vcard-body">
+        <p>${r.how}</p>
+        <p class="note">${id}　${r.scene}</p>
+        <div class="vev">${r.src==='未找到'?'<span class="note">没找到依据</span>':`<span class="note">依据</span><div class="quote">${r.excerpt}<div class="note">${r.src}</div></div>`}</div>
+        <div class="vact">
+          <div class="segbar" role="group" aria-label="${id} 改判">${seg}</div>
+          <button class="switch ${S.contract[id]?'on':''}" data-csw="${id}" role="switch" aria-checked="${!!S.contract[id]}" ${canSign?'':'disabled'}><span class="knob"></span>能写进合同</button>
+        </div>
+        ${canSign?'':'<p class="note">只有「能做」的条目能写进合同</p>'}
+      </div>`:''}
+    </article>`;
   }).join('');
   return `
-  <section class="card">
-    <div class="row between"><h1>逐条判定</h1><span class="note">判定由助手生成，批准前可改</span></div>
-    ${left.length?`<div class="warn" style="margin-top:16px">追问时没补的信息：${left.map(g=>g.label).join('、')}。相关判定可能不准。</div>`:''}
-    <div class="filters" style="margin:16px 0">${filters}</div>
-    <div class="tbl-wrap"><table class="vtable">
-      <thead><tr><th style="width:48px">编号</th><th>客户原话和场景</th><th style="width:150px">判定</th><th>怎么满足或为什么不行</th><th style="width:96px">证据</th><th style="width:110px">能写进合同</th></tr></thead>
-      <tbody>${rows||'<tr><td colspan="6" class="note">这一档没有需求</td></tr>'}</tbody>
-    </table></div>
+  <section class="card vpage">
+    <div class="row between"><h1>逐条判定</h1><span class="note">${counts.all} 条，点开可改</span></div>
+    ${left.length?`<div class="warn" style="margin-top:12px">没问到：${left.map(g=>g.label).join('、')}，相关判定可能不准</div>`:''}
+    <div class="filters vfilters">${filters}</div>
+    <div class="vlist">${cards||'<p class="note">这一档没有需求</p>'}</div>
     <div class="bar row between">
-      <button class="btn" data-reject>驳回并补问</button>
-      <button class="btn btn-primary" data-approve>批准判定，生成产出</button>
+      <button class="btn" data-reject>补充信息</button>
+      <button class="btn btn-primary" data-approve>批准，生成产出</button>
     </div>
   </section>`;
 }
@@ -733,14 +788,14 @@ function refreshNextBtn(){ const b=app.querySelector('[data-next-round]'); if(b)
 function nextRound(){
   const notes=[];
   Object.entries(S.fb.prod).forEach(([id,f])=>{
-    if(f.status==='have'){S.verdicts[id]='can';REQS[id].pending=false;REQS[id].how=`产品回复现网已支持${f.note?`：${f.note}`:''}`;notes.push(`${id} 改判「现在能做」（合同可写请你确认后再勾）`);}
-    if(f.status==='plan'){S.verdicts[id]='plan';REQS[id].pending=false;notes.push(`${id} 改判「规划中」`);}
-    if(f.status==='nodo'){REQS[id].pending=false;REQS[id].how=`产品确认不做${f.note?`：${f.note}`:''}`;notes.push(`${id} 产品确认不做`);}
+    if(f.status==='have'){S.verdicts[id]='can';REQS[id].pending=false;REQS[id].how=`产品回复现网已支持${f.note?`：${f.note}`:''}`;notes.push(`${id} 改判能做`);}
+    if(f.status==='plan'){S.verdicts[id]='plan';REQS[id].pending=false;notes.push(`${id} 改判规划`);}
+    if(f.status==='nodo'){REQS[id].pending=false;REQS[id].how=`产品确认不做${f.note?`：${f.note}`:''}`;notes.push(`${id} 确认不做`);}
   });
   const disputes=Object.entries(S.fb.cust).filter(([,f])=>f.status==='dispute');
   const ok=Object.values(S.fb.cust).filter(f=>f.status==='ok').length;
   S.round++;
-  S.log.push({me:false,text:`第 ${S.round} 轮：客户确认 ${ok} 条${disputes.length?`，对 ${disputes.map(([id])=>id).join('、')} 有异议`:''}。${notes.join('；')}`});
+  S.log.push({me:false,text:`第 ${S.round} 轮：确认 ${ok} 条${disputes.length?`，${disputes.map(([id])=>id).join('、')} 有异议`:''}${notes.length?`；${notes.join('；')}`:''}`});
   CONFIRM_QS.forEach((q,i)=>{ if(S.fb.answers[i]) S.log.push({me:false,text:q},{me:true,text:S.fb.answers[i]}); });
   if(S.fb.raw) S.log.push({me:false,text:`客户回复原文已记录：${S.fb.raw}`});
   const followUps=disputes.map(([id,f])=>({gap:id,text:`客户对「${REQS[id].quote}」有异议${f.note?`（${f.note}）`:''}，具体哪里不符合？`,
@@ -759,6 +814,9 @@ function bind(){
   app.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>{S.view='case';S.step=1;render();});
   app.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=+b.dataset.step;S.maxStep=Math.max(S.maxStep,S.step);render();window.scrollTo(0,0);});
   const az=app.querySelector('[data-analyze]'); if(az) az.onclick=startAnalyze;
+  app.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{S.openCard=S.openCard===b.dataset.card?null:b.dataset.card;render();});
+  app.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{const [id,k]=b.dataset.set.split(':');S.verdicts[id]=k;if(k!=='can')S.contract[id]=false;render();});
+  app.querySelectorAll('[data-csw]').forEach(b=>b.onclick=()=>{const id=b.dataset.csw;if(S.verdicts[id]==='can'){S.contract[id]=!S.contract[id];render();}});
   const tk=app.querySelector('[data-task]'); if(tk) tk.onclick=()=>{ if(S.taskOpen) collapseTask(); else {S.taskOpen=true;render();} };
   // 任务卡上滑收起（触屏）
   const tc=app.querySelector('.task-card');
@@ -798,7 +856,7 @@ function answer(opt){
   const isNewGap = GAPS.some(g=>g.id===q.gap) && !S.gapsDone.has(q.gap);
   S.gapsDone.add(q.gap);
   if(isNewGap) S.gapNotes[q.gap]=opt.t;
-  if(added.length) S.log.push({me:false,text:`明白，又记下 ${added.length} 条：${added.map(id=>REQS[id].quote).join('；')}。`});
+  if(added.length) S.log.push({me:false,text:`记下：${added.map(id=>REQS[id].quote).join('；')}`});
   S.qIndex++;
   if(isNewGap) announceGap(q.gap); else render();
 }
