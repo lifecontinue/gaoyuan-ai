@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>评估并入调查 · 归档占位</title>
+<link rel="icon" href="data:," />
+<style>
+  :root {
+    --primary: #0152D9; --primary-hover: #2A6BDD; --primary-soft: #EEF4FF;
+    --text-1: #1F1F1F; --text-2: #595959; --text-3: #8C8C8C;
+    --border: #D9D9D9; --divider: #E5E5E5; --page: #F8F8F8; --card: #FFFFFF; --block: #F5F5F5;
+    --navy: #16335F;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif; font-size: 14px; line-height: 22px; color: var(--text-1); background: var(--page); }
+  .app { display: grid; grid-template-columns: 208px 1fr; min-height: 100vh; }
+  .side { background: var(--navy); color: #fff; padding: 16px 0; }
+  .side .brand { padding: 0 20px 16px; font-weight: 500; }
+  .side .group { padding: 12px 20px 4px; font-size: 12px; color: rgba(255,255,255,.55); }
+  .side a { display: block; padding: 8px 20px; color: rgba(255,255,255,.85); text-decoration: none; }
+  .side a:hover { background: rgba(255,255,255,.08); }
+  .side a.on { background: var(--primary); color: #fff; }
+  main { padding: 24px; min-width: 0; }
+  h1 { font-size: 20px; line-height: 28px; font-weight: 500; margin-bottom: 16px; }
+  .card { background: var(--card); border-radius: 8px; padding: 24px; margin-bottom: 16px; }
+  .note { font-size: 12px; line-height: 20px; color: var(--text-3); }
+  .btn { display: inline-flex; align-items: center; height: 32px; padding: 0 16px; border-radius: 4px; border: 1px solid var(--border); background: #fff; color: inherit; text-decoration: none; }
+  .btn:hover { border-color: var(--primary); color: var(--primary); }
+  .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .btn.primary:hover { background: var(--primary-hover); color: #fff; }
+  .tag { display: inline-block; padding: 0 8px; border-radius: 4px; font-size: 12px; line-height: 20px; background: var(--primary-soft); color: var(--primary); margin-bottom: 12px; }
+  p { margin-bottom: 12px; color: var(--text-2); }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    .side { display: flex; flex-wrap: wrap; padding: 8px; }
+    .side .brand, .side .group { display: none; }
+    .side a { padding: 6px 10px; }
+    main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">评估并入调查</div>
+    <div class="group">原型</div>
+    <a href="/survey-evaluation/">评估型调查</a>
+    <a class="on" href="/survey-evaluation/archive/">归档</a>
+  </aside>
+  <main>
+    <h1>归档占位</h1>
+    <div class="card">
+      <span class="tag">预留路径</span>
+      <p>这是「评估并入调查」原型的归档槽位，用来保住 <code>/survey-evaluation/archive/</code> 这条线上 URL。</p>
+      <p>Claude 仍在改、收口后会替换此页。此处不是完整归档界面，请勿当作成品使用。</p>
+      <p><a class="btn primary" href="/survey-evaluation/">返回评估型调查原型</a></p>
+      <p class="note">路径：<code>/survey-evaluation/archive/</code> · 页面带 noindex，不进站点 sitemap 与首页导航。</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>
