@@ -639,7 +639,7 @@ function stepGrill(){
   const gapLabel = id => (GAPS.find(g=>g.id===id)||{}).label || (REQS[id] ? `${id} 客户异议` : id);
   const ask = q ? `
     <div class="ask">
-      <div class="ask-head"><span class="ask-no">第 ${qNo} 问</span><span class="tag t-neutral">${gapLabel(q.gap)}</span></div>
+      <div class="ask-head"><span class="ask-no">第 ${qNo} 问</span></div>
       <h2 class="ask-q">${q.text}</h2>
       <div class="opts" role="list">${q.options.map((o,i)=>`<button class="opt" role="listitem" data-ans="${i}" title="${o.t}"><kbd>${i+1}</kbd><span class="opt-text">${o.t}</span></button>`).join('')}</div>
       <div class="free"><input id="freeAns" placeholder="都不对？直接写客户怎么说的" aria-label="自己填写回答"><button class="btn" data-free>回答</button><button class="btn-link" data-skip>先跳过</button></div>
