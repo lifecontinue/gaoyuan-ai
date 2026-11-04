@@ -243,6 +243,9 @@ th{font-weight:500;background:var(--block);color:var(--text-2)}
   .chat-head .task-head{padding:10px 12px}
   .chat-head .task-body{padding:0 12px 8px}
 }
+/* 回填卡片里的状态选项：放不下就换行，每格等宽 */
+.optgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:4px;background:var(--block);border-radius:8px;padding:2px}
+.optgrid .seg-opt{min-height:36px}
 /* 上一条记录：只显示一条，左右滑动或点 ‹ › 切换 */
 .hist{background:var(--block);border-radius:12px;padding:10px 14px 12px;touch-action:pan-y;user-select:none}
 .hist-top{display:flex;align-items:center;justify-content:space-between;min-height:28px}
@@ -871,31 +874,45 @@ function stepOutput(){
 /* ---------- 回填：客户和产品的回复进来，开启下一轮 ---------- */
 const CUST_FB = {pending:'待回复', ok:'确认', dispute:'有异议'};
 const PROD_FB = {pending:'待回复', have:'现网已支持', plan:'已列入规划', nodo:'确认不做', more:'需要更多信息'};
-function fbRow(id, kind){
+// 回填状态的图标和样式
+const FB_ICON={pending:{icon:'○',cls:'t-neutral'},ok:{icon:'✓',cls:'t-can'},dispute:{icon:'!',cls:'t-plan'},
+  have:{icon:'✓',cls:'t-can'},plan:{icon:'◷',cls:'t-plan'},nodo:{icon:'✕',cls:'t-no'},more:{icon:'?',cls:'t-alt'},answered:{icon:'✓',cls:'t-can'}};
+// 每项回复一张卡：收起时只有标题和当前状态，点开才选状态、写说明
+function fbCard({key,title,sub,status,label,body}){
+  const open=S.fbOpen===key, m=FB_ICON[status]||FB_ICON.pending;
+  return `<article class="vcard ${open?'open':''}">
+    <button class="vcard-head" data-fbcard="${key}" aria-expanded="${open}">
+      <span class="vicon ${m.cls}" aria-hidden="true">${m.icon}</span>
+      <span class="vmain"><span class="vquote">${title}</span>${sub?`<span class="vsub">${sub}</span>`:''}</span>
+      <span class="vbadge ${status==='pending'?'wait':'sign'}">${label}</span><span class="vchev" aria-hidden="true">›</span>
+    </button>
+    ${open?`<div class="vcard-body">${body}</div>`:''}
+  </article>`;
+}
+function fbItemCard(id,kind){
   const r=REQS[id], map=kind==='cust'?CUST_FB:PROD_FB, f=S.fb[kind][id]||{status:'pending',note:''};
-  const opts=Object.entries(map).map(([k,l])=>`<option value="${k}" ${k===f.status?'selected':''}>${l}</option>`).join('');
-  return `<div class="fb-row">
-    <div><span class="note">${kind==='cust'?`客户版第 ${custNumbers()[id]} 条`:id}</span>　${r.quote}<div><span class="tag ${VERDICT[S.verdicts[id]].cls}">${VERDICT[S.verdicts[id]].label}</span></div></div>
-    <select data-fb="${kind}" data-id="${id}" aria-label="${id} ${kind==='cust'?'客户':'产品'}回复">${opts}</select>
-    <input data-fb-note="${kind}" data-id="${id}" value="${f.note}" placeholder="${kind==='cust'?'客户原话或异议点':'产品的说明'}" aria-label="${id} 补充说明">
-  </div>`;
+  const opts=Object.entries(map).map(([k,l])=>`<button class="seg-opt ${k===f.status?'on '+FB_ICON[k].cls:''}" data-fbset="${kind}:${id}:${k}" aria-pressed="${k===f.status}">${l}</button>`).join('');
+  return fbCard({key:`${kind}:${id}`, title:r.quote, status:f.status, label:map[f.status],
+    sub:`${kind==='cust'?`客户版第 ${custNumbers()[id]} 条`:id}${f.note?`　${f.note}`:''}`,
+    body:`<section class="vsec"><h3 class="vlabel">${kind==='cust'?'客户怎么说':'产品怎么回'}</h3><div class="optgrid" role="group">${opts}</div></section>
+      <section class="vsec"><h3 class="vlabel">补充说明</h3><input data-fb-note="${kind}" data-id="${id}" value="${f.note}" placeholder="${kind==='cust'?'客户原话或异议点':'产品的说明'}" aria-label="补充说明"></section>`});
 }
 function stepFeedback(){
   const cust=S.reqIds.filter(id=>S.verdicts[id]!=='no'), prod=S.reqIds.filter(id=>S.verdicts[id]==='no');
   const filled=fbFilled();
-  const disputes=Object.values(S.fb.cust).filter(f=>f.status==='dispute').length;
+  const ans=CONFIRM_QS.map((q,i)=>fbCard({key:`ans:${i}`, title:q, sub:S.fb.answers[i]||'', status:S.fb.answers[i]?'answered':'pending', label:S.fb.answers[i]?'已回答':'待回复',
+    body:`<input data-fb-ans="${i}" value="${S.fb.answers[i]||''}" placeholder="客户的回答" aria-label="客户的回答">`})).join('');
+  const raw=fbCard({key:'raw', title:'客户回复原文', sub:(S.fb.raw||'').slice(0,40), status:S.fb.raw?'answered':'pending', label:S.fb.raw?'已粘贴':'可选',
+    body:`<textarea data-fb-raw style="min-height:96px" placeholder="微信、邮件里客户的原话" aria-label="客户回复原文">${S.fb.raw}</textarea>`});
   return `
-  <section class="card stack">
-    <div class="row between"><h1>回填反馈</h1><span class="note">第 ${S.round} 轮</span></div>
-    <p class="muted">客户和产品都按编号回复。把结果填在这里，点「开始下一轮」：产品的回复会直接改判，客户有异议的条目会变成助手的追问，然后重新判定、重新出产出。</p>
+  <section class="card stack vpage">
+    <div class="row between"><h1>回填反馈</h1><span class="note">第 ${S.round} 轮　点开填写</span></div>
     <h2>客户回复</h2>
-    <div>${cust.map(id=>fbRow(id,'cust')).join('')}</div>
-    <div class="stack">${CONFIRM_QS.map((q,i)=>`<div><label class="field" for="ans${i}">${q}</label><input id="ans${i}" data-fb-ans="${i}" value="${S.fb.answers[i]||''}" placeholder="客户的回答"></div>`).join('')}</div>
-    <div><label class="field" for="fbraw">客户回复原文（可选，直接粘贴）</label><textarea id="fbraw" data-fb-raw style="min-height:96px" placeholder="微信、邮件里客户的原话">${S.fb.raw}</textarea></div>
+    <div class="vlist">${cust.map(id=>fbItemCard(id,'cust')).join('')}${ans}${raw}</div>
     <h2>产品回复</h2>
-    <div>${prod.length?prod.map(id=>fbRow(id,'prod')).join(''):'<p class="note">这一轮没有发给产品的需求</p>'}</div>
+    <div class="vlist">${prod.length?prod.map(id=>fbItemCard(id,'prod')).join(''):'<p class="note">这一轮没有发给产品的需求</p>'}</div>
     <div class="bar row between">
-      <span class="note">已填 ${filled} 条${disputes?`，${disputes} 条客户有异议`:''}</span>
+      <span class="note">已填 ${filled} 项</span>
       <button class="btn btn-primary" data-next-round ${filled?'':'disabled'}>开始第 ${S.round+1} 轮</button>
     </div>
   </section>`;
@@ -968,7 +985,8 @@ function bind(){
   app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.outTab=b.dataset.tab;render();});
   const cp=app.querySelector('[data-copy]'); if(cp) cp.onclick=()=>{navigator.clipboard.writeText(productText()).then(()=>toast('已复制，可直接粘贴发送'),()=>toast('复制失败，请手动选中文字复制'));};
   const pv=document.getElementById('preview'); if(pv) pv.srcdoc=customerHTML();
-  app.querySelectorAll('[data-fb]').forEach(s=>s.onchange=()=>{const k=s.dataset.fb,id=s.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{note:''}),status:s.value};render();});
+  app.querySelectorAll('[data-fbcard]').forEach(b=>b.onclick=()=>{S.fbOpen=S.fbOpen===b.dataset.fbcard?null:b.dataset.fbcard;render();});
+  app.querySelectorAll('[data-fbset]').forEach(b=>b.onclick=()=>{const [k,id,st]=b.dataset.fbset.split(':');S.fb[k][id]={...(S.fb[k][id]||{note:''}),status:st};render();});
   app.querySelectorAll('[data-fb-note]').forEach(i=>i.oninput=()=>{const k=i.dataset.fbNote,id=i.dataset.id;S.fb[k][id]={...(S.fb[k][id]||{status:'pending'}),note:i.value};refreshNextBtn();});
   app.querySelectorAll('[data-fb-ans]').forEach(i=>i.oninput=()=>{S.fb.answers[i.dataset.fbAns]=i.value;refreshNextBtn();});
   const raw=app.querySelector('[data-fb-raw]'); if(raw) raw.oninput=()=>{S.fb.raw=raw.value;refreshNextBtn();};
