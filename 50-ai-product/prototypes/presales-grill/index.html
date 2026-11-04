@@ -230,6 +230,19 @@ th{font-weight:500;background:var(--block);color:var(--text-2)}
   body.in-case .side{display:none}
   body.in-case .main{padding-bottom:12px}
 }
+/* 访谈卡：顶栏是信息收集进度，下面是问答；记下的需求以小标签挂在问答里 */
+.chat.card{padding-top:0}
+.chat-head{position:sticky;top:0;z-index:3;background:var(--card);margin:0 -24px 12px;border-bottom:var(--hair);border-radius:12px 12px 0 0}
+.chat-head .task-head{padding:12px 24px}
+.chat-head .task-body{border-top:0;padding:0 24px 8px}
+.caps{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.cap{font-size:12px;line-height:20px;padding:0 8px;border-radius:10px;background:var(--green-bg);color:var(--green-tx)}
+@media (max-width:700px){
+  .grill .chat.card{padding-top:0}
+  .chat-head{margin:0 -12px 8px}
+  .chat-head .task-head{padding:10px 12px}
+  .chat-head .task-body{padding:0 12px 8px}
+}
 /* 追问页顶部固定任务卡 */
 .task-card{position:sticky;top:0;z-index:5;background:var(--card);border-radius:8px;margin-bottom:12px;box-shadow:0 1px 0 var(--divider)}
 .task-head{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px 16px;text-align:left;color:var(--text)}
@@ -655,7 +668,7 @@ function stepGrill(){
   // 顶部固定的任务卡：收起时一行进度，点开看六项明细
   const doneN = GAPS.length - left.length, nowGap = q && GAPS.find(g=>g.id===q.gap && !S.gapsDone.has(g.id));
   const task = `
-  <section class="task-card ${S.taskOpen?'open':''}">
+  <div class="chat-head ${S.taskOpen?'open':''}">
     <button class="task-head" data-task aria-expanded="${!!S.taskOpen}" aria-controls="task-body">
       <span class="task-title">信息收集</span>
       <span class="task-meter" aria-hidden="true"><span style="width:${doneN/GAPS.length*100}%"></span></span>
@@ -667,11 +680,11 @@ function stepGrill(){
       ${S.justGot?`<div class="task-tip" role="status">✓ 刚收集到：${gapLabel(S.justGot)}　<span class="note">3 秒后自动收起，点标题或上滑可立即收起</span></div>`:''}
       ${gaps}
     </div>
-  </section>`;
+  </div>`;
   return `
-  ${task}
   <div class="grill">
     <section class="card chat">
+      ${task}
       <div class="msgs ${S.expandLog?'expanded':''}" aria-live="polite">${msgs}</div>
       ${ask}
     </section>
@@ -692,25 +705,24 @@ function stepGrill(){
   </div>`;
 }
 
-// 对话按「访谈记录」排：开头是客户信息，之后每组一问一答编号；助手的旁白（记下需求等）作为小注
+// 访谈记录：开头是客户信息，之后每组一问一答编号；这一问记下的需求以小标签挂在问答下面
 function transcript(){
   const log = S.log, items = [];
   let n = 0;
+  const captured = t => { const m=t.match(/^记下[:：](.*)$/); return m ? m[1].split(/[；;、，,]/).map(x=>x.replace(/[。.]$/,'').trim()).filter(Boolean) : []; };
   for(let i=0;i<log.length;i++){
     const m = log[i];
-    if(i===0 && m.me){ items.push({kind:'brief', html:`<div class="brief"><div class="note">客户信息</div><div class="brief-text">${m.text}</div></div>`}); continue; }
-    if(!m.me && log[i+1]?.me){
-      n++;
-      items.push({kind:'qa', html:`<div class="qa"><span class="num">${n}</span><div><div class="q">${m.text}</div><div class="a">${log[i+1].text}</div></div></div>`});
-      i++; continue;
-    }
-    items.push({kind:'sys', html:`<div class="sys"><span aria-hidden="true">✓</span><span>${m.text.replace(/\n/g,'　')}</span></div>`});
+    if(i===0 && m.me){ items.push({kind:'brief', a:m.text, caps:[]}); continue; }
+    if(!m.me && log[i+1]?.me){ n++; items.push({kind:'qa', n, q:m.text, a:log[i+1].text, caps:[]}); i++; continue; }
+    const got = captured(m.text);
+    if(got.length && items.length) items[items.length-1].caps.push(...got);
   }
+  const caps = list => list.length ? `<div class="caps">${list.map(x=>`<span class="cap">＋ ${x}</span>`).join('')}</div>` : '';
+  const html = items.map((it,i)=> it.kind==='brief'
+    ? `<div class="brief"><div class="note">客户信息</div><div class="brief-text">${it.a}</div>${caps(it.caps)}</div>`
+    : `<div class="qa ${i>0 && i<items.length-2 ? 'old' : ''}"><span class="num">${it.n}</span><div><div class="q">${it.q}</div><div class="a">${it.a}</div>${caps(it.caps)}</div></div>`);
   // 手机上只留最近 2 问，更早的收起（桌面照常全显示）
-  const qaIdx = items.map((it,i)=>it.kind==='qa'?i:-1).filter(i=>i>=0);
-  const cut = qaIdx.length > 2 ? qaIdx[qaIdx.length-2] : 0;
-  const hidden = qaIdx.filter(i=>i<cut).length;
-  const html = items.map((it,i)=> i>0 && i<cut ? it.html.replace(/^<div class="/,'<div class="old ') : it.html);
+  const hidden = Math.max(0, items.length-3);
   if(hidden) html.splice(1,0,`<button class="fold-btn btn-link" data-fold>${S.expandLog?'收起前面的问答':`前面还有 ${hidden} 问，展开`}</button>`);
   return html.join('');
 }
@@ -894,7 +906,7 @@ function bind(){
   app.querySelectorAll('[data-csw]').forEach(b=>b.onclick=()=>{const id=b.dataset.csw;if(S.verdicts[id]==='can'){S.contract[id]=!S.contract[id];render();}});
   const tk=app.querySelector('[data-task]'); if(tk) tk.onclick=()=>{ if(S.taskOpen) collapseTask(); else {S.taskOpen=true;render();} };
   // 任务卡上滑收起（触屏）
-  const tc=app.querySelector('.task-card');
+  const tc=app.querySelector('.chat-head');
   if(tc){ let y0=null;
     tc.ontouchstart=e=>{y0=e.touches[0].clientY;};
     tc.ontouchend=e=>{ if(y0!==null && S.taskOpen && y0-e.changedTouches[0].clientY>30) collapseTask(); y0=null; };
