@@ -246,6 +246,41 @@
   .tpl-table td { vertical-align: top; }
   .nowrap { white-space: nowrap; }
   .btn.link.err { color: var(--danger); }
+  .filters { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; background: var(--block); padding: 12px 16px; border-radius: 6px; }
+  .filters label { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); }
+  .filters input[type=text] { width: 150px; }
+  .plist td { vertical-align: top; }
+  .plist th:nth-child(2), .plist td:nth-child(2) { min-width: 210px; }
+  .plist th:nth-child(3), .plist td:nth-child(3) { min-width: 130px; }
+  .ops { min-width: 230px; }
+  .op { border: none; background: none; color: var(--primary); cursor: pointer; padding: 0 8px 0 0; font: inherit; font-size: 13px; line-height: 24px; }
+  .op:hover { text-decoration: underline; }
+  .op.danger { color: var(--danger); }
+  .op.off { color: var(--text-3); opacity: .55; cursor: not-allowed; text-decoration: none; }
+  .mono { font-family: Consolas, "SFMono-Regular", monospace; font-size: 12px; }
+  .nowrap { white-space: nowrap; }
+  .pager { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 16px; }
+  .pager label { display: inline-flex; gap: 6px; align-items: center; color: var(--text-2); font-size: 13px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .grid-single { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; }
+  .pickbox { background: var(--block); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; align-self: start; }
+  .pickbox h3 { font-size: 13px; font-weight: 500; margin: 0; }
+  .pickbox .switch { font-size: 13px; line-height: 18px; align-items: flex-start; }
+  .subtabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .subtabs button { border: 1px solid var(--border); background: #fff; border-radius: 14px; padding: 2px 12px; cursor: pointer; font: inherit; font-size: 13px; }
+  .subtabs button.on { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+  .chart { width: 100%; height: auto; display: block; margin: 8px 0; }
+  .chart .ct { font-size: 13px; fill: #595959; } .chart .cv { font-size: 12px; fill: #1F1F1F; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+  tr.removed td { color: var(--text-3); text-decoration: line-through; } tr.removed td:last-child, tr.removed td:nth-last-child(2) { text-decoration: none; }
+  .calc { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; padding: 10px 12px; background: var(--block); border-radius: 6px; font-size: 13px; }
+  .kv { display: grid; grid-template-columns: 90px 1fr 90px 1fr; gap: 6px 12px; margin: 12px 0; font-size: 13px; }
+  .kv span { color: var(--text-3); } .kv b { font-weight: 500; }
+  .qd { border-top: 1px solid var(--divider); padding-top: 12px; margin-top: 12px; }
+  .qd h3 { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .qlist { padding-left: 20px; } .qlist li { margin: 4px 0; }
+  @media (max-width: 760px) { .grid-single { grid-template-columns: 1fr; } .kv { grid-template-columns: 90px 1fr; } }
 </style>
 </head>
 <body>
@@ -337,7 +372,7 @@ const ANSWERS = [
 
 /* ---------- 页面状态 ---------- */
 const state = {
-  page: 'result', step: 'score', tab: 'object',
+  page: 'list', step: 'score', tab: 'rank',
   qWeightOn: true, qWeights: QUESTIONS.map(q => q.weight),
   relWeightOn: true, objects: [], objSel: [], poolOpen: false, poolSel: [], poolTpl: true,
   poolF: { name: '', src: '', level: '', pool: '' },
@@ -361,7 +396,8 @@ function trimmed(totals) {
   return t;
 }
 function included() {
-  return ANSWERS.filter(a => (!state.relFilter || a.rel === state.relFilter)
+  return ANSWERS.filter(a => !(state.ansState && state.ansState[`${a.obj}|${a.who}`])
+    && (!state.relFilter || a.rel === state.relFilter)
     && (!state.deptFilter || objById(a.obj).dept === state.deptFilter));
 }
 const objById = id => OBJECTS.find(o => o.id === id);
@@ -396,38 +432,8 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 function render() {
   document.querySelectorAll('.side a').forEach(a => a.classList.toggle('on', a.dataset.page === state.page));
   main.classList.toggle('editor-mode', state.page === 'create' && state.step === 'score');
-  main.innerHTML = ({ list: pageList, create: pageCreate, result: pageResult, legacy: pageLegacy, callers: pageCallers, student: pageStudent })[state.page]();
+  main.innerHTML = ({ list: pageList, create: pageCreate, result: pageResult, legacy: pageLegacy, callers: pageCallers, student: pageStudent, detail: pageDetail, monitor: pageMonitor })[state.page]();
   bind();
-}
-
-function pageList() {
-  const rows = [
-    ['2026 Q4 内训师授课评估', '评估型调查', '调查管理', '进行中', '23/24'],
-    ['新员工入职培训讲师评价', '评估型调查', '面授管理', '已结束', '96/100'],
-    ['门店督导评估', '评估型调查', '远程督导', '进行中', '18/40'],
-    ['管培生混合培训评估', '评估型调查', '混合培训', '未开始', '0/32'],
-    ['销售训练营阶段评估', '评估型调查', '学习地图', '未开始', '0/45'],
-    ['2026 年度培训需求调研', '普通调查', '调查管理', '进行中', '312/800'],
-  ];
-  return `<h1>调查列表</h1>
-  <div class="card">
-    <div class="row between" style="margin-bottom:16px">
-      <div class="row">
-        <input type="text" placeholder="调查名称" aria-label="调查名称" />
-        <select aria-label="类型"><option>全部类型</option><option>普通调查</option><option>评估型调查</option></select>
-        <select aria-label="来源"><option>全部来源</option><option>调查管理</option><option>学习地图</option><option>面授管理</option><option>混合培训</option><option>远程督导</option></select>
-      </div>
-      <button class="btn primary" id="newSurvey">新建调查</button>
-    </div>
-    <div class="scroll"><table>
-      <thead><tr><th>调查名称</th><th>类型</th><th>来源</th><th>状态</th><th class="num">完成/应答</th><th>操作</th></tr></thead>
-      <tbody>${rows.map(r => `<tr><td>${r[0]}</td>
-        <td><span class="tag ${r[1] === '评估型调查' ? 'blue' : ''}">${r[1]}</span></td>
-        <td>${r[2]}${r[2] !== '调查管理' ? `<div class="note">由${r[2]}创建，请到来源应用修改</div>` : ''}</td><td>${r[3]}</td><td class="num">${r[4]}</td>
-        <td>${r[1] === '评估型调查' ? '<button class="btn link" data-go="result">结果分析</button>' : '<span class="muted">统计</span>'}</td></tr>`).join('')}</tbody>
-    </table></div>
-    <p class="note" style="margin-top:12px">来源不是调查管理的，是在学习地图、面授管理、混合培训、远程督导里点「新建评估」后创建的。这里可以看监控和结果，基本信息、对象和关系要到来源应用修改。</p>
-  </div>`;
 }
 
 function pageLegacy() {
@@ -1115,47 +1121,7 @@ function stepSetting() {
 }
 
 /* ---------- 结果分析 ---------- */
-function pageResult() {
-  const tabs = [['object','对象排名'],['rel','关系对比'],['question','题目分析'],['evaluator','评测人分析'],['dept','部门分析']];
-  const depts = [...new Set(OBJECTS.map(o => o.dept))];
-  const body = ({ object: tabObject, rel: tabRel, question: tabQuestion, evaluator: tabEvaluator, dept: tabDept })[state.tab]();
-  return `<h1>2026 Q4 内训师授课评估</h1>
-  <div class="card" style="padding:16px 24px">
-    <div class="row between">
-      <div class="row">
-        <select id="relFilter" aria-label="关系"><option value="">全部关系</option>${REL_NAMES.map(r => `<option ${state.relFilter === r ? 'selected' : ''}>${r}</option>`).join('')}</select>
-        <select id="deptFilter" aria-label="对象部门"><option value="">全部部门</option>${depts.map(d => `<option ${state.deptFilter === d ? 'selected' : ''}>${d}</option>`).join('')}</select>
-        <label class="switch"><input type="checkbox" id="trim" ${state.trim ? 'checked' : ''} /> 去掉最高分、最低分</label>
-        <label class="switch"><input type="checkbox" id="anonView" ${state.anon ? 'checked' : ''} /> 演示：匿名模式</label>
-        <label class="switch"><input type="checkbox" id="weighted" ${state.weighted ? 'checked' : ''} ${state.relFilter ? 'disabled' : ''} /> 按关系加权（用第 2 步各对象的权重）</label>
-      </div>
-      <span class="note">满分 ${FULL} 分</span>
-    </div>
-    ${state.relFilter ? `<p class="note" style="margin-top:8px">已筛选「${state.relFilter}」，只统计该关系的答卷，对象得分不加权。</p>` : ''}
-  </div>
-  <div class="card">
-    <div class="row between"><div class="tabs" role="tablist" style="flex:1">${tabs.map(([k, t]) => `<button role="tab" data-tab="${k}" class="${state.tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
-      <button class="btn" id="exportBtn" style="margin-left:16px;margin-bottom:16px">导出</button></div>
-    <div class="scroll">${body}</div>
-  </div>`;
-}
-
 const visibleObjects = () => OBJECTS.filter(o => !state.deptFilter || o.dept === state.deptFilter);
-
-function tabObject() {
-  const pAvg = projectAvg();
-  const rows = visibleObjects().map(o => ({ o, ...objScore(o.id), n: included().filter(a => a.obj === o.id).length }))
-    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
-  return `<table><thead><tr><th>排名</th><th>对象</th><th class="num">${state.weighted && !state.relFilter ? '加权得分' : '得分'}</th><th class="num">得分率</th><th></th><th class="num">对比平均分</th><th class="num">有效份数</th><th>各关系完成</th></tr></thead>
-  <tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.o.name}</td><td class="num">${r1(r.score)}</td><td class="num">${r1(r.score / FULL * 100)}</td>
-    <td><div class="bar"><i style="width:${r.score / FULL * 100}%"></i></div></td>
-    <td class="num">${pAvg ? r1(r.score / pAvg * 100) + '%' : '—'}</td><td class="num">${r.n}</td>
-    <td>${REL_NAMES.filter(rel => !state.relFilter || rel === state.relFilter).map(rel => {
-      const n = included().filter(a => a.obj === r.o.id && a.rel === rel).length;
-      return n ? `<span class="tag">${rel} ${n}</span>` : `<span class="tag orange">缺少${rel}</span>`;
-    }).join(' ')}</td></tr>`).join('')}</tbody></table>
-  <p class="note" style="margin-top:12px">项目平均分 ${r1(pAvg)}（全部有效答卷总分的平均）。${state.weighted && !state.relFilter ? '某关系没有有效答卷时，其余关系按权重重新折算。' : ''}</p>`;
-}
 
 function tabRel() {
   const rels = REL_NAMES.filter(rel => !state.relFilter || rel === state.relFilter);
@@ -1386,12 +1352,487 @@ function bindStudent() {
   });
 }
 
+/* ---------- 调查列表 / 查看 / 监控 / 统计排名（对齐评估管理现网字段与操作） ---------- */
+// 演示日期：2026-11-05。只有「2026 Q4 内训师授课评估」带完整答卷；其他评估型项目的监控、排名沿用同一份演示数据，页面上会注明。
+const TODAY = '2026-11-05';
+const DEMO_PID = 'P20261101';
+const P = (code, name, type, qn, creator, start, end, status, created, done, total, source) => ({ id: code, code, name, type, qn, creator, start, end, status, created, done, total, source });
+state.projects = [
+  P('P20261101', '2026 Q4 内训师授课评估', '评估型调查', '内训师授课评价表', '高源', '2026-11-01 09:00', '2026-11-15 18:00', '进行中', '2026-10-28', 23, 25, '调查管理'),
+  P('P20261102', '新员工入职培训讲师评价', '评估型调查', '讲师满意度评估', '高源', '2026-10-08 09:00', '2026-10-20 18:00', '已结束', '2026-10-06', 96, 100, '面授管理'),
+  P('P20261103', '门店督导评估', '评估型调查', '督导能力评估表', '唐佳宁', '2026-11-02 09:00', '2026-11-30 18:00', '进行中', '2026-11-01', 18, 40, '远程督导'),
+  P('P20261104', '管培生混合培训评估', '评估型调查', '讲师满意度评估', '苏利敏', '2026-11-20 09:00', '2026-12-05 18:00', '未开始', '2026-11-03', 0, 32, '混合培训'),
+  P('P20261105', '销售训练营阶段评估', '评估型调查', '讲师满意度评估', '朱佳禾', '2026-11-18 09:00', '', '未开始', '2026-11-02', 0, 45, '学习地图'),
+  P('P20261106', '2026 Q4 课程开发技能评估', '评估型调查', '内训师授课评价表', '高源', '', '', '草稿', '2026-11-04', 0, 0, '调查管理'),
+  P('S20261107', '2026 年度培训需求调研', '普通调查', '培训需求调研问卷', '高源', '2026-10-25 09:00', '2026-11-30 18:00', '进行中', '2026-10-24', 312, 800, '调查管理'),
+  P('P20261108', '2026 Q3 内训师授课评估', '评估型调查', '内训师授课评价表', '高源', '2026-08-01 09:00', '2026-08-15 18:00', '已结束', '2026-07-28', 88, 90, '调查管理'),
+  P('P20261109', '华南晨会讲师评估', '评估型调查', '讲师满意度评估', '褚丽娜', '2026-09-19 11:31', '2026-09-30 11:31', '已作废', '2026-09-17', 0, 12, '调查管理'),
+  P('S20261110', '食堂满意度调查', '普通调查', '食堂满意度问卷', '李钊', '2026-11-10 09:00', '2026-11-20 18:00', '未开始', '2026-11-04', 0, 600, '调查管理'),
+];
+// 补几页演示数据，用来演示分页
+for (let i = 1; i <= 14; i++) {
+  const st = ['已结束', '已结束', '进行中', '草稿'][i % 4];
+  state.projects.push(P(`P2026${String(i).padStart(4, '0')}`, `2026 年第 ${i} 期讲师授课评估`, '评估型调查', '讲师满意度评估', ['高源', '唐佳宁', '苏利敏'][i % 3],
+    st === '草稿' ? '' : `2026-0${(i % 9) + 1}-01 09:00`, st === '草稿' ? '' : `2026-0${(i % 9) + 1}-10 18:00`, st, `2026-0${(i % 9) + 1}-01`, st === '已结束' ? 30 + i : (st === '进行中' ? i : 0), st === '草稿' ? 0 : 40, i % 5 === 0 ? '面授管理' : '调查管理'));
+}
+state.listF = { kw: '', qn: '', status: '', type: '', source: '' };
+state.listQ = { ...state.listF };
+state.page_no = 1; state.page_size = 10;
+state.pid = DEMO_PID;
+state.ansState = {};          // `${obj}|${who}` → 'invalid' | 'recycled'
+state.rankSel = [];           // 综合排名勾选的对象（绘图用）
+state.singleQ = 0;            // 单项排名当前题
+state.singleQs = [0, 1, 2, 3, 4];
+state.singleObjs = OBJECTS.map(o => o.id);
+state.monTab = 'done'; state.monF = { kw: '', dept: '', obj: '', st: '' }; state.monSel = [];
+state.opModal = null;
+
+const curProject = () => state.projects.find(p => p.id === state.pid) || state.projects[0];
+const isEval = p => p.type === '评估型调查';
+const fromOther = p => p.source !== '调查管理';
+const validity = p => p.start ? `${p.start}～${p.end || '长期有效'}` : '—';
+const statusTag = s => ({ 草稿: '', 未开始: 'orange', 进行中: 'blue', 已结束: 'green', 已作废: 'red' })[s] || '';
+
+// 每种操作在什么状态下可用；不可用时给出原因
+function opRule(p, op) {
+  const src = fromOther(p) ? `由${p.source}创建，请到${p.source}修改` : '';
+  const s = p.status;
+  const rules = {
+    edit: s === '草稿' || s === '未开始' ? (src || '') : (s === '进行中' ? '进行中只能追加评测人，不能修改问卷和对象' : `${s}的项目不能编辑`),
+    publish: s === '草稿' ? '' : null,
+    view: s === '草稿' ? '草稿还没有发布，请点「编辑」' : '',
+    stat: ['进行中', '已结束'].includes(s) ? '' : (s === '已作废' ? '已作废的项目不统计' : '还没有答卷'),
+    copy: '',
+    monitor: ['进行中', '已结束'].includes(s) ? '' : (s === '已作废' ? '已作废的项目不能监控' : '还没有开始作答'),
+    addUser: s === '进行中' && isEval(p) ? (src || '') : null,
+    export: ['进行中', '已结束'].includes(s) ? '' : '还没有答卷可导出',
+    del: s === '草稿' ? (src || '') : null,
+    abolish: ['未开始', '进行中'].includes(s) ? (src || '') : null,
+  };
+  return rules[op];
+}
+const OPS = [['view', '查看'], ['edit', '编辑'], ['publish', '发布'], ['addUser', '加人员'], ['monitor', '监控'], ['stat', '统计排名'], ['copy', '复制'], ['export', '导出'], ['del', '删除'], ['abolish', '作废']];
+function opsCell(p) {
+  return OPS.map(([op, label]) => {
+    const r = opRule(p, op);
+    if (r === null || r === undefined) return '';
+    const name = op === 'stat' && !isEval(p) ? '统计' : label;
+    return r ? `<button class="op off" data-opoff="${r}" title="${r}" aria-disabled="true">${name}</button>`
+      : `<button class="op ${op === 'del' || op === 'abolish' ? 'danger' : ''}" data-op="${op}" data-pid="${p.id}">${name}</button>`;
+  }).join('');
+}
+
+function listRows() {
+  const f = state.listQ;
+  return state.projects.filter(p => (!f.kw || p.code.includes(f.kw) || p.name.includes(f.kw)) && (!f.qn || p.qn.includes(f.qn))
+    && (!f.status || p.status === f.status) && (!f.type || p.type === f.type) && (!f.source || p.source === f.source));
+}
+
+function pageList() {
+  const all = listRows(), size = state.page_size, pages = Math.max(1, Math.ceil(all.length / size));
+  if (state.page_no > pages) state.page_no = pages;
+  const rows = all.slice((state.page_no - 1) * size, state.page_no * size), f = state.listF;
+  return `<h1>调查列表</h1>
+  <div class="card">
+    <div class="filters">
+      <label>项目编号/名称 <input type="text" id="fKw" value="${f.kw}" /></label>
+      <label>使用问卷 <input type="text" id="fQn" value="${f.qn}" /></label>
+      <label>状态 <select id="fStatus"><option value="">全部</option>${['草稿', '未开始', '进行中', '已结束', '已作废'].map(s => `<option ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+      <label>类型 <select id="fType"><option value="">全部</option>${['评估型调查', '普通调查'].map(s => `<option ${f.type === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+      <label>项目来源 <select id="fSource"><option value="">全部</option>${['调查管理', '学习地图', '面授管理', '混合培训', '远程督导'].map(s => `<option ${f.source === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+      <button class="btn primary" id="fGo">筛选</button><button class="btn" id="fReset">重置</button>
+    </div>
+    <div class="row between" style="margin:16px 0 12px">
+      <span class="note">由其他应用创建的项目在这里部分管理功能受限，学员从来源应用进入作答。</span>
+      <span class="row"><button class="btn" id="listExport">导出列表</button><button class="btn primary" id="newSurvey">新建调查</button></span>
+    </div>
+    <div class="scroll"><table class="plist">
+      <thead><tr><th>编号</th><th>项目名称</th><th>使用问卷</th><th>创建人</th><th>有效时间</th><th>状态</th><th>创建日期</th><th class="num">已填/下发</th><th>项目来源</th><th>操作</th></tr></thead>
+      <tbody>${rows.length ? rows.map(p => `<tr>
+        <td class="mono">${p.code}</td>
+        <td><button class="btn link" data-op="${p.status === '草稿' ? 'edit' : 'view'}" data-pid="${p.id}" ${p.status === '草稿' && opRule(p, 'edit') ? 'disabled' : ''}>${p.name}</button><div><span class="tag ${isEval(p) ? 'blue' : ''}">${p.type}</span></div></td>
+        <td>${p.qn}</td><td>${p.creator}</td><td class="nowrap">${p.start ? `${p.start}<br>～${p.end || '长期有效'}` : '—'}</td>
+        <td><span class="tag ${statusTag(p.status)}">${p.status}</span></td><td class="nowrap">${p.created}</td>
+        <td class="num">${p.total ? `${p.done}/${p.total}` : '--'}</td><td>${p.source}</td>
+        <td class="ops">${opsCell(p)}</td></tr>`).join('') : '<tr><td colspan="10" class="muted" style="text-align:center;padding:32px">没有符合条件的项目，换个条件试试</td></tr>'}</tbody>
+    </table></div>
+    ${pager(all.length, pages)}
+  </div>
+  ${state.opModal ? opModal() : ''}`;
+}
+
+function pager(n, pages) {
+  const no = state.page_no;
+  return `<div class="pager">
+    <button class="btn sm" data-pg="1" ${no === 1 ? 'disabled' : ''}>首页</button><button class="btn sm" data-pg="${no - 1}" ${no === 1 ? 'disabled' : ''}>上一页</button>
+    <button class="btn sm" data-pg="${no + 1}" ${no === pages ? 'disabled' : ''}>下一页</button><button class="btn sm" data-pg="${pages}" ${no === pages ? 'disabled' : ''}>末页</button>
+    <label>每页 <select id="pgSize">${[10, 20, 50].map(s => `<option ${state.page_size === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+    <label>转到 <input type="number" id="pgTo" min="1" max="${pages}" value="${no}" style="width:56px" /> 页</label><button class="btn sm" id="pgGo">Go</button>
+    <span class="note">第 ${no}/${pages} 页　共 ${n} 条记录</span></div>`;
+}
+
+/* ---------- 查看（只读） ---------- */
+function pageDetail() {
+  const p = curProject(), demo = p.id === DEMO_PID;
+  return `<div class="row between"><h1>${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button>
+    ${opRule(p, 'monitor') === '' ? `<button class="btn" data-op="monitor" data-pid="${p.id}">监控</button>` : ''}${opRule(p, 'stat') === '' && isEval(p) ? `<button class="btn primary" data-op="stat" data-pid="${p.id}">统计排名</button>` : ''}</span></div>
+  ${demo ? '' : `<div class="banner"><span>演示：该项目的问卷、对象和关系沿用「2026 Q4 内训师授课评估」的演示数据。</span></div>`}
+  <div class="grid2">
+    <div class="card"><h2>基本信息</h2>
+      ${[['编号', p.code], ['项目名称', p.name], ['类型', p.type], ['使用问卷', p.qn], ['有效时间', validity(p)], ['状态', `<span class="tag ${statusTag(p.status)}">${p.status}</span>`], ['创建人', p.creator], ['创建日期', p.created], ['项目来源', p.source], ['说明', state.edHead.desc]]
+        .map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
+    <div class="card"><h2>计分与设置</h2>
+      ${[['计分题', `${scoredCount()} 道，满分 ${fmt(fullScore())} 分`], ['题目权重', state.qWeightOn ? '已开启' : '未开启'], ['按关系加权', state.relWeightOn ? '已开启，按对象各自设置' : '未开启'],
+         ['去掉最高分、最低分', state.trim ? '已开启' : '未开启'], ['调查模式', state.anon ? '匿名模式' : '管理模式'], ['扫码参与', state.stu.scanRule === 'pick' ? '任何人可扫码，自己选择评估对象' : '只允许评测人名单内的人'],
+         ['学员查看排名', state.rankVisible ? '允许' : '不允许']].map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
+  </div>
+  ${isEval(p) ? `<div class="card"><h2>评估对象与评测关系（${state.objects.length} 个对象）</h2><div class="scroll"><table>
+    <thead><tr><th>被评对象</th><th>来源</th><th>评测关系与权重</th><th>评测人</th></tr></thead>
+    <tbody>${state.objects.map(o => `<tr><td>${o.name}</td><td><span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span></td>
+      <td>${o.rels.map(r => `${r.name} ${r.weight}%`).join('、')}</td><td class="note">${o.rels.map(r => `${r.name}：${r.who || '未选择'}`).join('；')}</td></tr>`).join('')}</tbody></table></div></div>` : ''}
+  <div class="card"><h2>问卷（${state.edQs.length} 道题）</h2><ol class="qlist">${state.edQs.map(q => `<li>${q.title} <span class="tag">${q.type}</span> ${q.score ? `<span class="note">权重 ${state.qWeightOn ? q.weight : 1}，本题满分 ${fmt(qFull(q))}</span>` : '<span class="note">不计分</span>'}</li>`).join('')}</ol></div>
+  ${state.opModal ? opModal() : ''}`;
+}
+
+/* ---------- 监控 ---------- */
+const CODES = { s1: '0101', s2: '0102', s3: '0103', s4: '0104', m1: '0301', s5: '0105', t1: 'JS0012', t2: 'JS0035', t3: 'JS0041', t4: 'JS0058' };
+EVALUATORS.s5 = { name: '钱五', dept: '财务部', rel: '学员' };
+const UNANSWERED = [
+  { obj: 't1', who: 's5', rel: '学员', st: '已暂存' }, { obj: 't2', who: 's5', rel: '学员', st: '未开始' },
+  { obj: 't3', who: 's5', rel: '学员', st: '未开始' }, { obj: 't4', who: 's5', rel: '学员', st: '未开始' },
+  { obj: 't3', who: 't3', rel: '自评', st: '未开始' },
+];
+const akey = a => `${a.obj}|${a.who}`;
+const submitTime = i => `2026-11-0${1 + (i % 5)} ${String(9 + (i * 7) % 9).padStart(2, '0')}:${String((i * 13) % 60).padStart(2, '0')}`;
+const ansStatus = a => ({ invalid: '无效', recycled: '已回收' })[state.ansState[akey(a)]] || '有效';
+function whoName(who, i) { return state.anon ? `评测人 ${i + 1}` : evalInfo(who).name; }
+
+function pageMonitor() {
+  const p = curProject(), f = state.monF;
+  const done = ANSWERS.map((a, i) => ({ a, i })).filter(({ a }) => (!f.kw || CODES[a.who].includes(f.kw) || evalInfo(a.who).name.includes(f.kw))
+    && (!f.dept || evalInfo(a.who).dept === f.dept) && (!f.obj || a.obj === f.obj) && (!f.st || ansStatus(a) === f.st));
+  const undone = UNANSWERED.filter(u => (!f.kw || CODES[u.who].includes(f.kw) || evalInfo(u.who).name.includes(f.kw)) && (!f.dept || evalInfo(u.who).dept === f.dept) && (!f.obj || u.obj === f.obj));
+  const depts = [...new Set([...Object.keys(EVALUATORS), ...OBJECTS.map(o => o.id)].map(w => evalInfo(w).dept))];
+  const sel = state.monSel, tab = state.monTab;
+  return `<div class="row between"><h1>监控：${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button>${isEval(p) && opRule(p, 'stat') === '' ? `<button class="btn primary" data-op="stat" data-pid="${p.id}">统计排名</button>` : ''}</span></div>
+  ${p.id === DEMO_PID ? '' : '<div class="banner"><span>演示：监控数据沿用「2026 Q4 内训师授课评估」。</span></div>'}
+  <div class="card">
+    <div class="tabs" role="tablist"><button role="tab" data-mtab="done" class="${tab === 'done' ? 'on' : ''}">已答人员（${ANSWERS.length}）</button><button role="tab" data-mtab="undone" class="${tab === 'undone' ? 'on' : ''}">未答人员（${UNANSWERED.length}）</button></div>
+    <div class="filters">
+      <label>工号/姓名 <input type="text" id="mKw" value="${f.kw}" /></label>
+      <label>部门 <select id="mDept"><option value="">全部</option>${depts.map(d => `<option ${f.dept === d ? 'selected' : ''}>${d}</option>`).join('')}</select></label>
+      <label>被评测对象 <select id="mObj"><option value="">全部</option>${OBJECTS.map(o => `<option value="${o.id}" ${f.obj === o.id ? 'selected' : ''}>${o.name}</option>`).join('')}</select></label>
+      ${tab === 'done' ? `<label>状态 <select id="mSt"><option value="">全部</option>${['有效', '无效', '已回收'].map(s => `<option ${f.st === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>` : ''}
+      <button class="btn primary" id="mGo">筛选</button>
+    </div>
+    <div class="row" style="margin:12px 0">
+      ${tab === 'done' ? `<button class="btn" data-mact="recycle" ${sel.length ? '' : 'disabled'}>回收问卷</button><button class="btn" data-mact="valid" ${sel.length ? '' : 'disabled'}>标记有效</button><button class="btn" data-mact="invalid" ${sel.length ? '' : 'disabled'}>标记无效</button>
+        <button class="btn" data-mact="expUsers">导出已答人员</button><button class="btn" data-mact="expAns">导出评估答卷</button>`
+      : `<button class="btn primary" data-mact="remind" ${sel.length ? '' : 'disabled'}>提醒参加</button><button class="btn" data-mact="remindAll">全部提醒</button><button class="btn" data-mact="expUndone">导出未答人员</button>`}
+      <span class="note">${sel.length ? `已选 ${sel.length} 条` : '勾选后可批量操作'}</span>
+    </div>
+    <div class="scroll"><table>
+      ${tab === 'done' ? `<thead><tr><th><input type="checkbox" id="mAll" aria-label="全选" /></th><th>工号</th><th>姓名</th><th>部门</th><th>被评测对象</th><th>关系</th><th>提交时间</th><th class="num">答卷总分</th><th>状态</th><th>操作</th></tr></thead>
+      <tbody>${done.map(({ a, i }) => `<tr><td><input type="checkbox" data-msel="${akey(a)}" ${sel.includes(akey(a)) ? 'checked' : ''} aria-label="选择" /></td>
+        <td class="mono">${state.anon ? '—' : CODES[a.who]}</td><td>${whoName(a.who, i)}</td><td>${state.anon ? '—' : evalInfo(a.who).dept}</td><td>${objById(a.obj).name}</td><td>${a.rel}</td>
+        <td class="nowrap">${submitTime(i)}</td><td class="num">${total(a)}</td><td><span class="tag ${ansStatus(a) === '有效' ? 'green' : 'red'}">${ansStatus(a)}</span></td>
+        <td><button class="btn link" data-ans="${akey(a)}">查看答卷</button></td></tr>`).join('') || '<tr><td colspan="10" class="muted">没有符合条件的答卷</td></tr>'}</tbody>`
+      : `<thead><tr><th><input type="checkbox" id="mAll" aria-label="全选" /></th><th>工号</th><th>姓名</th><th>部门</th><th>被评测对象</th><th>关系</th><th>作答状态</th></tr></thead>
+      <tbody>${undone.map(u => `<tr><td><input type="checkbox" data-msel="${akey(u)}" ${sel.includes(akey(u)) ? 'checked' : ''} aria-label="选择" /></td>
+        <td class="mono">${CODES[u.who]}</td><td>${evalInfo(u.who).name}</td><td>${evalInfo(u.who).dept}</td><td>${objById(u.obj).name}</td><td>${u.rel}</td><td><span class="tag ${u.st === '已暂存' ? 'orange' : ''}">${u.st}</span></td></tr>`).join('') || '<tr><td colspan="7" class="muted">没有符合条件的人员</td></tr>'}</tbody>`}
+    </table></div>
+    <p class="note" style="margin-top:12px">${tab === 'done' ? '标记无效或回收的答卷不计入统计排名，排名会同步重算；回收后评测人可以重新作答。' : '提醒参加按项目设置里「监控提醒参加」的渠道发送。'}</p>
+  </div>
+  ${state.opModal ? opModal() : ''}`;
+}
+
+/* ---------- 统计排名 ---------- */
+function pageResult() {
+  const p = curProject();
+  const tabs = [['rank', '综合排名'], ['single', '单项排名'], ['extra', '附加题汇总'], ['multi', '多维分析']];
+  const depts = [...new Set(OBJECTS.map(o => o.dept))];
+  const body = ({ rank: tabComposite, single: tabSingle, extra: tabExtra, multi: tabMulti })[state.tab] || tabComposite;
+  const nValid = included().length;
+  return `<div class="row between"><h1>统计排名：${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button><button class="btn" data-op="monitor" data-pid="${p.id}">监控</button></span></div>
+  ${p.id === DEMO_PID ? '' : '<div class="banner"><span>演示：排名数据沿用「2026 Q4 内训师授课评估」。</span></div>'}
+  <div class="card" style="padding:16px 24px">
+    <div class="row between">
+      <div class="row">
+        <select id="relFilter" aria-label="关系"><option value="">全部关系</option>${REL_NAMES.map(r => `<option ${state.relFilter === r ? 'selected' : ''}>${r}</option>`).join('')}</select>
+        <select id="deptFilter" aria-label="对象部门"><option value="">全部部门</option>${depts.map(d => `<option ${state.deptFilter === d ? 'selected' : ''}>${d}</option>`).join('')}</select>
+        <label class="switch"><input type="checkbox" id="trim" ${state.trim ? 'checked' : ''} /> 去掉最高分、最低分</label>
+        <label class="switch"><input type="checkbox" id="weighted" ${state.weighted ? 'checked' : ''} ${state.relFilter ? 'disabled' : ''} /> 按关系加权</label>
+        <label class="switch"><input type="checkbox" id="anonView" ${state.anon ? 'checked' : ''} /> 演示：匿名模式</label>
+      </div>
+      <span class="note">有效问卷 ${nValid} 份　满分 ${FULL} 分</span>
+    </div>
+    ${state.relFilter ? `<p class="note" style="margin-top:8px">已筛选「${state.relFilter}」，只统计该关系的答卷，对象得分不加权。</p>` : ''}
+  </div>
+  <div class="card">
+    <div class="tabs" role="tablist">${tabs.map(([k, t]) => `<button role="tab" data-tab="${k}" class="${state.tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
+    ${body()}
+  </div>
+  ${state.opModal ? opModal() : ''}`;
+}
+
+function compositeRows() {
+  const pAvg = projectAvg();
+  return visibleObjects().map(o => ({ o, ...objScore(o.id), n: included().filter(a => a.obj === o.id).length, pAvg }))
+    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+}
+function tabComposite() {
+  const rows = compositeRows(), w = state.weighted && !state.relFilter, sel = state.rankSel;
+  return `<div class="row between" style="margin-bottom:12px">
+      <span class="note">勾选对象后点「绘图」，不勾选时画全部对象，最多 15 个。</span>
+      <span class="row"><button class="btn" id="drawRank">绘图</button><button class="btn" data-exp="综合排名">导出</button></span></div>
+  <div class="scroll"><table>
+    <thead><tr><th><input type="checkbox" id="rkAll" aria-label="全选" ${sel.length === rows.length ? 'checked' : ''} /></th><th>排名</th><th>被评测对象</th><th class="num">${w ? '加权得分' : '得分'}</th><th class="num">得分率</th><th class="num">平均分</th><th class="num">对比平均分</th><th>有效问卷</th><th>各关系完成</th><th>操作</th></tr></thead>
+    <tbody>${rows.map((r, i) => `<tr><td><input type="checkbox" data-rk="${r.o.id}" ${sel.includes(r.o.id) ? 'checked' : ''} aria-label="选择${r.o.name}" /></td>
+      <td>${i + 1}</td><td>${r.o.name}</td><td class="num">${r1(r.score)}</td><td class="num">${r.score == null ? '—' : r1(r.score / FULL * 100)}</td>
+      <td class="num">${r1(r.pAvg)}</td><td class="num">${r.pAvg && r.score != null ? r1(r.score / r.pAvg * 100) + '%' : '—'}</td>
+      <td><button class="btn link" data-valid="${r.o.id}">有效问卷 ${r.n} 份</button></td>
+      <td>${REL_NAMES.filter(rel => !state.relFilter || rel === state.relFilter).map(rel => {
+        const n = included().filter(a => a.obj === r.o.id && a.rel === rel).length;
+        return n ? `<span class="tag">${rel} ${n}</span>` : `<span class="tag orange">缺少${rel}</span>`;
+      }).join(' ')}</td><td><button class="btn link" data-odetail="${r.o.id}">查看明细</button></td></tr>`).join('')}</tbody></table></div>
+  <p class="note" style="margin-top:12px">得分 = ${w ? '各关系有效答卷平均分 × 该对象的关系权重之和；某关系没有有效答卷时，其余关系按权重折算' : '有效答卷总分之和 ÷ 有效份数'}${state.trim ? '；开启去掉最高分、最低分时，在每种关系内各去一份' : ''}。平均分 = 全部有效答卷总分 ÷ 有效份数；对比平均分 = 得分 ÷ 平均分 × 100%。标记无效、已回收的答卷不计入。</p>`;
+}
+
+function qAvg(objId, qi, list) { return avg((list || included()).filter(a => !objId || a.obj === objId).map(a => a.s[qi])); }
+function tabSingle() {
+  const qi = state.singleQ, q = QUESTIONS[qi], objs = visibleObjects();
+  const allAvg = qAvg(null, qi);
+  const rows = objs.map(o => ({ o, v: qAvg(o.id, qi), n: included().filter(a => a.obj === o.id).length })).sort((a, b) => (b.v ?? -1) - (a.v ?? -1));
+  return `<div class="grid-single">
+    <div class="pickbox"><h3>选择题目</h3>
+      <label class="switch"><input type="checkbox" id="sqAll" ${state.singleQs.length === QUESTIONS.length ? 'checked' : ''} /> 全部</label>
+      ${QUESTIONS.map((x, i) => `<label class="switch"><input type="checkbox" data-sq="${i}" ${state.singleQs.includes(i) ? 'checked' : ''} /> ${i + 1}. ${x.title}</label>`).join('')}
+      <h3 style="margin-top:12px">选择被评测对象</h3>
+      <label class="switch"><input type="checkbox" id="soAll" ${state.singleObjs.length === OBJECTS.length ? 'checked' : ''} /> 全部</label>
+      ${OBJECTS.map(o => `<label class="switch"><input type="checkbox" data-so="${o.id}" ${state.singleObjs.includes(o.id) ? 'checked' : ''} /> ${o.name}</label>`).join('')}
+      <button class="btn primary" id="drawSingle" style="margin-top:12px">绘图</button>
+    </div>
+    <div style="min-width:0">
+      <div class="row between" style="margin-bottom:12px">
+        <label>题目 <select id="singleQ">${QUESTIONS.map((x, i) => `<option value="${i}" ${i === qi ? 'selected' : ''}>${i + 1}. ${x.title}（权重 ${x.weight}）</option>`).join('')}</select></label>
+        <button class="btn" data-exp="单项排名">导出</button></div>
+      <div class="scroll"><table>
+        <thead><tr><th>排名</th><th>被评测对象</th><th class="num">本题平均分</th><th class="num">加权得分</th><th class="num">得分率</th><th class="num">对比平均分</th><th class="num">有效问卷</th><th>操作</th></tr></thead>
+        <tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.o.name}</td><td class="num">${r.v == null ? '—' : r.v.toFixed(2)}</td><td class="num">${r.v == null ? '—' : r1(r.v * q.weight)}</td>
+          <td class="num">${r.v == null ? '—' : r1(r.v / q.max * 100) + '%'}</td><td class="num">${allAvg && r.v != null ? r1(r.v / allAvg * 100) + '%' : '—'}</td><td class="num">${r.n}</td>
+          <td><button class="btn link" data-odetail="${r.o.id}">查看明细</button></td></tr>`).join('')}</tbody></table></div>
+      <p class="note" style="margin-top:12px">本题平均分为原始分（${q.max === 5 ? '1–5' : '0–' + q.max}）；加权得分 = 本题平均分 × 题目权重 ${q.weight}；对比平均分 = 本题平均分 ÷ 全部对象本题平均分 ${allAvg ? allAvg.toFixed(2) : '—'}。</p>
+    </div></div>`;
+}
+
+function tabExtra() {
+  const objs = visibleObjects();
+  return `<div class="row between" style="margin-bottom:12px"><label>附加题 <select><option>${OPEN_QUESTION}</option></select></label><button class="btn" data-exp="附加题汇总">导出</button></div>
+  <div class="scroll"><table><thead><tr><th>被评测对象</th><th class="num">回答数</th><th>最近回答</th><th>操作</th></tr></thead>
+    <tbody>${objs.map(o => `<tr><td>${o.name}</td><td class="num">${OPEN_ANSWERS[o.id].length}</td><td class="note">${OPEN_ANSWERS[o.id][0]}</td><td><button class="btn link" data-extra="${o.id}">查看明细</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function tabMulti() {
+  const sub = state.multiTab || 'rel';
+  const subs = [['rel', '关系对比'], ['question', '题目分析'], ['evaluator', '评测人分析'], ['dept', '部门分析']];
+  return `<div class="subtabs">${subs.map(([k, t]) => `<button data-mt="${k}" class="${sub === k ? 'on' : ''}">${t}</button>`).join('')}</div>
+    <div class="scroll">${({ rel: tabRel, question: tabQuestion, evaluator: tabEvaluator, dept: tabDept })[sub]()}</div>`;
+}
+
+/* ---------- 弹窗 ---------- */
+const OPT5 = { 5: '非常合理', 4: '比较合理', 3: '一般', 2: '不太合理', 1: '很不合理' };
+function answerOf(key) { return ANSWERS.find(a => akey(a) === key); }
+function openAnswer(a) {
+  const idx = ANSWERS.filter(x => x.obj === a.obj).indexOf(a);
+  return OPEN_ANSWERS[a.obj][idx] || '（未作答）';
+}
+function trimFlags(objId) {
+  // 去掉最高分、最低分：在每种关系内各去一份，剩余不足 1 份时不去（与计分规则一致）
+  const flags = {};
+  if (!state.trim) return flags;
+  REL_NAMES.forEach(rel => {
+    const list = included().filter(a => a.obj === objId && a.rel === rel).sort((x, y) => total(x) - total(y));
+    if (list.length - 1 >= 1) flags[akey(list[list.length - 1])] = '去掉最高分';
+    if (list.length - 2 >= 1) flags[akey(list[0])] = '去掉最低分';
+  });
+  return flags;
+}
+function bars(items, max, unit) {
+  const h = 26, W = 520, left = 90;
+  return `<svg viewBox="0 0 ${W + 60} ${items.length * (h + 10) + 10}" class="chart" role="img" aria-label="条形图">
+    ${items.map((it, i) => { const y = 10 + i * (h + 10), w = max ? (it.v || 0) / max * W * 0.78 : 0;
+      return `<text x="${left - 8}" y="${y + 17}" text-anchor="end" class="ct">${it.label}</text><rect x="${left}" y="${y}" width="${w}" height="${h}" rx="3" fill="${it.color || '#0152D9'}"></rect>
+        <text x="${left + w + 6}" y="${y + 17}" class="cv">${it.v == null ? '—' : r1(it.v)}${unit}</text>`; }).join('')}</svg>`;
+}
+const COLORS = ['#0152D9', '#2BA471', '#D9822B', '#8E59C8', '#E5484D'];
+
+function opModal() {
+  const m = state.opModal, p = curProject();
+  const wrap = (title, body, w = 640, foot = '') => `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="omTitle"><div class="modal" style="width:min(${w}px, calc(100vw - 32px));max-height:88vh;overflow-y:auto">
+    <div class="row between"><h2 id="omTitle" style="margin:0">${title}</h2><button class="btn link" data-omclose aria-label="关闭">✕</button></div>${body}
+    <div class="foot">${foot || '<button class="btn" data-omclose>关闭</button>'}</div></div></div>`;
+  if (m.kind === 'confirm') return wrap(m.title, `<p style="margin-top:12px">${m.text}</p>${m.reason ? '<label class="col" style="margin-top:12px">作废原因（选填）<textarea id="omReason" rows="3" style="font:inherit;padding:6px 8px;border:1px solid var(--border);border-radius:4px"></textarea></label>' : ''}`, 440,
+    `<button class="btn" data-omclose>取消</button><button class="btn primary ${m.danger ? 'danger' : ''}" id="omOk">${m.ok}</button>`);
+  if (m.kind === 'copy') return wrap('复制项目', `
+    <div class="field" style="margin-top:12px"><label for="cpName">项目名称</label><input type="text" id="cpName" value="${m.p.name}_副本" maxlength="50" /></div>
+    <div class="field"><label>起止时间</label><span class="row"><input type="text" id="cpStart" value="" placeholder="开始时间" style="width:150px" /> 至 <input type="text" id="cpEnd" placeholder="不填为长期有效" style="width:150px" /></span></div>
+    <label class="switch"><input type="checkbox" id="cpObj" checked /> 同时复制评估对象和评测关系（不复制答卷）</label>
+    <p class="note" style="margin-top:8px">复制后为草稿，编号自动生成；问卷、计分规则和项目设置一起复制。</p>`, 520, '<button class="btn" data-omclose>取消</button><button class="btn primary" id="cpOk">复制</button>');
+  if (m.kind === 'addUser') return wrap('追加评测人', `
+    <p class="note" style="margin:8px 0 12px">进行中的项目只能追加评测人，追加后按「（发布后）增加评测人」的渠道通知；已提交的答卷不受影响。</p>
+    <div class="field"><label for="auObj">被评测对象</label><select id="auObj"><option value="">全部对象</option>${state.objects.map(o => `<option value="${o.id}">${o.name}</option>`).join('')}</select></div>
+    <div class="field"><label for="auRel">评测关系</label><select id="auRel">${REL_NAMES.map(r => `<option>${r}</option>`).join('')}</select></div>
+    <table><thead><tr><th></th><th>姓名</th><th>工号</th><th>部门</th></tr></thead><tbody>${PEOPLE.map(u => `<tr><td><input type="checkbox" data-au="${u.id}" aria-label="选择${u.name}" /></td><td>${u.name}</td><td>${u.code}</td><td>${u.dept}</td></tr>`).join('')}</tbody></table>`, 600,
+    '<button class="btn" data-omclose>取消</button><button class="btn primary" id="auOk">追加</button>');
+  if (m.kind === 'chart') {
+    const ids = (state.rankSel.length ? state.rankSel : compositeRows().map(r => r.o.id)).slice(0, 15);
+    const items = compositeRows().filter(r => ids.includes(r.o.id)).map((r, i) => ({ label: r.o.name, v: m.mode === 'rate' ? (r.score == null ? null : r.score / FULL * 100) : r.score, color: COLORS[0] }));
+    return wrap('综合排名图表', `<div class="row" style="margin:12px 0"><label class="switch"><input type="radio" name="chm" data-chm="score" ${m.mode !== 'rate' ? 'checked' : ''} /> ${state.weighted && !state.relFilter ? '加权得分' : '得分'}</label><label class="switch"><input type="radio" name="chm" data-chm="rate" ${m.mode === 'rate' ? 'checked' : ''} /> 得分率</label></div>
+      ${bars(items, m.mode === 'rate' ? 100 : FULL, m.mode === 'rate' ? '%' : ' 分')}<p class="note">共 ${items.length} 个对象${state.rankSel.length ? '（已勾选）' : '（全部）'}；满分 ${FULL} 分。</p>`, 720);
+  }
+  if (m.kind === 'chartSingle') {
+    const qs = state.singleQs, objs = OBJECTS.filter(o => state.singleObjs.includes(o.id));
+    if (!qs.length || !objs.length) return wrap('单项排名图表', '<p style="margin-top:12px">请至少选择 1 道题和 1 个被评测对象。</p>', 420);
+    return wrap('单项排名图表', `<div class="legend">${objs.map((o, i) => `<span><i style="background:${COLORS[i % 5]}"></i>${o.name}</span>`).join('')}</div>
+      ${qs.map(qi => `<h3 style="margin:12px 0 4px">${qi + 1}. ${QUESTIONS[qi].title}</h3>${bars(objs.map((o, i) => ({ label: o.name, v: qAvg(o.id, qi), color: COLORS[i % 5] })), QUESTIONS[qi].max, ' 分')}`).join('')}
+      <p class="note">各对象在所选题目上的平均原始分（满分 5 分）。</p>`, 760);
+  }
+  if (m.kind === 'valid') {
+    const o = objById(m.obj), list = included().filter(a => a.obj === o.id), flags = trimFlags(o.id), sc = objScore(o.id);
+    return wrap(`有效问卷：${o.name}`, `<p class="note" style="margin:8px 0 12px">有效问卷 ${list.length} 份；得分 ${r1(sc.score)}。${state.trim ? '已开启去掉最高分、最低分：每种关系内各去掉一份最高分和一份最低分（份数不足时不去），去掉的答卷标灰，不参与计算。' : '未开启去掉最高分、最低分，全部有效答卷参与计算。'}</p>
+      <table><thead><tr><th>工号</th><th>姓名</th><th>部门</th><th>关系</th><th class="num">分数</th><th class="num">关系权重</th><th>计算</th><th>操作</th></tr></thead>
+      <tbody>${list.map((a, i) => `<tr class="${flags[akey(a)] ? 'removed' : ''}"><td class="mono">${state.anon ? '—' : CODES[a.who]}</td><td>${whoName(a.who, i)}</td><td>${state.anon ? '—' : evalInfo(a.who).dept}</td><td>${a.rel}</td>
+        <td class="num">${total(a)}</td><td class="num">${state.weighted && !state.relFilter ? relWeight(o.id, a.rel) + '%' : '—'}</td><td>${flags[akey(a)] ? `<span class="tag">${flags[akey(a)]}</span>` : '计入'}</td>
+        <td><button class="btn link" data-ans="${akey(a)}">查看答卷</button></td></tr>`).join('')}</tbody></table>
+      <div class="calc">${REL_NAMES.map(rel => { const s = relScore(o.id, rel); return s == null ? '' : `<span>${rel}平均 ${r1(s)}${state.weighted && !state.relFilter ? ` × ${relWeight(o.id, rel)}%` : ''}</span>`; }).join('')}<b>得分 ${r1(sc.score)}</b></div>`, 760,
+      `<button class="btn" data-exp="有效问卷明细">导出</button><button class="btn" data-omclose>关闭</button>`);
+  }
+  if (m.kind === 'odetail') {
+    const o = objById(m.obj), list = included().filter(a => a.obj === o.id);
+    return wrap(`查看明细：${o.name}`, `<p class="note" style="margin:8px 0 12px">有效问卷 ${list.length} 份。点姓名查看该评测人的答题情况。</p>
+      ${QUESTIONS.map((q, qi) => {
+        const vals = list.map(a => a.s[qi]), av = avg(vals);
+        const dist = qi === 4 ? [5, 4, 3, 2, 1].map(v => [`${OPT5[v]}（${v} 分）`, vals.filter(x => x === v).length]) : [5, 4, 3, 2, 1].map(v => [`${v} 分`, vals.filter(x => x === v).length]);
+        return `<div class="qd"><h3>${qi + 1}. ${q.title} <span class="tag">${qi === 4 ? '单选' : '打分'}</span> <span class="note">权重 ${q.weight}</span></h3>
+          <div class="grid2"><table><thead><tr><th>${qi === 4 ? '选项' : '分值'}</th><th class="num">人次</th><th class="num">比例</th></tr></thead>
+            <tbody>${dist.map(([k, n]) => `<tr><td>${k}</td><td class="num">${n}</td><td class="num">${list.length ? r1(n / list.length * 100) : 0}%</td></tr>`).join('')}
+            <tr><td><b>本题平均分</b></td><td class="num" colspan="2"><b>${av == null ? '—' : av.toFixed(2)}</b>　加权 ${av == null ? '—' : r1(av * q.weight)}</td></tr></tbody></table>
+          <table><thead><tr><th>评测人</th><th>关系</th><th class="num">得分</th><th class="num">加权得分</th></tr></thead>
+            <tbody>${list.map((a, i) => `<tr><td><button class="btn link" data-ans="${akey(a)}">${whoName(a.who, i)}</button></td><td>${a.rel}</td><td class="num">${a.s[qi]}</td><td class="num">${a.s[qi] * q.weight}</td></tr>`).join('')}</tbody></table></div></div>`;
+      }).join('')}`, 900, `<button class="btn" data-exp="查看明细">导出</button><button class="btn" data-omclose>关闭</button>`);
+  }
+  if (m.kind === 'extra') {
+    const o = objById(m.obj), list = ANSWERS.filter(a => a.obj === o.id);
+    return wrap(`附加题明细：${o.name}`, `<p class="note" style="margin:8px 0 12px">${OPEN_QUESTION}</p><table><thead><tr><th>评测人</th><th>关系</th><th>回答</th></tr></thead>
+      <tbody>${list.map((a, i) => ({ a, t: OPEN_ANSWERS[o.id][i], i })).filter(x => x.t).map(({ a, t, i }) => `<tr><td><button class="btn link" data-ans="${akey(a)}">${whoName(a.who, i)}</button></td><td>${a.rel}</td><td>${t}</td></tr>`).join('')}</tbody></table>`, 640);
+  }
+  if (m.kind === 'answer') {
+    const a = answerOf(m.key), i = ANSWERS.indexOf(a), o = objById(a.obj);
+    return wrap('答题情况', `<div class="kv">
+        <span>被评测对象</span><b>${o.name}</b><span>评测人</span><b>${whoName(a.who, i)}${state.anon ? '' : `（${CODES[a.who]}，${evalInfo(a.who).dept}）`}</b>
+        <span>评测关系</span><b>${a.rel}</b><span>提交时间</span><b>${submitTime(i)}</b><span>状态</span><b>${ansStatus(a)}</b><span>答卷总分</span><b>${total(a)} / ${FULL}</b></div>
+      <table><thead><tr><th>#</th><th>题目</th><th>题型</th><th>作答</th><th class="num">得分</th><th class="num">权重</th><th class="num">加权得分</th></tr></thead>
+        <tbody>${QUESTIONS.map((q, qi) => `<tr><td>${qi + 1}</td><td>${q.title}</td><td>${qi === 4 ? '单选' : '打分'}</td><td>${qi === 4 ? OPT5[a.s[qi]] : a.s[qi] + ' 分'}</td>
+          <td class="num">${a.s[qi]}</td><td class="num">${q.weight}</td><td class="num">${a.s[qi] * q.weight}</td></tr>`).join('')}
+          <tr><td>6</td><td>${OPEN_QUESTION}</td><td>问答</td><td colspan="4">${openAnswer(a)}<span class="note">（附加问题，不计分）</span></td></tr></tbody></table>
+      ${state.anon ? '<p class="note" style="margin-top:8px">匿名模式：不显示评测人身份。</p>' : ''}`, 760,
+      `<button class="btn" data-exp="答卷（Word）">导出答卷</button><button class="btn" data-omclose>关闭</button>`);
+  }
+  return '';
+}
+
+function bindOps() {
+  const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
+  const close = () => { state.opModal = state.opModal && state.opModal.back ? state.opModal.back : null; render(); };
+  main.querySelectorAll('[data-omclose]').forEach(b => b.onclick = close);
+  main.querySelectorAll('[data-opoff]').forEach(b => b.onclick = () => toast(b.dataset.opoff));
+  main.querySelectorAll('[data-op]').forEach(b => b.onclick = () => {
+    const p = state.projects.find(x => x.id === b.dataset.pid); state.pid = p.id;
+    const op = b.dataset.op;
+    if (op === 'view') { state.opModal = null; go('detail'); }
+    if (op === 'edit') { if (!isEval(p)) { toast('普通调查沿用调查管理（新）现有的编辑页，原型不展开'); return; } state.opModal = null; state.step = 'score'; state.selQ = null; go('create'); }
+    if (op === 'monitor') { state.opModal = null; state.monSel = []; go('monitor'); }
+    if (op === 'stat') { if (!isEval(p)) { toast('普通调查沿用调查管理（新）现有的数据统计页（按题图表），原型不展开'); return; } state.opModal = null; state.tab = 'rank'; go('result'); }
+    if (op === 'copy') { state.opModal = { kind: 'copy', p }; render(); }
+    if (op === 'export') toast(`已加入导出任务：${p.name}_答卷明细.xlsx，完成后在「导出任务」里下载`);
+    if (op === 'addUser') { state.opModal = { kind: 'addUser', p }; render(); }
+    if (op === 'publish') { state.opModal = { kind: 'confirm', title: '发布项目', text: `发布「${p.name}」后，按消息提醒设置通知评测人。开始时间未到时状态为「未开始」。`, ok: '发布', act: 'publish', p }; render(); }
+    if (op === 'del') { state.opModal = { kind: 'confirm', title: '删除项目', text: `确定删除草稿「${p.name}」吗？删除后不能恢复。`, ok: '删除', danger: true, act: 'del', p }; render(); }
+    if (op === 'abolish') { state.opModal = { kind: 'confirm', title: '作废项目', text: `作废「${p.name}」后，评测人不能再作答，已提交的答卷保留，可以查看和导出。此操作不能撤销。`, ok: '作废', danger: true, act: 'abolish', reason: true, p }; render(); }
+  });
+  on('#omOk', 'click', () => {
+    const m = state.opModal, p = m.p;
+    if (m.act === 'publish') { p.status = p.start && p.start.slice(0, 10) > TODAY ? '未开始' : '进行中'; if (!p.start) { p.start = `${TODAY} 09:00`; p.status = '进行中'; } toast(`已发布，状态：${p.status}`); }
+    if (m.act === 'del') { state.projects = state.projects.filter(x => x !== p); toast('已删除'); }
+    if (m.act === 'abolish') { p.status = '已作废'; toast('已作废'); }
+    state.opModal = null; render();
+  });
+  on('#cpOk', 'click', () => {
+    const m = state.opModal, name = main.querySelector('#cpName').value.trim();
+    if (!name) { toast('请填写项目名称'); return; }
+    const n = state.projects.length + 1, code = `P${TODAY.replace(/-/g, '')}${String(n).padStart(2, '0')}`;
+    state.projects.unshift({ ...m.p, id: code, code, name, status: '草稿', start: main.querySelector('#cpStart').value.trim(), end: main.querySelector('#cpEnd').value.trim(), created: TODAY, done: 0, total: 0, source: '调查管理', creator: '高源' });
+    state.opModal = null; state.page_no = 1; state.listQ = { kw: '', qn: '', status: '', type: '', source: '' }; state.listF = { ...state.listQ }; go('list'); toast(`已复制为草稿「${name}」`);
+  });
+  on('#auOk', 'click', () => {
+    const picks = [...main.querySelectorAll('[data-au]:checked')].length;
+    if (!picks) { toast('请至少选择 1 名人员'); return; }
+    const m = state.opModal, objSel = main.querySelector('#auObj'), on1 = objSel.value ? objSel.selectedOptions[0].text : '全部对象';
+    m.p.total += picks * (objSel.value ? 1 : state.objects.length);
+    state.opModal = null; render(); toast(`已为${on1}追加 ${picks} 名评测人，已发送通知`);
+  });
+  // 列表筛选与分页
+  const lf = id => main.querySelector(id)?.value.trim() ?? '';
+  on('#fGo', 'click', () => { state.listF = { kw: lf('#fKw'), qn: lf('#fQn'), status: lf('#fStatus'), type: lf('#fType'), source: lf('#fSource') }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
+  on('#fReset', 'click', () => { state.listF = { kw: '', qn: '', status: '', type: '', source: '' }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
+  on('#listExport', 'click', () => toast(`已加入导出任务：调查列表（${listRows().length} 条）.xlsx`));
+  main.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => { state.page_no = Number(b.dataset.pg); render(); });
+  on('#pgSize', 'change', e => { state.page_size = Number(e.target.value); state.page_no = 1; render(); });
+  on('#pgGo', 'click', () => { const v = Number(main.querySelector('#pgTo').value); const pages = Math.max(1, Math.ceil(listRows().length / state.page_size)); if (!v || v < 1 || v > pages) { toast(`请输入 1–${pages} 之间的页码`); return; } state.page_no = v; render(); });
+  // 监控
+  main.querySelectorAll('[data-mtab]').forEach(b => b.onclick = () => { state.monTab = b.dataset.mtab; state.monSel = []; render(); });
+  on('#mGo', 'click', () => { state.monF = { kw: lf('#mKw'), dept: lf('#mDept'), obj: lf('#mObj'), st: lf('#mSt') }; state.monSel = []; render(); });
+  main.querySelectorAll('[data-msel]').forEach(c => c.onchange = () => { const k = c.dataset.msel; state.monSel = c.checked ? [...state.monSel, k] : state.monSel.filter(x => x !== k); render(); });
+  on('#mAll', 'change', e => { state.monSel = e.target.checked ? [...main.querySelectorAll('[data-msel]')].map(c => c.dataset.msel) : []; render(); });
+  main.querySelectorAll('[data-mact]').forEach(b => b.onclick = () => {
+    const act = b.dataset.mact, n = state.monSel.length;
+    if (act === 'recycle') { state.monSel.forEach(k => { state.ansState[k] = 'recycled'; }); toast(`已回收 ${n} 份问卷，评测人可以重新作答；统计排名已重算`); }
+    if (act === 'invalid') { state.monSel.forEach(k => { state.ansState[k] = 'invalid'; }); toast(`已标记 ${n} 份为无效，不计入统计排名`); }
+    if (act === 'valid') { state.monSel.forEach(k => { delete state.ansState[k]; }); toast(`已标记 ${n} 份为有效`); }
+    if (act === 'remind') toast(`已提醒 ${n} 人参加评估`);
+    if (act === 'remindAll') toast(`已提醒全部 ${UNANSWERED.length} 条未答记录的评测人`);
+    if (act === 'expUsers') toast('已加入导出任务：已答人员.xlsx');
+    if (act === 'expAns') toast('已加入导出任务：评估答卷.xlsx（一个评测人对一个对象一行）');
+    if (act === 'expUndone') toast('已加入导出任务：未答人员.xlsx');
+    if (['recycle', 'invalid', 'valid'].includes(act)) { state.monSel = []; render(); }
+  });
+  // 统计排名
+  main.querySelectorAll('[data-mt]').forEach(b => b.onclick = () => { state.multiTab = b.dataset.mt; render(); });
+  main.querySelectorAll('[data-rk]').forEach(c => c.onchange = () => { const id = c.dataset.rk; state.rankSel = c.checked ? [...state.rankSel, id] : state.rankSel.filter(x => x !== id); render(); });
+  on('#rkAll', 'change', e => { state.rankSel = e.target.checked ? compositeRows().map(r => r.o.id) : []; render(); });
+  on('#drawRank', 'click', () => { state.opModal = { kind: 'chart', mode: 'score' }; render(); });
+  main.querySelectorAll('[data-chm]').forEach(r => r.onchange = () => { state.opModal.mode = r.dataset.chm; render(); });
+  main.querySelectorAll('[data-valid]').forEach(b => b.onclick = () => { state.opModal = { kind: 'valid', obj: b.dataset.valid }; render(); });
+  main.querySelectorAll('[data-odetail]').forEach(b => b.onclick = () => { state.opModal = { kind: 'odetail', obj: b.dataset.odetail }; render(); });
+  main.querySelectorAll('[data-extra]').forEach(b => b.onclick = () => { state.opModal = { kind: 'extra', obj: b.dataset.extra }; render(); });
+  // 答题弹窗关闭后回到打开它的弹窗（有效问卷、查看明细、附加题明细）
+  main.querySelectorAll('[data-ans]').forEach(b => b.onclick = () => { state.opModal = { kind: 'answer', key: b.dataset.ans, back: state.opModal }; render(); });
+  main.querySelectorAll('[data-exp]').forEach(b => b.onclick = () => toast(`已加入导出任务：${b.dataset.exp}_${curProject().name}.xlsx，完成后在「导出任务」里下载`));
+  on('#singleQ', 'change', e => { state.singleQ = Number(e.target.value); render(); });
+  main.querySelectorAll('[data-sq]').forEach(c => c.onchange = () => { const i = Number(c.dataset.sq); state.singleQs = c.checked ? [...state.singleQs, i].sort() : state.singleQs.filter(x => x !== i); render(); });
+  main.querySelectorAll('[data-so]').forEach(c => c.onchange = () => { const id = c.dataset.so; state.singleObjs = c.checked ? [...state.singleObjs, id] : state.singleObjs.filter(x => x !== id); render(); });
+  on('#sqAll', 'change', e => { state.singleQs = e.target.checked ? QUESTIONS.map((_, i) => i) : []; render(); });
+  on('#soAll', 'change', e => { state.singleObjs = e.target.checked ? OBJECTS.map(o => o.id) : []; render(); });
+  on('#drawSingle', 'click', () => { state.opModal = { kind: 'chartSingle' }; render(); });
+}
+
 /* ---------- 事件 ---------- */
 function bind() {
   if (state.page === 'create' && state.step === 'score') bindEditor();
   if (state.page === 'create' && state.step === 'rel') bindRel();
   if (state.page === 'student') bindStudent();
-  main.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+  if (['list', 'detail', 'monitor', 'result'].includes(state.page)) bindOps();
+  main.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { state.opModal = null; go(b.dataset.go); });
   main.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { state.step = b.dataset.step; render(); });
   main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { state.tab = b.dataset.tab; render(); });
   const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
