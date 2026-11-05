@@ -2923,3 +2923,12 @@ table.tbl .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, mo
   background: rgba(255, 255, 255, .35);
 }
 .proto-anno.on .proto-anno-dot { background: #faad14; }
+
+/* 评分导入：表内改分与重新校验 */
+.import-table td, .import-table th { white-space: nowrap; }
+.import-score-input { width: 76px; height: 28px; padding: 0 8px; text-align: right; font-variant-numeric: tabular-nums; }
+.import-table tr.row-dirty td { background: #fffbe6; }
+.import-dirty { color: #d46b08; }
+.import-row-check { margin-left: 8px; font-size: 12px; padding: 0; }
+.import-table-ops { margin-left: auto; display: inline-flex; gap: 8px; }
+.import-submit-hint { color: var(--text-45); font-size: 12px; }

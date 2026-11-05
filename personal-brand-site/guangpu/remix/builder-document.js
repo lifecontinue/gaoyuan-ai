@@ -92,7 +92,7 @@
     target.split('/').forEach(part => { if (!part || part === '.') return; if (part === '..') { if (!stack.length) fail('工作表路径越界'); stack.pop(); } else stack.push(part); });
     return stack.join('/');
   }
-  async function spreadsheet(bytes) {
+  async function spreadsheet(bytes, maxRows = 500, maxText = MAX_TEXT) {
     const read = zipArchive(bytes), workbook = xmlDocument(await read('xl/workbook.xml'), 'workbook');
     const rels = xmlDocument(await read('xl/_rels/workbook.xml.rels'), 'Relationships');
     const links = new Map(Array.from(rels.getElementsByTagNameNS('*', 'Relationship')).map(n => [n.getAttribute('Id'), n]));
@@ -111,7 +111,7 @@
       const matrix = []; let lastRow = 0, maximumColumn = 0, formulas = 0;
       for (const row of sourceRows) {
         const rowIndex = Number(row.getAttribute('r') || lastRow + 1);
-        if (!Number.isInteger(rowIndex) || rowIndex <= lastRow || rowIndex > 500) fail(`工作表“${name}”超过 500 行或行号异常，请整理后导入。`);
+        if (!Number.isInteger(rowIndex) || rowIndex <= lastRow || rowIndex > maxRows) fail(`工作表“${name}”超过 ${maxRows} 行或行号异常，请整理后导入。`);
         lastRow = rowIndex; const cells = []; let lastColumn = 0;
         for (const cell of Array.from(row.children).filter(n => n.localName === 'c')) {
           const reference = cell.getAttribute('r'), match = reference ? /^([A-Z]+)([1-9][0-9]*)$/.exec(reference) : null;
@@ -138,7 +138,7 @@
     }
     const text = output.map(sheet => sheet.name + '\n' + sheet.text).join('\n\n').trim();
     if (!output.some(sheet => sheet.cells.some(row => row.some(value => value.trim())))) fail('工作簿没有可解析的文字或数值，请检查文件是否仅包含图片。');
-    if (text.length > MAX_TEXT) fail('解析正文超过 30000 字符，请拆分工作簿后导入。');
+    if (text.length > maxText) fail(`解析正文超过 ${maxText} 字符，请拆分工作簿后导入。`);
     return { text, sheets: output, warnings: Array.from(new Set(warnings)) };
   }
 
@@ -205,5 +205,14 @@
     }
     return { fileName: name, files };
   }
-  window.GP_BUILDER_DOCUMENT = { parse, parsePackage };
+  /** 只读 .xlsx 表格（评分导入用），行数与正文上限由调用方给出。 */
+  async function parseWorkbook(file, { maxRows = 500, maxText = MAX_TEXT } = {}) {
+    if (!/\.xlsx$/i.test(String(file?.name || ''))) fail('请上传 .xlsx 格式的 Excel 表格。');
+    if (!file.size) fail('文件为空，请使用下载的模板填写。');
+    if (file.size > MAX_FILE) fail('文件超过 5 MB，请拆分后上传。');
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (bytes.length >= 8 && bytes.slice(0, 8).every((v, i) => v === [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1][i])) fail('文件可能已加密或是旧版 Excel，请解除密码并另存为 .xlsx 后上传。');
+    return spreadsheet(bytes, maxRows, maxText);
+  }
+  window.GP_BUILDER_DOCUMENT = { parse, parsePackage, parseWorkbook };
 })();
