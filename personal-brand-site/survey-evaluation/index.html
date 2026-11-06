@@ -183,9 +183,9 @@
   .ed-sw.off::after { right: auto; left: 2px; }
   .ed-sw:disabled { opacity: .5; cursor: not-allowed; }
   @media (max-width: 760px) { .ed-body { grid-template-columns: 1fr; } .ed-pal, .ed-props { display: none; } .ed-h, .ed-q { padding-left: 20px; padding-right: 20px; } }
-  .reltable td.objcell { vertical-align: top; background: #fff; min-width: 150px; }
+  .reltable td.objcell { vertical-align: middle; background: #fff; min-width: 150px; }
   .reltable td.objcell .note { margin-top: 4px; }
-  .reltable tr.addrow td { padding: 4px 12px 12px; border-bottom: 1px solid var(--border); }
+  .reltable tr.objlast td, .reltable td.objcell { border-bottom: 1px solid var(--border); }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
   .ed-tag.warn { background: #FFFBE6; color: #AD6800; }
   .ed-err { color: var(--e-danger, #FF4D4F); font-size: 12px; }
@@ -364,6 +364,24 @@
   .upload { display: flex; align-items: center; justify-content: center; height: 72px; border: 1px dashed var(--border); border-radius: 6px; color: var(--text-3); cursor: pointer; background: var(--block); }
   .upload:hover { border-color: var(--primary); color: var(--primary); }
   .upload input { display: none; }
+  .setcard { max-width: 916px; margin: 0 auto; background: #fff; border-radius: 8px; padding: 32px 0 48px; }
+  .setsec { width: 604px; max-width: calc(100% - 48px); margin: 0 auto; }
+  .sethd { width: 100%; display: flex; justify-content: space-between; align-items: center; border: none; background: none; font: inherit; font-weight: 500; padding: 16px 6px 12px; border-bottom: 1px solid var(--divider); cursor: pointer; color: var(--text-1); }
+  .sethd svg { color: var(--text-3); transition: transform .15s; }
+  .setbd { padding: 24px 0 16px; }
+  .setrow { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 0 16px; align-items: start; margin-bottom: 24px; }
+  .setlb { text-align: right; line-height: 32px; color: var(--text-1); white-space: nowrap; }
+  .setrow:has(.setlb) { grid-template-columns: 112px minmax(0, 1fr); }
+  .setlb .req { color: var(--danger); font-style: normal; margin-right: 4px; }
+  .setct { min-height: 32px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+  .setct > input[type=text] { width: 432px; max-width: 100%; }
+  .setct > .row input[type=text] { width: 212px; }
+  .setct > .note { margin-top: 4px; max-width: 432px; }
+  .setct input.tg { margin: 8px 0; }
+  .remind { display: flex; gap: 32px; align-items: flex-start; }
+  .chs { display: grid; grid-template-columns: repeat(3, 110px); gap: 8px 6px; padding-top: 6px; }
+  .chs .due { grid-column: 1 / -1; color: var(--text-2); }
+  .chs .due input { width: 56px; }
 </style>
 </head>
 <body>
@@ -553,24 +571,14 @@ function pageCreate() {
   // 第 ②③ 步顶栏与第 ① 步一致：标题、步骤条、操作按钮在同一行
   const btns = state.step === 'rel'
     ? '<button class="ed-btn" data-step="score">上一步</button><button class="ed-btn" id="flowSave">保存并关闭</button><button class="ed-btn" id="flowCancel">取消</button><button class="ed-btn primary" id="relNext">下一步</button>'
-    : `<button class="ed-btn" data-step="rel">上一步</button><button class="ed-btn" id="flowSave">保存并关闭</button><button class="ed-btn" id="flowCancel">取消</button><button class="ed-btn primary" id="publish" data-ok="${[...relChecks(), [scoredCount() > 0]].every(c => c[0])}">发布调查</button>`;
+    : '<button class="ed-btn primary" data-step="rel">上一步</button><button class="ed-btn" id="publish">发布</button><button class="ed-btn" id="flowSave">保存并关闭</button>';
   return `<div class="ed-head flowhead">
     <h1>${state.editPid ? '编辑调查' : '新建调查'} <span class="tag blue">评估型调查</span></h1>
-    ${stepBar()}${btns}
+    <span style="flex:1"></span>${btns}
   </div>
   ${body}`;
 }
 
-// 三步共用的步骤条：已完成的步骤可以点回去；后面的步骤只能通过「下一步」进入（会先校验本步）
-const STEPS = [['score', '编辑问卷'], ['rel', '对象与关系'], ['setting', '项目设置与发布']];
-function stepBar() {
-  const ci = STEPS.findIndex(([k]) => k === state.step);
-  return `<ol class="stepbar" aria-label="创建步骤">${STEPS.map(([k, t], i) => {
-    if (i < ci) return `<li class="done"><button data-step="${k}"><i>✓</i><em>${t}</em></button></li>`;
-    if (i === ci) return `<li class="on" aria-current="step"><span><i>${i + 1}</i><em>${t}</em></span></li>`;
-    return `<li title="完成当前步骤后点「下一步」进入"><span><i>${i + 1}</i><em>${t}</em></span></li>`;
-  }).join('')}</ol>`;
-}
 
 /* 第 1 步沿用调查管理(新)的「新建问卷」页：左侧题型（点击添加）、中间画布（点题目直接编辑）、右侧题目设置。
    评估型调查只放能设分值的题型：单选、多选、打分、NPS；问答单列为「附加问题」，不计分。
@@ -651,7 +659,7 @@ ${state.qtEditId ? `<h1>编辑模板 <span class="tag blue">评估型调查</spa
     <button class="ed-btn" id="edPreview"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M6.5 5.5l4 2.5-4 2.5z"/></svg>预览</button>
     <button class="ed-btn" id="edCancel">取消</button>
     <button class="ed-btn primary" id="edSaveLib">保存模板</button>` : `<h1>${state.editPid ? '编辑调查' : '新建调查'} <span class="tag blue">评估型调查</span></h1>
-    ${stepBar()}
+    <span style="flex:1"></span>
     <button class="ed-btn" id="edPreview"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M6.5 5.5l4 2.5-4 2.5z"/></svg>预览</button>
     <button class="ed-btn" id="edSaveTpl"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h8l2 2v9H3z"/><path d="M5.5 2.5v3h5v-3M5.5 13.5v-4h5v4"/></svg>保存为模板</button>
     <button class="ed-btn" id="edSaveClose">保存并关闭</button>
@@ -904,8 +912,8 @@ function bindEditor() {
 
 /* 第 2 步：一张表配齐「被评测对象 × 评测关系 × 评测人 × 权重」。从讲师库按讲师分类批量选，支持自定义对象和关系。 */
 // 第 ② 步按评估管理现网：每个对象自己填评测关系（文本，可不填）、评测人和权重；不提供关系模板
-// 新关系默认评测人来源为「指定人员」，人还没选
-const newRel = weight => ({ name: '', who: '指定人员', count: 0, weight, pick: [] });
+// 新关系的评测人还没选（本期只支持指定人员）
+const newRel = weight => ({ name: '', who: '', count: 0, weight, pick: [] });
 const newRels = () => [newRel(100)];
 const objFromTeacher = t => ({ id: t.id, name: t.name, kind: '讲师库', no: t.no, level: t.level, dept: t.dept, pool: poolName(t.pool), rels: newRels() });
 // 演示项目已配置好的关系（结果页的演示答卷按这三种关系计分）
@@ -941,19 +949,19 @@ function stepRel() {
 }
 
 function objRows(o, oi) {
-  const n = o.rels.length + 1, sum = objSum(o), on = state.objSel.includes(oi);
+  const n = Math.max(1, o.rels.length), sum = objSum(o), on = state.objSel.includes(oi);
   const meta = o.kind === '讲师库' ? `${o.level}　${o.no}　${o.pool}` : (o.kind === '自定义' ? '自定义对象' : o.dept);
   const head = `<td rowspan="${n}" class="objcell"><input type="checkbox" data-osel="${oi}" ${on ? 'checked' : ''} aria-label="选择${o.name}" /></td>
     <td rowspan="${n}" class="objcell">
       <span class="row" style="gap:8px;flex-wrap:nowrap">${o.kind === '自定义' ? `<input type="text" value="${o.name}" data-oname="${oi}" aria-label="对象名称" style="width:140px" />` : `<b title="${meta}">${o.name}</b>`}<span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span></span>
       ${state.relWeightOn && sum !== 100 ? `<div class="note err">权重合计 ${sum}%</div>` : ''}</td>`;
-  const relRow = (r, ri) => `<tr>${ri === 0 ? head : ''}
+  const add = `<button class="btn link" data-addrel="${oi}">添加关系</button>`;
+  const relRow = (r, ri) => `<tr class="${ri === o.rels.length - 1 ? 'objlast' : ''}">${ri === 0 ? head : ''}
       <td><input type="text" value="${r.name}" data-rname="${oi}.${ri}" placeholder="选填" maxlength="20" aria-label="评测关系" style="width:120px" /></td>
-      <td class="nowrap">${r.count ? `${r.who}${r.who === '面授学员' ? `（${r.count} 人）` : ''}` : `${r.who || '指定人员'} <span class="err">（未选择）</span>`} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button></td>
+      <td class="nowrap">${r.pick && r.pick.length ? pickText(r.pick) : '<span class="err">未选择</span>'} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button></td>
       ${state.relWeightOn ? `<td><input type="number" min="0" max="100" value="${r.weight}" data-rweight="${oi}.${ri}" aria-label="权重" /> %</td>` : ''}
-      <td><button class="btn link" data-delrel="${oi}.${ri}">删除</button></td></tr>`;
-  const rows = o.rels.length ? o.rels.map(relRow).join('') : `<tr>${head}<td colspan="${state.relWeightOn ? 4 : 3}" class="err">还没有评测关系</td></tr>`;
-  return rows + `<tr class="addrow"><td colspan="${state.relWeightOn ? 4 : 3}"><button class="btn link" data-addrel="${oi}">+ 添加关系</button></td></tr>`;
+      <td class="nowrap"><span class="row" style="gap:12px;flex-wrap:nowrap"><button class="btn link" data-delrel="${oi}.${ri}">删除</button>${ri === o.rels.length - 1 ? add : ''}</span></td></tr>`;
+  return o.rels.length ? o.rels.map(relRow).join('') : `<tr class="objlast">${head}<td colspan="${state.relWeightOn ? 3 : 2}" class="err">还没有评测关系</td><td>${add}</td></tr>`;
 }
 
 function poolDialog() {
@@ -1074,6 +1082,8 @@ function pickPool() {
   return [...fromEval, ...PEOPLE.map(u => ({ id: u.id, name: u.name, code: u.code, dept: u.dept }))];
 }
 const personName = id => (pickPool().find(p => p.id === id) || {}).name || id;
+// 评测人本期只支持指定人员：表格里直接显示人名
+const pickText = ids => { const n = ids.map(personName); return n.length <= 2 ? n.join('、') : `${n.slice(0, 2).join('、')} 等 ${n.length} 人`; };
 function whoLabel(src, sel, o) {
   if (src === '面授学员') return '面授学员';
   if (src === '对象本人') return '对象本人';
@@ -1114,9 +1124,7 @@ function whoDialog() {
   if (w.src === '对象的直属上级') body = custom ? '<p class="err">自定义对象没有组织关系，不能取直属上级。</p>' : `<p class="note">按组织架构带出 ${o.name} 的直属上级：<b>${SUPERVISOR[o.id] || '（从组织架构自动带出）'}</b>。组织调整后，未提交前自动更新。</p>`;
   const cnt = whoCount(w.src, w.sel, o);
   return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="wpTitle"><div class="modal" style="width:min(680px, calc(100vw - 32px));max-height:88vh;overflow-y:auto">
-    <div class="row between"><h2 id="wpTitle" style="margin:0">选择评测人：${o.name} · ${rel.name || '（未命名关系）'}</h2><button class="btn link" id="wpClose" aria-label="关闭"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <h3 class="wp-h">评测人来源</h3>
-    <div class="src-grid">${opt('面授学员', `关联面授项目的学员（${FACE_STUDENTS.length} 人）`)}${opt('指定人员', '从人员名单里选')}${opt('对象本人', '自评', custom)}${opt('对象的直属上级', '按组织架构带出', custom)}</div>
+    <div class="row between"><h2 id="wpTitle" style="margin:0">选择评测人：${o.name}${rel.name ? ' · ' + rel.name : ''}</h2><button class="btn link" id="wpClose" aria-label="关闭"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
     <div style="margin-top:12px">${body}</div>
     <div class="foot"><span class="note" style="margin-right:auto">${cnt ? `共 ${cnt} 名评测人` : '还没有评测人'}</span><button class="btn" id="wpCancel">取消</button><button class="btn primary" id="wpOk" ${cnt ? '' : 'disabled'}>确定</button></div>
   </div></div>`;
@@ -1170,7 +1178,7 @@ function bindRel() {
   main.querySelectorAll('[data-addrel]').forEach(b => b.onclick = () => { state.objects[b.dataset.addrel].rels.push(newRel(0)); render(); });
   main.querySelectorAll('[data-pickwho]').forEach(b => b.onclick = () => {
     const [o, r] = at(b.dataset.pickwho), rel = state.objects[o].rels[r];
-    state.whoPick = { o, r, src: srcOfRel(rel), sel: [...(rel.pick || [])], q: '', dept: '', allObj: false }; render();
+    state.whoPick = { o, r, src: '指定人员', sel: [...(rel.pick || [])], q: '', dept: '' }; render();
   });
   on('#openImport', 'click', () => { state.importOpen = true; state.importRes = null; state.importFile = ''; render(); });
   const impClose = () => { state.importOpen = false; state.importRes = null; render(); };
@@ -1225,43 +1233,46 @@ function timeError(start, end) {
   return '';
 }
 
+// 第 ③ 步复用调查管理（新）「项目设置」页：基本信息、调查模式、调查结果、参与设置、调查提醒。
+// 评估型调查：调查模式、调查结果只有普通调查有；评测人在第 ② 步设置；除基本信息和调查提醒外，评估相关设置放在「评估设置」一组。
+const REMIND_ITEMS = ['消息发布', '调查作废', '临时新增学员', '移除学员', '未参加提醒', '期限到期提醒'];
+const CHANNELS = ['邮件通知', '站内短信', '手机短信', '企业微信', '钉钉', '飞书'];
+state.set = { fold: {}, scanOn: false, remind: {}, ch: {} };
+function setChecks() { return [...relChecks(), [scoredCount() > 0, '问卷至少 1 道计分题', '请回到第 1 步添加计分题']]; }
 function stepSetting() {
-  const checks = [...relChecks(), [scoredCount() > 0, '问卷至少 1 道计分题', '请回到第 1 步添加计分题']];
-  return `<div class="grid2">
-  <div class="card">
-    <h2>基本信息</h2>
-    <div class="field"><label>编号</label><span>${state.editPid || '保存后自动生成'} <span class="note">自动生成</span></span></div>
-    <div class="field"><label>调查名称</label><input type="text" id="setName" value="${state.editPid ? curProject().name : '内训师授课评价表'}" maxlength="50" aria-label="调查名称" /></div>
-    <div class="field"><label>调查类型</label><span><span class="tag blue">评估型调查</span> <span class="note">创建后不能修改</span></span></div>
-    <div class="field"><label>开始时间</label><input type="text" id="setStart" value="${state.editPid ? curProject().start : '2026-11-10 09:00'}" placeholder="不填为立即开始" aria-label="开始时间" /></div>
-    <div class="field"><label>结束时间</label><input type="text" id="setEnd" value="${state.editPid ? curProject().end : ''}" placeholder="不填为长期有效" aria-label="结束时间" /></div>
-    <div class="field"><label>关联计划</label><span><button class="btn link" data-toast="暂无可关联的计划">选择计划</button></span></div>
-    <div class="field"><label>说明</label><input type="text" placeholder="告知评测人本次评估的目的和注意事项" maxlength="2000" aria-label="说明" /></div>
-    <div class="field"><label>发起方</label><input type="text" placeholder="最多 15 个字" maxlength="15" aria-label="发起方" /></div>
-    <div class="field"><label>来源</label><span>调查管理</span></div>
-  </div>
-  <div class="card">
-    <h2>调查模式</h2>
-    <div class="field"><label>模式</label><span class="row">
-      <label class="switch"><input type="radio" name="anon" value="0" ${state.anon ? '' : 'checked'} /> 管理模式</label>
-      <label class="switch"><input type="radio" name="anon" value="1" ${state.anon ? 'checked' : ''} /> 匿名模式</label></span></div>
-    <p class="note" style="margin-bottom:16px">发布后不能修改。匿名模式下，评测人分析和导出不显示评测人身份。</p>
-    <h2>计分与结果</h2>
-    <div class="field"><label>去高去低</label><span class="row"><label class="switch"><input type="checkbox" class="tg" id="trimSet" ${state.trim ? 'checked' : ''} /> 去掉最高分、最低分</label></span></div>
-    <div class="field"><label>扫码参与</label><span class="col" style="gap:6px">
-      <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'list' ? 'checked' : ''} data-scan="list" /> 只允许评测人名单内的人</label>
-      <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'pick' ? 'checked' : ''} data-scan="pick" /> 任何人可扫码，自己选择被评测对象</label>
-      <button class="btn link" data-toast="已下载作答二维码" style="align-self:flex-start">下载二维码</button></span></div>
-    <div class="field"><label>排名可见</label><label class="switch"><input type="checkbox" class="tg" id="rankVisSet" ${state.rankVisible ? 'checked' : ''} /> 允许学员查看排名</label></div>
-    <div class="field"><label>关系权重</label><span>${state.relWeightOn ? '已开启，按第 2 步各对象设置的权重' : '未开启'} <button class="btn link" data-step="rel">修改</button></span></div>
-    <h2>其他</h2>
-    <div class="field"><label>提交提示</label><input type="text" value="感谢你的评价！" aria-label="提交提示" /></div>
-    <div class="field"><label>消息提醒</label><span class="note">发布、作废、增加评测人、移除评测人、修改起止时间、未参加提醒</span></div>
-  </div></div>
-  <div class="card">
-    <h2>发布前检查</h2>
-    <table><tbody>${checks.map(([ok, label, msg]) => `<tr><td>${label}</td><td>${ok ? '<span class="tag green">通过</span>' : `<span class="tag red">未通过</span> <span class="err">${msg}</span>`}</td></tr>`).join('')}</tbody></table>
+  const st = state.set, p = state.editPid ? curProject() : null;
+  const code = p ? p.code : `${TODAY.replace(/-/g, '')}${String(state.projects.length + 1).padStart(6, '0')}`;
+  const sw = (id, on, attrs = '') => `<input type="checkbox" class="tg" id="${id}" ${on ? 'checked' : ''} ${attrs} />`;
+  const sec = (k, title, body) => `<section class="setsec">
+      <button class="sethd" data-fold="${k}" aria-expanded="${!st.fold[k]}"><span>${title}</span>${k === 'base' ? '' : `<svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" style="transform:rotate(${st.fold[k] ? -90 : 0}deg)"><path d="M4 6l4 4 4-4"/></svg>`}</button>
+      ${st.fold[k] ? '' : `<div class="setbd">${body}</div>`}</section>`;
+  const f = (label, ctrl, hint = '', req = false) => `<div class="setrow"><label class="setlb">${req ? '<i class="req">*</i>' : ''}${label}</label><div class="setct">${ctrl}${hint ? `<p class="note">${hint}</p>` : ''}</div></div>`;
+  const remind = REMIND_ITEMS.map(k => `<div class="setrow"><label class="setlb">${k}</label><div class="setct"><div class="remind">${sw('rm_' + k, st.remind[k], `data-remind="${k}"`)}
+      <div class="chs">${k === '期限到期提醒' ? '<div class="due">提前 <input type="number" value="3" min="1" aria-label="提前天数" /> 天提醒　每 <input type="number" value="1" min="1" aria-label="间隔天数" /> 天提醒一次</div>' : ''}
+      ${CHANNELS.map(c => `<label class="switch"><input type="checkbox" data-ch="${k}|${c}" ${(st.ch[k] || []).includes(c) ? 'checked' : ''} ${st.remind[k] ? '' : 'disabled'} /> ${c}</label>`).join('')}</div></div></div></div>`).join('');
+  return `<div class="setcard">
+    ${sec('base', '基本信息', `
+      ${f('调查编号', `<input type="text" id="setCode" value="${code}" maxlength="30" aria-label="调查编号" />`, '', true)}
+      ${f('调查名称', `<input type="text" id="setName" value="${p ? p.name : state.edHead.title}" maxlength="50" aria-label="调查名称" />`, '', true)}
+      ${f('发起方', '<input type="text" placeholder="请输入" maxlength="15" aria-label="发起方" />')}
+      ${f('项目期限', `<span class="row" style="gap:8px;flex-wrap:nowrap"><input type="text" id="setStart" value="${p ? p.start : `${TODAY} 09:00`}" placeholder="开始时间" aria-label="开始时间" /> - <input type="text" id="setEnd" value="${p ? p.end : ''}" placeholder="结束日期" aria-label="结束时间" /></span>`, '可不设置项目期限，若不设置，项目发布后需要手动回收问卷')}`)}
+    ${sec('eval', '评估设置', `
+      ${f('去高去低', sw('trimSet', state.trim), '开启后，每种评测关系内各去掉一份最高分和一份最低分再计算得分')}
+      ${f('允许学员查看排名', sw('rankVisSet', state.rankVisible), '开启后，学员可以看到被评测对象的当前排名和综合得分')}
+      ${f('允许扫码参与', `${sw('scanOn', st.scanOn)}${st.scanOn ? `<div class="col" style="gap:6px;margin-top:8px">
+          <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'list' ? 'checked' : ''} data-scan="list" /> 只允许评测人名单内的人</label>
+          <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'pick' ? 'checked' : ''} data-scan="pick" /> 任何人可扫码，自己选择被评测对象</label>
+          <button class="btn link" data-toast="已下载作答二维码" style="align-self:flex-start">下载二维码</button></div>` : ''}`, '开启后，允许通过扫码参与评估')}`)}
+    ${sec('remind', '调查提醒', remind)}
   </div>`;
+}
+function bindSetting() {
+  const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
+  const st = state.set;
+  main.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { if (b.dataset.fold === 'base') return; st.fold[b.dataset.fold] = !st.fold[b.dataset.fold]; render(); });
+  on('#scanOn', 'change', e => { st.scanOn = e.target.checked; render(); });
+  main.querySelectorAll('[data-remind]').forEach(c => c.onchange = () => { st.remind[c.dataset.remind] = c.checked; if (c.checked && !(st.ch[c.dataset.remind] || []).length) st.ch[c.dataset.remind] = ['站内短信']; render(); });
+  main.querySelectorAll('[data-ch]').forEach(c => c.onchange = () => { const [k, ch] = c.dataset.ch.split('|'), cur = st.ch[k] || []; st.ch[k] = c.checked ? [...cur, ch] : cur.filter(x => x !== ch); });
 }
 
 /* ---------- 统计排名 ---------- */
@@ -2250,6 +2261,7 @@ function publishProject(name, start, end) {
 function bind() {
   if (state.page === 'create' && state.step === 'score') bindEditor();
   if (state.page === 'create' && state.step === 'rel') bindRel();
+  if (state.page === 'create' && state.step === 'setting') bindSetting();
   if (state.page === 'student') bindStudent();
   if (state.page === 'tplLib') bindTplLib();
   if (['list', 'detail', 'monitor', 'result'].includes(state.page)) bindOps();
@@ -2267,7 +2279,9 @@ function bind() {
   on('#flowSave', 'click', () => { state.editPid = null; state.step = 'score'; go('list'); toast('已保存草稿，可在调查列表继续编辑'); });
   on('#flowCancel', 'click', () => { state.editPid = null; state.step = 'score'; go('list'); });
   on('#publish', 'click', e => {
-    if (e.target.dataset.ok !== 'true') { toast('还有检查项未通过，不能发布'); return; }
+    const bad = setChecks().find(c => !c[0]);
+    if (bad) { toast(bad[2]); return; }
+    if (!main.querySelector('#setCode').value.trim()) { toast('请填写调查编号'); return; }
     const name = main.querySelector('#setName').value.trim(), start = main.querySelector('#setStart').value.trim(), end = main.querySelector('#setEnd').value.trim();
     if (!name) { toast('请填写调查名称'); return; }
     const terr = timeError(start, end);
