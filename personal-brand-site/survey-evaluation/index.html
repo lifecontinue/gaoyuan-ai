@@ -17,22 +17,22 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: "PingFang-SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; font-size: 14px; line-height: 22px; color: var(--text-1); background: var(--page); }
   button, input, select { font: inherit; color: inherit; }
-  .app { display: grid; grid-template-columns: 80px 1fr; min-height: 100vh; }
+  .app { display: grid; grid-template-columns: 64px 1fr; min-height: 100vh; }
   .shell { min-width: 0; display: flex; flex-direction: column; }
-  .topbar { height: 64px; flex: none; display: flex; align-items: center; gap: 24px; padding: 0 24px 0 16px; background: #fff; border-bottom: 1px solid var(--divider); position: sticky; top: 0; z-index: 30; }
-  .apptabs { display: flex; align-items: stretch; height: 40px; gap: 4px; }
+  .topbar { height: 40px; flex: none; display: flex; align-items: center; gap: 24px; padding: 0 24px 0 16px; background: #fff; border-bottom: 1px solid var(--divider); position: sticky; top: 0; z-index: 30; }
+  .apptabs { display: flex; align-items: stretch; height: 40px; gap: 4px; align-self: flex-end; }
   .apptabs button { border: none; background: none; font: inherit; color: var(--text-2); padding: 0 20px; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
   .apptabs button.on { background: var(--primary-soft); color: var(--primary); }
   .apptabs svg { width: 12px; height: 12px; }
   .topbar-r { margin-left: auto; display: flex; align-items: center; gap: 24px; color: var(--text-2); }
-  .topbar-r .search { width: 200px; height: 32px; border-radius: 16px; background: var(--block); display: flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--text-disabled); }
+  .topbar-r .search { width: 160px; height: 28px; border-radius: 16px; background: var(--block); display: flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--text-disabled); }
   .topbar-r button { border: none; background: none; font: inherit; color: var(--text-2); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
   .topbar-r button:hover { color: var(--primary); }
   .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
   .ic { width: 16px; height: 16px; flex: none; vertical-align: -3px; }
   .side { background: var(--primary); color: #fff; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; position: sticky; top: 0; height: 100vh; }
-  .side .brand { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-weight: 500; margin-bottom: 12px; }
-  .side a { width: 68px; padding: 8px 0; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; color: rgba(255,255,255,.85); font-size: 12px; line-height: 20px; cursor: pointer; text-decoration: none; }
+  .side .brand { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-weight: 500; margin-bottom: 12px; }
+  .side a { width: 56px; padding: 8px 0; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; color: rgba(255,255,255,.85); font-size: 12px; line-height: 20px; cursor: pointer; text-decoration: none; }
   .side a svg { width: 20px; height: 20px; }
   .side a:hover { background: rgba(255,255,255,.12); }
   .side a.on { background: rgba(255,255,255,.2); color: #fff; }
@@ -67,7 +67,7 @@
   .banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 4px; background: var(--primary-soft); margin-bottom: 16px; }
   .banner.warn { background: var(--warning-soft); }
   .flowhead { --e-primary: var(--primary); --e-text-2: #595959; --e-border: #D9D9D9; --e-border-light: #E5E5E5;
-    margin: -24px -24px 16px; position: sticky; top: 64px; z-index: 20; font-size: 14px; color: #1F1F1F; }
+    margin: -24px -24px 16px; position: sticky; top: 40px; z-index: 20; font-size: 14px; color: #1F1F1F; }
   .stepbar { display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0; font-size: 14px; color: var(--text-3); white-space: nowrap; }
   .ed-head h1 { flex: none !important; }
   .ed-head .stepbar { margin: 0 auto 0 40px; } /* 紧跟标题，三步里位置不随右侧按钮变化 */
@@ -130,31 +130,33 @@
   main.editor-mode { padding: 0; }
   .ed { --e-primary: var(--primary); --e-primary-light: var(--primary-soft); --e-text: #1F1F1F; --e-text-2: #595959; --e-text-3: #8C8C8C;
         --e-border: #D9D9D9; --e-border-light: #E5E5E5; --e-danger: #FF4D4F;
-        display: flex; flex-direction: column; height: calc(100vh - 64px); background: #F8F8F8; font-size: 14px; color: var(--e-text); }
-  .ed-head { height: 52px; background: #fff; display: flex; align-items: center; padding: 0 16px 0 20px; border-bottom: 1px solid var(--e-border-light); flex: none; }
-  .ed-head h1 { font-size: 14px; font-weight: 500; margin: 0; flex: 1; display: flex; align-items: center; gap: 8px; }
-  .ed-btn { height: 32px; padding: 0 16px; border: 1px solid var(--e-border); background: #fff; border-radius: 4px; color: var(--e-text-2); font-size: 14px; margin-left: 8px; cursor: pointer; white-space: nowrap; }
+        display: flex; flex-direction: column; height: calc(100vh - 40px); background: #F8F8F8; font-size: 14px; color: var(--e-text); }
+  .ed-head { height: 64px; background: #fff; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--e-border-light); flex: none; }
+  .ed-head h1 { font-size: 16px; font-weight: 400; margin: 0; flex: 1; display: flex; align-items: center; gap: 8px; }
+  .ed-btn { height: 32px; padding: 0 16px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--e-border); background: #fff; border-radius: 4px; color: var(--e-text-2); font-size: 14px; margin-left: 8px; cursor: pointer; white-space: nowrap; }
   .ed-btn:hover { color: var(--e-primary); border-color: var(--e-primary); }
   .ed-btn.primary:hover { background: var(--primary-hover); color: #fff; }
   .ed-btn.primary { background: var(--e-primary); border-color: var(--e-primary); color: #fff; }
-  .ed-body { flex: 1; display: grid; grid-template-columns: 136px minmax(0, 1fr) 220px; min-height: 0; }
-  .ed-pal { background: #fff; border-right: 1px solid var(--e-border-light); overflow-y: auto; padding: 10px 10px 20px; }
-  .ed-pal-title { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 2px; }
+  .ed-body { flex: 1; display: grid; grid-template-columns: 188px minmax(0, 1fr) 288px; min-height: 0; }
+  .ed-pal { background: #fff; overflow-y: auto; padding: 16px; }
+  .ed-pal-title { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--e-text-2); padding: 8px 0 4px; margin-top: 8px; }
+  .ed-pal-title:first-child { margin-top: 0; }
+  .ed-pal-title svg { width: 12px; height: 12px; }
   .ed-pal-title span { color: var(--e-text-3); }
-  .ed-pal-item { height: 26px; margin: 4px 0; padding: 0 8px; background: #F5F5F5; border-radius: 3px; display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; border: none; width: 100%; color: var(--e-text); }
+  .ed-pal-item { height: 32px; margin: 8px 0; padding: 0 12px; background: #F5F5F5; border-radius: 4px; display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; border: none; width: 100%; color: var(--e-text); }
   .ed-pal-item:hover { background: var(--e-primary-light); color: var(--e-primary); }
-  .ed-pal-item i { width: 12px; height: 12px; border: 1.2px solid currentColor; border-radius: 2px; flex: none; }
+  .ed-pal-item svg { width: 14px; height: 14px; flex: none; }
   .ed-pal-item .sc { margin-left: auto; font-size: 12px; color: var(--e-text-3); }
   .ed-pal-note { font-size: 12px; color: var(--e-text-3); line-height: 1.6; padding: 4px 2px 0; }
-  .ed-wrap { overflow-y: auto; padding: 0 16px 80px; }
-  .ed-sum { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #EEF4FF; color: var(--e-text-2); font-size: 12px; padding: 8px 12px; margin: 12px 0 0; }
+  .ed-wrap { overflow-y: auto; padding: 0 24px 80px; background: var(--block); }
+  .ed-sum { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-radius: 4px; background: #EEF4FF; color: var(--e-text-2); font-size: 12px; padding: 8px 12px; margin: 12px 0 0; }
   .ed-sum b { color: var(--e-primary); font-weight: 600; }
-  .ed-canvas { background: #fff; margin-top: 12px; }
+  .ed-canvas { background: #fff; margin-top: 16px; border-radius: 8px; overflow: hidden; }
   .ed-block { position: relative; border: 1px solid transparent; border-bottom-color: var(--e-border-light); cursor: pointer; }
   .ed-block:hover { border-color: #B9D0F7; }
   .ed-block.sel { border-color: var(--e-primary); box-shadow: inset 3px 0 0 var(--e-primary); }
   .ed-h { padding: 22px 52px 20px; }
-  .ed-h-title { font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 10px; }
+  .ed-h-title { font-size: 24px; line-height: 32px; font-weight: 500; text-align: center; margin-bottom: 10px; }
   .ed-h-desc { font-size: 14px; color: var(--e-text-2); line-height: 1.8; }
   .ed-q { padding: 14px 52px 18px; }
   .ed-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
@@ -167,7 +169,7 @@
   .ed-stars span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .ed-stars span::before { content: "★"; color: #D9D9D9; font-size: 16px; }
   .ed-essay { height: 60px; border: 1px solid var(--e-border-light); border-radius: 3px; color: #BFBFBF; font-size: 12px; padding: 8px; }
-  .ed-props { background: #fff; border-left: 1px solid var(--e-border-light); padding: 16px 14px; overflow-y: auto; }
+  .ed-props { background: #fff; padding: 16px 24px; overflow-y: auto; }
   .ed-props h3 { font-size: 14px; font-weight: 500; margin: 0 0 16px; }
   .ed-props h4 { font-size: 12px; font-weight: 500; color: var(--e-text); margin: 20px 0 12px; padding-top: 16px; border-top: 1px solid var(--e-border-light); }
   .ed-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--e-text-2); margin-bottom: 16px; gap: 8px; }
@@ -463,7 +465,7 @@ const ANSWERS = [
 const state = {
   page: 'list', step: 'score', tab: 'rank',
   qWeightOn: true, qWeights: QUESTIONS.map(q => q.weight),
-  relWeightOn: true, objects: [], objSel: [], poolOpen: false, poolSel: [], poolTpl: true,
+  relWeightOn: true, objects: [], objSel: [], poolOpen: false, poolSel: [],
   poolF: { name: '', src: '', level: '', pool: '' },
   trim: false, weighted: true, relFilter: '', deptFilter: '', anon: false, selQ: null,
 };
@@ -579,6 +581,7 @@ const PALETTE = [
   ['附加问题（不计分）', ['问答']],
 ];
 const SCORABLE = ['单选', '多选', '打分', 'NPS'];
+const PAL_ICON = {"单选": '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="5.5"/><circle cx="7" cy="7" r="2.2" fill="currentColor"/></svg>', "多选": '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5"/><path d="M4 7l2 2 4-4"/></svg>', "打分": '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5"/><rect x="5" y="5" width="4" height="4" fill="currentColor"/></svg>', "NPS": '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="5.5"/><path d="M7 7l3-3M4 9.5h6"/></svg>', "问答": '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="1.5" width="10" height="11" rx="1.5"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3"/></svg>'};
 const OPT_TYPES = ['单选', '多选'];
 const MATRIX_TYPES = [];   // 矩阵题本期不在评估型调查里提供
 
@@ -645,21 +648,21 @@ function stepScore() {
   <div class="ed-head">
 ${state.qtEditId ? `<h1>编辑模板 <span class="tag blue">评估型调查</span></h1>
     <span class="note" style="margin-right:8px">模板库 · 自定义模板</span>
-    <button class="ed-btn" id="edPreview">预览</button>
+    <button class="ed-btn" id="edPreview"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M6.5 5.5l4 2.5-4 2.5z"/></svg>预览</button>
     <button class="ed-btn" id="edCancel">取消</button>
     <button class="ed-btn primary" id="edSaveLib">保存模板</button>` : `<h1>${state.editPid ? '编辑调查' : '新建调查'} <span class="tag blue">评估型调查</span></h1>
     ${stepBar()}
-    <button class="ed-btn" id="edPreview">预览</button>
-    <button class="ed-btn" id="edSaveTpl">保存为模板</button>
+    <button class="ed-btn" id="edPreview"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M6.5 5.5l4 2.5-4 2.5z"/></svg>预览</button>
+    <button class="ed-btn" id="edSaveTpl"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h8l2 2v9H3z"/><path d="M5.5 2.5v3h5v-3M5.5 13.5v-4h5v4"/></svg>保存为模板</button>
     <button class="ed-btn" id="edSaveClose">保存并关闭</button>
     <button class="ed-btn" id="edCancel">取消</button>
     <button class="ed-btn primary" id="edNext">下一步</button>`}
   </div>
   <div class="ed-body">
     <aside class="ed-pal" aria-label="题型">
-      ${PALETTE.map(([g, items]) => `<div class="ed-pal-title">${g}<span>⌃</span></div>
-        ${items.map(n => `<button class="ed-pal-item" data-addq="${n}"><i></i>${n}</button>`).join('')}`).join('')}
-      <p class="ed-pal-note">评估型调查只提供能设分值的题型。问答作为附加问题，只收集文字，不计分。点击题型添加题目，插在当前选中的题目后面。</p>
+      ${PALETTE.map(([g, items]) => `<div class="ed-pal-title">${g}<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 7.5l3-3 3 3"/></svg></div>
+        ${items.map(n => `<button class="ed-pal-item" data-addq="${n}">${PAL_ICON[n]}${n}</button>`).join('')}`).join('')}
+
     </aside>
     <main class="ed-wrap">
       <div class="ed-sum"><span>计分题 <b>${scoredCount()}</b> 道，满分 <b>${fmt(fullScore())}</b> 分${errs ? `　<span class="ed-err">${errs} 道题未完成</span>` : ''}</span>
@@ -900,19 +903,11 @@ function bindEditor() {
 }
 
 /* 第 2 步：一张表配齐「被评测对象 × 评测关系 × 评测人 × 权重」。从讲师库按讲师分类批量选，支持自定义对象和关系。 */
-// 关系模板为租户级，所有管理员共用，在「管理模板」里维护
-state.tpls = [
-  { id: 'tp1', name: '讲师评估', def: true, rels: [{ name: '学员', who: '面授学员', count: 4, weight: 60 }, { name: '班主任', who: '指定人员（赵敏）', count: 1, weight: 30 }, { name: '自评', who: '对象本人', count: 1, weight: 10 }] },
-  { id: 'tp2', name: '学员评讲师', rels: [{ name: '学员', who: '面授学员', count: 4, weight: 100 }] },
-  { id: 'tp3', name: '上级、同事、自评', rels: [{ name: '上级', who: '对象的直属上级', count: 1, weight: 50 }, { name: '同事', who: '', count: 0, weight: 30 }, { name: '自评', who: '对象本人', count: 1, weight: 20 }] },
-];
-state.tplId = 'tp1';
-const curTpl = () => state.tpls.find(t => t.id === state.tplId) || state.tpls[0];
-const tplText = t => t.rels.map(r => `${r.name} ${r.weight}%`).join('、');
-const REL_TEMPLATE = curTpl().rels;
-const REL_SUGGEST = ['学员', '班主任', '自评', '上级', '同事', '下级'];
-const cloneTpl = () => curTpl().rels.map(r => ({ ...r }));
-const objFromTeacher = t => ({ id: t.id, name: t.name, kind: '讲师库', no: t.no, level: t.level, dept: t.dept, pool: poolName(t.pool), rels: cloneTpl() });
+// 第 ② 步按评估管理现网：每个对象自己填评测关系（文本，可不填）、评测人和权重；不提供关系模板
+const newRels = () => [{ name: '', who: '', count: 0, weight: 100 }];
+const objFromTeacher = t => ({ id: t.id, name: t.name, kind: '讲师库', no: t.no, level: t.level, dept: t.dept, pool: poolName(t.pool), rels: newRels() });
+// 演示项目已配置好的关系（结果页的演示答卷按这三种关系计分）
+const DEMO_RELS = [{ name: '学员', who: '面授学员', count: 4, weight: 60 }, { name: '班主任', who: '指定人员（赵敏）', count: 1, weight: 30, pick: ['m1'] }, { name: '自评', who: '对象本人', count: 1, weight: 10 }];
 const objSum = o => o.rels.reduce((s, r) => s + (Number(r.weight) || 0), 0);
 const objErrors = () => state.objects.filter(o => state.relWeightOn && objSum(o) !== 100);
 
@@ -931,14 +926,11 @@ function stepRel() {
       </div>
     </div>
     <div class="banner" style="margin-bottom:12px">
-      <span class="row" style="gap:8px">关系模板 <select id="tplSel" aria-label="关系模板">${state.tpls.map(t => `<option value="${t.id}" ${t.id === state.tplId ? 'selected' : ''}>${t.name}${t.def ? '（默认）' : ''}</option>`).join('')}</select>
-        <span class="note">${tplText(curTpl())}</span><button class="btn link" id="openTpl">管理模板</button></span>
       <span class="row" style="gap:16px">
-        ${sel.length ? `<span>已选 ${sel.length} 个对象</span><button class="btn link" id="applyTpl">应用模板</button><button class="btn link" id="removeSel">移除</button>` : ''}
+        ${sel.length ? `<span>已选 ${sel.length} 个对象</span><button class="btn link" id="removeSel">移除</button>` : ''}
         <label class="switch"><input type="checkbox" class="tg" id="relWeightOn" ${state.relWeightOn ? 'checked' : ''} /> 按关系加权</label>
       </span>
     </div>
-    <datalist id="relNames">${REL_SUGGEST.map(n => `<option value="${n}"></option>`).join('')}</datalist>
     <div class="scroll"><table class="reltable">
       <thead><tr><th style="width:36px"><input type="checkbox" id="selAll" aria-label="全选" ${sel.length && sel.length === state.objects.length ? 'checked' : ''} /></th>
         <th>被评测对象</th><th>评测关系</th><th>评测人</th>${state.relWeightOn ? '<th>权重</th>' : ''}<th>操作</th></tr></thead>
@@ -949,7 +941,7 @@ function stepRel() {
       ${errs.length ? `<span class="err">${errs.length} 个对象的权重合计不等于 100%</span>` : (state.relWeightOn ? '<span class="ok">所有对象权重合计 100%</span>' : '<span class="note">关闭后所有有效问卷同等计算</span>')}
     </div>
   </div>
-  ${state.poolOpen ? poolDialog() : ''}${state.tplOpen ? tplDialog() : ''}${state.importOpen ? importDialog() : ''}${state.peopleOpen ? peopleDialog() : ''}${state.whoPick ? whoDialog() : ''}`;
+  ${state.poolOpen ? poolDialog() : ''}${state.importOpen ? importDialog() : ''}${state.peopleOpen ? peopleDialog() : ''}${state.whoPick ? whoDialog() : ''}`;
 }
 
 function objRows(o, oi) {
@@ -962,7 +954,7 @@ function objRows(o, oi) {
       ${state.relWeightOn ? `<div class="note ${sum === 100 ? 'ok' : 'err'}">权重合计 ${sum}%</div>` : ''}
       <button class="btn link" data-toast="该功能暂未开放">添加介绍</button></td>`;
   const relRow = (r, ri) => `<tr>${ri === 0 ? head : ''}
-      <td><input type="text" list="relNames" value="${r.name}" data-rname="${oi}.${ri}" placeholder="如：学员" aria-label="评测关系" style="width:96px" /></td>
+      <td><input type="text" value="${r.name}" data-rname="${oi}.${ri}" placeholder="选填" maxlength="20" aria-label="评测关系" style="width:120px" /></td>
       <td>${r.count ? `${r.who}${r.who === '面授学员' ? `（${r.count} 人）` : ''}` : '<span class="err">未选择</span>'} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button></td>
       ${state.relWeightOn ? `<td><input type="number" min="0" max="100" value="${r.weight}" data-rweight="${oi}.${ri}" aria-label="权重" /> %</td>` : ''}
       <td><button class="btn link" data-delrel="${oi}.${ri}">删除</button></td></tr>`;
@@ -990,7 +982,7 @@ function poolDialog() {
         <td>${t.name}</td><td>${t.no}</td><td>${t.src}</td><td>${t.level}</td><td>${poolName(t.pool)}${added.has(t.id) ? ' <span class="tag">已添加</span>' : ''}</td></tr>`).join('')
         : '<tr><td colspan="6" class="muted">没有符合条件的讲师</td></tr>'}</tbody></table></div>
     <div class="row between" style="margin-top:16px">
-      <span class="note">评测关系按关系模板「${curTpl().name}」带出，添加后可修改</span>
+      <span></span>
       <span class="row"><span class="note">已选 ${pick.length} 人</span><button class="btn" id="poolCancel">取消</button><button class="btn primary" id="poolOk" ${pick.length ? '' : 'disabled'}>添加到被评测对象</button></span>
     </div>
   </div></div>`;
@@ -1018,104 +1010,10 @@ function peopleDialog() {
       <tbody>${list.map(u => `<tr><td>${added.has(u.id) ? '' : `<input type="checkbox" data-ppl="${u.id}" ${pick.includes(u.id) ? 'checked' : ''} aria-label="选择${u.name}" />`}</td>
         <td>${u.name}${added.has(u.id) ? ' <span class="tag">已添加</span>' : ''}</td><td>${u.code}</td><td>${u.dept}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">没有符合条件的人员</td></tr>'}</tbody></table></div>
     <div class="row between" style="margin-top:16px">
-      <span class="note">按关系模板「${curTpl().name}」生成评测关系</span>
+      <span></span>
       <span class="row"><span class="note">已选 ${pick.length} 人</span><button class="btn" id="pplCancel">取消</button><button class="btn primary" id="pplOk" ${pick.length ? '' : 'disabled'}>添加到被评测对象</button></span>
     </div>
   </div></div>`;
-}
-
-// 关系模板管理：列表（使用、设为默认、编辑、删除）+ 新建 / 编辑表单（名称、关系、评测人来源、权重，合计 100%）
-const WHO_SOURCES = [
-  { v: '面授学员', count: 4, note: '关联面授项目的学员' },
-  { v: '指定人员', count: 0, note: '新建调查时再选人' },
-  { v: '对象本人', count: 1, note: '自评' },
-  { v: '对象的直属上级', count: 1, note: '从组织架构取' },
-];
-function tplErrors(f) {
-  const errs = [];
-  if (!f.name.trim()) errs.push('请填写模板名称');
-  else if (state.tpls.some(t => t.name === f.name.trim() && t.id !== f.id)) errs.push(`已有同名模板「${f.name.trim()}」`);
-  if (!f.rels.length) errs.push('至少添加 1 种评测关系');
-  if (f.rels.some(r => !r.name.trim())) errs.push('关系名称不能为空');
-  const names = f.rels.map(r => r.name.trim()).filter(Boolean);
-  if (new Set(names).size !== names.length) errs.push('关系名称不能重复');
-  const sum = f.rels.reduce((s, r) => s + (Number(r.weight) || 0), 0);
-  if (sum !== 100) errs.push(`权重合计为 ${sum}%，需要等于 100%`);
-  return errs;
-}
-
-function tplForm() {
-  const f = state.tplEdit, sum = f.rels.reduce((s, r) => s + (Number(r.weight) || 0), 0), errs = tplErrors(f);
-  return `<div class="row between"><h2 id="tplTitle" style="margin:0">${f.id ? '编辑模板' : '新建模板'}</h2><button class="btn link" id="tfBack">‹ 返回模板列表</button></div>
-    <div class="field" style="margin-top:16px"><label for="tfName">模板名称</label><input type="text" id="tfName" value="${f.name}" maxlength="30" placeholder="如：讲师评估" /></div>
-    <div class="tbl-wrap"><table class="tpl-table"><thead><tr><th>评测关系</th><th>评测人来源</th><th>权重</th><th></th></tr></thead>
-      <tbody>${f.rels.map((r, i) => `<tr>
-        <td><input type="text" list="relNames" value="${r.name}" data-tfn="${i}" placeholder="如：学员" aria-label="评测关系" style="width:110px" /></td>
-        <td><select data-tfw="${i}" aria-label="评测人来源">${WHO_SOURCES.map(w => `<option ${r.src === w.v ? 'selected' : ''}>${w.v}</option>`).join('')}</select>
-          <div class="note">${(WHO_SOURCES.find(w => w.v === r.src) || {}).note || ''}</div></td>
-        <td class="nowrap"><input type="number" min="0" max="100" value="${r.weight}" data-tfp="${i}" aria-label="权重" /> %</td>
-        <td><button class="btn link" data-tfdel="${i}" ${f.rels.length > 1 ? '' : 'disabled'}>删除</button></td></tr>`).join('')}</tbody></table></div>
-    <datalist id="relNames">${REL_SUGGEST.map(n => `<option value="${n}"></option>`).join('')}</datalist>
-    <div class="row between" style="margin-top:8px"><button class="btn link" id="tfAdd">+ 添加关系</button>
-      <span class="${sum === 100 ? 'ok' : 'err'}">权重合计 ${sum}%</span></div>
-    <label class="switch" style="margin-top:12px"><input type="checkbox" id="tfDef" ${f.def ? 'checked' : ''} /> 设为默认模板（新建评估型调查时自动带出）</label>
-    ${errs.length ? `<ul class="err" style="margin:12px 0 0 18px;font-size:14px">${errs.map(e => `<li>${e}</li>`).join('')}</ul>` : ''}
-    <p class="note" style="margin-top:12px">修改模板不影响已经用过它的调查；已应用到对象表的关系，需要重新「应用模板」才会更新。</p>
-    <div class="foot"><button class="btn" id="tfCancel">取消</button><button class="btn primary" id="tfSave" ${errs.length ? 'disabled' : ''}>保存模板</button></div>`;
-}
-
-function tplDialog() {
-  const body = state.tplEdit ? tplForm() : `
-    <div class="row between"><h2 id="tplTitle" style="margin:0">关系模板</h2><button class="btn link" id="tplClose" aria-label="关闭"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <p class="note" style="margin:8px 0 12px">租户级模板，所有管理员新建评估型调查时都可以选用；默认模板在新建时自动带出。</p>
-    <div class="tbl-wrap"><table class="tpl-table"><thead><tr><th>模板名称</th><th>评测关系与权重</th><th>评测人来源</th><th>操作</th></tr></thead>
-      <tbody>${state.tpls.map(t => `<tr><td class="nowrap">${t.name}${t.def ? ' <span class="tag blue">默认</span>' : ''}</td>
-        <td>${t.rels.map(r => `<div class="nowrap">${r.name} ${r.weight}%</div>`).join('')}</td>
-        <td class="note">${t.rels.map(r => `<div>${r.name}：${r.who || '新建时选择'}</div>`).join('')}</td>
-        <td><span class="row" style="gap:12px;flex-wrap:nowrap"><button class="btn link" data-tpluse="${t.id}">使用</button>${t.def ? '' : `<button class="btn link" data-tpldef="${t.id}">设为默认</button>`}<button class="btn link" data-tpledit="${t.id}">编辑</button>${t.def ? '' : `<button class="btn link err" data-tpldel="${t.id}">删除</button>`}</span></td></tr>`).join('')}</tbody></table></div>
-    ${state.tplDelId ? `<div class="banner warn" style="margin-top:12px"><span>确定删除模板「${state.tpls.find(t => t.id === state.tplDelId).name}」？已经用过它的调查不受影响。</span>
-      <span class="row" style="flex-wrap:nowrap"><button class="btn" id="tdNo">取消</button><button class="btn primary danger" id="tdYes">删除</button></span></div>` : ''}
-    <div class="row between" style="margin-top:16px"><button class="btn" id="tplNew">新建模板</button><span class="note">默认模板不能删除，先把别的模板设为默认</span></div>`;
-  return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="tplTitle">
-  <div class="modal" style="width:min(820px, calc(100vw - 32px));max-height:88vh;overflow-y:auto">${body}</div></div>`;
-}
-
-function bindTpl() {
-  const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
-  const srcOf = r => (WHO_SOURCES.find(w => w.v === r.who) ? r.who : (r.who === '' || r.count === 0 ? '指定人员' : (/^赵|指定/.test(r.who) ? '指定人员' : '面授学员')));
-  on('#tplNew', 'click', () => { state.tplEdit = { id: null, name: '', def: false, rels: [{ name: '学员', src: '面授学员', weight: 100 }] }; state.tplDelId = null; render(); });
-  main.querySelectorAll('[data-tpledit]').forEach(b => b.onclick = () => {
-    const t = state.tpls.find(x => x.id === b.dataset.tpledit);
-    state.tplEdit = { id: t.id, name: t.name, def: !!t.def, rels: t.rels.map(r => ({ name: r.name, src: srcOf(r), weight: r.weight })) }; state.tplDelId = null; render();
-  });
-  main.querySelectorAll('[data-tpldel]').forEach(b => b.onclick = () => { state.tplDelId = b.dataset.tpldel; render(); });
-  on('#tdNo', 'click', () => { state.tplDelId = null; render(); });
-  on('#tdYes', 'click', () => {
-    const t = state.tpls.find(x => x.id === state.tplDelId);
-    state.tpls = state.tpls.filter(x => x.id !== state.tplDelId);
-    if (state.tplId === t.id) state.tplId = state.tpls.find(x => x.def).id;
-    state.tplDelId = null; render(); toast(`已删除模板「${t.name}」`);
-  });
-  const f = state.tplEdit;
-  if (!f) return;
-  on('#tfName', 'change', e => { f.name = e.target.value; render(); });
-  main.querySelectorAll('[data-tfn]').forEach(i => i.onchange = () => { f.rels[i.dataset.tfn].name = i.value; render(); });
-  main.querySelectorAll('[data-tfw]').forEach(s => s.onchange = () => { f.rels[s.dataset.tfw].src = s.value; render(); });
-  main.querySelectorAll('[data-tfp]').forEach(i => i.onchange = () => { f.rels[i.dataset.tfp].weight = Number(i.value) || 0; render(); });
-  main.querySelectorAll('[data-tfdel]').forEach(b => b.onclick = () => { f.rels.splice(b.dataset.tfdel, 1); render(); });
-  on('#tfAdd', 'click', () => { f.rels.push({ name: '', src: '指定人员', weight: 0 }); render(); });
-  on('#tfDef', 'change', e => { f.def = e.target.checked; });
-  const back = () => { state.tplEdit = null; render(); };
-  on('#tfBack', 'click', back); on('#tfCancel', 'click', back);
-  on('#tfSave', 'click', () => {
-    if (tplErrors(f).length) return;
-    const rels = f.rels.map(r => { const w = WHO_SOURCES.find(x => x.v === r.src); return { name: r.name.trim(), who: r.src === '指定人员' ? '' : r.src, count: w.count, weight: Number(r.weight) }; });
-    let t = state.tpls.find(x => x.id === f.id);
-    if (t) Object.assign(t, { name: f.name.trim(), rels });
-    else { t = { id: 'tp' + Date.now(), name: f.name.trim(), rels }; state.tpls.push(t); }
-    if (f.def) state.tpls.forEach(x => { x.def = x.id === t.id; });
-    const isNew = !f.id; state.tplEdit = null; render(); toast(isNew ? `已新建模板「${t.name}」` : `已保存模板「${t.name}」`);
-  });
 }
 
 const IMPORT_COLS = ['被评测对象*', '评测关系', '评测人工号*', '评测人姓名*', '被评测对象介绍'];
@@ -1263,14 +1161,13 @@ function bindRel() {
   on('#openPool', 'click', () => { state.poolOpen = true; state.poolSel = []; render(); });
   on('#addCustom', 'click', () => {
     state.customN = (state.customN || 0) + 1;
-    state.objects.push({ id: 'c' + state.customN, name: '自定义对象 ' + state.customN, kind: '自定义', rels: cloneTpl() }); render();
+    state.objects.push({ id: 'c' + state.customN, name: '自定义对象 ' + state.customN, kind: '自定义', rels: newRels() }); render();
   });
   on('#relWeightOn', 'change', e => { state.relWeightOn = e.target.checked; render(); });
   on('#selAll', 'change', e => { state.objSel = e.target.checked ? state.objects.map((_, i) => i) : []; render(); });
   main.querySelectorAll('[data-osel]').forEach(c => c.onchange = () => {
     const i = Number(c.dataset.osel); state.objSel = c.checked ? [...state.objSel, i] : state.objSel.filter(x => x !== i); render();
   });
-  on('#applyTpl', 'click', () => { state.objSel.forEach(i => { state.objects[i].rels = cloneTpl(); }); toast(`已为 ${state.objSel.length} 个对象应用关系模板`); state.objSel = []; render(); });
   on('#removeSel', 'click', () => { state.objects = state.objects.filter((_, i) => !state.objSel.includes(i)); state.objSel = []; render(); });
   main.querySelectorAll('[data-oname]').forEach(i => i.onchange = () => { state.objects[i.dataset.oname].name = i.value || '未命名对象'; });
   main.querySelectorAll('[data-rname]').forEach(i => i.onchange = () => { const [o, r] = at(i.dataset.rname); state.objects[o].rels[r].name = i.value.trim(); render(); });
@@ -1281,12 +1178,6 @@ function bindRel() {
     const [o, r] = at(b.dataset.pickwho), rel = state.objects[o].rels[r];
     state.whoPick = { o, r, src: srcOfRel(rel), sel: [...(rel.pick || [])], q: '', dept: '', allObj: false }; render();
   });
-  on('#tplSel', 'change', e => { state.tplId = e.target.value; render(); });
-  on('#openTpl', 'click', () => { state.tplOpen = true; render(); });
-  on('#tplClose', 'click', () => { state.tplOpen = false; state.tplEdit = null; state.tplDelId = null; render(); });
-  if (state.tplOpen) bindTpl();
-  main.querySelectorAll('[data-tpldef]').forEach(b => b.onclick = () => { state.tpls.forEach(t => { t.def = t.id === b.dataset.tpldef; }); render(); toast('已设为默认模板，新建评估时自动带出'); });
-  main.querySelectorAll('[data-tpluse]').forEach(b => b.onclick = () => { state.tplId = b.dataset.tpluse; state.tplOpen = false; render(); });
   on('#openImport', 'click', () => { state.importOpen = true; state.importRes = null; state.importFile = ''; render(); });
   const impClose = () => { state.importOpen = false; state.importRes = null; render(); };
   on('#importClose', 'click', impClose); on('#importCancel', 'click', impClose); on('#importDone', 'click', impClose);
@@ -1299,7 +1190,7 @@ function bindRel() {
   on('#pplDept', 'change', e => { state.peopleF = { ...(state.peopleF || { name: '' }), dept: e.target.value }; render(); });
   main.querySelectorAll('[data-ppl]').forEach(c => c.onchange = () => { const id = c.dataset.ppl, cur = state.peopleSel || []; state.peopleSel = c.checked ? [...cur, id] : cur.filter(x => x !== id); render(); });
   on('#pplOk', 'click', () => {
-    const add = PEOPLE.filter(u => (state.peopleSel || []).includes(u.id)).map(u => ({ id: u.id, name: u.name, kind: '人员', dept: `${u.dept}　工号 ${u.code}`, rels: cloneTpl() }));
+    const add = PEOPLE.filter(u => (state.peopleSel || []).includes(u.id)).map(u => ({ id: u.id, name: u.name, kind: '人员', dept: `${u.dept}　工号 ${u.code}`, rels: newRels() }));
     state.objects.push(...add); state.peopleOpen = false; state.peopleSel = []; render(); toast(`已添加 ${add.length} 名人员`);
   });
   // 讲师库弹窗
@@ -1318,7 +1209,7 @@ function bindRel() {
   });
 }
 
-state.objects = OBJECTS.map(objFromTeacher);
+state.objects = OBJECTS.map(t => ({ ...objFromTeacher(t), rels: DEMO_RELS.map(r => ({ ...r, pick: r.pick ? [...r.pick] : undefined })) }));
 
 // 第 ② 步「下一步」和第 ③ 步「发布前检查」共用
 function relChecks() {
@@ -1327,7 +1218,8 @@ function relChecks() {
     [state.objects.length > 0, '至少 1 个被评测对象', '请先添加被评测对象'],
     [state.objects.every(o => o.rels.length > 0), '每个对象至少 1 种评测关系', '有对象还没有评测关系'],
     [!bad.length, '每个对象的关系权重合计 100%', bad.length ? `「${bad[0].name}」的关系权重合计为 ${objSum(bad[0])}%，需要等于 100%` : ''],
-    [state.objects.every(o => o.rels.every(r => r.count > 0 && r.name)), '每条关系都有名称和评测人', '有关系还没有填名称或选评测人'],
+    [state.objects.every(o => o.rels.every(r => r.count > 0)), '每条关系都选了评测人', (() => { const o = state.objects.find(x => x.rels.some(r => !(r.count > 0))); return o ? `「${o.name}」有关系还没有选评测人` : ''; })()],
+    [!state.relWeightOn || state.objects.every(o => o.rels.length < 2 || o.rels.every(r => r.name.trim())), '按关系加权时每条关系都有名称', (() => { const o = state.objects.find(x => x.rels.length > 1 && x.rels.some(r => !r.name.trim())); return o ? `「${o.name}」有多条关系，按关系加权时请填写关系名称` : ''; })()],
   ];
 }
 const TIME_RE = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
@@ -2414,7 +2306,7 @@ document.addEventListener('click', e => {
   if (state.lib.more && !e.target.closest('.more')) { state.lib.more = null; render(); }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.colOpen) { state.colOpen = false; render(); return; } });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && (state.poolOpen || state.tplOpen || state.importOpen || state.peopleOpen || state.whoPick || state.qtpl)) { state.poolOpen = state.tplOpen = state.importOpen = state.peopleOpen = false; state.whoPick = null; state.qtpl = null; render(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (state.poolOpen || state.importOpen || state.peopleOpen || state.whoPick || state.qtpl)) { state.poolOpen = state.importOpen = state.peopleOpen = false; state.whoPick = null; state.qtpl = null; render(); } });
 render();
 </script>
 </body>
