@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>评估型调查原型</title>
+<title>调查管理</title>
 <link rel="icon" href="data:," />
 <style>
   :root {
@@ -102,6 +102,7 @@
     .side .brand, .side .group { display: none; }
     .side a { padding: 6px 10px; }
     main { padding: 16px; }
+    .subnav { margin: -16px -16px 16px; padding: 0 16px; overflow-x: auto; gap: 16px; }
     .grid2, .typecards { grid-template-columns: 1fr; }
     .field { grid-template-columns: 1fr; }
   }
@@ -307,6 +308,30 @@
   .src-opt.on { border-color: var(--primary); background: var(--primary-soft); }
   .src-opt.dis { opacity: .5; cursor: not-allowed; }
   .modal .foot { align-items: center; }
+  .drawer-mask { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 40; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(940px, calc(100vw - 48px)); background: #fff; z-index: 41; display: flex; flex-direction: column; box-shadow: -4px 0 16px rgba(0, 0, 0, .08); }
+  .drawer-head { padding: 16px 24px; border-bottom: 1px solid var(--divider); }
+  .drawer-body { padding: 16px 24px; overflow-y: auto; flex: 1; }
+  .subnav { display: flex; align-items: center; justify-content: space-between; background: #fff; margin: -24px -24px 16px; padding: 0 24px; height: 56px; border-bottom: 1px solid var(--divider); }
+  .subnav-tabs { display: flex; gap: 32px; height: 100%; }
+  .subnav-tabs button { border: none; background: none; font: inherit; font-size: 15px; color: var(--text-2); cursor: pointer; border-bottom: 2px solid transparent; padding: 0 2px; }
+  .subnav-tabs button.on { color: var(--primary); border-bottom-color: var(--primary); }
+  .subnav-r { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+  .subnav-r .sub { color: var(--text-1); }
+  .subnav-r i { width: 1px; height: 14px; background: var(--border); }
+  .btn.icon { width: 32px; padding: 0; font-size: 15px; }
+  .colset { position: relative; display: inline-flex; }
+  .btn.icon.on { border-color: var(--primary); color: var(--primary); }
+  .colmenu { position: absolute; top: 36px; left: 0; z-index: 30; background: #fff; border-radius: 4px; box-shadow: 0 4px 16px rgba(0, 0, 0, .12); padding: 6px 0; min-width: 170px; }
+  .colmenu label { display: flex; align-items: center; gap: 8px; padding: 0 14px; height: 34px; cursor: pointer; white-space: nowrap; }
+  .colmenu label:hover, .colmenu .colall { background: var(--primary-soft); }
+  .colmenu input { width: 16px; height: 16px; accent-color: var(--primary); }
+  .more { position: relative; display: inline-flex; }
+  .moremenu { position: absolute; right: 0; top: 26px; z-index: 30; background: #fff; border-radius: 4px; box-shadow: 0 4px 16px rgba(0, 0, 0, .12); padding: 4px 0; min-width: 96px; }
+  .moremenu button { display: block; width: 100%; text-align: left; border: none; background: none; font: inherit; font-size: 13px; padding: 0 14px; height: 32px; cursor: pointer; color: var(--text-1); }
+  .moremenu button:hover:not(:disabled) { background: var(--primary-soft); color: var(--primary); }
+  .moremenu button.danger { color: var(--danger); }
+  .moremenu button:disabled { color: var(--text-3); cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -318,11 +343,7 @@
     <a data-page="create">新建评估型调查</a>
     <a data-page="result">统计排名</a>
     <div class="group">学员端</div>
-    <a data-page="student">学员端作答</a>
-    <div class="group">评估管理</div>
-    <a data-page="legacy">我管理的评估（旧）</a>
-    <div class="group">评审用</div>
-    <a data-page="callers">接入方切换</a>
+    <a data-page="student">学员端预览</a>
   </nav>
   <main id="main"></main>
 </div>
@@ -456,9 +477,9 @@ function go(page) { state.page = page; render(); window.scrollTo(0, 0); }
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2000); }
 
 function render() {
-  document.querySelectorAll('.side a').forEach(a => a.classList.toggle('on', a.dataset.page === state.page));
+  document.querySelectorAll('.side a').forEach(a => a.classList.toggle('on', a.dataset.page === state.page || (state.page === 'tplLib' && a.dataset.page === 'list')));
   main.classList.toggle('editor-mode', state.page === 'create' && state.step === 'score');
-  main.innerHTML = ({ list: pageList, create: pageCreate, result: pageResult, legacy: pageLegacy, callers: pageCallers, student: pageStudent, detail: pageDetail, monitor: pageMonitor })[state.page]();
+  main.innerHTML = ({ list: pageList, create: pageCreate, result: pageResult, legacy: pageLegacy, callers: pageCallers, tplLib: pageTplLib, student: pageStudent, detail: pageDetail, monitor: pageMonitor })[state.page]();
   bind();
 }
 
@@ -497,7 +518,7 @@ function stepBar() {
 
 /* 第 1 步沿用调查管理(新)的「新建问卷」页：左侧题型（点击添加）、中间画布（点题目直接编辑）、右侧题目设置。
    评估型调查只放能设分值的题型：单选、多选、打分、NPS；问答单列为「附加问题」，不计分。
-   编辑操作：新增（插在选中题后）、编辑、自动保存、上移、下移、复制、删除（确认）、取消恢复、预览、保存为模版、保存并关闭、离开确认、下一步校验。 */
+   编辑操作：新增（插在选中题后）、编辑、自动保存、上移、下移、复制、删除（确认）、取消恢复、预览、保存为模板、保存并关闭、离开确认、下一步校验。 */
 const PALETTE = [
   ['选择题', ['单选', '多选']],
   ['评分题', ['打分', 'NPS']],
@@ -564,13 +585,17 @@ function stepScore() {
   const errs = state.edQs.filter(qError).length;
   return `<div class="ed">
   <div class="ed-head">
-    <h1>${state.editPid ? '编辑问卷' : '新建问卷'} <span class="tag blue">评估型调查</span></h1>
+${state.qtEditId ? `<h1>编辑模板 <span class="tag blue">评估型调查</span></h1>
+    <span class="note" style="margin-right:8px">模板库 · 自定义模板</span>
+    <button class="ed-btn" id="edPreview">预览</button>
+    <button class="ed-btn" id="edCancel">取消</button>
+    <button class="ed-btn primary" id="edSaveLib">保存模板</button>` : `<h1>${state.editPid ? '编辑问卷' : '新建问卷'} <span class="tag blue">评估型调查</span></h1>
     ${stepBar()}
     <button class="ed-btn" id="edPreview">预览</button>
-    <button class="ed-btn" id="edSaveTpl">保存为模版</button>
+    <button class="ed-btn" id="edSaveTpl">保存为模板</button>
     <button class="ed-btn" id="edSaveClose">保存并关闭</button>
     <button class="ed-btn" id="edCancel">取消</button>
-    <button class="ed-btn primary" id="edNext">下一步</button>
+    <button class="ed-btn primary" id="edNext">下一步</button>`}
   </div>
   <div class="ed-body">
     <aside class="ed-pal" aria-label="题型">
@@ -681,7 +706,7 @@ function edProps(sel) {
   return `<h3>${q.type}</h3>
     <div class="ed-row"><span>本题必答</span>${sw('swReq', q.req)}</div>
     ${q.type === '问答' ? `<div class="ed-row"><span>字数限制</span>${sw('swLen', false)}</div>` : ''}
-    <div class="ed-row"><span>逻辑跳转</span><a data-toast="原型中不演示逻辑跳转">设置</a></div>
+    <div class="ed-row"><span>逻辑跳转</span><a data-toast="评估型调查暂不支持逻辑跳转">设置</a></div>
     ${!can ? '<h4>计分设置</h4><div class="ed-hint">问答题是附加问题，不能计分。</div>' : `
     <h4>计分设置</h4>
     <div class="ed-row"><span>计入得分</span>${sw('swScore', q.score)}</div>
@@ -704,9 +729,9 @@ function edModal() {
     <h2 id="edmTitle">${m.title}</h2><p class="note" style="font-size:14px;color:var(--text-2)">${m.text}</p>
     <div class="foot"><button class="btn" id="edmCancel">取消</button><button class="btn primary ${m.danger ? 'danger' : ''}" id="edmOk">${m.ok}</button></div></div></div>`;
   if (m.kind === 'tpl') return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="edmTitle"><div class="modal" style="width:min(460px, calc(100vw - 32px))">
-    <h2 id="edmTitle">保存为模版</h2>
-    <div class="field" style="margin-top:12px"><label for="tplName">模版名称</label><input type="text" id="tplName" value="${state.edHead.title}" maxlength="50" /></div>
-    <p class="note">保存到「模版库 · 自定义模版」，题目、选项分值和题目权重一起保存，下次新建评估型调查时可直接选用。</p>
+    <h2 id="edmTitle">保存为模板</h2>
+    <div class="field" style="margin-top:12px"><label for="tplName">模板名称</label><input type="text" id="tplName" value="${state.edHead.title}" maxlength="50" /></div>
+    <p class="note">保存到「模板库 · 自定义模板」，题目、选项分值和题目权重一起保存，下次新建评估型调查时可直接选用。</p>
     <div class="foot"><button class="btn" id="edmCancel">取消</button><button class="btn primary" id="tplOk">保存</button></div></div></div>`;
   if (m.kind === 'preview') return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="edmTitle"><div class="modal" style="width:min(420px, calc(100vw - 32px));max-height:86vh;overflow-y:auto;background:#f5f6f8">
     <div class="row between"><h2 id="edmTitle" style="margin:0">预览：学员作答页</h2><button class="btn link" id="edmCancel" aria-label="关闭">✕</button></div>
@@ -774,7 +799,7 @@ function bindEditor() {
   on('#edPreview', 'click', () => { state.stu.cur = 'preview'; state.edModal = { kind: 'preview' }; render(); });
   on('#edSaveTpl', 'click', () => {
     const bad = state.edQs.findIndex(qError);
-    if (bad >= 0) { toast(`第 ${bad + 1} 题：${qError(state.edQs[bad])}，完成后才能保存为模版`); state.selQ = bad; render(); return; }
+    if (bad >= 0) { toast(`第 ${bad + 1} 题：${qError(state.edQs[bad])}，完成后才能保存为模板`); state.selQ = bad; render(); return; }
     state.edModal = { kind: 'tpl' }; render();
   });
   on('#edSaveClose', 'click', () => {
@@ -782,7 +807,16 @@ function bindEditor() {
     state.edDirty = false; state.selQ = null; go('list');
     toast(n ? `已保存草稿，还有 ${n} 道题未完成，可在调查列表继续编辑` : '已保存草稿，可在调查列表继续编辑');
   });
+  on('#edSaveLib', 'click', () => {
+    const t = QTPLS.find(x => x.id === state.qtEditId), name = state.edHead.title.trim();
+    if (!name) { toast('请填写模板名称（问卷标题）'); return; }
+    const bad = state.edQs.findIndex(qError);
+    if (bad >= 0) { toast(`第 ${bad + 1} 题：${qError(state.edQs[bad])}`); state.selQ = bad; render(); return; }
+    t.name = name; t.qs = state.edQs.map(q => q.score ? q.title : `${q.title}（附加问题）`); const isNew = t.isNew; delete t.isNew;
+    state.qtEditId = null; state.edDirty = false; state.selQ = null; go('tplLib'); toast(isNew ? `已新增模板「${name}」（草稿），启用后可在「从模板新增」里使用` : `已保存模板「${name}」`);
+  });
   on('#edCancel', 'click', () => {
+    if (state.qtEditId) { const t = QTPLS.find(x => x.id === state.qtEditId); if (t && t.isNew) QTPLS.splice(QTPLS.indexOf(t), 1); state.qtEditId = null; state.edDirty = false; state.selQ = null; go('tplLib'); return; }
     if (!state.edDirty) { state.selQ = null; go('list'); return; }
     state.edModal = { kind: 'confirm', title: '放弃本次编辑？', text: '有未保存的修改，离开后这些修改会丢失。需要保留请点「保存并关闭」。', ok: '放弃并离开', danger: true, act: 'leave' }; render();
   });
@@ -801,8 +835,9 @@ function bindEditor() {
   });
   on('#tplOk', 'click', () => {
     const name = main.querySelector('#tplName').value.trim();
-    if (!name) { toast('请填写模版名称'); return; }
-    state.edModal = null; render(); toast(`已保存为模版「${name}」`);
+    if (!name) { toast('请填写模板名称'); return; }
+    QTPLS.unshift(T(`q${Date.now()}`, '自定义模板', name, `${TODAY.replace(/-/g, '')}${String(QTPLS.length + 1).padStart(6, '0')}`, '评估型调查', '高源', '培训中心', `${TODAY} 10:00:00`, '启用', 0, state.edQs.map(q => q.score ? q.title : `${q.title}（附加问题）`)));
+    state.edModal = null; render(); toast(`已保存为模板「${name}」，可在模板库和「从模板新增」里找到`);
   });
 }
 
@@ -829,7 +864,7 @@ function stepRel() {
   const sel = state.objSel;
   return `<div class="card">
     <div class="row between" style="margin-bottom:12px">
-      <div><h2 style="margin:0">被评测对象与评测关系</h2><p class="note">普通调查在这一步选参与学员；评估型调查在这一步配置被评测对象、评测人和权重。</p></div>
+      <div><h2 style="margin:0">被评测对象与评测关系</h2><p class="note">添加被评测对象，为每个对象设置评测关系、评测人和关系权重。</p></div>
       <div class="row">
         <button class="btn primary" id="openPool">从讲师库选择</button>
         <button class="btn" id="openPeople">从人员选择</button>
@@ -868,7 +903,7 @@ function objRows(o, oi) {
       ${o.kind === '自定义' ? `<input type="text" value="${o.name}" data-oname="${oi}" aria-label="对象名称" style="width:140px" />` : `<b>${o.name}</b>`}
       <div class="note"><span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span> ${meta}</div>
       ${state.relWeightOn ? `<div class="note ${sum === 100 ? 'ok' : 'err'}">权重合计 ${sum}%</div>` : ''}
-      <button class="btn link" data-toast="原型中不演示添加介绍">添加介绍</button></td>`;
+      <button class="btn link" data-toast="该功能暂未开放">添加介绍</button></td>`;
   const relRow = (r, ri) => `<tr>${ri === 0 ? head : ''}
       <td><input type="text" list="relNames" value="${r.name}" data-rname="${oi}.${ri}" placeholder="如：学员" aria-label="评测关系" style="width:96px" /></td>
       <td>${r.count ? `${r.who}${r.who === '面授学员' ? `（${r.count} 人）` : ''}` : '<span class="err">未选择</span>'} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button></td>
@@ -1031,7 +1066,7 @@ function importDialog() {
   return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="impTitle">
   <div class="modal" style="width:min(760px, calc(100vw - 32px))">
     <div class="row between"><h2 id="impTitle" style="margin:0">批量导入对象和评测人</h2><button class="btn link" id="importClose" aria-label="关闭">✕</button></div>
-    <p class="note" style="margin:8px 0">沿用评估管理现有导入模板，最后增加选填列「关系权重」。<button class="btn link" data-toast="原型中不演示下载">下载模板</button></p>
+    <p class="note" style="margin:8px 0">按导入模板填写被评测对象、评测关系、评测人和关系权重后上传。<button class="btn link" data-toast="已下载「被评测对象导入模板.xls」">下载模板</button></p>
     <table><thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
       <tbody><tr><td>张明</td><td>学员</td><td>001</td><td>周一</td><td>研发中心内训师</td><td>60</td></tr>
       <tr><td>张明</td><td>班主任</td><td>005</td><td>赵敏</td><td></td><td>30</td></tr></tbody></table>
@@ -1162,7 +1197,7 @@ function bindRel() {
   on('#openImport', 'click', () => { state.importOpen = true; render(); });
   on('#importClose', 'click', () => { state.importOpen = false; render(); });
   on('#importCancel', 'click', () => { state.importOpen = false; render(); });
-  on('#importOk', 'click', () => { state.importOpen = false; render(); toast('原型中不演示上传；导入后对象和关系追加到表格，错误行可下载错误列表'); });
+  on('#importOk', 'click', () => { state.importOpen = false; render(); toast('导入完成，对象和评测关系已追加到表格'); });
   on('#openPeople', 'click', () => { state.peopleOpen = true; state.peopleSel = []; render(); });
   const pplClose = () => { state.peopleOpen = false; render(); };
   on('#pplClose', 'click', pplClose); on('#pplCancel', 'click', pplClose);
@@ -1220,10 +1255,10 @@ function stepSetting() {
     <div class="field"><label>调查类型</label><span><span class="tag blue">评估型调查</span> <span class="note">创建后不能修改</span></span></div>
     <div class="field"><label>开始时间</label><input type="text" id="setStart" value="${state.editPid ? curProject().start : '2026-11-10 09:00'}" placeholder="不填为立即开始" aria-label="开始时间" /></div>
     <div class="field"><label>结束时间</label><input type="text" id="setEnd" value="${state.editPid ? curProject().end : ''}" placeholder="不填为长期有效" aria-label="结束时间" /></div>
-    <div class="field"><label>关联计划</label><span><button class="btn link" data-toast="原型中不演示选择计划">选择计划</button></span></div>
+    <div class="field"><label>关联计划</label><span><button class="btn link" data-toast="暂无可关联的计划">选择计划</button></span></div>
     <div class="field"><label>说明</label><input type="text" placeholder="告知评测人本次评估的目的和注意事项" maxlength="2000" aria-label="说明" /></div>
     <div class="field"><label>发起方</label><input type="text" placeholder="最多 15 个字" maxlength="15" aria-label="发起方" /></div>
-    <div class="field"><label>来源</label><span>调查管理 <span class="note">接入方创建时显示来源应用和来源对象</span></span></div>
+    <div class="field"><label>来源</label><span>调查管理</span></div>
   </div>
   <div class="card">
     <h2>调查模式</h2>
@@ -1236,7 +1271,7 @@ function stepSetting() {
     <div class="field"><label>扫码参与</label><span class="col" style="gap:6px">
       <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'list' ? 'checked' : ''} data-scan="list" /> 只允许评测人名单内的人</label>
       <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'pick' ? 'checked' : ''} data-scan="pick" /> 任何人可扫码，自己选择被评测对象</label>
-      <button class="btn link" data-toast="原型中不演示二维码下载" style="align-self:flex-start">下载二维码</button></span></div>
+      <button class="btn link" data-toast="已下载作答二维码" style="align-self:flex-start">下载二维码</button></span></div>
     <div class="field"><label>排名可见</label><label class="switch"><input type="checkbox" class="tg" id="rankVisSet" ${state.rankVisible ? 'checked' : ''} /> 允许学员查看排名</label></div>
     <div class="field"><label>关系权重</label><span>${state.relWeightOn ? '已开启，按第 2 步各对象设置的权重' : '未开启'} <button class="btn link" data-step="rel">修改</button></span></div>
     <h2>其他</h2>
@@ -1346,28 +1381,28 @@ function stuStart(entry) {
 
 function pageStudent() {
   const s = state.stu;
-  return `<h1>学员端作答</h1>
+  return `<h1>学员端预览</h1>
   <div class="stu-wrap">
     <div class="phone" aria-label="学员端手机预览"><div class="phone-bar"><span>9:41</span><span>${SURVEY_NAME}</span><span></span></div>
       <div class="phone-body">${({ entry: stuEntry, pick: stuPick, list: stuList, answer: stuAnswer, done: stuDone, denied: stuDenied })[s.screen]()}</div></div>
     <div class="card stu-ctrl">
-      <h2>演示入口</h2>
+      <h2>进入方式</h2>
       <div class="col">
-        <button class="btn" data-stu-entry="todo">从待办进入（钱五，已安排评测 4 位讲师）</button>
-        <button class="btn" data-stu-entry="scanIn">扫码进入（钱五在评测人名单中）</button>
-        <button class="btn" data-stu-entry="scanOut">扫码进入（孙六，不在评测人名单中）</button>
+        <button class="btn" data-stu-entry="todo">从待办进入（钱五）</button>
+        <button class="btn" data-stu-entry="scanIn">扫码进入（钱五，名单内）</button>
+        <button class="btn" data-stu-entry="scanOut">扫码进入（孙六，名单外）</button>
       </div>
-      <h2 style="margin-top:20px">扫码规则（项目设置里配置）</h2>
+      <h2 style="margin-top:20px">扫码规则</h2>
       <label class="switch"><input type="radio" name="scanRule" value="list" ${s.scanRule === 'list' ? 'checked' : ''} /> 只允许评测人名单内的人参与</label>
       <label class="switch" style="margin-top:8px"><input type="radio" name="scanRule" value="pick" ${s.scanRule === 'pick' ? 'checked' : ''} /> 任何人扫码可参与，自己选择被评测对象</label>
       <p class="note" style="margin-top:8px">自选被评测对象时，评测关系记为「学员」，按该对象「学员」关系的权重计分；对象没有「学员」关系时，不能被自选。</p>
-      <label class="switch" style="margin-top:12px"><input type="checkbox" id="stuRankVis" ${state.rankVisible ? 'checked' : ''} /> 允许学员查看排名（项目设置）</label>
+      <label class="switch" style="margin-top:12px"><input type="checkbox" id="stuRankVis" ${state.rankVisible ? 'checked' : ''} /> 允许学员查看排名</label>
       <h2 style="margin-top:20px">规则</h2>
       <ul class="note" style="padding-left:18px">
         <li>每个对象一份答卷，可暂存，提交后只能查看。</li>
-        <li>全部对象提交后，这次评估才算完成；来源应用（如学习地图）在这时收到完成回调。</li>
+        <li>全部对象提交后，这次评估才算完成。</li>
         <li>匿名模式下，作答页顶部提示「本次评估为匿名，管理员看不到你的姓名」。</li>
-        <li>项目设置开启「允许学员查看排名」时，列表显示每个对象的当前排名和综合得分（与评估管理现网学员端一致）。</li>
+        <li>开启「允许学员查看排名」时，列表显示每个对象的当前排名和综合得分。</li>
       </ul>
     </div>
   </div>`;
@@ -1375,7 +1410,7 @@ function pageStudent() {
 
 function stuEntry() {
   return `<div class="stu-pad"><p class="stu-title">${SURVEY_NAME}</p>
-    <p class="stu-note">请在右侧选择一种入口开始演示。</p></div>`;
+    <p class="stu-note">请选择进入方式。</p></div>`;
 }
 function stuDenied() {
   return `<div class="stu-pad stu-center"><div class="stu-icon warn">!</div>
@@ -1530,7 +1565,7 @@ for (let i = 1; i <= 14; i++) {
 }
 state.listF = { kw: '', qn: '', status: '', type: '', source: '' };
 state.listQ = { ...state.listF };
-state.page_no = 1; state.page_size = 10;
+state.page_no = 1; state.page_size = 10; state.listSel = [];
 state.pid = DEMO_PID;
 state.ansState = {};          // `${obj}|${who}` → 'invalid' | 'recycled'
 state.rankSel = [];           // 综合排名勾选的对象（绘图用）
@@ -1585,7 +1620,8 @@ function pageList() {
   const all = listRows(), size = state.page_size, pages = Math.max(1, Math.ceil(all.length / size));
   if (state.page_no > pages) state.page_no = pages;
   const rows = all.slice((state.page_no - 1) * size, state.page_no * size), f = state.listF;
-  return `<h1>调查列表</h1>
+  const sel = state.listSel, cols = LIST_COLS.filter(c => state.listCols.includes(c[0]));
+  return `${subnav('list')}
   <div class="card">
     <div class="filters">
       <label>项目编号/名称 <input type="text" id="fKw" value="${f.kw}" /></label>
@@ -1593,25 +1629,237 @@ function pageList() {
       <label>状态 <select id="fStatus"><option value="">全部</option>${['草稿', '未开始', '进行中', '已结束', '已作废'].map(s => `<option ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
       <label>类型 <select id="fType"><option value="">全部</option>${['评估型调查', '普通调查'].map(s => `<option ${f.type === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
       <label>项目来源 <select id="fSource"><option value="">全部</option>${['调查管理', '学习地图', '面授管理', '混合培训', '远程督导'].map(s => `<option ${f.source === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
-      <button class="btn primary" id="fGo">筛选</button><button class="btn" id="fReset">重置</button>
+      <button class="btn primary" id="fGo">查询</button><button class="btn" id="fReset">重置</button>
     </div>
     <div class="row" style="margin:16px 0 12px">
-      <button class="btn primary" id="newSurvey">新建调查</button><button class="btn" id="listExport">导出列表</button>
-      <span class="note">由其他应用创建的项目在这里部分管理功能受限，学员从来源应用进入作答。</span>
+      <span class="colset"><button class="btn icon ${state.colOpen ? 'on' : ''}" id="colSet" title="列设置" aria-label="列设置" aria-expanded="${!!state.colOpen}">⚙</button>${state.colOpen ? colMenu() : ''}</span><button class="btn primary" id="newSurvey">新增</button><button class="btn" id="fromTpl">从模板新增</button><button class="btn" id="listPublish" ${sel.length ? '' : 'disabled'} title="${sel.length ? '' : '勾选草稿后可批量发布'}">发布</button><button class="btn" id="listExport">导出</button>
+      <span class="note">${sel.length ? `已选 ${sel.length} 项` : ''}</span>
     </div>
     <div class="scroll"><table class="plist">
-      <thead><tr><th>编号</th><th>项目名称</th><th>使用问卷</th><th>创建人</th><th>有效时间</th><th>状态</th><th>创建日期</th><th class="num">已填/下发</th><th>项目来源</th><th>操作</th></tr></thead>
+      <thead><tr><th style="width:36px"><input type="checkbox" id="lAll" aria-label="全选本页" ${rows.length && rows.every(p => sel.includes(p.id)) ? 'checked' : ''} /></th>${cols.map(c => `<th${c[2] ? ` class="${c[2]}"` : ''}>${c[1]}</th>`).join('')}<th>操作</th></tr></thead>
       <tbody>${rows.length ? rows.map(p => `<tr>
-        <td class="mono">${p.code}</td>
-        <td><button class="btn link" data-op="${p.status === '草稿' ? 'edit' : 'view'}" data-pid="${p.id}" ${p.status === '草稿' && opRule(p, 'edit') ? 'disabled' : ''}>${p.name}</button><div><span class="tag ${isEval(p) ? 'blue' : ''}">${p.type}</span></div></td>
-        <td>${p.qn}</td><td>${p.creator}</td><td class="nowrap">${p.start ? `${p.start}<br>～${p.end || '长期有效'}` : '—'}</td>
-        <td><span class="tag ${statusTag(p.status)}">${p.status}</span></td><td class="nowrap">${p.created}</td>
-        <td class="num">${p.total ? `${p.done}/${p.total}` : '--'}</td><td>${p.source}</td>
-        <td class="ops">${opsCell(p)}</td></tr>`).join('') : '<tr><td colspan="10" class="muted" style="text-align:center;padding:32px">没有符合条件的项目，换个条件试试</td></tr>'}</tbody>
+        <td><input type="checkbox" data-lsel="${p.id}" ${sel.includes(p.id) ? 'checked' : ''} aria-label="选择${p.name}" /></td>
+        ${cols.map(c => `<td${c[2] ? ` class="${c[2]}"` : ''}>${c[3](p)}</td>`).join('')}
+        <td class="ops">${opsCell(p)}</td></tr>`).join('') : `<tr><td colspan="${cols.length + 2}" class="muted" style="text-align:center;padding:32px">没有符合条件的项目，换个条件试试</td></tr>`}</tbody>
     </table></div>
     ${pager(all.length, pages)}
   </div>
-  ${state.opModal ? opModal() : ''}`;
+  ${state.opModal ? opModal() : ''}${state.qtpl ? qtplDrawer() : ''}`;
+}
+
+/* 从模板新增：右侧抽屉，与调查管理（新）现网一致（自定义模板 / 系统模板两个页签、编号/名称查询、预览、使用），
+   多一列「调查类型」区分评估型调查和普通调查。评估型模板带题目分值和题目权重。 */
+const T = (id, kind, name, code, type, creator, dept, created, status, uses, qs) => ({ id, kind, name, code, type, creator, dept, created, status, uses, qs });
+const QS_EVAL = ['授课内容贴合工作实际', '讲解清晰、重点突出', '互动充分、能解答疑问', '案例和练习有帮助', '课程时间安排合理', '对讲师还有什么建议？（附加问题）'];
+const QTPLS = [
+  T('q1', '自定义模板', '内训师授课评价表', '20261014170858', '评估型调查', '高源', '培训中心', '2026-10-14 17:08:58', '启用', 0, QS_EVAL),
+  T('q9', '自定义模板', '员工信息收集', '20260709143926', '普通调查', '唐佳宁', '人力资源部', '2026-07-09 14:39:26', '草稿', 0, ['姓名', '所在部门', '入职时间']),
+  T('q2', '自定义模板', '讲师满意度评估', '20260702172159', '评估型调查', '唐佳宁', '人力资源部', '2026-07-02 17:22:01', '启用', 2, ['整体满意度', '专业能力', '表达能力', '你有多大可能向同事推荐这位讲师？（NPS）']),
+  T('q3', '自定义模板', '问题征集：共筑更优智能服务', '20250908145833', '普通调查', '沐志芹', '研发中心', '2025-09-08 14:58:35', '启用', 1, ['你最常用的智能服务是？', '使用中遇到的问题', '希望增加的功能']),
+  T('q10', '自定义模板', '课程开发技能评估表', '20250401090828', '评估型调查', '沐志芹', '研发中心', '2025-04-01 09:08:28', '草稿', 0, ['课程目标清晰', '内容结构合理', '素材制作质量', '改进建议（附加问题）']),
+  T('q4', '自定义模板', '培训需求调研问卷', '20250330211312', '普通调查', '沐志芹', '研发中心', '2025-03-30 21:13:13', '启用', 5, ['你所在的岗位', '最想提升的能力', '偏好的学习方式']),
+  T('q11', '自定义模板', '新员工满意度调查', '20241009153155', '普通调查', '苏茂荣', '销售部', '2024-10-09 15:31:55', '草稿', 0, ['入职引导', '岗位培训', '团队氛围']),
+  T('q12', '自定义模板', '督导能力评估表', '20240730160827', '评估型调查', '苏茂荣', '销售部', '2024-07-30 16:08:41', '草稿', 0, ['巡店规范', '问题诊断', '辅导反馈', '综合评价（附加问题）']),
+  T('q5', '系统模板', '讲师授课评估（通用）', 'SYS0001', '评估型调查', '系统', '—', '2024-01-01 00:00:00', '启用', 12, ['课程内容', '授课技巧', '课堂互动', '时间把控', '改进建议（附加问题）']),
+  T('q6', '系统模板', '360 度能力评估', 'SYS0002', '评估型调查', '系统', '—', '2024-01-01 00:00:00', '启用', 4, ['沟通协作', '执行力', '团队管理', '专业能力', '综合评价（附加问题）']),
+  T('q7', '系统模板', '课后满意度调查', 'SYS0003', '普通调查', '系统', '—', '2024-01-01 00:00:00', '启用', 30, ['课程整体满意度', '最有收获的内容', '其他建议']),
+  T('q8', '系统模板', '员工满意度调查', 'SYS0004', '普通调查', '系统', '—', '2024-01-01 00:00:00', '启用', 9, ['工作环境', '薪酬福利', '职业发展', '其他建议']),
+];
+function subnav(active) {
+  const tab = (k, t) => `<button class="${active === k ? 'on' : ''}" ${active === k ? 'aria-current="page"' : `data-go="${k}"`}>${t}</button>`;
+  return `<div class="subnav">
+    <nav class="subnav-tabs" aria-label="调查管理">${tab('list', '调查管理')}${tab('tplLib', '模板库')}<button data-toast="该功能暂未开放">系统设置</button></nav>
+    <span class="subnav-r"><button class="btn link sub" data-toast="回收站暂无数据">回收站</button><i></i><span class="sub">系统管理员 ▾</span><i></i><button class="btn link" data-toast="该功能暂未开放">? 帮助中心</button></span>
+  </div>`;
+}
+
+// 列设置：与调查管理（新）现网一致，下拉勾选要显示的列，含「全选/不选」；勾选框列和操作列固定显示
+const LIST_COLS = [
+  ['code', '编号', 'mono', p => p.code],
+  ['name', '项目名称', '', p => `<button class="btn link" data-op="${p.status === '草稿' ? 'edit' : 'view'}" data-pid="${p.id}" ${p.status === '草稿' && opRule(p, 'edit') ? 'disabled' : ''}>${p.name}</button><div><span class="tag ${isEval(p) ? 'blue' : ''}">${p.type}</span></div>`],
+  ['qn', '使用问卷', '', p => p.qn],
+  ['creator', '创建人', '', p => p.creator],
+  ['time', '有效时间', 'nowrap', p => p.start ? `${p.start}<br>～${p.end || '长期有效'}` : '—'],
+  ['status', '状态', '', p => `<span class="tag ${statusTag(p.status)}">${p.status}</span>`],
+  ['created', '创建日期', 'nowrap', p => p.created],
+  ['fill', '已填/下发', 'num', p => p.total ? `${p.done}/${p.total}` : '--'],
+  ['source', '项目来源', '', p => p.source],
+];
+state.listCols = LIST_COLS.map(c => c[0]);
+function colMenu(defs = LIST_COLS, shown = state.listCols) {
+  const all = shown.length === defs.length;
+  return `<div class="colmenu" role="menu">
+    <label class="colall"><input type="checkbox" id="colAll" ${all ? 'checked' : ''} /> 全选/不选</label>
+    ${defs.map(([k, t]) => `<label><input type="checkbox" data-col="${k}" ${shown.includes(k) ? 'checked' : ''} /> ${t}</label>`).join('')}
+  </div>`;
+}
+function bindColMenu(defs, get, set) {
+  const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
+  on('#colSet', 'click', e => { e.stopPropagation(); state.colOpen = !state.colOpen; render(); });
+  on('#colAll', 'change', e => { set(e.target.checked ? defs.map(c => c[0]) : []); render(); });
+  main.querySelectorAll('[data-col]').forEach(c => c.onchange = () => { const k = c.dataset.col, cur = get(); set(c.checked ? defs.map(x => x[0]).filter(x => x === k || cur.includes(x)) : cur.filter(x => x !== k)); render(); });
+}
+
+/* 模板库：字段与现网一致（编号/名称、模板状态、创建人、创建人部门；新增模板、导入、停用、启用；
+   列：模板名称、模板编号、创建人、创建日期、模板状态、使用次数、操作），多一列「调查类型」。
+   与「从模板新增」用同一份模板，「从模板新增」只列已启用的模板。 */
+const LIB_COLS = [
+  ['name', '模板名称', '', t => t.name],
+  ['code', '模板编号', 'mono', t => t.code],
+  ['type', '调查类型', '', t => `<span class="tag ${t.type === '评估型调查' ? 'blue' : ''}">${t.type}</span>`],
+  ['creator', '创建人', '', t => t.creator],
+  ['created', '创建日期', 'nowrap', t => t.created],
+  ['status', '模板状态', '', t => `<span class="tag ${t.status === '启用' ? 'green' : ''}">${t.status}</span>`],
+  ['uses', '使用次数', 'num', t => t.uses],
+];
+state.lib = { tab: '自定义模板', f: { kw: '', status: '', creator: '', dept: '', type: '' }, q: { kw: '', status: '', creator: '', dept: '', type: '' }, sel: [], cols: LIB_COLS.map(c => c[0]), more: null, pv: null };
+function libRows() {
+  const L = state.lib, q = L.q;
+  return QTPLS.filter(t => t.kind === L.tab && (!q.kw || t.name.includes(q.kw) || t.code.includes(q.kw)) && (!q.status || t.status === q.status)
+    && (!q.creator || t.creator.includes(q.creator)) && (!q.dept || t.dept === q.dept) && (!q.type || t.type === q.type));
+}
+function pageTplLib() {
+  const L = state.lib, f = L.f, rows = libRows(), cols = LIB_COLS.filter(c => L.cols.includes(c[0])), sys = L.tab === '系统模板';
+  const depts = [...new Set(QTPLS.filter(t => t.kind === '自定义模板').map(t => t.dept))];
+  const sel = L.sel.filter(id => rows.some(t => t.id === id));
+  const rowOps = t => {
+    const toggle = t.status === '启用' ? ['disable', '停用'] : ['enable', '启用'];
+    return `<button class="op" data-lib="preview" data-tid="${t.id}">预览</button>${sys ? '' : `<button class="op" data-lib="edit" data-tid="${t.id}">编辑</button><button class="op" data-lib="${toggle[0]}" data-tid="${t.id}">${toggle[1]}</button>`}
+      <span class="more"><button class="op" data-libmore="${t.id}" aria-label="更多操作" aria-expanded="${L.more === t.id}">···</button>${L.more === t.id ? `<div class="moremenu" role="menu">
+        <button data-lib="use" data-tid="${t.id}" ${t.status === '启用' ? '' : 'disabled title="启用后才能使用"'}>使用</button><button data-lib="copy" data-tid="${t.id}">复制</button>${sys ? '' : `<button data-lib="del" data-tid="${t.id}" class="danger" ${t.uses ? 'disabled title="已被调查使用过，只能停用"' : ''}>删除</button>`}</div>` : ''}</span>`;
+  };
+  return `${subnav('tplLib')}
+  <div class="card">
+    <div class="tabs" role="tablist">${['自定义模板', '系统模板'].map(k => `<button role="tab" data-libtab="${k}" class="${L.tab === k ? 'on' : ''}">${k}</button>`).join('')}</div>
+    <div class="filters" style="margin-top:16px">
+      <label>编号/名称 <input type="text" id="lbKw" value="${f.kw}" placeholder="请输入" /></label>
+      <label>模板状态 <select id="lbStatus"><option value="">全部</option>${['启用', '停用', '草稿'].map(x => `<option ${f.status === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+      ${sys ? '' : `<label>创建人 <input type="text" id="lbCreator" value="${f.creator}" placeholder="请输入" /></label>
+      <label>创建人部门 <select id="lbDept"><option value="">全部</option>${depts.map(x => `<option ${f.dept === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>`}
+      <label>调查类型 <select id="lbType"><option value="">全部</option>${['评估型调查', '普通调查'].map(x => `<option ${f.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+      <button class="btn primary" id="lbGo">查询</button><button class="btn" id="lbReset">重置</button>
+    </div>
+    <div class="row" style="margin:16px 0 12px">
+      <span class="colset"><button class="btn icon ${state.colOpen ? 'on' : ''}" id="colSet" title="列设置" aria-label="列设置" aria-expanded="${!!state.colOpen}">⚙</button>${state.colOpen ? colMenu(LIB_COLS, L.cols) : ''}</span>
+      ${sys ? '<span class="note">系统模板由平台维护，只能预览、使用和复制为自定义模板。</span>' : `<button class="btn primary" id="lbNew">新增模板</button><button class="btn" id="lbImport">导入</button>
+      <button class="btn" id="lbDisable" ${sel.length ? '' : 'disabled'}>停用</button><button class="btn" id="lbEnable" ${sel.length ? '' : 'disabled'}>启用</button>
+      <span class="note">${sel.length ? `已选 ${sel.length} 项` : ''}</span>`}
+    </div>
+    <div class="scroll"><table class="plist">
+      <thead><tr>${sys ? '' : `<th style="width:36px"><input type="checkbox" id="lbAll" aria-label="全选" ${rows.length && rows.every(t => sel.includes(t.id)) ? 'checked' : ''} /></th>`}${cols.map(c => `<th${c[2] ? ` class="${c[2]}"` : ''}>${c[1]}</th>`).join('')}<th>操作</th></tr></thead>
+      <tbody>${rows.map(t => `<tr>${sys ? '' : `<td><input type="checkbox" data-lbsel="${t.id}" ${sel.includes(t.id) ? 'checked' : ''} aria-label="选择${t.name}" /></td>`}${cols.map(c => `<td${c[2] ? ` class="${c[2]}"` : ''}>${c[3](t)}</td>`).join('')}<td class="nowrap">${rowOps(t)}</td></tr>`).join('')
+        || `<tr><td colspan="${cols.length + 2}" class="muted" style="text-align:center;padding:32px">没有符合条件的模板</td></tr>`}</tbody>
+    </table></div>
+    <div class="pager"><span class="note">共 ${rows.length} 条</span></div>
+  </div>
+  ${L.pv ? libPreview() : ''}${L.del ? libDelConfirm() : ''}`;
+}
+function libPreview() {
+  const t = QTPLS.find(x => x.id === state.lib.pv);
+  return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="lpTitle"><div class="modal" style="width:min(560px, calc(100vw - 32px))">
+    <div class="row between"><h2 id="lpTitle" style="margin:0">预览：${t.name}</h2><button class="btn link" id="lpClose" aria-label="关闭">✕</button></div>
+    <p class="note" style="margin:6px 0 12px"><span class="tag ${t.type === '评估型调查' ? 'blue' : ''}">${t.type}</span>　${t.kind}　编号 ${t.code}　共 ${t.qs.length} 题${t.type === '评估型调查' ? '；计分题带选项分值和题目权重' : ''}</p>
+    <ol style="padding-left:20px;line-height:28px">${t.qs.map(q => `<li>${q}</li>`).join('')}</ol>
+    <div class="foot"><button class="btn" id="lpClose2">关闭</button>${t.status === '启用' ? `<button class="btn primary" data-lib="use" data-tid="${t.id}">使用</button>` : ''}</div>
+  </div></div>`;
+}
+function libDelConfirm() {
+  const t = QTPLS.find(x => x.id === state.lib.del);
+  return `<div class="mask show" role="dialog" aria-modal="true" aria-labelledby="ldTitle"><div class="modal" style="width:min(420px, calc(100vw - 32px))">
+    <h2 id="ldTitle">删除模板</h2><p style="margin-top:12px">确定删除模板「${t.name}」吗？删除后不能恢复，已用它创建的调查不受影响。</p>
+    <div class="foot"><button class="btn" id="ldCancel">取消</button><button class="btn primary danger" id="ldOk">删除</button></div></div></div>`;
+}
+// 打开第 1 步编辑页编辑模板：只有题目编辑，没有后两步
+function editTemplate(t) {
+  state.qtEditId = t.id; state.edHead.title = t.name; state.editPid = null; state.step = 'score'; state.selQ = null; state.lib.more = null;
+  go('create');
+}
+function useTemplate(t) {
+  state.lib.more = null; state.lib.pv = null;
+  if (t.type !== '评估型调查') { render(); toast('该功能暂未开放'); return; }
+  t.uses += 1; state.qtEditId = null; state.edHead.title = t.name; state.editPid = null; state.step = 'score'; state.selQ = null;
+  go('create'); toast(`已使用模板「${t.name}」，题目、分值和权重已带入`);
+}
+function bindTplLib() {
+  const L = state.lib, on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
+  const val = sel => { const el = main.querySelector(sel); return el ? el.value.trim() : ''; };
+  const find = id => QTPLS.find(t => t.id === id);
+  bindColMenu(LIB_COLS, () => L.cols, v => { L.cols = v; });
+  main.querySelectorAll('[data-libtab]').forEach(b => b.onclick = () => { L.tab = b.dataset.libtab; L.sel = []; L.more = null; render(); });
+  on('#lbGo', 'click', () => { L.f = { kw: val('#lbKw'), status: val('#lbStatus'), creator: val('#lbCreator'), dept: val('#lbDept'), type: val('#lbType') }; L.q = { ...L.f }; render(); });
+  on('#lbReset', 'click', () => { L.f = { kw: '', status: '', creator: '', dept: '', type: '' }; L.q = { ...L.f }; render(); });
+  main.querySelectorAll('[data-lbsel]').forEach(c => c.onchange = () => { const id = c.dataset.lbsel; L.sel = c.checked ? [...L.sel, id] : L.sel.filter(x => x !== id); render(); });
+  on('#lbAll', 'change', e => { const ids = libRows().map(t => t.id); L.sel = e.target.checked ? ids : []; render(); });
+  const batch = st => { const ts = QTPLS.filter(t => L.sel.includes(t.id) && t.status !== st); ts.forEach(t => { t.status = st; }); L.sel = []; render(); toast(ts.length ? `已${st} ${ts.length} 个模板` : `所选模板已经是「${st}」`); };
+  on('#lbDisable', 'click', () => batch('停用'));
+  on('#lbEnable', 'click', () => batch('启用'));
+  on('#lbImport', 'click', () => toast('请上传 Excel 文件，导入后生成自定义模板（草稿）'));
+  on('#lbNew', 'click', () => { state.newTplMode = true; $('#modalTitle').textContent = '新增模板'; $('#mask').classList.add('show'); });
+  main.querySelectorAll('[data-libmore]').forEach(b => b.onclick = e => { e.stopPropagation(); L.more = L.more === b.dataset.libmore ? null : b.dataset.libmore; render(); });
+  main.querySelectorAll('[data-lib]').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    const t = find(b.dataset.tid), act = b.dataset.lib;
+    if (act === 'preview') { L.pv = t.id; L.more = null; render(); }
+    if (act === 'edit') { if (t.type !== '评估型调查') { toast('该功能暂未开放'); return; } editTemplate(t); }
+    if (act === 'disable' || act === 'enable') { t.status = act === 'disable' ? '停用' : '启用'; render(); toast(`已${t.status}「${t.name}」${t.status === '停用' ? '，「从模板新增」里不再显示' : ''}`); }
+    if (act === 'use') useTemplate(t);
+    if (act === 'copy') {
+      const n = QTPLS.length + 1;
+      QTPLS.unshift(T(`q${Date.now()}`, '自定义模板', `${t.name}_副本`, `${TODAY.replace(/-/g, '')}${String(n).padStart(6, '0')}`, t.type, '高源', '培训中心', `${TODAY} 10:00:00`, '草稿', 0, [...t.qs]));
+      L.tab = '自定义模板'; L.more = null; render(); toast(`已复制为自定义模板「${t.name}_副本」（草稿）`);
+    }
+    if (act === 'del') { L.del = t.id; L.more = null; render(); }
+  });
+  on('#lpClose', 'click', () => { L.pv = null; render(); }); on('#lpClose2', 'click', () => { L.pv = null; render(); });
+  on('#ldCancel', 'click', () => { L.del = null; render(); });
+  on('#ldOk', 'click', () => { const t = find(L.del); QTPLS.splice(QTPLS.indexOf(t), 1); L.del = null; L.sel = L.sel.filter(x => x !== t.id); render(); toast(`已删除模板「${t.name}」`); });
+}
+
+function qtplDrawer() {
+  const d = state.qtpl;
+  const rows = QTPLS.filter(t => t.kind === d.tab && t.status === '启用' && (!d.kw || t.name.includes(d.kw) || t.code.includes(d.kw)) && (!d.type || t.type === d.type));
+  const pv = d.pv && QTPLS.find(t => t.id === d.pv);
+  const body = pv ? `<button class="btn link" id="qtBack">‹ 返回模板列表</button>
+      <div class="card" style="margin-top:12px;border:1px solid var(--divider)"><div class="row between"><h2 style="margin:0">${pv.name}</h2><span class="tag ${pv.type === '评估型调查' ? 'blue' : ''}">${pv.type}</span></div>
+        <p class="note" style="margin:4px 0 12px">${pv.kind}　编号 ${pv.code}　共 ${pv.qs.length} 题${pv.type === '评估型调查' ? '；计分题带选项分值和题目权重' : ''}</p>
+        <ol style="padding-left:20px;line-height:28px">${pv.qs.map(q => `<li>${q}</li>`).join('')}</ol></div>
+      <div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn primary" data-qtuse="${pv.id}">使用</button></div>`
+    : `<div class="tabs" role="tablist">${['自定义模板', '系统模板'].map(k => `<button role="tab" data-qttab="${k}" class="${d.tab === k ? 'on' : ''}">${k}</button>`).join('')}</div>
+      <div class="filters" style="margin-top:16px">
+        <label>编号/名称 <input type="text" id="qtKw" value="${d.kw}" placeholder="请输入模板编号/名称" /></label>
+        <label>调查类型 <select id="qtType"><option value="">全部</option>${['评估型调查', '普通调查'].map(t => `<option ${d.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+        <button class="btn primary" id="qtGo">查询</button><button class="btn" id="qtReset">重置</button>
+      </div>
+      <div class="scroll" style="margin-top:12px"><table>
+        <thead><tr><th>模板名称</th><th>模板编号</th><th>调查类型</th><th>模板类型</th><th>操作</th></tr></thead>
+        <tbody>${rows.map(t => `<tr><td>${t.name}</td><td class="mono">${t.code}</td><td><span class="tag ${t.type === '评估型调查' ? 'blue' : ''}">${t.type}</span></td><td>${t.kind}</td>
+          <td class="nowrap"><button class="op" data-qtpv="${t.id}">预览</button><button class="op" data-qtuse="${t.id}">使用</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted" style="text-align:center;padding:24px">没有符合条件的模板</td></tr>'}</tbody>
+      </table></div>
+      <p class="note" style="margin-top:8px">共 ${rows.length} 条，只显示已启用的模板。使用评估型模板时，题目、选项分值和题目权重一起带入。</p>`;
+  return `<div class="drawer-mask" id="qtMask"></div>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="qtTitle">
+    <div class="row between drawer-head"><h2 id="qtTitle" style="margin:0">从模板新增</h2><button class="btn link" id="qtClose" aria-label="关闭">✕</button></div>
+    <div class="drawer-body">${body}</div>
+  </aside>`;
+}
+function bindQtpl() {
+  const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
+  on('#fromTpl', 'click', () => { state.qtpl = { tab: '自定义模板', kw: '', type: '', pv: null }; render(); });
+  const d = state.qtpl;
+  if (!d) return;
+  const close = () => { state.qtpl = null; render(); };
+  on('#qtClose', 'click', close); on('#qtMask', 'click', close);
+  main.querySelectorAll('[data-qttab]').forEach(b => b.onclick = () => { d.tab = b.dataset.qttab; render(); });
+  on('#qtGo', 'click', () => { d.kw = main.querySelector('#qtKw').value.trim(); d.type = main.querySelector('#qtType').value; render(); });
+  on('#qtReset', 'click', () => { d.kw = ''; d.type = ''; render(); });
+  on('#qtBack', 'click', () => { d.pv = null; render(); });
+  main.querySelectorAll('[data-qtpv]').forEach(b => b.onclick = () => { d.pv = b.dataset.qtpv; render(); });
+  main.querySelectorAll('[data-qtuse]').forEach(b => b.onclick = () => {
+    const t = QTPLS.find(x => x.id === b.dataset.qtuse);
+    if (t.type !== '评估型调查') { toast('该功能暂未开放'); return; }
+    t.uses += 1; state.qtpl = null; state.edHead.title = t.name; state.editPid = null; state.step = 'score'; state.selQ = null;
+    go('create'); toast(`已使用模板「${t.name}」，题目、分值和权重已带入`);
+  });
 }
 
 function pager(n, pages) {
@@ -1629,7 +1877,7 @@ function pageDetail() {
   const p = curProject(), demo = p.id === DEMO_PID;
   return `<div class="row between"><h1>${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button>
     ${opRule(p, 'monitor') === '' ? `<button class="btn" data-op="monitor" data-pid="${p.id}">监控</button>` : ''}${opRule(p, 'stat') === '' && isEval(p) ? `<button class="btn primary" data-op="stat" data-pid="${p.id}">统计排名</button>` : ''}</span></div>
-  ${demo ? '' : `<div class="banner"><span>演示：该项目的问卷、对象和关系沿用「2026 Q4 内训师授课评估」的演示数据。</span></div>`}
+
   <div class="grid2">
     <div class="card"><h2>基本信息</h2>
       ${[['编号', p.code], ['项目名称', p.name], ['类型', p.type], ['使用问卷', p.qn], ['有效时间', validity(p)], ['状态', `<span class="tag ${statusTag(p.status)}">${p.status}</span>`], ['创建人', p.creator], ['创建日期', p.created], ['项目来源', p.source], ['说明', state.edHead.desc]]
@@ -1669,7 +1917,7 @@ function pageMonitor() {
   const depts = [...new Set([...Object.keys(EVALUATORS), ...OBJECTS.map(o => o.id)].map(w => evalInfo(w).dept))];
   const sel = state.monSel, tab = state.monTab;
   return `<div class="row between"><h1>监控：${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button>${isEval(p) && opRule(p, 'stat') === '' ? `<button class="btn primary" data-op="stat" data-pid="${p.id}">统计排名</button>` : ''}</span></div>
-  ${p.id === DEMO_PID ? '' : '<div class="banner"><span>演示：监控数据沿用「2026 Q4 内训师授课评估」。</span></div>'}
+
   <div class="card">
     <div class="tabs" role="tablist"><button role="tab" data-mtab="done" class="${tab === 'done' ? 'on' : ''}">已答人员（${ANSWERS.length}）</button><button role="tab" data-mtab="undone" class="${tab === 'undone' ? 'on' : ''}">未答人员（${UNANSWERED.length}）</button></div>
     <div class="filters">
@@ -1708,7 +1956,7 @@ function pageResult() {
   const body = ({ rank: tabComposite, single: tabSingle, extra: tabExtra, multi: tabMulti })[state.tab] || tabComposite;
   const nValid = included().length;
   return `<div class="row between"><h1>统计排名：${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button><button class="btn" data-op="monitor" data-pid="${p.id}">监控</button></span></div>
-  ${p.id === DEMO_PID ? '' : '<div class="banner"><span>演示：排名数据沿用「2026 Q4 内训师授课评估」。</span></div>'}
+
   <div class="card" style="padding:16px 24px">
     <div class="row between">
       <div class="row">
@@ -1716,7 +1964,7 @@ function pageResult() {
         <select id="deptFilter" aria-label="对象部门"><option value="">全部部门</option>${depts.map(d => `<option ${state.deptFilter === d ? 'selected' : ''}>${d}</option>`).join('')}</select>
         <label class="switch"><input type="checkbox" class="tg" id="trim" ${state.trim ? 'checked' : ''} /> 去掉最高分、最低分</label>
         <label class="switch"><input type="checkbox" class="tg" id="weighted" ${state.weighted ? 'checked' : ''} ${state.relFilter ? 'disabled' : ''} /> 按关系加权</label>
-        <label class="switch"><input type="checkbox" class="tg" id="anonView" ${state.anon ? 'checked' : ''} /> 演示：匿名模式</label>
+
       </div>
       <span class="note">有效问卷 ${nValid} 份　满分 ${FULL} 分</span>
     </div>
@@ -1904,9 +2152,9 @@ function bindOps() {
     const p = state.projects.find(x => x.id === b.dataset.pid); state.pid = p.id;
     const op = b.dataset.op;
     if (op === 'view') { state.opModal = null; go('detail'); }
-    if (op === 'edit') { if (!isEval(p)) { toast('普通调查沿用调查管理（新）现有的编辑页，原型不展开'); return; } state.opModal = null; state.editPid = p.id; state.step = 'score'; state.selQ = null; go('create'); }
+    if (op === 'edit') { if (!isEval(p)) { toast('该功能暂未开放'); return; } state.opModal = null; state.editPid = p.id; state.step = 'score'; state.selQ = null; go('create'); }
     if (op === 'monitor') { state.opModal = null; state.monSel = []; go('monitor'); }
-    if (op === 'stat') { if (!isEval(p)) { toast('普通调查沿用调查管理（新）现有的数据统计页（按题图表），原型不展开'); return; } state.opModal = null; state.tab = 'rank'; go('result'); }
+    if (op === 'stat') { if (!isEval(p)) { toast('该功能暂未开放'); return; } state.opModal = null; state.tab = 'rank'; go('result'); }
     if (op === 'copy') { state.opModal = { kind: 'copy', p }; render(); }
     if (op === 'export') toast(`已加入导出任务：${p.name}_答卷明细.xlsx，完成后在「导出任务」里下载`);
     if (op === 'addUser') { state.opModal = { kind: 'addUser', p }; render(); }
@@ -1941,6 +2189,17 @@ function bindOps() {
   const lf = id => main.querySelector(id)?.value.trim() ?? '';
   on('#fGo', 'click', () => { state.listF = { kw: lf('#fKw'), qn: lf('#fQn'), status: lf('#fStatus'), type: lf('#fType'), source: lf('#fSource') }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
   on('#fReset', 'click', () => { state.listF = { kw: '', qn: '', status: '', type: '', source: '' }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
+  bindQtpl();
+  main.querySelectorAll('[data-lsel]').forEach(c => c.onchange = () => { const id = c.dataset.lsel; state.listSel = c.checked ? [...state.listSel, id] : state.listSel.filter(x => x !== id); render(); });
+  on('#lAll', 'change', e => { const ids = [...main.querySelectorAll('[data-lsel]')].map(c => c.dataset.lsel); state.listSel = e.target.checked ? [...new Set([...state.listSel, ...ids])] : state.listSel.filter(x => !ids.includes(x)); render(); });
+  if (state.page === 'list') bindColMenu(LIST_COLS, () => state.listCols, v => { state.listCols = v; });
+  on('#listPublish', 'click', () => {
+    const picked = state.projects.filter(p => state.listSel.includes(p.id));
+    const ok = picked.filter(p => opRule(p, 'publish') === '');
+    ok.forEach(p => { p.status = p.start && p.start.slice(0, 10) > TODAY ? '未开始' : '进行中'; if (!p.start) p.start = `${TODAY} 09:00`; });
+    state.listSel = []; render();
+    toast(ok.length ? `已发布 ${ok.length} 个项目${picked.length > ok.length ? `，${picked.length - ok.length} 个不是草稿，已跳过` : ''}` : '所选项目都不是草稿，不能发布');
+  });
   on('#listExport', 'click', () => toast(`已加入导出任务：调查列表（${listRows().length} 条）.xlsx`));
   main.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => { state.page_no = Number(b.dataset.pg); render(); });
   on('#pgSize', 'change', e => { state.page_size = Number(e.target.value); state.page_no = 1; render(); });
@@ -2004,6 +2263,7 @@ function bind() {
   if (state.page === 'create' && state.step === 'score') bindEditor();
   if (state.page === 'create' && state.step === 'rel') bindRel();
   if (state.page === 'student') bindStudent();
+  if (state.page === 'tplLib') bindTplLib();
   if (['list', 'detail', 'monitor', 'result'].includes(state.page)) bindOps();
   main.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { state.opModal = null; if (b.dataset.go === 'create') { state.step = 'score'; state.editPid = null; } go(b.dataset.go); });
   main.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { state.step = b.dataset.step; render(); });
@@ -2030,14 +2290,26 @@ function bind() {
   on('#weighted', 'change', e => { state.weighted = e.target.checked; render(); });
   on('#exportBtn', 'click', () => toast('已加入导出任务，可在导出任务列表下载'));
 }
-document.querySelectorAll('.side a').forEach(a => a.onclick = () => { if (a.dataset.page === 'create') { state.step = 'score'; state.selQ = null; state.editPid = null; } go(a.dataset.page); });
+document.querySelectorAll('.side a').forEach(a => a.onclick = () => { if (a.dataset.page === 'create') { state.step = 'score'; state.selQ = null; state.editPid = null; } state.qtEditId = null; go(a.dataset.page); });
 document.querySelectorAll('.typecard').forEach(c => c.onclick = () => { document.querySelectorAll('.typecard').forEach(x => x.classList.remove('on')); c.classList.add('on'); });
-$('#modalCancel').onclick = () => $('#mask').classList.remove('show');
+$('#modalCancel').onclick = () => { $('#mask').classList.remove('show'); state.newTplMode = false; $('#modalTitle').textContent = '新建调查'; };
 $('#modalOk').onclick = () => {
   $('#mask').classList.remove('show');
-  if (document.querySelector('.typecard.on').dataset.type === 'eval') { state.step = 'score'; state.editPid = null; go('create'); } else toast('普通调查沿用现有流程');
+  const isEvalType = document.querySelector('.typecard.on').dataset.type === 'eval';
+  if (state.newTplMode) {
+    state.newTplMode = false; $('#modalTitle').textContent = '新建调查';
+    if (!isEvalType) { toast('该功能暂未开放'); return; }
+    const t = T(`q${Date.now()}`, '自定义模板', '未命名模板', `${TODAY.replace(/-/g, '')}${String(QTPLS.length + 1).padStart(6, '0')}`, '评估型调查', '高源', '培训中心', `${TODAY} 10:00:00`, '草稿', 0, []);
+    t.isNew = true; QTPLS.unshift(t); editTemplate(t); return;
+  }
+  if (isEvalType) { state.step = 'score'; state.editPid = null; state.qtEditId = null; go('create'); } else toast('该功能暂未开放');
 };
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && (state.poolOpen || state.tplOpen || state.importOpen || state.peopleOpen || state.whoPick)) { state.poolOpen = state.tplOpen = state.importOpen = state.peopleOpen = false; state.whoPick = null; render(); } });
+document.addEventListener('click', e => {
+  if (state.colOpen && !e.target.closest('.colset')) { state.colOpen = false; render(); }
+  if (state.lib.more && !e.target.closest('.more')) { state.lib.more = null; render(); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.colOpen) { state.colOpen = false; render(); return; } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (state.poolOpen || state.tplOpen || state.importOpen || state.peopleOpen || state.whoPick || state.qtpl)) { state.poolOpen = state.tplOpen = state.importOpen = state.peopleOpen = false; state.whoPick = null; state.qtpl = null; render(); } });
 render();
 </script>
 </body>
