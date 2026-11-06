@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>光谱优化进展汇报 · 2026-11-06</title>
+<style>
+  :root {
+    --bg: #f5f7fb; --card: #fff; --line: #e6e9ef; --text: #1f2329; --sub: #5f6672; --muted: #8f959e;
+    --brand: #2f6bff; --brand-soft: #eaf1ff;
+    --p1: #2f9e6a; --p1-soft: #e6f6ee; --p2: #6b5cf0; --p2-soft: #efecfe;
+    --amber: #c27400; --amber-soft: #fdf1dc; --gray-soft: #f0f2f5; --today: #e5484d;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  header h1 { margin: 0; font-size: 24px; }
+  header p { margin: 4px 0 0; color: var(--sub); }
+  header .date { color: var(--muted); font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+  .card > h2 { margin: 0 0 12px; font-size: 16px; display: flex; align-items: baseline; gap: 10px; }
+  .card > h2 small { color: var(--muted); font-weight: 400; font-size: 13px; }
+
+  .phases { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .phase { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; border-top: 4px solid var(--c); }
+  .phase .k { font-size: 13px; color: var(--c); font-weight: 600; }
+  .phase h3 { margin: 2px 0 6px; font-size: 17px; }
+  .phase p { margin: 0 0 10px; color: var(--sub); font-size: 13px; }
+  .phase .nums { display: flex; gap: 22px; }
+  .phase .nums b { display: block; font-size: 20px; }
+  .phase .nums span { font-size: 12px; color: var(--muted); }
+
+  table.list { width: 100%; border-collapse: collapse; }
+  .list th { text-align: left; font-weight: 500; color: var(--sub); font-size: 13px; padding: 8px 10px; border-bottom: 1px solid var(--line); background: #fafbfc; white-space: nowrap; }
+  .list td { padding: 7px 10px; border-bottom: 1px solid #f0f2f5; vertical-align: top; }
+  .list tr.phase-row td { background: var(--soft); color: var(--c); font-weight: 600; padding: 9px 10px; }
+  .list tr.parent td { font-weight: 600; background: #fcfcfd; }
+  .list tr.parent td.num { color: var(--muted); font-weight: 500; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  .list tr.child td { color: var(--sub); font-size: 13px; }
+  .list tr.child td.name { padding-left: 34px; position: relative; }
+  .list tr.child td.name::before { content: ""; position: absolute; left: 20px; top: 15px; width: 6px; height: 6px; border-radius: 50%; background: #c9ced6; }
+  .list td.date { white-space: nowrap; font-size: 13px; }
+  .st { display: inline-block; padding: 1px 9px; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+  .st-done { background: #1f9d55; color: #fff; }
+  .st-test { background: #e3f5ea; color: #1f9d55; }
+  .st-sched { background: var(--brand-soft); color: var(--brand); }
+  .st-dev { background: var(--brand-soft); color: var(--brand); }
+  .st-plan { background: var(--gray-soft); color: var(--sub); }
+  .low { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+
+  .gantt { overflow-x: auto; }
+  .g-grid { min-width: 980px; position: relative; margin-bottom: 22px; }
+  .g-row { display: grid; grid-template-columns: 230px 1fr; align-items: center; min-height: 34px; border-bottom: 1px solid #f0f2f5; }
+  .g-row.head { min-height: 30px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+  .g-row.ph { background: var(--soft); color: var(--c); font-weight: 600; font-size: 13px; min-height: 30px; }
+  .g-label { padding: 4px 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .g-track { position: relative; height: 100%; min-height: inherit; }
+  .g-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid #eef0f3; }
+  .g-tick span { position: absolute; top: 6px; left: 4px; white-space: nowrap; }
+  .g-bar { position: absolute; top: 8px; height: 18px; border-radius: 9px; background: var(--c); color: #fff; font-size: 11px; line-height: 18px; padding: 0 8px; white-space: nowrap; overflow: hidden; }
+  .g-bar.tail { background: transparent; border: 1.5px dashed var(--c); opacity: .7; }
+  .g-bar.tbd { background: repeating-linear-gradient(45deg, #eef0f3, #eef0f3 6px, #f7f8fa 6px, #f7f8fa 12px); color: var(--muted); border: 1px dashed #cfd4dc; }
+  .g-ms { position: absolute; top: 9px; width: 14px; height: 14px; transform: translateX(-7px) rotate(45deg); background: var(--c); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--c); }
+  .g-today { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--today); z-index: 3; pointer-events: none; }
+  .g-today span { position: absolute; bottom: -20px; left: 4px; font-size: 11px; color: var(--today); white-space: nowrap; background: #fff; padding: 0 3px; }
+  .g-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: var(--sub); }
+  .g-legend i { display: inline-block; width: 18px; height: 8px; border-radius: 4px; vertical-align: middle; margin-right: 5px; }
+
+  .confirm ol { margin: 0; padding-left: 20px; }
+  .confirm li { margin: 5px 0; }
+  .confirm li span { color: var(--muted); font-size: 13px; }
+  .proto { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .proto a { background: var(--brand); color: #fff; text-decoration: none; padding: 7px 16px; border-radius: 8px; white-space: nowrap; }
+
+  .edit-bar { position: sticky; top: 0; z-index: 10; display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #fff7e6; border: 1px solid #f3dfb5; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: var(--amber); }
+  .edit-bar[hidden] { display: none; }
+  .edit-bar button { background: var(--brand); color: #fff; border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer; white-space: nowrap; }
+  .list input, .list select { font: inherit; font-size: 12px; border: 1px solid var(--brand); border-radius: 4px; padding: 1px 4px; }
+  footer { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+  @media (max-width: 760px) { .phases { grid-template-columns: 1fr; } }
+  @media print { body { background: #fff; } .card, .phase { break-inside: avoid; } * { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="edit-bar" class="edit-bar" hidden>编辑模式：可修改状态、开始和上线日期（上线日期留空显示「待排期」；填了「至」表示上线日期是一个待定区间），改完点右侧按钮另存一份发给客户。<button id="save">保存为新文件</button></div>
+
+  <header>
+    <div>
+      <h1>光谱优化进展汇报</h1>
+      <p>分两期推进：一期完成后即可正常建图使用，二期优化流程和效率。</p>
+    </div>
+    <div class="date">汇报日期：2026 年 11 月 6 日</div>
+  </header>
+
+  <div class="phases" id="phases"></div>
+
+  <div class="card">
+    <h2>需求列表 <small id="list-count"></small></h2>
+    <table class="list">
+      <thead><tr><th style="width:52px">编号</th><th>需求</th><th style="width:110px">状态</th><th style="width:120px">开始</th><th style="width:120px">计划上线</th></tr></thead>
+      <tbody id="list"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>排期甘特图 <small>红线为今天；虚线为待排期</small></h2>
+    <div class="gantt"><div class="g-grid" id="gantt"></div></div>
+    <div class="g-legend">
+      <span><i style="background:var(--p1)"></i>一期</span>
+      <span><i style="background:var(--p2)"></i>二期</span>
+      <span><i style="background:repeating-linear-gradient(45deg,#e3e6ea,#e3e6ea 3px,#f7f8fa 3px,#f7f8fa 6px);border:1px dashed #cfd4dc"></i>待排期</span>
+      <span><i style="border:1.5px dashed var(--p1)"></i>上线日期待定区间</span>
+      <span>◆ 阶段完成</span>
+    </div>
+  </div>
+
+  <div class="card proto">
+    <div><b>在线体验</b><br><span style="color:var(--sub)">交互原型包含两期的主要流程，使用演示数据，可直接点击体验。</span></div>
+    <a href="https://www.gaoyuan-ai.xyz/guangpu/remix/" target="_blank">打开原型</a>
+  </div>
+
+  <footer>时代光华 · 光谱产品组</footer>
+</div>
+
+<!-- 页面数据。地址后加 #edit 可在页面上修改状态和日期，再另存新文件 -->
+<script id="data" type="application/json">
+{
+ "today": "2026-11-06",
+ "range": [
+  "2026-10-19",
+  "2026-12-27"
+ ],
+ "phases": [
+  {
+   "name": "一期",
+   "title": "完成基础功能调整，能够进行创建",
+   "color": "p1",
+   "desc": "解决建图时被字数、符号、必填内容卡住的问题，支持批量上传资料、批量导入能力等级，图谱与岗位解绑、按人配置。一期完成后即可正常使用。",
+   "items": [
+    {
+     "t": "三级标签本地上传资料",
+     "s": "done",
+     "start": "2026-10-20",
+     "end": "2026-10-30",
+     "sub": [
+      "配置资源时新增「本地上传」入口",
+      "支持 PPT、Word、Excel、视频格式",
+      "上传后自动存入知识库默认目录",
+      "上传后自动关联到当前标签"
+     ]
+    },
+    {
+     "t": "三级标签名称放宽",
+     "s": "test",
+     "start": "2026-10-27",
+     "end": "2026-11-13",
+     "sub": [
+      "名称上限从 20 字放宽到 50 字",
+      "支持括号、书名号、斜杠、顿号等常用符号",
+      "超长或含不支持符号时给出明确提示",
+      "页面编辑和表格导入使用同一规则"
+     ]
+    },
+    {
+     "t": "标签关联课程和测试改为非必须",
+     "s": "sched",
+     "start": "2026-11-09",
+     "end": "2026-11-30",
+     "sub": [
+      "末级标签不关联课程也能保存、启用",
+      "末级标签不关联考试也能保存、启用",
+      "配置时提示哪些标签还没挂内容",
+      "提示不影响保存"
+     ]
+    },
+    {
+     "t": "能力等级批量导入",
+     "s": "sched",
+     "start": "2026-10-27",
+     "end": "2026-11-30",
+     "sub": [
+      "选择学员，默认全部关联学员，也可只选部分",
+      "一键生成模板：学员信息、三级标签、最新成绩",
+      "在同一页面上传填好的模板",
+      "所有错误一次列在页面上，标明行和原因",
+      "在页面上直接改错或移除出错行",
+      "确认无误后提交，新成绩成为下次的最新成绩",
+      "成绩不低于学员职级对应的最低等级"
+     ]
+    },
+    {
+     "t": "多份资料一次上传",
+     "s": "sched",
+     "start": "2026-11-04",
+     "end": "2026-11-13",
+     "sub": [
+      "一次选择多个文件",
+      "逐个显示上传进度",
+      "个别文件失败可单独重试，不影响其他文件",
+      "全部自动关联到当前末级标签"
+     ]
+    },
+    {
+     "t": "图谱创建流程改造",
+     "s": "dev",
+     "start": "2026-10-20",
+     "end": "2026-11-30",
+     "sub": [
+      "按四步创建：基本信息、编辑标签、配置标签内容、关联学员",
+      "部门、岗位、群组改为可选",
+      "自动同步：岗位人员增减时自动下发或回收图谱",
+      "关联学员：直接添加、导入、移出",
+      "同一岗位的不同学员可使用不同图谱",
+      "学员在 PC 和 H5 上切换自己的多张图谱",
+      "驾驶舱按图谱统计学员",
+      "查询并导出还没有图谱的学员",
+      "图谱停用后保留学习和成绩记录"
+     ],
+     "endLatest": "2026-12-15"
+    }
+   ]
+  },
+  {
+   "name": "二期",
+   "title": "完成用户体验优化，提升效率",
+   "color": "p2",
+   "desc": "表格建图、整图导出、配置界面加强引导，题目难度与试题管理打通。",
+   "items": [
+    {
+     "t": "表格导入建图",
+     "s": "plan",
+     "start": "",
+     "end": "",
+     "sub": [
+      "导入图谱基本信息和关联岗位",
+      "导入三级标签和标签类型",
+      "导入测试题",
+      "所有错误一次列在页面上，不用下载错误表"
+     ]
+    },
+    {
+     "t": "图谱完整导出",
+     "s": "plan",
+     "start": "",
+     "end": "",
+     "sub": [
+      "导出基本信息和标签体系",
+      "导出每个标签下课程、考试、资料的名称和链接",
+      "导出测试题和关联学员",
+      "岗位意义、关键职责一行一条",
+      "后台生成，完成后下载"
+     ]
+    },
+    {
+     "t": "配置界面引导加强",
+     "s": "plan",
+     "start": "",
+     "end": "",
+     "sub": [
+      "标签层级增加路径导航",
+      "显示每级标签数量和内容完成度",
+      "岗位职级设置改为分步引导",
+      "适用层级直接显示对应职级和影响的学员"
+     ]
+    },
+    {
+     "t": "题目难度与试题管理打通",
+     "s": "plan",
+     "start": "",
+     "end": "",
+     "sub": [
+      "题目增加难度标签",
+      "直接引用试题管理里的题目",
+      "按难度和知识点筛选题目"
+     ]
+    },
+    {
+     "t": "上传压缩包自动生成图谱",
+     "s": "plan",
+     "start": "",
+     "end": "",
+     "low": true,
+     "sub": [
+      "上传压缩包后自动解析文档",
+      "生成标签草稿并挂好资料",
+      "确认后再建图"
+     ]
+    }
+   ]
+  }
+ ]
+}
+</script>
+<script>
+const STATUS = { done: ["已上线", "st-done"], test: ["测试中", "st-test"], dev: ["开发中", "st-dev"], sched: ["已排期", "st-sched"], plan: ["待排期", "st-plan"] };
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const editing = location.hash === "#edit";
+const DAY = 86400000;
+const toDate = s => new Date(s + "T00:00:00");
+const md = s => s ? `${toDate(s).getMonth() + 1}月${toDate(s).getDate()}日` : "";
+
+function render(edit) {
+  document.getElementById("edit-bar").hidden = !edit;
+  renderPhases();
+  renderList(edit);
+  renderGantt();
+}
+
+// 阶段完成日 = 该期已排期需求里最晚的上线日
+const phaseEnd = p => p.items.map(i => i.endLatest || i.end).filter(Boolean).sort().pop() || "";
+const phaseEarly = p => p.items.map(i => i.end).filter(Boolean).sort().pop() || "";
+const endText = it => it.endLatest ? `${md(it.end)}–${md(it.endLatest)}（待定）` : md(it.end);
+
+function renderPhases() {
+  document.getElementById("phases").innerHTML = DATA.phases.map(p => {
+    const subs = p.items.reduce((n, i) => n + i.sub.length, 0);
+    const pending = p.items.filter(i => i.s === "plan").length;
+    const end = phaseEnd(p), early = phaseEarly(p);
+    const endLabel = end && early !== end ? `${md(early)}–${md(end)}` : md(end);
+    return `<div class="phase" style="--c:var(--${p.color})">
+      <div class="k">${p.name}</div><h3>${p.title}</h3><p>${p.desc}</p>
+      <div class="nums">
+        <div><b>${p.items.length}</b><span>项需求</span></div>
+        <div><b>${subs}</b><span>个功能点</span></div>
+        <div><b>${end ? endLabel : "待排期"}</b><span>${!end ? "暂未排期" : pending ? `已排期部分完成；另 ${pending} 项待排期` : early !== end ? "计划全部上线，具体日期待定" : "计划全部上线"}</span></div>
+      </div></div>`;
+  }).join("");
+}
+
+function renderList(edit) {
+  let total = 0;
+  const rows = DATA.phases.map((p, pi) => {
+    const head = `<tr class="phase-row" style="--c:var(--${p.color});--soft:var(--${p.color}-soft)"><td colspan="5">${p.name}：${p.title}</td></tr>`;
+    return head + p.items.map((it, ii) => {
+      total += it.sub.length;
+      const num = `${pi + 1}.${ii + 1}`;
+      const parent = `<tr class="parent"><td class="num">${num}</td>
+        <td>${it.t}${it.low ? '<span class="low">优先级低</span>' : ""}</td>
+        <td>${edit ? statusSelect(it.s, pi, ii) : `<span class="st ${STATUS[it.s][1]}">${STATUS[it.s][0]}</span>`}</td>
+        <td class="date">${dateCell(it.start, pi, ii, "start", edit)}</td>
+        <td class="date">${edit ? `${dateCell(it.end, pi, ii, "end", edit)}<br>至 ${dateCell(it.endLatest || "", pi, ii, "endLatest", edit)}` : it.end ? endText(it) : '<span style="color:var(--muted)">待排期</span>'}</td></tr>`;
+      const children = it.sub.map((s, si) => `<tr class="child"><td class="num" style="color:var(--muted);font-size:12px">${num}.${si + 1}</td><td class="name" colspan="4">${s}</td></tr>`).join("");
+      return parent + children;
+    }).join("");
+  }).join("");
+  document.getElementById("list").innerHTML = rows;
+  document.getElementById("list-count").textContent = `共 ${DATA.phases.reduce((n, p) => n + p.items.length, 0)} 项需求、${total} 个功能点`;
+  document.querySelectorAll("[data-field]").forEach(el => el.oninput = el.onchange = () => {
+    const [pi, ii, f] = el.dataset.field.split(".");
+    DATA.phases[pi].items[ii][f] = el.value;
+    renderPhases(); renderGantt();
+  });
+}
+
+function dateCell(v, pi, ii, f, edit, empty = "—") {
+  return edit ? `<input type="date" value="${v}" data-field="${pi}.${ii}.${f}">` : (v ? md(v) : `<span style="color:var(--muted)">${empty}</span>`);
+}
+
+function statusSelect(v, pi, ii) {
+  return `<select data-field="${pi}.${ii}.s">${Object.entries(STATUS).map(([k, [l]]) => `<option value="${k}" ${k === v ? "selected" : ""}>${l}</option>`).join("")}</select>`;
+}
+
+function renderGantt() {
+  const [from, to] = DATA.range.map(toDate);
+  const span = (to - from) / DAY;
+  const pos = d => Math.max(0, Math.min(100, (((typeof d === "string" ? toDate(d) : d) - from) / DAY) / span * 100));
+  const ticks = [];
+  for (let d = new Date(from); d <= to; d = new Date(+d + 7 * DAY)) {
+    ticks.push(`<div class="g-tick" style="left:${pos(d)}%"><span>${d.getMonth() + 1}/${d.getDate()}</span></div>`);
+  }
+  const grid = ticks.join("").replace(/<span>.*?<\/span>/g, "");
+  const today = `<div class="g-today" style="left:calc(230px + (100% - 230px) * ${pos(DATA.today) / 100})"><span>今天 ${md(DATA.today)}</span></div>`;
+
+  let html = `<div class="g-row head"><div class="g-label">需求</div><div class="g-track">${ticks.join("")}</div></div>`;
+  DATA.phases.forEach(p => {
+    const c = `--c:var(--${p.color});--soft:var(--${p.color}-soft)`;
+    const end = phaseEnd(p);
+    const ms = end ? `<div class="g-ms" style="left:${pos(end)}%" title="${p.name}最晚上线 ${md(end)}"></div>` : "";
+    html += `<div class="g-row ph" style="${c}"><div class="g-label">${p.name}</div><div class="g-track">${grid}${ms}</div></div>`;
+    p.items.forEach(it => {
+      let bar;
+      if (it.start && it.end) {
+        const l = pos(it.start), w = Math.max(pos(it.end) - l, 1.5);
+        const label = it.s === "done" ? `已上线 · ${md(it.end)}` : `${endText(it)}上线`;
+        const tail = it.endLatest ? `<div class="g-bar tail" style="left:${pos(it.end)}%;width:${pos(it.endLatest) - pos(it.end)}%"></div>` : "";
+        bar = `${tail}<div class="g-bar" style="left:${l}%;width:${w}%" title="${md(it.start)} – ${endText(it)}">${label}</div>`;
+      } else if (it.start) {
+        const l = pos(it.start), w = Math.max(pos(DATA.today) - l, 1.5);
+        bar = `<div class="g-bar" style="left:${l}%;width:${w}%">${STATUS[it.s][0]}</div>`;
+      } else {
+        bar = `<div class="g-bar tbd" style="left:${pos(DATA.today)}%;width:22%">待排期</div>`;
+      }
+      html += `<div class="g-row" style="${c}"><div class="g-label" title="${it.t}">${it.t}</div><div class="g-track">${grid}${bar}</div></div>`;
+    });
+  });
+  document.getElementById("gantt").innerHTML = html + today;
+}
+
+// 把修改写回页面数据，下载一份不带编辑状态的新文件
+function saveFile() {
+  document.getElementById("data").textContent = "\n" + JSON.stringify(DATA, null, 1) + "\n";
+  render(false);
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  render(true);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+  a.download = document.title.replace(/\s+/g, "") + ".html";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+document.getElementById("save").onclick = saveFile;
+render(editing);
+</script>
+</body>
+</html>
