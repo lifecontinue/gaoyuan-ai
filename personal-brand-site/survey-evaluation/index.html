@@ -1741,7 +1741,7 @@ function pageTplLib() {
     </div>
     <div class="row" style="margin:16px 0 12px">
       <span class="colset"><button class="btn icon ${state.colOpen ? 'on' : ''}" id="colSet" title="列设置" aria-label="列设置" aria-expanded="${!!state.colOpen}">⚙</button>${state.colOpen ? colMenu(LIB_COLS, L.cols) : ''}</span>
-      ${sys ? '<span class="note">系统模板由平台维护，只能预览、使用和复制为自定义模板。</span>' : `<button class="btn primary" id="lbNew">新增模板</button><button class="btn" id="lbImport">导入</button>
+      ${sys ? '<span class="note">系统模板由平台维护，只能预览、使用和复制为自定义模板。</span>' : `<button class="btn primary" id="lbNew">新增模板</button><button class="btn" id="lbImport">导入</button><button class="btn" id="lbExport" ${sel.length ? '' : 'disabled'} title="${sel.length ? '' : '勾选模板后导出'}">导出</button>
       <button class="btn" id="lbDisable" ${sel.length ? '' : 'disabled'}>停用</button><button class="btn" id="lbEnable" ${sel.length ? '' : 'disabled'}>启用</button>
       <span class="note">${sel.length ? `已选 ${sel.length} 项` : ''}</span>`}
     </div>
@@ -1793,6 +1793,11 @@ function bindTplLib() {
   const batch = st => { const ts = QTPLS.filter(t => L.sel.includes(t.id) && t.status !== st); ts.forEach(t => { t.status = st; }); L.sel = []; render(); toast(ts.length ? `已${st} ${ts.length} 个模板` : `所选模板已经是「${st}」`); };
   on('#lbDisable', 'click', () => batch('停用'));
   on('#lbEnable', 'click', () => batch('启用'));
+  on('#lbExport', 'click', () => {
+    const ts = QTPLS.filter(t => L.sel.includes(t.id));
+    const file = ts.length > 1 ? `模板导出_${TODAY.replace(/-/g, '')}.zip` : `${ts[0].name}.xlsx`;
+    L.sel = []; render(); toast(ts.length > 1 ? `已导出 ${ts.length} 个模板，「${file}」开始下载` : `已导出模板，「${file}」开始下载`);
+  });
   on('#lbImport', 'click', () => toast('请上传 Excel 文件，导入后生成自定义模板（草稿）'));
   on('#lbNew', 'click', () => { state.newTplMode = true; $('#modalTitle').textContent = '新增模板'; $('#mask').classList.add('show'); });
   main.querySelectorAll('[data-libmore]').forEach(b => b.onclick = e => { e.stopPropagation(); L.more = L.more === b.dataset.libmore ? null : b.dataset.libmore; render(); });
