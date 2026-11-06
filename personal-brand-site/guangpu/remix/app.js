@@ -766,52 +766,53 @@
     let table = '';
     if (!rows) {
       table = `<div class="empty"><div class="empty-title">暂无待导入数据</div>
-        <div>选择评分文件后，先核对校验结果和预计分数。</div></div>`;
+        <div>按上方三步：选学员下载模板，填好新成绩后上传，在这里核对、修改并提交。</div></div>`;
     } else {
       // 列与下载模板一致；文件未填的核对字段用系统数据补齐。
       table = `<div class="table-wrap"><table class="tbl import-table">
         <thead><tr>
-          <th style="width:52px;">行号</th><th>员工工号</th><th>员工姓名</th><th>图谱ID</th><th>图谱名称</th><th>末级标签ID</th><th>标签名称</th>
-          <th class="num">原结果</th><th class="num" style="width:96px;">分数</th><th style="min-width:200px;">校验</th>
+          <th style="width:52px;">行号</th><th>工号</th><th>姓名</th><th>用户名</th><th>部门</th><th>岗位</th><th>一级标签</th><th>二级标签</th><th>三级标签</th>
+          <th class="num">最新成绩</th><th class="num" style="width:96px;">新成绩</th><th style="min-width:200px;">校验</th>
         </tr></thead>
         <tbody>
-          ${filtered.map((r) => `<tr class="${r.dirty ? 'row-dirty' : r.errors.length ? 'row-error' : ''}" data-row="${r.rowNo}">
+          ${filtered.map((r) => { const p = S.persons.find(x => x.userId === r.userId) || {}; const path = r.pathInput || window.GP_IMPORT.tagPath(r.graphId, r.tagId); return `<tr class="${r.dirty ? 'row-dirty' : r.errors.length ? 'row-error' : ''}" data-row="${r.rowNo}">
             <td class="num">${r.sourceLine || r.rowNo}</td>
-            <td class="mono">${esc(r.employeeCode || personCode(r.userId) || '—')}</td>
-            <td>${esc(r.userNameInput || r.personName || '—')}</td>
-            <td class="mono">${esc(r.graphId || '—')}</td>
-            <td>${esc(r.graphNameInput || graphName(r.graphId) || '—')}</td>
-            <td class="mono">${esc(r.tagId || '—')}</td>
-            <td>${esc(r.tagNameInput || r.tagLabel || '—')}</td>
-            <td class="num">${r.before === null ? '—' : r.before}</td>
-            <td class="num"><input class="input import-score-input" data-act="import-score" data-row="${r.rowNo}" value="${esc(r.scoreInput ?? (Number.isFinite(r.score) ? r.score : ''))}" inputmode="decimal" aria-label="第 ${r.sourceLine || r.rowNo} 行分数" ${exec ? 'disabled' : ''}></td>
+            <td class="mono">${esc(r.employeeCode || p.employeeCode || '—')}</td>
+            <td>${esc(r.userNameInput || p.userName || '—')}</td>
+            <td class="mono">${esc(r.loginInput || p.loginName || '—')}</td>
+            <td>${esc(r.deptInput || p.deptName || '—')}</td>
+            <td>${esc(r.postInput || (p.positionIds || []).map(posName).join('、') || '—')}</td>
+            <td>${esc(path[0] || '—')}</td><td>${esc(path[1] || '—')}</td><td>${esc(path[2] || '—')}</td>
+            <td class="num">${r.latest == null ? '<span class="import-muted">未导入</span>' : r.latest}</td>
+            <td class="num"><input class="input import-score-input" data-act="import-score" data-row="${r.rowNo}" value="${esc(r.scoreInput ?? (Number.isFinite(r.score) ? r.score : ''))}" inputmode="decimal" aria-label="第 ${r.sourceLine || r.rowNo} 行新成绩" ${exec ? 'disabled' : ''}></td>
             <td style="font-size:12px;">${r.dirty
               ? '<span class="import-dirty">已修改，待校验</span>'
               : r.errors.length
                 ? '<span style="color:#ff4d4f;">' + r.errors.map(esc).join('；') + '</span>'
                 : '<span style="color:#52c41a;">通过</span>'}${!exec && (r.dirty || r.errors.length) ? `<button class="btn-link import-row-check" data-act="import-revalidate-row" data-row="${r.rowNo}">重新校验</button>` : ''}</td>
-          </tr>`).join('')}
+          </tr>`; }).join('')}
         </tbody>
       </table>${!filtered.length ? '<div class="empty">当前分类没有数据</div>' : ''}</div>`;
     }
 
     return `
-      <header class="gp-head import-head"><div class="page-title-with-back"><button class="page-back" data-act="go" data-page="list" aria-label="返回图谱中心" title="返回图谱中心"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5 7 12l7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1 class="gp-head-title">评分数据导入</h1><span class="auto-sync-help import-help">
+      <header class="gp-head import-head"><div class="page-title-with-back"><button class="page-back" data-act="go" data-page="list" aria-label="返回图谱中心" title="返回图谱中心"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5 7 12l7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1 class="gp-head-title">评分数据导入</h1><span class="import-graph-name">${esc(graphName(S.selectedGraphId))}</span><span class="auto-sync-help import-help">
             <button class="help-icon" type="button" aria-label="查看文件要求与导入规则" aria-describedby="import-rules-tooltip">?</button>
             <span class="auto-sync-tooltip" id="import-rules-tooltip" role="tooltip">
               <span class="sync-help-section"><strong>文件要求</strong><span>用本页「下载模板」得到的 Excel 表格填写，保存后直接上传即可（也支持 .csv）。</span><span>文件不超过 2 MB，最多 500 行。</span></span>
-              <span class="sync-help-section"><strong>模板字段</strong><span>必填：员工工号、图谱ID、末级标签ID、分数。姓名和名称仅供核对，以工号及 ID 匹配。</span></span>
+              <span class="sync-help-section"><strong>怎么填</strong><span>模板按所选学员和本图谱的标签生成。只填最后一列「新成绩」，其他列不用改；新成绩留空的行不更新。以工号和标签匹配，只能导入到下载它的图谱。</span></span>
               <span class="sync-help-section"><strong>导入规则</strong><span>直接覆盖：末级标签能力分取导入值。再次导入替换上次导入值，不累加。课程与学习进度保持不变。</span></span>
               <span class="sync-help-section">本地示例采用 0–100 分。Excel 格式、客户量表及生产批量上限待确认。</span>
             </span></span></div>
-        <div class="gp-head-ops"><button class="btn btn-primary" data-act="import-choose" ${ui.importReading?'disabled':''}>上传文件</button><button class="btn" data-act="import-template">下载模板</button><button class="btn" data-act="import-load">加载演示数据</button></div>
+        <div class="gp-head-ops"><button class="btn" data-act="import-load">加载演示数据</button></div>
       </header>
       <section class="import-content">
+        ${renderImportSteps()}
         <input type="file" data-act="import-file" accept=".xlsx,.csv" aria-label="选择评分表格文件" hidden>
         ${ui.importSource ? `<div class="import-upload-info"><b>${esc(ui.importSource)}</b></div>` : ''}
         ${ui.importReading ? '<div class="notice notice-info" role="status">正在读取文件…</div>' : ''}
         ${ui.importFileError ? `<div class="notice notice-error" role="alert">${esc(ui.importFileError)}</div>` : ''}
-        ${rows ? `<div class="import-preview-summary"><b>预览 ${rows.length} 行</b><span>通过 ${rows.length-errors} 行</span><span>错误 ${errors} 行</span><span>${exec?'执行已完成，以结果明细为准':'预览尚未写入评分'}</span></div><div class="import-preview-tabs" aria-label="预览分类">${[['all','全部',rows.length],['error','错误',errors],['valid','通过',rows.length-errors]].map(([id,label,count])=>`<button class="btn btn-sm ${(!ui.importFilter&&id==='all')||ui.importFilter===id?'btn-primary':''}" data-act="import-filter" data-filter="${id}">${label}（${count}）</button>`).join('')}${hasError?'<button class="btn btn-sm" data-act="import-export-errors">导出错误明细</button>':''}${exec?'':`<span class="import-table-ops">${hasError || dirty ? `<span class="import-submit-hint">${dirty ? '还有修改未校验' : '还有错误未处理'}，全部通过后才能提交</span>` : ''}<button class="btn btn-sm" data-act="import-revalidate-all">重新校验</button><button class="btn btn-sm btn-primary" data-act="import-execute" ${hasError || dirty || ui.importReading ? 'aria-disabled="true" disabled' : ''}>提交（${rows.length - errors} 行）</button></span>`}</div>` : ''}
+        ${rows ? `<div class="import-preview-summary"><b>预览 ${rows.length} 行</b><span>通过 ${rows.length-errors} 行</span><span>错误 ${errors} 行</span>${ui.importSkipped ? `<span>新成绩未填 ${ui.importSkipped} 行，不更新</span>` : ''}<span>${exec?'执行已完成，以结果明细为准':'预览尚未写入评分'}</span></div><div class="import-preview-tabs" aria-label="预览分类">${[['all','全部',rows.length],['error','错误',errors],['valid','通过',rows.length-errors]].map(([id,label,count])=>`<button class="btn btn-sm ${(!ui.importFilter&&id==='all')||ui.importFilter===id?'btn-primary':''}" data-act="import-filter" data-filter="${id}">${label}（${count}）</button>`).join('')}${hasError?'<button class="btn btn-sm" data-act="import-export-errors">导出错误明细</button>':''}${exec?'':`<span class="import-table-ops">${hasError || dirty ? `<span class="import-submit-hint">${dirty ? '还有修改未校验' : '还有错误未处理'}，全部通过后才能提交</span>` : ''}<button class="btn btn-sm" data-act="import-revalidate-all">重新校验</button><button class="btn btn-sm btn-primary" data-act="import-execute" ${hasError || dirty || ui.importReading ? 'aria-disabled="true" disabled' : ''}>提交（${rows.length - errors} 行）</button></span>`}</div>` : ''}
         ${dirty && !exec ? `<div class="notice notice-warn"><span class="notice-icon">!</span>
           <div>有 ${dirty} 行分数已修改尚未校验，请点「重新校验」。</div></div>` : ''}
         ${hasError && !exec ? `<div class="notice notice-error"><span class="notice-icon">×</span>
@@ -825,7 +826,50 @@
       </section>
 
       ${renderFormulaCard()}
+      ${ui.importScope?.picker ? renderImportPicker() : ''}
     `;
+  }
+
+  // 第一步选学员；默认本图谱全部有效关联学员。
+  function importMembers() {
+    return G.effectiveMembers(S, S.selectedGraphId).map(m => S.persons.find(p => p.userId === m.userId)).filter(Boolean);
+  }
+  function importScope() {
+    return ui.importScope ||= { mode: 'all', selected: [], picker: null };
+  }
+  function importScopeIds() {
+    const sc = importScope(), all = importMembers().map(p => p.userId);
+    return sc.mode === 'all' ? all : sc.selected.filter(id => all.includes(id));
+  }
+  function renderImportSteps() {
+    const sc = importScope(), all = importMembers(), ids = importScopeIds();
+    return `<ol class="import-steps" aria-label="导入步骤">
+      <li><b><i>1</i>选择学员，下载模板</b>
+        <div class="import-scope" role="radiogroup" aria-label="下载范围">
+          <label><input type="radio" name="import-scope" data-act="import-scope-mode" value="all" ${sc.mode === 'all' ? 'checked' : ''}>全部关联学员（${all.length} 人）</label>
+          <label><input type="radio" name="import-scope" data-act="import-scope-mode" value="some" ${sc.mode === 'some' ? 'checked' : ''}>部分学员${sc.mode === 'some' ? `（已选 ${ids.length} 人）` : ''}</label>
+          ${sc.mode === 'some' ? '<button class="btn-link" data-act="import-pick-open">选择学员</button>' : ''}
+        </div>
+        <button class="btn btn-sm" data-act="import-template" ${ids.length ? '' : 'disabled'}>下载模板</button></li>
+      <li><b><i>2</i>填写新成绩，上传文件</b><span>只填最后一列「新成绩」，其他列不用改。</span>
+        <button class="btn btn-sm btn-primary" data-act="import-choose" ${ui.importReading ? 'disabled' : ''}>上传文件</button></li>
+      <li><b><i>3</i>核对、修改并提交</b><span>错误可在表格中直接改，重新校验全部通过后提交。</span></li>
+    </ol>`;
+  }
+  function renderImportPicker() {
+    const pk = importScope().picker, kw = (pk.kw || '').trim().toLowerCase();
+    const list = importMembers().filter(p => (!pk.dept || p.deptId === pk.dept) && (!kw || [p.userName, p.employeeCode].some(v => String(v).toLowerCase().includes(kw))));
+    const depts = [...new Map(importMembers().map(p => [p.deptId, p.deptName])).entries()];
+    return `<div class="modal-mask"><section class="modal mgmt-modal import-pick" role="dialog" aria-modal="true" aria-labelledby="import-pick-title">
+      <div class="modal-head"><h2 id="import-pick-title">选择学员</h2><button type="button" data-act="import-pick-cancel" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="import-pick-filter"><input class="input" data-act="import-pick-kw" placeholder="搜索姓名或工号" value="${esc(pk.kw || '')}" aria-label="搜索学员">
+          <select class="select-native" data-act="import-pick-dept" aria-label="按部门筛选"><option value="">全部部门</option>${depts.map(([id, nm]) => `<option value="${esc(id)}" ${pk.dept === id ? 'selected' : ''}>${esc(nm)}</option>`).join('')}</select>
+          <button class="btn btn-sm" data-act="import-pick-all" ${list.length ? '' : 'disabled'}>全选当前结果</button><button class="btn btn-sm" data-act="import-pick-none" ${pk.draft.length ? '' : 'disabled'}>清空</button></div>
+        <div class="import-pick-list">${list.map(p => `<label class="import-pick-row"><input type="checkbox" data-act="import-pick-toggle" data-uid="${esc(p.userId)}" ${pk.draft.includes(p.userId) ? 'checked' : ''}><b>${esc(p.userName)}</b><span class="mono">${esc(p.employeeCode)}</span><span>${esc(p.deptName || '')}</span><span>${esc((p.positionIds || []).map(posName).join('、'))}</span></label>`).join('') || '<div class="empty">没有符合条件的学员</div>'}</div>
+      </div>
+      <div class="modal-foot"><span class="import-pick-count">已选 ${pk.draft.length} 人</span><button class="btn" data-act="import-pick-cancel">取消</button><button class="btn btn-primary" data-act="import-pick-confirm" ${pk.draft.length ? '' : 'disabled'}>确定</button></div>
+    </section></div>`;
   }
 
   function renderExecResult(exec) {
@@ -2789,7 +2833,7 @@
     root.dataset.bound = 'true';
     root.addEventListener('click', onClick);
     root.addEventListener('input', onInput);
-    root.addEventListener('change', e => { const t = e.target.closest('[data-act]'); if(t?.dataset.act==='import-file'){readImportFile(t);return;} if(t?.dataset.act==='import-score'){render();return;} if (t && t.dataset.act.startsWith('rx-') && window.GP_REMIX?.change(t.dataset.act,t,extensionContext())) return; if (t && t.dataset.act.startsWith('ca-')) window.GP_COCKPIT_ADMIN?.change(t.dataset.act,t,extensionContext()); if (t && t.dataset.act.startsWith('mgmt-')) window.GP_MANAGEMENT?.change(t.dataset.act, t, extensionContext()); });
+    root.addEventListener('change', e => { const t = e.target.closest('[data-act]'); if(t?.dataset.act==='import-file'){readImportFile(t);return;} if(t?.dataset.act==='import-score'||t?.dataset.act==='import-pick-kw'){render();return;} if(t?.dataset.act==='import-pick-dept'){const pk=importScope().picker;if(pk){pk.dept=t.value;render();}return;} if (t && t.dataset.act.startsWith('rx-') && window.GP_REMIX?.change(t.dataset.act,t,extensionContext())) return; if (t && t.dataset.act.startsWith('ca-')) window.GP_COCKPIT_ADMIN?.change(t.dataset.act,t,extensionContext()); if (t && t.dataset.act.startsWith('mgmt-')) window.GP_MANAGEMENT?.change(t.dataset.act, t, extensionContext()); });
     root.addEventListener('keydown', onKey);
   }
 
@@ -2827,6 +2871,7 @@
         S.selectedGraphId = t.dataset.gid;
         ui.importPreview = null;
         ui.importExecResult = null;
+        ui.importScope = { mode: 'all', selected: [], picker: null }; ui.importSkipped = 0;
         ui.page = 'import';
         ui.lastAction = '打开发起评分导入：' + S.graphs[t.dataset.gid].name;
         render(); break;
@@ -3413,6 +3458,13 @@
       case 'import-filter': ui.importFilter=t.dataset.filter; render(); break;
       case 'import-export-errors': exportImportErrors(); break;
       case 'import-execute': if(ui.importPreview && !ui.importExecResult && !ui.importPreview.some(r=>r.errors.length||r.dirty)) {ui.importConfirm=true;render();} break;
+      case 'import-scope-mode': { const sc = importScope(); sc.mode = t.value === 'some' ? 'some' : 'all'; if (sc.mode === 'some' && !sc.selected.length) sc.picker = { draft: [], kw: '', dept: '' }; render(); break; }
+      case 'import-pick-open': { const sc = importScope(); sc.picker = { draft: sc.selected.slice(), kw: '', dept: '' }; render(); break; }
+      case 'import-pick-toggle': { const pk = importScope().picker; if (pk) { const id = t.dataset.uid; pk.draft = t.checked ? [...new Set([...pk.draft, id])] : pk.draft.filter(x => x !== id); render(); } break; }
+      case 'import-pick-all': { const pk = importScope().picker; if (pk) { [...document.querySelectorAll('[data-act="import-pick-toggle"]')].forEach(el => { if (!pk.draft.includes(el.dataset.uid)) pk.draft.push(el.dataset.uid); }); render(); } break; }
+      case 'import-pick-none': { const pk = importScope().picker; if (pk) { pk.draft = []; render(); } break; }
+      case 'import-pick-cancel': { const sc = importScope(); sc.picker = null; if (sc.mode === 'some' && !sc.selected.length) sc.mode = 'all'; render(); break; }
+      case 'import-pick-confirm': { const sc = importScope(); if (sc.picker?.draft.length) { sc.selected = sc.picker.draft.slice(); sc.picker = null; sc.mode = 'some'; render(); } break; }
       case 'import-revalidate-row': if(ui.importPreview && !ui.importExecResult){ui.importPreview=window.GP_IMPORT.revalidate(ui.importPreview, Number(t.dataset.row));ui.importConfirm=false;render();} break;
       case 'import-revalidate-all': if(ui.importPreview && !ui.importExecResult){ui.importPreview=window.GP_IMPORT.revalidate(ui.importPreview);ui.importConfirm=false;const e=ui.importPreview.filter(r=>r.errors.length).length;toast(e?`重新校验完成：仍有 ${e} 行错误`:'重新校验完成：全部通过',e?'warning':'success');render();} break;
       case 'import-cancel-execute': ui.importConfirm=false;render();break;
@@ -3425,6 +3477,7 @@
     const t = e.target.closest('[data-act]');
     if (!t) return;
     const act = t.dataset.act;
+    if (act === 'import-pick-kw') { const pk = importScope().picker; if (pk) pk.kw = t.value; return; }
     if (act === 'import-score') {
       const row = ui.importPreview?.find(r => r.rowNo === Number(t.dataset.row));
       if (row && !ui.importExecResult) { row.scoreInput = t.value; row.score = window.GP_IMPORT.parseScore(t.value); row.dirty = true; ui.importConfirm = false; }
@@ -3809,7 +3862,7 @@
   async function readImportFile(input) {
     const file=input.files?.[0];if(!file)return;
     const ticket=ui.importLoadToken=(ui.importLoadToken||0)+1;
-    ui.importPreview=null;ui.importExecResult=null;ui.importConfirm=false;ui.importFilter='all';ui.importFileError='';ui.importSource=file.name;ui.importReading=true;render();
+    ui.importPreview=null;ui.importExecResult=null;ui.importConfirm=false;ui.importFilter='all';ui.importFileError='';ui.importSkipped=0;ui.importSource=file.name;ui.importReading=true;render();
     try {
       const ext=(file.name.match(/\.([^.]+)$/)?.[1]||'').toLowerCase();
       if(ext==='xls')throw new Error('暂不支持旧版 .xls 文件，请在 Excel 中另存为 .xlsx 后上传。');
@@ -3819,13 +3872,14 @@
       if(ext==='xlsx'){
         const book=await window.GP_BUILDER_DOCUMENT.parseWorkbook(file,{maxRows:1000,maxText:500000});
         if(ticket!==ui.importLoadToken||ui.page!=='import')return;
-        rows=window.GP_IMPORT.parseSheets(book.sheets);
+        rows=window.GP_IMPORT.parseSheets(book.sheets,{graphId:S.selectedGraphId});
       } else {
         const content=await file.text();
         if(content.includes('\uFFFD'))throw new Error('文件里的中文无法识别，建议直接上传 Excel 表格（.xlsx）。');
         if(ticket!==ui.importLoadToken||ui.page!=='import')return;
-        rows=window.GP_IMPORT.parseCsv(content);
+        rows=window.GP_IMPORT.parseCsv(content,{graphId:S.selectedGraphId});
       }
+      ui.importSkipped=rows.skipped||0;
       ui.importPreview=window.GP_IMPORT.preview(rows);
     } catch(error) { if(ticket===ui.importLoadToken&&ui.page==='import')ui.importFileError=error.message || '文件读取失败，请重新选择。'; }
     finally { if(ticket===ui.importLoadToken&&ui.page==='import'){ui.importReading=false;render();} }
@@ -3838,25 +3892,24 @@
     toast('已发起文件下载');
   }
 
-  function importXlsxDownload(name, rows, widths) {
-    const url=URL.createObjectURL(window.GP_IMPORT.toXlsx('评分导入',rows,widths)),link=document.createElement('a');
+  function importXlsxDownload(name, rowsOrSheets, widths) {
+    const book=Array.isArray(rowsOrSheets[0]?.rows)?window.GP_IMPORT.toXlsx(rowsOrSheets):window.GP_IMPORT.toXlsx('评分导入',rowsOrSheets,widths);
+    const url=URL.createObjectURL(book),link=document.createElement('a');
     link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     toast('已发起文件下载');
   }
 
   function downloadTemplate() {
-    const g=S.graphs[S.selectedGraphId]?.status==='enabled'?S.graphs[S.selectedGraphId]:Object.values(S.graphs).find(g=>g.status==='enabled');
-    const p=g&&S.persons.find(p=>G.accessibleGraphs(S,p.userId).some(x=>x.graphId===g.id));
-    const lines=[['员工工号','员工姓名','图谱ID','图谱名称','末级标签ID','标签名称','分数']];
-    if(g&&p)G.leafTags(g.tagTree).slice(0,2).forEach((tag,i)=>lines.push([p.employeeCode,p.userName,g.id,g.name,tag.id,tag.nm,i?70:88]));
-    importXlsxDownload('评分导入模板.xlsx',lines,[14,12,10,20,14,20,10]);
+    const ids=importScopeIds();
+    if(!ids.length){toast('请先选择学员','warning');return;}
+    importXlsxDownload(`评分导入模板-${graphName(S.selectedGraphId)}.xlsx`,window.GP_IMPORT.templateSheets(S.selectedGraphId,ids));
   }
 
   function exportImportErrors() {
     const rows=(ui.importPreview||[]).filter(r=>r.errors.length);if(!rows.length)return;
-    const lines=[['员工工号','图谱ID','末级标签ID','分数','原文件行号','错误原因']];
-    rows.forEach(r=>lines.push([r.employeeCode||personCode(r.userId),r.graphId,r.tagId,Number.isFinite(r.score)?r.score:r.scoreInput||'',r.sourceLine||r.rowNo,r.errors.join('；')]));
-    importXlsxDownload('评分导入错误明细.xlsx',lines,[14,10,14,10,12,48]);
+    const lines=[['工号','姓名','一级标签','二级标签','三级标签','新成绩','原文件行号','错误原因']];
+    rows.forEach(r=>{const path=r.pathInput||window.GP_IMPORT.tagPath(r.graphId,r.tagId);lines.push([r.employeeCode||personCode(r.userId),r.userNameInput||r.personName||'',path[0]||'',path[1]||'',path[2]||'',Number.isFinite(r.score)?r.score:r.scoreInput||'',r.sourceLine||r.rowNo,r.errors.join('；')]);});
+    importXlsxDownload('评分导入错误明细.xlsx',lines,[12,10,14,14,16,10,12,48]);
   }
 
   function personOfName(uid) {

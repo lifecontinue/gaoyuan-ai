@@ -23,7 +23,7 @@
   ];
 
   // 本地文件适配：Excel 模板为主，兼容 CSV；不定义生产上传协议。
-  function parseCsv(text) {
+  function parseCsv(text, ctx) {
     text=String(text).replace(/^\uFEFF/,'');
     const records=[]; let row=[],cell='',quoted=false,closed=false,line=1,start=1;
     const push=()=>{row.push(cell);if(row.some(v=>v.trim()))records.push({cells:row,line:start});row=[];cell='';closed=false;};
@@ -36,13 +36,18 @@
       else{if(closed&&!/\s/.test(ch))throw new Error(`第 ${line} 行引号后存在多余内容`);if(!closed)cell+=ch;}
     }
     if(quoted)throw new Error('文件中有未闭合的引号，请检查 CSV 格式');
-    push();return parseTable(records);
+    push();return parseTable(records, ctx);
   }
 
   /** Excel：找到含「员工工号」表头的工作表，行号按 Excel 实际行号记录。 */
-  function parseSheets(sheets) {
+  function parseSheets(sheets, ctx = {}) {
+    // 模板「填写说明」里记录了图谱ID，防止把别的图谱的表传进来。
+    const note = (sheets || []).find(x => x.name === '填写说明');
+    const gid = note && (note.cells.find(r => String(r[0]).trim() === '图谱ID') || [])[1];
+    if (ctx.graphId && gid && String(gid).trim() !== ctx.graphId) throw new Error('这不是本图谱的模板，请在本页面重新下载后填写。');
     for (const sheet of sheets || []) {
-      const h = sheet.cells.slice(0, 10).findIndex(r => r.some(v => String(v).trim() === '员工工号'));
+      if (sheet.name === '填写说明') continue;
+      const h = sheet.cells.slice(0, 10).findIndex(r => r.some(v => ['工号', '员工工号'].includes(String(v).trim())));
       if (h < 0) continue;
       const width = sheet.cells[h].reduce((n, v, i) => (String(v).trim() ? i + 1 : n), 0);
       const records = sheet.cells.slice(h).map((cells, i) => {
@@ -51,27 +56,61 @@
         while (row.length < width) row.push('');
         return { cells: row, line: h + i + 1 };
       }).filter((r, i) => i === 0 || r.cells.some(v => v.trim()));
-      return parseTable(records);
+      return parseTable(records, ctx);
     }
-    throw new Error('表格里找不到「员工工号」表头，请使用本页下载的模板填写。');
+    throw new Error('表格里找不到「工号」表头，请使用本页下载的模板填写。');
   }
 
-  function parseTable(records) {
+  /** 图谱内末级标签及其上级路径（一级、二级、三级名称）。 */
+  function leafPaths(graphId) {
+    const g = window.GP_UI.state.graphs[graphId], out = [];
+    (function walk(nodes, path) {
+      (nodes || []).forEach(n => (n.children && n.children.length ? walk(n.children, [...path, n.nm]) : out.push({ id: n.id, path: [...path, n.nm] })));
+    })(g ? g.tagTree : [], []);
+    return out;
+  }
+  function tagPath(graphId, tagId) {
+    const hit = leafPaths(graphId).find(t => t.id === tagId);
+    return hit ? [hit.path[0] || '', hit.path[1] || '', hit.path[2] || ''] : ['', '', ''];
+  }
+  function findLeaf(graphId, names) {
+    const want = names.filter(Boolean);
+    const hit = leafPaths(graphId).find(t => t.path.length === want.length && t.path.every((v, i) => v === want[i]));
+    return hit ? hit.id : '';
+  }
+
+  // 新模板（工号 + 三级标签 + 新成绩）与旧模板（员工工号 + 图谱ID + 末级标签ID + 分数）都能读。
+  function parseTable(records, ctx = {}) {
     if(records.length<2)throw new Error('文件中没有评分数据，请保留表头并填写至少一行');
     if(records.length>501)throw new Error('本地原型单次最多预览 500 行，请拆分文件');
-    const headers=records.shift().cells.map(v=>v.trim());
-    const required=['员工工号','图谱ID','末级标签ID','分数'];
-    if(new Set(headers).size!==headers.length)throw new Error('表头存在重复列，请使用下载模板');
-    const missing=required.filter(h=>!headers.includes(h));if(missing.length)throw new Error('缺少必填列：'+missing.join('、'));
-    const S=window.GP_UI.state;
-    return records.map(record=>{
+    const headers=records.shift().cells.map(v=>String(v).trim());
+    const named=headers.filter(Boolean);
+    if(new Set(named).size!==named.length)throw new Error('表头存在重复列，请使用下载模板');
+    const pick=list=>list.find(h=>headers.includes(h));
+    const codeCol=pick(['工号','员工工号']), scoreCol=pick(['新成绩','分数']);
+    const byId=headers.includes('末级标签ID'), byName=headers.includes('一级标签')&&headers.includes('二级标签');
+    const missing=[!codeCol&&'工号',!scoreCol&&'新成绩',!byId&&!byName&&'一级标签、二级标签',!headers.includes('图谱ID')&&!ctx.graphId&&'图谱ID'].filter(Boolean);
+    if(missing.length)throw new Error('缺少必填列：'+missing.join('、'));
+    const S=window.GP_UI.state, newTemplate=scoreCol==='新成绩', rows=[];
+    let skipped=0;
+    records.forEach(record=>{
       const inputErrors=[];if(record.cells.length!==headers.length)inputErrors.push('列数与表头不一致');
-      const get=h=>(record.cells[headers.indexOf(h)]||'').trim();
-      const code=get('员工工号'),people=S.persons.filter(p=>p.employeeCode===code);
+      const get=h=>{const i=headers.indexOf(h);return i<0?'':String(record.cells[i]??'').trim();};
+      const raw=get(scoreCol);
+      if(newTemplate&&raw===''){skipped++;return;}  // 新成绩留空的行不更新
+      const code=get(codeCol),people=S.persons.filter(p=>p.employeeCode===code);
       if(people.length>1)inputErrors.push('工号匹配到多名人员，请核对唯一标识');
-      const raw=get('分数');
-      return {employeeCode:code,userId:people.length===1?people[0].userId:'',graphId:get('图谱ID'),tagId:get('末级标签ID'),score:raw!==''&&/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw)?Number(raw):NaN,scoreInput:raw,mode:'override',userNameInput:get('员工姓名'),graphNameInput:get('图谱名称'),tagNameInput:get('标签名称'),sourceLine:record.line,inputErrors};
+      const graphId=get('图谱ID')||ctx.graphId||'';
+      const names=[get('一级标签'),get('二级标签'),get('三级标签')];
+      let tagId=get('末级标签ID'),tagUnmatched=false;
+      if(!tagId&&byName){tagId=findLeaf(graphId,names);if(!tagId){tagUnmatched=true;inputErrors.push(`「${names.filter(Boolean).join(' › ')||'—'}」不是本图谱的末级标签`);}}
+      rows.push({employeeCode:code,userId:people.length===1?people[0].userId:'',graphId,tagId,tagUnmatched,score:parseScore(raw),scoreInput:raw,mode:'override',
+        userNameInput:get('姓名')||get('员工姓名'),loginInput:get('用户名'),deptInput:get('部门'),postInput:get('岗位'),
+        graphNameInput:get('图谱名称'),tagNameInput:get('标签名称'),pathInput:byName?names:null,sourceLine:record.line,inputErrors});
     });
+    if(!rows.length)throw new Error(newTemplate?'没有填写新成绩，请在最后一列填写后再上传':'文件中没有评分数据，请保留表头并填写至少一行');
+    rows.skipped=skipped;
+    return rows;
   }
 
   function isLeafOf(graphId, tagId) {
@@ -111,7 +150,7 @@
       else if(g.status!=='enabled')errs.push('图谱未启用，不能导入评分');
       if(p && row.employeeCode && p.employeeCode!==row.employeeCode)errs.push('工号匹配已变化，请重新选择文件预览');
 
-      if (g) {
+      if (g && !row.tagUnmatched) {
         const leafOk = isLeafOf(row.graphId, row.tagId);
         if (!leafOk) {
           const isExisting = (function () {
@@ -158,7 +197,7 @@
       if (!row.errors.length) {
         after = G.computeScore({ postTests: s ? s.postTests : [], importScore: row.score, mode: 'override' });
       }
-      return { ...row, before: before.value, beforeFormula: before.formula, after: after ? after.value : null, afterFormula: after ? after.formula : '' };
+      return { ...row, latest: s && typeof s.importScore === 'number' ? s.importScore : null, before: before.value, beforeFormula: before.formula, after: after ? after.value : null, afterFormula: after ? after.formula : '' };
     });
   }
 
@@ -232,7 +271,8 @@
     end.setUint32(12, size, true); end.setUint32(16, offset, true);
     return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   }
-  function toXlsx(sheetName, rows, widths = []) {
+  function toXlsx(nameOrSheets, rows, widths = []) {
+    const sheets = Array.isArray(nameOrSheets) ? nameOrSheets : [{ name: nameOrSheets, rows, widths }];
     const x = v => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const col = i => { let s = ''; for (i++; i; i = Math.floor((i - 1) / 26)) s = String.fromCharCode(65 + (i - 1) % 26) + s; return s; };
     // 文本一律存为内联字符串，以 = 开头的内容也不会被当成公式；分数为数值单元格。
@@ -241,18 +281,42 @@
       if (typeof v === 'number' && Number.isFinite(v)) return `<c r="${ref}"${st}><v>${v}</v></c>`;
       return `<c r="${ref}" t="inlineStr"${st}><is><t xml:space="preserve">${x(v ?? '')}</t></is></c>`;
     };
-    const cols = rows[0].map((_, i) => `<col min="${i + 1}" max="${i + 1}" width="${widths[i] || 14}" customWidth="1"/>`).join('');
-    const data = rows.map((r, i) => `<row r="${i + 1}">${r.map((v, j) => cell(v, i + 1, j, i === 0)).join('')}</row>`).join('');
+    const sheetXml = sh => {
+      const cols = sh.rows[0].map((_, i) => `<col min="${i + 1}" max="${i + 1}" width="${(sh.widths || [])[i] || 14}" customWidth="1"/>`).join('');
+      const data = sh.rows.map((r, i) => `<row r="${i + 1}">${r.map((v, j) => cell(v, i + 1, j, i === 0)).join('')}</row>`).join('');
+      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="${NS}/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${cols}</cols><sheetData>${data}</sheetData></worksheet>`;
+    };
     const NS = 'http://schemas.openxmlformats.org';
+    const n = sheets.map((_, i) => i + 1);
     return zipStore([
-      { name: '[Content_Types].xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="${NS}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>` },
+      { name: '[Content_Types].xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="${NS}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${n.map(i => `<Override PartName="/xl/worksheets/sheet${i}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>` },
       { name: '_rels/.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${NS}/package/2006/relationships"><Relationship Id="rId1" Type="${NS}/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
-      { name: 'xl/workbook.xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="${NS}/spreadsheetml/2006/main" xmlns:r="${NS}/officeDocument/2006/relationships"><sheets><sheet name="${x(sheetName)}" sheetId="1" r:id="rId1"/></sheets></workbook>` },
-      { name: 'xl/_rels/workbook.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${NS}/package/2006/relationships"><Relationship Id="rId1" Type="${NS}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="${NS}/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+      { name: 'xl/workbook.xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="${NS}/spreadsheetml/2006/main" xmlns:r="${NS}/officeDocument/2006/relationships"><sheets>${sheets.map((sh, i) => `<sheet name="${x(sh.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>` },
+      { name: 'xl/_rels/workbook.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${NS}/package/2006/relationships">${n.map(i => `<Relationship Id="rId${i}" Type="${NS}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="${NS}/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
       { name: 'xl/styles.xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="${NS}/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><name val="Arial"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf fontId="0" xfId="0"/><xf fontId="1" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>` },
-      { name: 'xl/worksheets/sheet1.xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="${NS}/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${cols}</cols><sheetData>${data}</sheetData></worksheet>` },
+      ...sheets.map((sh, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, data: sheetXml(sh) })),
     ]);
   }
 
-  window.GP_IMPORT = { IMPORT_TEMPLATE, parseCsv, parseSheets, validate, preview, execute, parseScore, revalidate, toXlsx };
+  /** 模板：所选学员 × 图谱末级标签；最后一列「新成绩」留空。另附「填写说明」记录图谱ID。 */
+  function templateSheets(graphId, userIds) {
+    const S = window.GP_UI.state, scores = window.GP_UI.scores, g = S.graphs[graphId];
+    const head = ['工号', '姓名', '用户名', '部门', '岗位', '一级标签', '二级标签', '三级标签', '最新成绩', '新成绩'];
+    const rows = [head];
+    userIds.forEach(uid => {
+      const p = S.persons.find(x => x.userId === uid);
+      if (!p) return;
+      const post = (p.positionIds || []).map(id => (G.positions.find(x => x.id === id) || {}).nm || id).join('、');
+      leafPaths(graphId).forEach(t => {
+        const s = scores.find(x => x.graphId === graphId && x.userId === uid && x.tagId === t.id);
+        const latest = s && typeof s.importScore === 'number' ? s.importScore : '未导入';
+        rows.push([p.employeeCode, p.userName, p.loginName || p.employeeCode, p.deptName || '', post, t.path[0] || '', t.path[1] || '', t.path[2] || '', latest, '']);
+      });
+    });
+    const note = [['项目', '内容'], ['图谱名称', g ? g.name : ''], ['图谱ID', graphId], ['学员数', userIds.length], ['下载时间', new Date().toLocaleString('zh-CN')],
+      ['怎么填', '只填最后一列「新成绩」（0–100 分），其他列不用改；新成绩留空的行不更新。'], ['导入规则', '新成绩直接覆盖该标签的能力分。请在本页面上传，只能导入到下载它的图谱。']];
+    return [{ name: '评分导入', rows, widths: [12, 10, 12, 14, 14, 14, 14, 16, 10, 10] }, { name: '填写说明', rows: note, widths: [12, 60] }];
+  }
+
+  window.GP_IMPORT = { IMPORT_TEMPLATE, parseCsv, parseSheets, validate, preview, execute, parseScore, revalidate, toXlsx, templateSheets, tagPath };
 })();
