@@ -804,26 +804,27 @@
               <span class="sync-help-section"><strong>导入规则</strong><span>直接覆盖：末级标签能力分取导入值。再次导入替换上次导入值，不累加。课程与学习进度保持不变。</span></span>
               <span class="sync-help-section">本地示例采用 0–100 分。Excel 格式、客户量表及生产批量上限待确认。</span>
             </span></span></div>
-        <div class="gp-head-ops"><button class="btn" data-act="import-load">加载演示数据</button></div>
+        <div class="gp-head-ops"><button class="btn" data-act="import-history-open">导入记录${importHistoryList().length ? `（${importHistoryList().length}）` : ''}</button><button class="btn" data-act="import-load">加载演示数据</button></div>
       </header>
       <section class="import-content">
         ${renderImportSteps()}
         <input type="file" data-act="import-file" accept=".xlsx,.csv" aria-label="选择评分表格文件" hidden>
-        ${ui.importSource ? `<div class="import-upload-info"><b>${esc(ui.importSource)}</b></div>` : ''}
-        ${ui.importReading ? '<div class="notice notice-info" role="status">正在读取文件…</div>' : ''}
+        ${ui.importReading ? '<div class="notice notice-info import-loading" role="status"><span class="import-spinner" aria-hidden="true"></span>正在读取并校验文件…</div>' : ''}
+        ${ui.importSubmitting ? `<div class="notice notice-info import-loading" role="status"><span class="import-spinner" aria-hidden="true"></span>正在提交 ${(ui.importPreview || []).filter(r => !r.errors.length).length} 行成绩，请稍候…</div>` : ''}
         ${ui.importFileError ? `<div class="notice notice-error" role="alert">${esc(ui.importFileError)}</div>` : ''}
-        ${rows ? `<div class="import-preview-summary"><b>预览 ${rows.length} 行</b><span>通过 ${rows.length-errors} 行</span><span>错误 ${errors} 行</span>${ui.importSkipped ? `<span>新成绩未填 ${ui.importSkipped} 行，不更新</span>` : ''}<span>${exec?'执行已完成，以结果明细为准':'预览尚未写入评分'}</span></div><div class="import-preview-tabs" aria-label="预览分类">${[['all','全部',rows.length],['error','错误',errors],['valid','通过',rows.length-errors]].map(([id,label,count])=>`<button class="btn btn-sm ${(!ui.importFilter&&id==='all')||ui.importFilter===id?'btn-primary':''}" data-act="import-filter" data-filter="${id}">${label}（${count}）</button>`).join('')}${hasError?'<button class="btn btn-sm" data-act="import-export-errors">导出错误明细</button>':''}${exec?'':`<span class="import-table-ops">${hasError || dirty ? `<span class="import-submit-hint">${dirty ? '还有修改未校验' : '还有错误未处理'}，全部通过后才能提交</span>` : ''}<button class="btn btn-sm" data-act="import-revalidate-all">重新校验</button><button class="btn btn-sm btn-primary" data-act="import-execute" ${hasError || dirty || ui.importReading ? 'aria-disabled="true" disabled' : ''}>提交（${rows.length - errors} 行）</button></span>`}</div>` : ''}
+        ${rows ? `<div class="import-preview-tabs" aria-label="预览分类">${[['all','全部',rows.length],['error','错误',errors],['valid','通过',rows.length-errors]].map(([id,label,count])=>`<button class="btn btn-sm ${(!ui.importFilter&&id==='all')||ui.importFilter===id?'btn-primary':''}" data-act="import-filter" data-filter="${id}">${label}（${count}）</button>`).join('')}${hasError?'<button class="btn btn-sm" data-act="import-export-errors">导出错误明细</button>':''}${ui.importSkipped ? `<span class="import-muted">新成绩未填 ${ui.importSkipped} 行，不更新</span>` : ''}${exec?'':`<span class="import-table-ops">${hasError || dirty ? `<span class="import-submit-hint">${dirty ? '还有修改未校验' : '还有错误未处理'}，全部通过后才能提交</span>` : ''}<button class="btn btn-sm" data-act="import-revalidate-all">重新校验</button><button class="btn btn-sm btn-primary" data-act="import-execute" ${hasError || dirty || ui.importReading || ui.importSubmitting ? 'aria-disabled="true" disabled' : ''}>提交（${rows.length - errors} 行）</button></span>`}</div>` : ''}
         ${dirty && !exec ? `<div class="notice notice-warn"><span class="notice-icon">!</span>
           <div>有 ${dirty} 行分数已修改尚未校验，请点「重新校验」。</div></div>` : ''}
         ${hasError && !exec ? `<div class="notice notice-error"><span class="notice-icon">×</span>
           <div>共 ${errors} 行校验未通过。分数问题可直接在表格中修改，改完后重新校验。</div></div>` : ''}
         ${exec ? renderExecResult(exec) : ''}
-        ${exec?`<details class="import-requirements"><summary>查看本批预览</summary>${table}</details>`:table}
+        ${exec ? '' : table}
         ${rows ? `<div class="import-actions">
           <button class="btn" data-act="import-clear">清空预览</button>
         </div>` : ''}
         ${ui.importConfirm && rows && !hasError && !exec ? `<section class="import-confirm" aria-label="确认提交"><h3>确认提交 ${rows.length} 行评分？</h3><p>能力分将直接取导入值，覆盖原结果；已有导入分将被本次值替换。课程及学习记录保持不变。</p><button class="btn btn-primary" data-act="import-confirm-execute">确认提交</button><button class="btn" data-act="import-cancel-execute">返回核对</button></section>` : ''}
       </section>
+      ${ui.importHistoryDrawer ? renderImportHistory() : ''}
 
       ${renderFormulaCard()}
       ${ui.importScope?.picker ? renderImportPicker() : ''}
@@ -852,7 +853,7 @@
         </div>
         <button class="btn btn-sm" data-act="import-template" ${ids.length ? '' : 'disabled'}>下载模板</button></li>
       <li><b><i>2</i>填写新成绩，上传文件</b><span>只填最后一列「新成绩」，其他列不用改。</span>
-        <button class="btn btn-sm btn-primary" data-act="import-choose" ${ui.importReading ? 'disabled' : ''}>上传文件</button></li>
+        <div class="import-upload-row"><button class="btn btn-sm btn-primary" data-act="import-choose" ${ui.importReading ? 'disabled' : ''}>上传文件</button>${ui.importSource ? `<span class="import-file-name" title="${esc(ui.importSource)}">${esc(ui.importSource)}</span>` : ''}</div></li>
       <li><b><i>3</i>核对、修改并提交</b><span>错误可在表格中直接改，重新校验全部通过后提交。</span></li>
     </ol>`;
   }
@@ -878,17 +879,19 @@
       <div><b>执行完成</b>（${esc(exec.execAt)}）：成功 <b>${exec.ok}</b> 行，失败 <b>${exec.fail}</b> 行。
       ${exec.fail ? '请查看下方失败原因。' : ''}</div>
     </div>
-    <div class="table-wrap" style="margin-bottom:14px;"><table class="tbl">
-      <thead><tr><th style="width:52px;">行号</th><th>员工</th><th>末级标签</th><th>结果</th><th class="num">当前能力分</th></tr></thead>
-      <tbody>${exec.results.map((r) => `<tr class="${r.status === 'failed' ? 'row-error' : ''}">
+    <div class="table-wrap" style="margin-bottom:14px;"><table class="tbl import-table">
+      <thead><tr><th style="width:52px;">行号</th><th>工号</th><th>姓名</th><th>一级标签</th><th>二级标签</th><th>三级标签</th><th class="num">新成绩</th><th>结果</th><th class="num">当前能力分</th></tr></thead>
+      <tbody>${exec.results.map((r) => { const path = r.pathInput || window.GP_IMPORT.tagPath(r.graphId, r.tagId); return `<tr class="${r.status === 'failed' ? 'row-error' : ''}">
         <td class="num">${r.sourceLine || r.rowNo}</td>
-        <td>${esc(r.personName)}</td>
-        <td>${esc(r.tagLabel)}</td>
+        <td class="mono">${esc(r.employeeCode || personCode(r.userId) || '—')}</td>
+        <td>${esc(r.userNameInput || r.personName || '—')}</td>
+        <td>${esc(path[0] || '—')}</td><td>${esc(path[1] || '—')}</td><td>${esc(path[2] || '—')}</td>
+        <td class="num">${esc(Number.isFinite(r.score) ? r.score : r.scoreInput || '—')}</td>
         <td>${r.status === 'success'
           ? '<span style="color:#52c41a;">成功</span>'
           : '<span style="color:#ff4d4f;">失败：' + esc(r.reason) + '</span>'}</td>
         <td class="num" style="font-weight:700;">${r.status === 'success' ? r.current : '—'}</td>
-      </tr>`).join('')}</tbody>
+      </tr>`; }).join('')}</tbody>
     </table></div>`;
   }
 
@@ -3458,6 +3461,15 @@
       case 'import-filter': ui.importFilter=t.dataset.filter; render(); break;
       case 'import-export-errors': exportImportErrors(); break;
       case 'import-execute': if(ui.importPreview && !ui.importExecResult && !ui.importPreview.some(r=>r.errors.length||r.dirty)) {ui.importConfirm=true;render();} break;
+      case 'import-history-open': ui.importHistoryDrawer = true; render(); break;
+      case 'import-history-close': if (t.classList.contains('import-drawer-mask') && e.target.closest('.import-drawer')) break; ui.importHistoryDrawer = false; render(); break;
+      case 'import-history-download': {
+        const h = importHistoryList().find(x => x.id === t.dataset.id); if (!h) break;
+        const rows = [['工号','姓名','一级标签','二级标签','三级标签','导入前','新成绩','结果','原因'],
+          ...h.items.map(it => [it.code || '', it.name || '', it.path[0] || '', it.path[1] || '', it.path[2] || '', it.before == null ? '未导入' : it.before, Number.isFinite(Number(it.score)) && it.score !== '' ? Number(it.score) : (it.score ?? ''), it.status === 'success' ? '成功' : '失败', it.reason || ''])];
+        importXlsxDownload(`导入明细-${graphName(S.selectedGraphId)}-${h.at.replace(/[\/:]/g, '').replace(/\s+/g, '-')}.xlsx`, rows, [12, 10, 14, 14, 16, 10, 10, 8, 40]);
+        break;
+      }
       case 'import-scope-mode': { const sc = importScope(); sc.mode = t.value === 'some' ? 'some' : 'all'; if (sc.mode === 'some' && !sc.selected.length) sc.picker = { draft: [], kw: '', dept: '' }; render(); break; }
       case 'import-pick-open': { const sc = importScope(); sc.picker = { draft: sc.selected.slice(), kw: '', dept: '' }; render(); break; }
       case 'import-pick-toggle': { const pk = importScope().picker; if (pk) { const id = t.dataset.uid; pk.draft = t.checked ? [...new Set([...pk.draft, id])] : pk.draft.filter(x => x !== id); render(); } break; }
@@ -3468,7 +3480,13 @@
       case 'import-revalidate-row': if(ui.importPreview && !ui.importExecResult){ui.importPreview=window.GP_IMPORT.revalidate(ui.importPreview, Number(t.dataset.row));ui.importConfirm=false;render();} break;
       case 'import-revalidate-all': if(ui.importPreview && !ui.importExecResult){ui.importPreview=window.GP_IMPORT.revalidate(ui.importPreview);ui.importConfirm=false;const e=ui.importPreview.filter(r=>r.errors.length).length;toast(e?`重新校验完成：仍有 ${e} 行错误`:'重新校验完成：全部通过',e?'warning':'success');render();} break;
       case 'import-cancel-execute': ui.importConfirm=false;render();break;
-      case 'import-confirm-execute': if(ui.importConfirm){ui.importConfirm=false;doImportExecute();} break;
+      case 'import-confirm-execute': if(ui.importConfirm && !ui.importSubmitting){
+        ui.importConfirm=false;
+        const delay=ui.importSubmitDelay ?? 900;
+        if(!delay){doImportExecute();break;}
+        ui.importSubmitting=true;render();
+        setTimeout(()=>{ui.importSubmitting=false;if(ui.page==='import'&&ui.importPreview)doImportExecute();else render();},delay);
+      } break;
       case 'import-template': downloadTemplate(); break;
     }
   }
@@ -3570,6 +3588,7 @@
     if (control && e.key === 'Enter' && control.dataset.act === 'mgmt-name') { window.GP_MANAGEMENT.action('mgmt-query',control,extensionContext()); e.preventDefault(); return; }
 
     if (e.key === 'Escape') {
+      if (ui.importHistoryDrawer) { ui.importHistoryDrawer=false;render();return; }
       if (ui.importConfirm) { ui.importConfirm=false;render();return; }
       if (ui.cockpitAdmin?.confirmDelete) { ui.cockpitAdmin.confirmDelete=null; render(); return; }
       if (ui.pdGraphModal) { ui.pdGraphModal=false; render(); document.querySelector('[data-act="pd-open-graph"]')?.focus(); return; }
@@ -3587,6 +3606,7 @@
   /* keydown 绑在 document 上：Esc 时焦点可能在 body 上，不能只依赖 #app 冒泡 */
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      if (ui.importHistoryDrawer) { ui.importHistoryDrawer=false;render();return; }
       if (ui.importConfirm) { ui.importConfirm=false;render();return; }
       if (ui.cockpitAdmin?.confirmDelete) { ui.cockpitAdmin.confirmDelete=null; render(); return; }
       if (ui.pdGraphModal) { ui.pdGraphModal=false; render(); document.querySelector('[data-act="pd-open-graph"]')?.focus(); return; }
@@ -3848,12 +3868,51 @@
   }
 
   /* ---- 导入执行 ---- */
+  function recordImportHistory(res) {
+    const gid = S.selectedGraphId;
+    S.importHistory ||= {};
+    const list = S.importHistory[gid] ||= [];
+    list.unshift({
+      id: 'h' + Date.now().toString(36) + list.length,
+      at: new Date().toLocaleString('zh-CN', { hour12: false }),
+      file: ui.importSource || '—',
+      actor: ui.actor.userName,
+      people: new Set(res.results.map(r => r.userId).filter(Boolean)).size,
+      ok: res.ok, fail: res.fail, skipped: ui.importSkipped || 0,
+      items: res.results.map(r => ({
+        code: r.employeeCode || personCode(r.userId), name: r.userNameInput || r.personName || '',
+        path: r.pathInput || window.GP_IMPORT.tagPath(r.graphId, r.tagId),
+        before: r.latest == null ? null : r.latest, score: Number.isFinite(r.score) ? r.score : r.scoreInput,
+        status: r.status, reason: r.reason || '',
+      })),
+    });
+  }
+
+  function importHistoryList() { return (S.importHistory || {})[S.selectedGraphId] || []; }
+  function renderImportHistory() {
+    const list = importHistoryList();
+    const card = h => `<article class="import-record" data-history="${esc(h.id)}">
+        <div class="import-record-top"><b>${esc(h.at)}</b>${h.fail ? '<span class="import-history-tag warn">部分失败</span>' : '<span class="import-history-tag ok">成功</span>'}</div>
+        <div class="import-record-file" title="${esc(h.file)}">${esc(h.file)}</div>
+        <div class="import-record-meta"><span>${esc(h.actor)}</span><span>涉及学员 <b>${h.people}</b></span><span>写入 <b>${h.ok}</b></span><span>未填跳过 <b>${h.skipped}</b></span><span>失败 <b>${h.fail}</b></span></div>
+        <button class="btn-link" data-act="import-history-download" data-id="${esc(h.id)}">下载明细</button>
+      </article>`;
+    return `<div class="modal-mask import-drawer-mask" data-act="import-history-close">
+      <aside class="import-drawer" role="dialog" aria-modal="true" aria-labelledby="import-drawer-title">
+        <header class="import-drawer-head"><h2 id="import-drawer-title">导入记录</h2>
+          <button type="button" class="import-drawer-close" data-act="import-history-close" aria-label="关闭导入记录">×</button></header>
+        <div class="import-drawer-body">${list.length ? list.map(card).join('') : '<div class="import-history-empty">还没有导入记录。提交后会在这里留下记录，可随时查看每次写入了哪些成绩。</div>'}</div>
+      </aside>
+    </div>`;
+  }
+
   function doImportExecute() {
     const rows = ui.importPreview;
     if (!rows) return;
     if (rows.some((r) => r.errors.length || r.dirty)) { toast('还有错误或未校验的修改，不能提交', 'error'); return; }
     const res = window.GP_IMPORT.execute(rows, ui.showFailMode);
     ui.importExecResult = res;
+    recordImportHistory(res);
     ui.lastAction = `执行导入：成功 ${res.ok} / 失败 ${res.fail}`;
     toast(res.fail ? `执行结束：成功 ${res.ok} 行，失败 ${res.fail} 行` : `执行成功 ${res.ok} 行`, res.fail ? 'warning' : 'success');
     render();

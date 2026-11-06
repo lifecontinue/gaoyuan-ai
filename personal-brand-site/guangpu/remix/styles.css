@@ -2954,3 +2954,49 @@ table.tbl .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, mo
 .import-pick .modal-foot { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
 .import-pick-count { margin-right: auto; color: var(--text-65); font-size: 13px; }
 @media (max-width: 900px) { .import-steps { grid-template-columns: 1fr; } .import-pick-row { grid-template-columns: 20px 1fr 1fr; } }
+
+/* 评分导入：导入记录 */
+.import-history { margin: 8px 0 24px; padding: 16px 20px; border: 1px solid var(--border-light); border-radius: 4px; background: #fff; }
+.import-history-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.import-history-head h2 { margin: 0; font-size: 15px; color: var(--text-85); }
+.import-history-table td, .import-history-table th { white-space: nowrap; font-size: 13px; }
+.import-history-detail > td { background: #fafbfd; padding: 8px 12px 12px; }
+.import-history-detail .tbl td, .import-history-detail .tbl th { font-size: 12px; white-space: nowrap; }
+.import-history-tag { display: inline-block; padding: 0 8px; line-height: 20px; border-radius: 10px; font-size: 12px; }
+.import-history-tag.ok { background: #f6ffed; color: #389e0d; }
+.import-history-tag.warn { background: #fff7e6; color: #d46b08; }
+.import-history-empty { padding: 18px; text-align: center; color: var(--text-45); font-size: 13px; border: 1px dashed var(--border); border-radius: 4px; }
+
+/* 评分导入：导入记录抽屉 */
+.import-drawer-mask { justify-content: flex-end; align-items: stretch; padding: 0; }
+.import-drawer { width: min(520px, 100vw); height: 100%; background: #fff; display: flex; flex-direction: column; box-shadow: var(--shadow-modal); }
+.import-drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border-light); }
+.import-drawer-head h2 { margin: 0 0 2px; font-size: 16px; }
+.import-drawer-close { border: 0; background: none; font-size: 22px; line-height: 1; color: var(--text-45); cursor: pointer; }
+.import-drawer-body { flex: 1; overflow: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+.import-record { border: 1px solid var(--border-light); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.import-record-top { display: flex; align-items: center; justify-content: space-between; }
+.import-record-file { color: var(--text-65); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.import-record-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--text-45); font-size: 12px; }
+.import-record-meta b { color: var(--text-85); font-weight: 600; }
+.import-record .btn-link { align-self: flex-start; padding: 0; font-size: 12px; }
+.import-record .import-history-detail { border-top: 1px solid var(--border-light); padding-top: 8px; overflow-x: auto; }
+.import-record .import-history-detail td, .import-record .import-history-detail th { font-size: 12px; }
+.import-record .import-history-detail small { display: block; color: var(--text-45); }
+
+.import-upload-row { margin-top: auto; display: flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%; }
+.import-upload-row .btn { margin-top: 0; flex: none; }
+.import-file-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-85); font-weight: 600; font-size: 13px; }
+
+/* 评分导入：加载动画与抽屉滑入 */
+.import-loading { display: flex; align-items: center; gap: 10px; }
+.import-spinner { width: 16px; height: 16px; flex: none; border-radius: 50%; border: 2px solid rgba(24, 136, 255, .25); border-top-color: var(--primary); animation: import-spin .8s linear infinite; }
+@keyframes import-spin { to { transform: rotate(360deg); } }
+.import-drawer-mask { animation: import-fade .18s ease-out; }
+.import-drawer { animation: import-slide .22s ease-out; }
+@keyframes import-fade { from { background: rgba(0, 0, 0, 0); } }
+@keyframes import-slide { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .import-spinner { animation: none; border-top-color: rgba(24, 136, 255, .25); border-left-color: var(--primary); }
+  .import-drawer, .import-drawer-mask { animation: none; }
+}
