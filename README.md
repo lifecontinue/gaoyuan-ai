@@ -20,6 +20,7 @@
 | `Vibe Coding 课件/` | Vibe Coding 课件 | 课程资料 |
 | `collab-whiteboard/` | 协作白板（Collab Whiteboard） | Miro 类单文件 HTML 协作白板，可配置 Supabase 后端 + localStorage 回退 |
 | `tank-wars/` | 坦克大战（Tank Wars） | 纯静态 Canvas 小游戏（index.html + css + js），无构建、无依赖 |
+| `personal-brand-site/admin-design-system-demo/` | 21TB 管理端设计系统可点击 demo | 静态 HTML 原型，线上路径 `/admin-design-system-demo/` |
 | `poop-tracker/` | 宝宝便便记录（Baby Poop Tracker） | 单文件 HTML 移动应用（Tailwind/FontAwesome CDN + localStorage） |
 | `pm-growth-os/` | PM 成长操作系统（PM Growth OS） | React 19 + Vite + TS + Supabase 全栈应用（.env 占位，需配 Tavily/WandB/Langfuse 等） |
 

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>系统设置 · 岗位管理 · 21TB 管理端原型</title>
+    <link rel="stylesheet" href="css/ads.css" />
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" hidden>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" />
+      </symbol>
+      <symbol id="i-org" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="3" />
+        <path d="M5 19a7 7 0 0 1 14 0" />
+      </symbol>
+      <symbol id="i-exam" viewBox="0 0 24 24">
+        <path d="M8 4h8a2 2 0 0 1 2 2v14l-6-3-6 3V6a2 2 0 0 1 2-2z" />
+      </symbol>
+      <symbol id="i-course" viewBox="0 0 24 24">
+        <rect x="4" y="5" width="16" height="14" rx="2" />
+        <path d="M8 9h8M8 13h5" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v5l3 2" />
+      </symbol>
+      <symbol id="i-community" viewBox="0 0 24 24">
+        <circle cx="9" cy="9" r="2.5" />
+        <circle cx="16" cy="10" r="2" />
+        <path d="M4.5 18a4.5 4.5 0 0 1 9 0M13 18a3.5 3.5 0 0 1 6.5 0" />
+      </symbol>
+      <symbol id="i-map" viewBox="0 0 24 24">
+        <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z" />
+        <circle cx="12" cy="11" r="1.8" />
+      </symbol>
+      <symbol id="i-eval" viewBox="0 0 24 24">
+        <rect x="5" y="4" width="14" height="16" rx="2" />
+        <path d="M8 9h8M8 13h6" />
+      </symbol>
+      <symbol id="i-resource" viewBox="0 0 24 24">
+        <rect x="4" y="6" width="16" height="12" rx="2" />
+        <path d="M4 10h16" />
+      </symbol>
+      <symbol id="i-report" viewBox="0 0 24 24">
+        <path d="M6 20V10M12 20V4M18 20v-7" />
+      </symbol>
+      <symbol id="i-apps" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="6" height="6" rx="1" />
+        <rect x="14" y="4" width="6" height="6" rx="1" />
+        <rect x="4" y="14" width="6" height="6" rx="1" />
+        <rect x="14" y="14" width="6" height="6" rx="1" />
+      </symbol>
+      <symbol id="i-setting" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.4 1a7 7 0 0 0-2.1-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2.1 1.2l-2.4-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 2.1 1.2L10 21h4l.4-2.7a7 7 0 0 0 2.1-1.2l2.4 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"
+        />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="6" />
+        <path d="m20 20-3.5-3.5" />
+      </symbol>
+      <symbol id="i-help" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01" />
+      </symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24">
+        <path d="M7 7h11M15 4l3 3-3 3M17 17H6M9 14l-3 3 3 3" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-down" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+      <symbol id="i-columns" viewBox="0 0 24 24">
+        <rect x="4" y="5" width="16" height="14" rx="2" />
+        <path d="M10 5v14M14 5v14" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <aside class="sider" aria-label="功能菜单">
+        <div class="brand">
+          <div class="brand-mark">光</div>
+          <div>
+            <div class="brand-name">时代光华</div>
+            <div class="brand-sub">21TB 管理端</div>
+          </div>
+        </div>
+        <nav class="menu">
+          <button class="menu-item" type="button" data-nav="home">
+            <svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg>
+            <span class="menu-label">首页</span>
+          </button>
+          <button class="menu-item" type="button" data-nav="org">
+            <svg class="icon" aria-hidden="true"><use href="#i-org"></use></svg>
+            <span class="menu-label">组织管理</span>
+          </button>
+          <button class="menu-item" type="button" data-nav="exam">
+            <svg class="icon" aria-hidden="true"><use href="#i-exam"></use></svg>
+            <span class="menu-label">考试管理</span>
+          </button>
+          <button class="menu-item" type="button" data-nav="course">
+            <svg class="icon" aria-hidden="true"><use href="#i-course"></use></svg>
+            <span class="menu-label">课程管理</span>
+          </button>
+          <button class="menu-item" type="button" data-nav="community">
+            <svg class="icon" aria-hidden="true"><use href="#i-community"></use></svg>
+            <span class="menu-label">学习社区</span>
+          </button>
+          <button class="menu-item" type="button" data-nav="eval">
+            <svg class="icon" aria-hidden="true"><use href="#i-eval"></use></svg>
+            <span class="menu-label">评估调研</span>
+          </button>
+          <button class="menu-item" type="button" data-nav="resource">
+            <svg class="icon" aria-hidden="true"><use href="#i-resource"></use></svg>
+            <span class="menu-label">资源管理</span>
+          </button>
+          <button class="menu-item is-active" type="button" data-nav="setting">
+            <svg class="icon" aria-hidden="true"><use href="#i-setting"></use></svg>
+            <span class="menu-label">平台设置</span>
+          </button>
+        </nav>
+        <div class="sider-foot">
+          <button class="menu-item" type="button" id="btn-spec" title="组件规范对照">
+            <svg class="icon" aria-hidden="true"><use href="#i-apps"></use></svg>
+            <span class="menu-label">组件规范</span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <nav class="crumb" aria-label="面包屑">
+            <span>首页</span>
+            <span class="crumb-sep">/</span>
+            <span>平台设置</span>
+            <span class="crumb-sep">/</span>
+            <strong id="crumb-current">岗位管理</strong>
+          </nav>
+          <div class="top-actions">
+            <input class="ads-input top-search" type="search" placeholder="搜索功能或岗位" />
+            <button class="icon-btn" type="button" aria-label="帮助中心">
+              <svg class="icon" aria-hidden="true"><use href="#i-help"></use></svg>
+            </button>
+            <button class="icon-btn" type="button" aria-label="切换身份">
+              <svg class="icon" aria-hidden="true"><use href="#i-swap"></use></svg>
+            </button>
+            <div class="user-chip">
+              <span class="avatar">陈</span>
+              <span>陈敏</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="spec-strip" id="spec-strip">
+          <span class="spec-label">组件规范 · Button / Tag</span>
+          <span class="spec-swatch" title="--ads-theme-6"></span>
+          <button class="ads-btn ads-btn-primary" type="button">主按钮</button>
+          <button class="ads-btn ads-btn-default" type="button">默认按钮</button>
+          <button class="ads-btn ads-btn-danger" type="button">危险按钮</button>
+          <button class="ads-btn ads-btn-text" type="button">文字按钮</button>
+          <button class="ads-btn ads-btn-primary" type="button" disabled>禁用</button>
+          <span class="ads-tag ads-tag-primary">进行中</span>
+          <span class="ads-tag ads-tag-success">已启用</span>
+          <span class="ads-tag ads-tag-default">已停用</span>
+          <span class="ads-tag ads-tag-danger">已过期</span>
+        </div>
+
+        <div class="workspace">
+          <aside class="tree-panel" aria-label="人才发展">
+            <div class="tree-title">
+              <span class="tree-folder" aria-hidden="true"></span>
+              人才发展
+            </div>
+            <button class="tree-item is-active" type="button" data-tree="job">岗位管理</button>
+            <button class="tree-item" type="button" data-tree="job-path">岗位发展通道</button>
+            <button class="tree-item" type="button" data-tree="rank-path">职级发展通道</button>
+            <button class="tree-item" type="button" data-tree="competency">胜任力管理</button>
+            <button class="tree-item" type="button" data-tree="qualify">任职资格管理</button>
+            <button class="tree-item" type="button" data-tree="assess">测评中心</button>
+            <button class="tree-item" type="button" data-tree="idp">个人发展计划</button>
+            <button class="tree-item" type="button" data-tree="sys">系统设置</button>
+          </aside>
+
+          <section class="page-card" id="page-list">
+            <div class="page-head">
+              <div>
+                <h1 class="page-title" id="page-title">岗位管理</h1>
+                <p class="page-desc" id="page-desc">
+                  系统设置案例模板：筛选 → 工具栏 → 表格 → 底栏「已选 N 条」左 / 分页右。点「编辑」开 md 640 抽屉，点「查看」开 xl 960 抽屉。
+                </p>
+              </div>
+            </div>
+
+            <div class="tabs" role="tablist" id="tabs">
+              <button class="tab is-active" type="button" role="tab" data-tab="list">岗位管理</button>
+              <button class="tab" type="button" role="tab" data-tab="spec">岗位说明书</button>
+              <button class="tab" type="button" role="tab" data-tab="cert">岗位认证</button>
+              <button class="tab" type="button" role="tab" data-tab="map">岗位地图</button>
+            </div>
+
+            <form class="filter-form" id="filter-form" autocomplete="off">
+              <div class="filter-item">
+                <label for="f-name">岗位名称：</label>
+                <input class="ads-input" id="f-name" name="name" placeholder="请输入" />
+              </div>
+              <div class="filter-item">
+                <label for="f-code">岗位编码：</label>
+                <input class="ads-input" id="f-code" name="code" placeholder="请输入" />
+              </div>
+              <div class="filter-item">
+                <label for="f-dept">所属部门：</label>
+                <select class="ads-select" id="f-dept" name="dept">
+                  <option value="">全部</option>
+                  <option>人力资源中心</option>
+                  <option>学习发展部</option>
+                  <option>产品研发中心</option>
+                  <option>销售管理部</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label for="f-status">状态：</label>
+                <select class="ads-select" id="f-status" name="status">
+                  <option value="">全部</option>
+                  <option value="on">启用</option>
+                  <option value="off">停用</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button class="ads-btn ads-btn-primary" type="submit">查询</button>
+                <button class="ads-btn ads-btn-default" type="reset" id="btn-reset">重置</button>
+              </div>
+            </form>
+
+            <div class="toolbar">
+              <div class="toolbar-left">
+                <button class="ads-btn ads-btn-primary" type="button" id="btn-create">
+                  <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                  新增岗位
+                </button>
+                <button class="ads-btn ads-btn-default" type="button" id="btn-import">导入</button>
+                <button class="ads-btn ads-btn-default" type="button" id="btn-export">导出</button>
+              </div>
+              <div class="toolbar-right">
+                <button class="ads-btn ads-btn-default" type="button" id="btn-cols" title="自定义列">
+                  <svg class="icon" aria-hidden="true"><use href="#i-columns"></use></svg>
+                  自定义列
+                </button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="ads-table" id="job-table">
+                <thead>
+                  <tr>
+                    <th class="col-check">
+                      <input class="ads-checkbox" type="checkbox" id="check-all" aria-label="全选" />
+                    </th>
+                    <th>岗位名称</th>
+                    <th>岗位编码</th>
+                    <th>所属部门</th>
+                    <th>职级带宽</th>
+                    <th>在岗人数</th>
+                    <th>状态</th>
+                    <th>更新时间</th>
+                    <th class="col-ops">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="job-tbody"></tbody>
+              </table>
+              <div class="empty" id="empty-state" hidden>暂无数据，请调整筛选条件或新增岗位</div>
+            </div>
+
+            <div class="table-foot">
+              <div class="selected-count">
+                <span>已选 <b id="selected-n">0</b> 条</span>
+                <button class="ads-btn ads-btn-text" type="button" id="btn-clear-sel" hidden>取消选择</button>
+              </div>
+              <div class="pagination" aria-label="分页">
+                <span id="page-total">共 0 条</span>
+                <button class="page-btn" type="button" id="page-prev" aria-label="上一页">&lt;</button>
+                <div id="page-nums"></div>
+                <button class="page-btn" type="button" id="page-next" aria-label="下一页">&gt;</button>
+                <select class="ads-select size-select" id="page-size" aria-label="每页条数">
+                  <option value="10">10 条/页</option>
+                  <option value="50">50 条/页</option>
+                  <option value="100">100 条/页</option>
+                  <option value="200">200 条/页</option>
+                </select>
+                <span>跳至</span>
+                <input class="ads-input jump-input" id="page-jump" inputmode="numeric" aria-label="跳页" />
+                <span>页</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="mask" id="mask"></div>
+    <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+      <div class="drawer-head">
+        <h2 class="drawer-title" id="drawer-title">编辑岗位</h2>
+        <button class="icon-btn" type="button" id="drawer-close" aria-label="关闭">
+          <svg class="icon" aria-hidden="true"><use href="#i-close"></use></svg>
+        </button>
+      </div>
+      <div class="drawer-body" id="drawer-body"></div>
+      <div class="drawer-foot" id="drawer-foot"></div>
+    </aside>
+
+    <div class="popconfirm" id="popconfirm" role="dialog">
+      <p>删除后不可恢复，确认删除该岗位？</p>
+      <div class="popconfirm-actions">
+        <button class="ads-btn ads-btn-default" type="button" id="pop-cancel">取消</button>
+        <button class="ads-btn ads-btn-danger" type="button" id="pop-ok">删除</button>
+      </div>
+    </div>
+
+    <div class="message" id="message" role="status"></div>
+    <script src="js/demo.js"></script>
+  </body>
+</html>
