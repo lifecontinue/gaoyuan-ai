@@ -1343,10 +1343,6 @@ function stepSetting() {
       ${f('计算总分和平均分', `<span class="row" style="gap:24px"><label class="switch"><input type="checkbox" id="trimHiSet" ${state.trimHi ? 'checked' : ''} /> 去掉最高分</label><label class="switch"><input type="checkbox" id="trimLoSet" ${state.trimLo ? 'checked' : ''} /> 去掉最低分</label></span>`, '在每种评测关系内各去一份，份数不足时不去')}
       ${f('问卷结果', `<span class="row" style="gap:24px"><label class="switch"><input type="radio" name="rankVis" value="1" ${state.rankVisible ? 'checked' : ''} /> 允许学员查看排名</label><label class="switch"><input type="radio" name="rankVis" value="0" ${state.rankVisible ? '' : 'checked'} /> 禁止学员查看</label></span>`)}
       ${f('综合得分显示', `<label class="switch"><input type="checkbox" id="showTotalSet" ${state.showTotal ? 'checked' : ''} /> 作答时末尾显示已评项总分</label>`)}
-      ${f('允许扫码参与', `${sw('scanOn', st.scanOn)}${st.scanOn ? `<div class="col" style="gap:6px;margin-top:8px">
-          <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'list' ? 'checked' : ''} data-scan="list" /> 只允许评测人名单内的人</label>
-          <label class="switch"><input type="radio" name="scanSet" ${state.stu.scanRule === 'pick' ? 'checked' : ''} data-scan="pick" /> 任何人可扫码，自己选择被评测对象</label>
-          <button class="btn link" data-toast="已下载作答二维码" style="align-self:flex-start">下载二维码</button></div>` : ''}`, '开启后，允许通过扫码参与评估')}
       ${f('提交提示', `<input type="text" id="submitTipSet" value="${state.submitTip}" maxlength="50" aria-label="提交提示" />`, '评测人全部提交后看到的提示')}`)}
     ${sec('remind', '调查提醒', remind)}
   </div>`;
@@ -1471,13 +1467,7 @@ function pageStudent() {
       <h2>进入方式</h2>
       <div class="col">
         <button class="btn" data-stu-entry="todo">从待办进入（钱五）</button>
-        <button class="btn" data-stu-entry="scanIn">扫码进入（钱五，名单内）</button>
-        <button class="btn" data-stu-entry="scanOut">扫码进入（孙六，名单外）</button>
       </div>
-      <h2 style="margin-top:20px">扫码规则</h2>
-      <label class="switch"><input type="radio" name="scanRule" value="list" ${s.scanRule === 'list' ? 'checked' : ''} /> 只允许评测人名单内的人参与</label>
-      <label class="switch" style="margin-top:8px"><input type="radio" name="scanRule" value="pick" ${s.scanRule === 'pick' ? 'checked' : ''} /> 任何人扫码可参与，自己选择被评测对象</label>
-      <p class="note" style="margin-top:8px">自选被评测对象时，评测关系记为「学员」，按该对象「学员」关系的权重计分；对象没有「学员」关系时，不能被自选。</p>
       <label class="switch" style="margin-top:12px"><input type="checkbox" id="stuRankVis" ${state.rankVisible ? 'checked' : ''} /> 允许学员查看排名</label>
       <h2 style="margin-top:20px">规则</h2>
       <ul class="note" style="padding-left:18px">
@@ -1979,7 +1969,7 @@ function pageDetail() {
         .map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
     <div class="card"><h2>计分与设置</h2>
       ${[['计分题', `${scoredCount()} 道，满分 ${fmt(fullScore())} 分`], ['题目权重', state.qWeightOn ? '已开启' : '未开启'], ['按关系加权', state.relWeightOn ? '已开启，按对象各自设置' : '未开启'],
-         ['去掉最高分、最低分', state.trim ? '已开启' : '未开启'], ['调查模式', state.anon ? '匿名模式' : '管理模式'], ['扫码参与', state.stu.scanRule === 'pick' ? '任何人可扫码，自己选择被评测对象' : '只允许评测人名单内的人'],
+         ['去掉最高分、最低分', state.trim ? '已开启' : '未开启'], ['调查模式', state.anon ? '匿名模式' : '管理模式'], 
          ['学员查看排名', state.rankVisible ? '允许' : '不允许']].map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
   </div>
   ${isEval(p) ? `<div class="card"><h2>被评测对象与评测关系（${state.projObjects.length} 个对象）</h2><div class="scroll"><table>
