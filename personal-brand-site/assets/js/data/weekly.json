@@ -3,6 +3,14 @@
   "description": "每周一份。新一期放到 content/weekly/，再把这条记录加到 issues 最前面。",
   "issues": [
     {
+      "slug": "2026-11-06",
+      "title": "企业学习与 AI 产品战略研判周报",
+      "volume": "Vol. 003",
+      "period": "2026-10-30 — 2026-11-06",
+      "summary": "企业学习竞争开始转向把 AI 训练嵌入真实工作流程，并验证能力是否改善。",
+      "markdown": "content/weekly/2026-11-06.md"
+    },
+    {
       "slug": "2026-10-30",
       "title": "企业学习与 AI 产品战略研判周报",
       "volume": "Vol. 002",
