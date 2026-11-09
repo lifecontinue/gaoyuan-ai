@@ -20,7 +20,19 @@ a:hover{text-decoration:underline}
 .top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .top b{font-size:16px;font-weight:500}
 .top .meta{color:var(--text3);font-size:12px;line-height:20px}
-.top .links{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;font-size:12px}
+.top .links{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;font-size:12px;align-items:center}
+.btn{height:28px;padding:0 12px;border:1px solid var(--border);border-radius:4px;background:#fff;color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary:hover{background:#2A6BDD;border-color:#2A6BDD}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+body.editing .doc-edit{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+body.editing .doc-edit:focus{outline-color:#2A6BDD}
+.edit-hint{display:none;font-size:12px;line-height:20px;color:var(--primary);background:var(--soft);padding:8px 12px;border-radius:4px;margin-bottom:12px}
+body.editing .edit-hint{display:block}
+.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);box-shadow:0 4px 16px rgba(0,0,0,.12);padding:8px 14px;border-radius:4px;font-size:12px;display:none;z-index:40}
+.dirty-dot{width:6px;height:6px;border-radius:50%;background:var(--warn);display:none}
+body.has-draft .dirty-dot{display:inline-block}
 .wrap{max-width:1180px;margin:0 auto;padding:20px 24px 64px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px}
 nav{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;padding:8px 0}
 nav a{display:block;padding:6px 10px;border-radius:4px;color:var(--text2);font-size:12px;line-height:20px}
@@ -61,10 +73,16 @@ input[type=checkbox]{margin-right:6px}
     <div class="meta">面向内部研发 · 定稿 2026-11-06 · 负责人 高源</div>
   </div>
   <div class="links">
+    <span class="dirty-dot" title="本机有未同步的草稿" aria-hidden="true"></span>
+    <button type="button" class="btn primary" id="btnEdit">编辑</button>
+    <button type="button" class="btn" id="btnSave" disabled>保存到本机</button>
+    <button type="button" class="btn" id="btnExport" disabled>导出 HTML</button>
+    <button type="button" class="btn" id="btnReset" disabled>恢复发布版</button>
     <a href="/survey-evaluation-merge/">交互原型</a>
     <a href="https://shuiiiiqqq.feishu.cn/docx/Oy1YdkAMTosQkXxoUmfcyTWPnbh">飞书定稿</a>
   </div>
 </header>
+<div class="toast" id="toast" role="status"></div>
 <div class="wrap">
 <nav aria-label="目录">
   <div class="g">阅读路径</div>
@@ -77,6 +95,8 @@ input[type=checkbox]{margin-right:6px}
   <a href="#s4">4. 验收标准</a>
 </nav>
 <main>
+  <div class="edit-hint">编辑中：可直接改正文与表格。改完点「保存到本机」（仅当前浏览器）。「导出 HTML」可下载整页发给别人；「恢复发布版」清掉本机草稿。</div>
+  <div id="docRoot">
   <section class="card hero" id="top">
     <h1>【调查管理】评估管理并入调查：接入方统一入口、讲师池评测关系带权重、评估结果多维分析</h1>
     <p>本文给公司内部开发使用：先看要解决什么、相对现网改了什么，再实现业务逻辑与功能，最后按验收打勾。依赖仓 <code>app-qsm</code>；360 评估不在范围。</p>
@@ -1791,17 +1811,126 @@ input[type=checkbox]{margin-right:6px}
 <li>[ ] 混合培训、远程督导创建的评估型调查，在调查管理里基本信息、对象和关系只读，列表提示「由{来源应用}创建，请到{来源应用}修改」；监控、统计排名、导出可用。</li>
 </ul></section>
 
-  <p class="note">源 Markdown：<code>30-prd/oem-merge-into-survey/prd-oem-merge-into-survey-2026-11-03.md</code>。本页由构建脚本生成，冲突时以飞书定稿与本地 Markdown 为准。</p>
+  <p class="note">源 Markdown：<code>30-prd/oem-merge-into-survey/prd-oem-merge-into-survey-2026-11-03.md</code>。本页可浏览器内编辑并保存到本机；冲突时以飞书定稿与本地 Markdown 为准。</p>
+  </div>
 </main>
 </div>
 <script>
-// Soft-anchor ids for renamed subsections
-document.querySelectorAll('h3').forEach(h => {
-  const t = h.textContent || '';
-  if (t.includes('需求列表')) h.id = 's3-1';
-  if (t.includes('业务流程') || t.includes('计分')) h.id = h.id || 's3-2';
-  if (t.includes('功能列表') || t.includes('功能说明')) h.id = h.id || 's3-4';
-});
+(function () {
+  const KEY = 'survey-evaluation-merge-prd:v1';
+  const root = document.getElementById('docRoot');
+  const btnEdit = document.getElementById('btnEdit');
+  const btnSave = document.getElementById('btnSave');
+  const btnExport = document.getElementById('btnExport');
+  const btnReset = document.getElementById('btnReset');
+  const toastEl = document.getElementById('toast');
+  let editing = false;
+  let baseline = root.innerHTML;
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.style.display = 'block';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => { toastEl.style.display = 'none'; }, 2200);
+  }
+  function markAnchors() {
+    document.querySelectorAll('h3').forEach(h => {
+      const t = h.textContent || '';
+      if (t.includes('需求列表')) h.id = 's3-1';
+      if (t.includes('业务流程') || t.includes('计分')) h.id = h.id || 's3-2';
+      if (t.includes('功能列表') || t.includes('功能说明')) h.id = h.id || 's3-4';
+    });
+  }
+  function enhanceChecks() {
+    root.querySelectorAll('li').forEach(li => {
+      const t = li.textContent || '';
+      if (!/^\[ \]/.test(t.trim()) && !li.querySelector('input[type=checkbox]')) return;
+      if (li.querySelector('input[type=checkbox]')) return;
+      const raw = li.innerHTML.replace(/^\s*\[ \]\s*/, '');
+      li.innerHTML = '';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.setAttribute('aria-label', '验收项');
+      li.appendChild(cb);
+      const span = document.createElement('span');
+      span.innerHTML = raw;
+      li.appendChild(span);
+    });
+  }
+  function setEditing(on) {
+    editing = on;
+    document.body.classList.toggle('editing', on);
+    root.contentEditable = on ? 'true' : 'false';
+    root.classList.toggle('doc-edit', on);
+    btnEdit.textContent = on ? '完成编辑' : '编辑';
+    btnSave.disabled = !on;
+    btnExport.disabled = false;
+    btnReset.disabled = !localStorage.getItem(KEY);
+    if (on) root.focus({ preventScroll: true });
+  }
+  function saveLocal() {
+    localStorage.setItem(KEY, root.innerHTML);
+    document.body.classList.add('has-draft');
+    btnReset.disabled = false;
+    toast('已保存到本机浏览器');
+  }
+  function loadLocal() {
+    const html = localStorage.getItem(KEY);
+    if (!html) return false;
+    root.innerHTML = html;
+    document.body.classList.add('has-draft');
+    btnReset.disabled = false;
+    markAnchors();
+    return true;
+  }
+  function resetPublished() {
+    if (!confirm('恢复为当前线上发布版？本机草稿会清除。')) return;
+    localStorage.removeItem(KEY);
+    root.innerHTML = baseline;
+    document.body.classList.remove('has-draft');
+    btnReset.disabled = true;
+    markAnchors();
+    enhanceChecks();
+    setEditing(false);
+    toast('已恢复发布版');
+  }
+  function exportHtml() {
+    const clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('#btnEdit,#btnSave,#btnExport,#btnReset,.dirty-dot,.edit-hint,.toast').forEach(el => el.remove());
+    const doc = '<!DOCTYPE html>\n' + clone.outerHTML;
+    const blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'survey-evaluation-merge-prd.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('已导出 HTML');
+  }
+
+  enhanceChecks();
+  markAnchors();
+  if (loadLocal()) toast('已载入本机草稿');
+  btnExport.disabled = false;
+  btnReset.disabled = !localStorage.getItem(KEY);
+
+  btnEdit.onclick = () => {
+    if (editing) { setEditing(false); toast('已退出编辑'); }
+    else setEditing(true);
+  };
+  btnSave.onclick = () => { if (editing) saveLocal(); };
+  btnExport.onclick = exportHtml;
+  btnReset.onclick = resetPublished;
+  root.addEventListener('input', () => {
+    if (editing) { btnSave.disabled = false; document.body.classList.add('has-draft'); }
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      if (!editing) return;
+      e.preventDefault();
+      saveLocal();
+    }
+  });
+})();
 </script>
 </body>
 </html>
