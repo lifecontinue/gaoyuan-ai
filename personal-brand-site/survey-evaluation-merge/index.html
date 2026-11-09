@@ -421,7 +421,7 @@
   .sc-left::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
   .sc-left::-webkit-scrollbar-thumb:hover { background: #B5B5B5; border: 2px solid transparent; background-clip: padding-box; }
   .sc-block { display: flex; flex-direction: column; gap: 10px; flex: none; }
-  .sc-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 320px)); gap: 12px; justify-content: start; }
+  .sc-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .sc-group { display: flex; align-items: baseline; gap: 10px; min-height: var(--sc-group-h); }
   .sc-group b { font-weight: 500; font-size: 14px; }
   .sc-card { position: relative; display: flex; flex-direction: row; align-items: stretch; text-align: left; background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 0; cursor: pointer; overflow: hidden; min-height: 96px;
@@ -458,7 +458,6 @@
   }
   .sc-card.blank:active { transform: none; box-shadow: 0 0 0 4px rgba(1,82,217,.16); }
   .sc-card.blank.on { border-style: solid; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
-  .sc-card.blank .sc-go { opacity: 1; transform: none; }
 
   .sc-pv { position: absolute; top: calc(var(--sc-group-h) + 10px); right: 0; bottom: 0; width: 340px; background: #fff; border: 1px solid var(--primary); border-radius: 8px; padding: 16px 18px; overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; box-shadow: 0 0 0 3px var(--primary-soft); transition: box-shadow .28s var(--ease), border-color .2s; }
   .sc-pv::before { content: ""; position: absolute; left: -14px; top: 28px; width: 10px; height: 2px; background: var(--primary); opacity: .55; pointer-events: none; }
@@ -496,7 +495,7 @@
     .sc { display: block; overflow: visible; }
     .sc-body { position: static; overflow: visible; height: auto; }
     .sc-left { position: static; inset: auto; overflow: visible; height: auto; padding-right: 0; }
-    .sc-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 320px)); }
+    .sc-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .sc-pv { position: static; width: 100%; top: auto; right: auto; bottom: auto; margin-top: 16px; max-height: none; }
   }
   @media (max-width: 760px) {
