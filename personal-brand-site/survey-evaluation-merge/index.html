@@ -286,12 +286,26 @@
   .tpl-table td { vertical-align: top; }
   .nowrap { white-space: nowrap; }
   .btn.link.err { color: var(--danger); }
-  .filters { display: flex; flex-wrap: wrap; gap: 16px 20px; align-items: center; padding: 16px 0 0; }
+  .filters { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; padding: 16px 0 0; overflow: visible; }
   .filters > label { display: inline-flex; align-items: center; gap: 0; color: var(--text-1); white-space: nowrap; }
-  .filters > label input, .filters > label select { min-width: 160px; }
-  .filters input[type=text] { width: 160px; }
-  /* 列表行高 46：单元格不换行，表格在卡片内横向滚动；操作列固定在右侧 */
+  .filters > label input[type=text] { width: 120px; min-width: 120px; }
+  .filters > label select { width: 112px; min-width: 112px; }
+  .filters-range input[type=text] { width: 112px; min-width: 112px; }
+  .filters-range span { color: var(--text-3); margin: 0 4px; }
+  /* 列表行高 46：单元格不换行，表格在卡片内横向滚动；勾选列左固定、操作列右固定 */
   .plist td, .plist th { white-space: nowrap; }
+  .plist tr > :first-child {
+    position: sticky; left: 0; z-index: 2; background: #fff;
+    border-right: 1px solid var(--divider);
+    overflow: visible;
+  }
+  /* 阴影画在勾选列外侧（竖线右侧），盖住右侧横向滚动内容 */
+  .plist tr > :first-child::after {
+    content: ""; position: absolute; top: 0; bottom: 0; right: -12px; width: 12px;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(15, 23, 42, .14), rgba(15, 23, 42, 0));
+  }
+  .plist thead tr > :first-child { background: var(--block); z-index: 3; }
   .plist tr > :last-child {
     position: sticky; right: 0; z-index: 2; background: #fff;
     border-left: 1px solid var(--divider);
@@ -305,6 +319,7 @@
   }
   .plist thead tr > :last-child { background: var(--block); z-index: 3; }
   .plist tbody tr:hover td { background: var(--block); }
+  .plist tbody tr:hover > :first-child,
   .plist tbody tr:hover > :last-child { background: var(--block); }
   .ops { min-width: 230px; padding-left: 16px; }
   .op { border: none; background: none; color: var(--primary); cursor: pointer; padding: 0 8px 0 0; font: inherit; font-size: 14px; line-height: 24px; }
@@ -1812,7 +1827,7 @@ for (let i = 1; i <= 14; i++) {
   state.projects.push(P(`P2026${String(i).padStart(4, '0')}`, `2026 年第 ${i} 期讲师授课评估`, '评估型调查', '讲师满意度评估', ['高源', '唐佳宁', '苏利敏'][i % 3],
     st === '草稿' ? '' : `2026-0${(i % 9) + 1}-01 09:00`, st === '草稿' ? '' : `2026-0${(i % 9) + 1}-10 18:00`, st, `2026-0${(i % 9) + 1}-01`, st === '已结束' ? 30 + i : (st === '进行中' ? i : 0), st === '草稿' ? 0 : 40, i % 5 === 0 ? '面授管理' : '评估调查'));
 }
-state.listF = { kw: '', qn: '', status: '', type: '', source: '' };
+state.listF = { kw: '', creator: '', createdFrom: '', createdTo: '', status: '', type: '', source: '' };
 state.listQ = { ...state.listF };
 state.page_no = 1; state.page_size = 10; state.listSel = [];
 state.pid = DEMO_PID;
@@ -1861,7 +1876,10 @@ function opsCell(p) {
 
 function listRows() {
   const f = state.listQ;
-  return state.projects.filter(p => (!f.kw || p.code.includes(f.kw) || p.name.includes(f.kw)) && (!f.qn || p.qn.includes(f.qn))
+  return state.projects.filter(p => (!f.kw || p.code.includes(f.kw) || p.name.includes(f.kw))
+    && (!f.creator || p.creator.includes(f.creator))
+    && (!f.createdFrom || (p.created || '') >= f.createdFrom)
+    && (!f.createdTo || (p.created || '') <= f.createdTo)
     && (!f.status || p.status === f.status) && (!f.type || p.type === f.type) && (!f.source || p.source === f.source))
     .sort((a, b) => (b.created || '').localeCompare(a.created || '') || (b.code || '').localeCompare(a.code || ''));
 }
@@ -1874,8 +1892,9 @@ function pageList() {
   return `${subnav('list')}
   <div class="card">
     <div class="filters">
-      <label>项目编号/名称：<input type="text" id="fKw" value="${f.kw}" /></label>
-      <label>使用问卷：<input type="text" id="fQn" value="${f.qn}" /></label>
+      <label>编号/名称：<input type="text" id="fKw" value="${f.kw}" /></label>
+      <label>创建人：<input type="text" id="fCreator" value="${f.creator || ''}" /></label>
+      <label class="filters-range">创建时间：<input type="text" id="fCreatedFrom" value="${f.createdFrom || ''}" placeholder="开始日期" aria-label="创建开始日期" /> <span>-</span> <input type="text" id="fCreatedTo" value="${f.createdTo || ''}" placeholder="结束日期" aria-label="创建结束日期" /></label>
       <label>状态：<select id="fStatus"><option value="">全部</option>${['草稿', '未开始', '进行中', '已结束', '已作废'].map(s => `<option ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
       <label>类型：<select id="fType"><option value="">全部</option>${[['普通调查', '调查问卷'], ['评估型调查', '评估问卷']].map(([v, t]) => `<option value="${v}" ${f.type === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
       <label>项目来源：<select id="fSource"><option value="">全部</option>${['评估调查', '学习地图', '面授管理', '混合培训', '远程督导'].map(s => `<option ${f.source === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
@@ -2640,7 +2659,7 @@ function bindOps() {
     if (terr) { toast(terr); return; }
     const n = state.projects.length + 1, code = `P${TODAY.replace(/-/g, '')}${String(n).padStart(2, '0')}`;
     state.projects.unshift({ ...m.p, id: code, code, name, status: '草稿', start: main.querySelector('#cpStart').value.trim(), end: main.querySelector('#cpEnd').value.trim(), created: TODAY, done: 0, total: 0, source: '评估调查', creator: '高源' });
-    state.opModal = null; state.page_no = 1; state.listQ = { kw: '', qn: '', status: '', type: '', source: '' }; state.listF = { ...state.listQ }; go('list'); toast(`已复制为草稿「${name}」`);
+    state.opModal = null; state.page_no = 1; state.listQ = { kw: '', creator: '', createdFrom: '', createdTo: '', status: '', type: '', source: '' }; state.listF = { ...state.listQ }; go('list'); toast(`已复制为草稿「${name}」`);
   });
   on('#auOk', 'click', () => {
     const picks = [...main.querySelectorAll('[data-au]:checked')].length;
@@ -2651,8 +2670,8 @@ function bindOps() {
   });
   // 列表筛选与分页
   const lf = id => main.querySelector(id)?.value.trim() ?? '';
-  on('#fGo', 'click', () => { state.listF = { kw: lf('#fKw'), qn: lf('#fQn'), status: lf('#fStatus'), type: lf('#fType'), source: lf('#fSource') }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
-  on('#fReset', 'click', () => { state.listF = { kw: '', qn: '', status: '', type: '', source: '' }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
+  on('#fGo', 'click', () => { state.listF = { kw: lf('#fKw'), creator: lf('#fCreator'), createdFrom: lf('#fCreatedFrom'), createdTo: lf('#fCreatedTo'), status: lf('#fStatus'), type: lf('#fType'), source: lf('#fSource') }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
+  on('#fReset', 'click', () => { state.listF = { kw: '', creator: '', createdFrom: '', createdTo: '', status: '', type: '', source: '' }; state.listQ = { ...state.listF }; state.page_no = 1; render(); });
   bindQtpl();
   main.querySelectorAll('[data-lsel]').forEach(c => c.onchange = () => { const id = c.dataset.lsel; state.listSel = c.checked ? [...state.listSel, id] : state.listSel.filter(x => x !== id); render(); });
   on('#lAll', 'change', e => { const ids = [...main.querySelectorAll('[data-lsel]')].map(c => c.dataset.lsel); state.listSel = e.target.checked ? [...new Set([...state.listSel, ...ids])] : state.listSel.filter(x => !ids.includes(x)); render(); });
@@ -2725,7 +2744,7 @@ function publishProject(name, start, end) {
     state.projects.unshift(p);
   }
   state.editPid = null; state.pid = p.id; state.step = 'score'; state.page_no = 1;
-  state.listQ = { kw: '', qn: '', status: '', type: '', source: '' }; state.listF = { ...state.listQ };
+  state.listQ = { kw: '', creator: '', createdFrom: '', createdTo: '', status: '', type: '', source: '' }; state.listF = { ...state.listQ };
   go('list'); toast(`已发布「${name}」，状态：${status}`);
 }
 
