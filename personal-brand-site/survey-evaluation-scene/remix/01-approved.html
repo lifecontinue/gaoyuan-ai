@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>样式 1 · 认可底稿</title>
+<link rel="stylesheet" href="shell.css" />
+<style>
+  /* ===== 只改这一段 =====
+     认可截图：白卡片、选中铺浅蓝并加蓝框、灰底筛选胶囊、底栏白卡片。 */
+  :root {
+    --page: #f8f8f8;
+    --card: #fff;
+    --line: #e5e5e5;
+    --text: #1f1f1f;
+    --muted: #595959;
+    --meta: #8c8c8c;
+    --blue: #0152d9;
+    --blue-soft: #eef4ff;
+    --radius: 8px;
+    --gap: 12px;
+    --card-pad: 16px;
+  }
+  body { background: var(--page); }
+  .banner { background: var(--blue-soft); color: var(--muted); border-radius: var(--radius); padding: 8px 14px; font-size: 12px; line-height: 20px; }
+  .back { border: 0; background: none; color: var(--blue); padding: 10px 0; cursor: pointer; }
+  .hero { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 24px 16px; }
+  .hero h2 { margin: 0 0 8px; font-size: 24px; line-height: 32px; font-weight: 500; }
+  .hero p { margin: 0; color: var(--muted); font-size: 14px; line-height: 22px; }
+  .steps { display: flex; gap: 16px; margin-top: 14px; color: var(--muted); font-size: 14px; }
+  .steps b { color: var(--blue); font-weight: 500; }
+  .steps .on { color: var(--text); font-weight: 500; }
+  .chips { display: inline-flex; gap: 4px; padding: 4px; margin: 16px 0 12px; background: #f5f5f5; border-radius: var(--radius); }
+  .chips button { height: 32px; padding: 0 16px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; }
+  .chips button.on { background: #fff; color: var(--blue); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap); }
+  .group { grid-column: 1 / -1; margin: 8px 0 0; font-size: 14px; line-height: 22px; font-weight: 500; }
+  .card { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--card-pad); min-height: 112px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+  .card b { font-size: 14px; line-height: 22px; font-weight: 500; }
+  .card p, .card .meta { margin: 0; font-size: 12px; line-height: 20px; }
+  .card p { color: var(--muted); }
+  .card .meta { margin-top: auto; color: var(--meta); }
+  .card:hover { border-color: #b9d0f7; }
+  .card.on { background: var(--blue-soft); border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .card.blank { border-style: dashed; }
+  .dock { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 14px 16px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+  .dock strong { font-weight: 500; }
+  .dock p { margin: 4px 0 0; color: var(--meta); font-size: 12px; line-height: 20px; }
+  .go { height: 32px; padding: 0 16px; border: 0; border-radius: 4px; background: var(--blue); color: #fff; cursor: pointer; white-space: nowrap; }
+  .go:hover { background: #2a6bdd; }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side" aria-label="应用导航">
+    <div class="brand">21</div>
+    <button class="nav" type="button">首页</button>
+    <button class="nav" type="button">组织结构</button>
+    <button class="nav" type="button">资源管理</button>
+    <button class="nav" type="button">线上培训</button>
+    <button class="nav on" type="button">评估调研</button>
+    <button class="nav" type="button">考试管理</button>
+    <button class="nav" type="button">报表管理</button>
+    <button class="nav" type="button">平台设置</button>
+  </nav>
+  <div class="shell">
+    <header class="top">
+      <button class="tab" type="button">评估管理</button>
+      <button class="tab on" type="button">调查管理(新)</button>
+      <span class="spacer"></span>
+      <span class="search">搜索应用</span>
+      <span class="who">切换学员</span>
+      <span class="who"><span class="avatar">高</span>高源</span>
+    </header>
+    <main><div id="stage"></div></main>
+  </div>
+</div>
+<script src="scene.js"></script>
+</body>
+</html>

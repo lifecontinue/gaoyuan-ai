@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>样式 3 · 左色条</title>
+<link rel="stylesheet" href="shell.css" />
+<style>
+  /* ===== 只改这一段 =====
+     选中靠左侧 3px 蓝条，卡片保持白底；空白模板用虚线；筛选是描边按钮。 */
+  :root {
+    --page: #f3f5f8;
+    --card: #fff;
+    --line: #d9d9d9;
+    --text: #1f1f1f;
+    --muted: #595959;
+    --meta: #8c8c8c;
+    --blue: #0152d9;
+    --blue-soft: #eef4ff;
+    --radius: 6px;
+    --gap: 10px;
+    --card-pad: 14px 14px 14px 16px;
+  }
+  body { background: var(--page); }
+  .banner { background: #fff; color: var(--muted); border-left: 3px solid var(--blue); padding: 8px 12px; font-size: 12px; line-height: 20px; }
+  .back { border: 0; background: none; color: var(--blue); padding: 12px 0 8px; cursor: pointer; }
+  .hero { background: var(--card); border-radius: var(--radius); padding: 18px 20px; }
+  .hero h2 { margin: 0 0 6px; font-size: 22px; line-height: 30px; font-weight: 500; }
+  .hero p { margin: 0; max-width: 640px; color: var(--muted); font-size: 14px; line-height: 22px; }
+  .steps { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .steps span { height: 28px; padding: 0 10px; border-radius: 14px; background: var(--page); color: var(--muted); font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+  .steps b { color: var(--blue); font-weight: 500; }
+  .steps .on { background: var(--blue-soft); color: var(--text); }
+  .chips { display: flex; gap: 8px; margin: 14px 0 10px; }
+  .chips button { height: 32px; padding: 0 14px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--text); cursor: pointer; }
+  .chips button.on { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+  .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap); }
+  .group { grid-column: 1 / -1; margin: 6px 0 0; font-size: 13px; line-height: 22px; font-weight: 500; }
+  .card { text-align: left; background: var(--card); border: 1px solid transparent; border-left: 3px solid #e5e5e5; border-radius: var(--radius); padding: var(--card-pad); min-height: 108px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 2px rgba(22, 51, 95, .06); }
+  .card b { font-size: 14px; line-height: 22px; font-weight: 500; }
+  .card p, .card .meta { margin: 0; font-size: 12px; line-height: 20px; }
+  .card p { color: var(--muted); }
+  .card .meta { margin-top: auto; color: var(--meta); }
+  .card:hover { border-left-color: #2a6bdd; }
+  .card.on { border-left-color: var(--blue); background: #fff; box-shadow: 0 0 0 1px #b9d0f7; }
+  .card.blank { background: transparent; border-style: dashed; border-left-style: solid; box-shadow: none; }
+  .dock { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 12px 14px; background: var(--card); border-radius: var(--radius); border-left: 3px solid var(--blue); }
+  .dock strong { font-weight: 500; }
+  .dock p { margin: 4px 0 0; color: var(--meta); font-size: 12px; line-height: 20px; }
+  .go { height: 32px; padding: 0 16px; border: 0; border-radius: 4px; background: var(--blue); color: #fff; cursor: pointer; }
+  .go:hover { background: #2a6bdd; }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side" aria-label="应用导航">
+    <div class="brand">21</div>
+    <button class="nav" type="button">首页</button>
+    <button class="nav" type="button">组织结构</button>
+    <button class="nav" type="button">资源管理</button>
+    <button class="nav" type="button">线上培训</button>
+    <button class="nav on" type="button">评估调研</button>
+    <button class="nav" type="button">考试管理</button>
+    <button class="nav" type="button">报表管理</button>
+    <button class="nav" type="button">平台设置</button>
+  </nav>
+  <div class="shell">
+    <header class="top">
+      <button class="tab" type="button">评估管理</button>
+      <button class="tab on" type="button">调查管理(新)</button>
+      <span class="spacer"></span>
+      <span class="search">搜索应用</span>
+      <span class="who">切换学员</span>
+      <span class="who"><span class="avatar">高</span>高源</span>
+    </header>
+    <main><div id="stage"></div></main>
+  </div>
+</div>
+<script src="scene.js"></script>
+</body>
+</html>
