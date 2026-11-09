@@ -110,7 +110,7 @@
   .mask.show { display: flex; }
   .modal { background: #fff; border-radius: 16px; padding: 24px; width: min(560px, calc(100vw - 32px)); }
   .modal .foot { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-  .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #fff; padding: 10px 16px; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,.12); display: none; z-index: 20; }
+  .toast { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); background: #fff; padding: 10px 16px; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,.12); display: none; z-index: 100; }
   .toast.show { display: block; }
   .scroll { overflow-x: auto; }
   .muted { color: var(--text-3); }
@@ -130,15 +130,15 @@
   main.editor-mode { padding: 0; }
   .ed { --e-primary: var(--primary); --e-primary-light: var(--primary-soft); --e-text: #1F1F1F; --e-text-2: #595959; --e-text-3: #8C8C8C;
         --e-border: #D9D9D9; --e-border-light: #E5E5E5; --e-danger: #FF4D4F;
-        display: flex; flex-direction: column; height: calc(100vh - 40px); background: #F8F8F8; font-size: 14px; color: var(--e-text); }
-  .ed-head { height: 64px; background: #fff; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--e-border-light); flex: none; }
+        display: flex; flex-direction: column; min-height: calc(100vh - 40px); background: #F8F8F8; font-size: 14px; color: var(--e-text); }
+  .ed-head { height: 64px; background: #fff; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--e-border-light); flex: none; position: sticky; top: 40px; z-index: 12; }
   .ed-head h1 { font-size: 16px; font-weight: 400; margin: 0; flex: 1; display: flex; align-items: center; gap: 8px; }
   .ed-btn { height: 32px; padding: 0 16px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--e-border); background: #fff; border-radius: 4px; color: var(--e-text-2); font-size: 14px; margin-left: 8px; cursor: pointer; white-space: nowrap; }
   .ed-btn:hover { color: var(--e-primary); border-color: var(--e-primary); }
   .ed-btn.primary:hover { background: var(--primary-hover); color: #fff; }
   .ed-btn.primary { background: var(--e-primary); border-color: var(--e-primary); color: #fff; }
-  .ed-body { flex: 1; display: grid; grid-template-columns: 188px minmax(0, 1fr) 288px; min-height: 0; }
-  .ed-pal { background: #fff; overflow-y: auto; padding: 16px; }
+  .ed-body { flex: 1; display: grid; grid-template-columns: 188px minmax(0, 1fr) 288px; align-items: start; }
+  .ed-pal { background: #fff; padding: 16px; position: sticky; top: 104px; max-height: calc(100vh - 104px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #C4C4C4 transparent; }
   .ed-pal-title { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--e-text-2); padding: 8px 0 4px; margin-top: 8px; }
   .ed-pal-title:first-child { margin-top: 0; }
   .ed-pal-title svg { width: 12px; height: 12px; }
@@ -148,7 +148,7 @@
   .ed-pal-item svg { width: 14px; height: 14px; flex: none; }
   .ed-pal-item .sc { margin-left: auto; font-size: 12px; color: var(--e-text-3); }
   .ed-pal-note { font-size: 12px; color: var(--e-text-3); line-height: 1.6; padding: 4px 2px 0; }
-  .ed-wrap { overflow-y: auto; padding: 0 24px 80px; background: var(--block); }
+  .ed-wrap { overflow: visible; padding: 0 24px 80px; background: var(--block); min-height: calc(100vh - 104px); }
   .ed-sum { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-radius: 4px; background: #EEF4FF; color: var(--e-text-2); font-size: 12px; padding: 8px 12px; margin: 12px 0 0; }
   .ed-sum b { color: var(--e-primary); font-weight: 600; }
   .ed-canvas { background: #fff; margin-top: 16px; border-radius: 8px; overflow: hidden; }
@@ -169,7 +169,7 @@
   .ed-stars span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .ed-stars span::before { content: "★"; color: #D9D9D9; font-size: 16px; }
   .ed-essay { height: 60px; border: 1px solid var(--e-border-light); border-radius: 3px; color: #BFBFBF; font-size: 12px; padding: 8px; }
-  .ed-props { background: #fff; padding: 16px 24px; overflow-y: auto; }
+  .ed-props { background: #fff; padding: 16px 24px; position: sticky; top: 104px; max-height: calc(100vh - 104px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #C4C4C4 transparent; }
   .ed-props h3 { font-size: 14px; font-weight: 500; margin: 0 0 16px; }
   .ed-props h4 { font-size: 12px; font-weight: 500; color: var(--e-text); margin: 20px 0 12px; padding-top: 16px; border-top: 1px solid var(--e-border-light); }
   .ed-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--e-text-2); margin-bottom: 16px; gap: 8px; }
@@ -415,9 +415,13 @@
   .sc-close svg { width: 16px; height: 16px; }
 
   .sc-body { position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; }
-  .sc-left { position: absolute; inset: 0 364px 0 0; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 12px 20px 0; display: flex; flex-direction: column; gap: 16px; scrollbar-gutter: stable; }
+  .sc-left { position: absolute; inset: 0 364px 0 0; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 10px 20px 0; display: flex; flex-direction: column; gap: 16px; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #C4C4C4 transparent; }
+  .sc-left::-webkit-scrollbar { width: 8px; }
+  .sc-left::-webkit-scrollbar-track { background: transparent; margin: 6px 0; }
+  .sc-left::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+  .sc-left::-webkit-scrollbar-thumb:hover { background: #B5B5B5; border: 2px solid transparent; background-clip: padding-box; }
   .sc-block { display: flex; flex-direction: column; gap: 10px; flex: none; }
-  .sc-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .sc-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 320px)); gap: 12px; justify-content: start; }
   .sc-group { display: flex; align-items: baseline; gap: 10px; min-height: var(--sc-group-h); }
   .sc-group b { font-weight: 500; font-size: 14px; }
   .sc-card { position: relative; display: flex; flex-direction: row; align-items: stretch; text-align: left; background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 0; cursor: pointer; overflow: hidden; min-height: 96px;
@@ -448,6 +452,11 @@
   .sc-card.blank { border: 1.5px dashed var(--primary); background: linear-gradient(90deg, #F5F9FF 0%, #fff 42%); box-shadow: inset 0 0 0 1px rgba(1,82,217,.04); }
   .sc-card.blank .sc-viz { background: radial-gradient(circle at center, rgba(1,82,217,.08), transparent 68%); border-right-color: #D6E4FF; }
   .sc-card.blank .sc-txt b { color: var(--primary); }
+  .sc-card.blank:hover, .sc-card.blank:focus-visible {
+    border-style: solid; border-color: var(--primary); background: linear-gradient(90deg, #EEF4FF 0%, #fff 48%);
+    box-shadow: 0 0 0 3px var(--primary-soft), 0 8px 20px rgba(1,82,217,.10); outline: none;
+  }
+  .sc-card.blank:active { transform: none; box-shadow: 0 0 0 4px rgba(1,82,217,.16); }
   .sc-card.blank.on { border-style: solid; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
   .sc-card.blank .sc-go { opacity: 1; transform: none; }
 
@@ -487,7 +496,7 @@
     .sc { display: block; overflow: visible; }
     .sc-body { position: static; overflow: visible; height: auto; }
     .sc-left { position: static; inset: auto; overflow: visible; height: auto; padding-right: 0; }
-    .sc-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .sc-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 320px)); }
     .sc-pv { position: static; width: 100%; top: auto; right: auto; bottom: auto; margin-top: 16px; max-height: none; }
   }
   @media (max-width: 760px) {
@@ -662,7 +671,7 @@ function render() {
 
 function pageLegacy() {
   return `<h1>我管理的评估</h1>
-  <div class="banner warn"><span>评估管理已并入调查管理，新建评估请到调查管理。历史评估可以继续查看排名和导出。</span>
+  <div class="banner warn"><span>评估管理已并入评估调查，新建评估请到评估调查。历史评估可以继续查看排名和导出。</span>
     <button class="btn primary" data-go="create">去新建评估型调查</button></div>
   <div class="card"><div class="scroll"><table>
     <thead><tr><th>评估名称</th><th>状态</th><th>结束时间</th><th>操作</th></tr></thead>
@@ -1163,7 +1172,7 @@ function objRows(o, oi) {
   const add = `<button class="btn link" data-addrel="${oi}">添加关系</button>`;
   const relRow = (r, ri) => `<tr class="${ri === o.rels.length - 1 ? 'objlast' : ''}">${ri === 0 ? head : ''}
       <td><input type="text" value="${r.name}" data-rname="${oi}.${ri}" placeholder="选填" maxlength="20" aria-label="评测关系" style="width:120px" /></td>
-      <td class="nowrap">${r.pick && r.pick.length ? pickText(r.pick) : '<span class="err">未选择</span>'} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button></td>
+      <td class="nowrap">${r.pick && r.pick.length ? pickText(r.pick) : '<span class="err">未选择</span>'} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button>${r.pick && r.pick.length ? ` <button class="btn link" data-clearwho="${oi}.${ri}">清除</button>` : ''}</td>
       <td class="nowrap"><span class="row" style="gap:12px;flex-wrap:nowrap"><button class="btn link" data-delrel="${oi}.${ri}">删除</button>${ri === o.rels.length - 1 ? add : ''}</span></td></tr>`;
   return o.rels.length ? o.rels.map(relRow).join('') : `<tr class="objlast">${head}<td colspan="2" class="err">还没有评测关系</td><td>${add}</td></tr>`;
 }
@@ -1395,11 +1404,24 @@ function bindRel() {
   on('#removeSel', 'click', () => { state.objects = state.objects.filter((_, i) => !state.objSel.includes(i)); state.objSel = []; render(); });
   main.querySelectorAll('[data-oname]').forEach(i => i.onchange = () => { state.objects[i.dataset.oname].name = i.value || '未命名对象'; });
   main.querySelectorAll('[data-rname]').forEach(i => i.onchange = () => { const [o, r] = at(i.dataset.rname); state.objects[o].rels[r].name = i.value.trim(); render(); });
-  main.querySelectorAll('[data-delrel]').forEach(b => b.onclick = () => { const [o, r] = at(b.dataset.delrel); state.objects[o].rels.splice(r, 1); render(); });
+  main.querySelectorAll('[data-delrel]').forEach(b => b.onclick = () => {
+    const [o, r] = at(b.dataset.delrel), obj = state.objects[o];
+    obj.rels.splice(r, 1);
+    if (!obj.rels.length) {
+      state.objects.splice(o, 1);
+      state.objSel = state.objSel.filter(i => i !== o).map(i => (i > o ? i - 1 : i));
+    }
+    render();
+  });
   main.querySelectorAll('[data-addrel]').forEach(b => b.onclick = () => { state.objects[b.dataset.addrel].rels.push(newRel()); render(); });
   main.querySelectorAll('[data-pickwho]').forEach(b => b.onclick = () => {
     const [o, r] = at(b.dataset.pickwho), rel = state.objects[o].rels[r];
     state.whoPick = { o, r, src: '指定人员', sel: [...(rel.pick || [])], q: '', dept: '' }; render();
+  });
+  main.querySelectorAll('[data-clearwho]').forEach(b => b.onclick = () => {
+    const [o, r] = at(b.dataset.clearwho), rel = state.objects[o].rels[r];
+    rel.pick = []; rel.count = 0; rel.who = '';
+    render(); toast('已清除评测人');
   });
   on('#openImport', 'click', () => { state.importOpen = true; state.importRes = null; state.importFile = ''; render(); });
   const impClose = () => { state.importOpen = false; state.importRes = null; render(); };
@@ -1566,7 +1588,7 @@ function tabDept() {
 
 function pageCallers() {
   const rows = [
-    ['评估管理官方入口', '新建、复制、管理评估项目', '跳到调查管理新建评估型调查；历史项目只读', '高源', '一期'],
+    ['评估管理官方入口', '新建、复制、管理评估项目', '跳到评估调查新建评估型调查；历史项目只读', '高源', '一期'],
     ['学习地图', 'findEstimationProject、publishOemProjectForRm、copyWithResource、完成回调', '评估型调查同类接口；完成回调由调查发出，内容不变', '待指定', '二期'],
     ['面授管理', 'FaceCourseRel、autoCreateObjectAndUser、对象数同步', '评估型调查接口；一键生成讲师对象和学员评测人', '待指定', '二期'],
     ['混合培训', '建评估项目（管理端草稿只能发布）', '评估型调查接口；管理端基本信息、对象和关系只读', '待指定', '二期'],
@@ -1774,22 +1796,22 @@ const TODAY = '2026-11-05';
 const DEMO_PID = 'P20261101';
 const P = (code, name, type, qn, creator, start, end, status, created, done, total, source) => ({ id: code, code, name, type, qn, creator, start, end, status, created, done, total, source });
 state.projects = [
-  P('P20261101', '2026 Q4 内训师授课评估', '评估型调查', '内训师授课评价表', '高源', '2026-11-01 09:00', '2026-11-15 18:00', '进行中', '2026-10-28', 23, 25, '调查管理'),
+  P('P20261101', '2026 Q4 内训师授课评估', '评估型调查', '内训师授课评价表', '高源', '2026-11-01 09:00', '2026-11-15 18:00', '进行中', '2026-10-28', 23, 25, '评估调查'),
   P('P20261102', '新员工入职培训讲师评价', '评估型调查', '讲师满意度评估', '高源', '2026-10-08 09:00', '2026-10-20 18:00', '已结束', '2026-10-06', 96, 100, '面授管理'),
   P('P20261103', '门店督导评估', '评估型调查', '督导能力评估表', '唐佳宁', '2026-11-02 09:00', '2026-11-30 18:00', '进行中', '2026-11-01', 18, 40, '远程督导'),
   P('P20261104', '管培生混合培训评估', '评估型调查', '讲师满意度评估', '苏利敏', '2026-11-20 09:00', '2026-12-05 18:00', '未开始', '2026-11-03', 0, 32, '混合培训'),
   P('P20261105', '销售训练营阶段评估', '评估型调查', '讲师满意度评估', '朱佳禾', '2026-11-18 09:00', '', '未开始', '2026-11-02', 0, 45, '学习地图'),
-  P('P20261106', '2026 Q4 课程开发技能评估', '评估型调查', '内训师授课评价表', '高源', '', '', '草稿', '2026-11-04', 0, 0, '调查管理'),
-  P('S20261107', '2026 年度培训需求调研', '普通调查', '培训需求调研问卷', '高源', '2026-10-25 09:00', '2026-11-30 18:00', '进行中', '2026-10-24', 312, 800, '调查管理'),
-  P('P20261108', '2026 Q3 内训师授课评估', '评估型调查', '内训师授课评价表', '高源', '2026-08-01 09:00', '2026-08-15 18:00', '已结束', '2026-07-28', 88, 90, '调查管理'),
-  P('P20261109', '华南晨会讲师评估', '评估型调查', '讲师满意度评估', '褚丽娜', '2026-09-19 11:31', '2026-09-30 11:31', '已作废', '2026-09-17', 0, 12, '调查管理'),
-  P('S20261110', '食堂满意度调查', '普通调查', '食堂满意度问卷', '李钊', '2026-11-10 09:00', '2026-11-20 18:00', '未开始', '2026-11-04', 0, 600, '调查管理'),
+  P('P20261106', '2026 Q4 课程开发技能评估', '评估型调查', '内训师授课评价表', '高源', '', '', '草稿', '2026-11-04', 0, 0, '评估调查'),
+  P('S20261107', '2026 年度培训需求调研', '普通调查', '培训需求调研问卷', '高源', '2026-10-25 09:00', '2026-11-30 18:00', '进行中', '2026-10-24', 312, 800, '评估调查'),
+  P('P20261108', '2026 Q3 内训师授课评估', '评估型调查', '内训师授课评价表', '高源', '2026-08-01 09:00', '2026-08-15 18:00', '已结束', '2026-07-28', 88, 90, '评估调查'),
+  P('P20261109', '华南晨会讲师评估', '评估型调查', '讲师满意度评估', '褚丽娜', '2026-09-19 11:31', '2026-09-30 11:31', '已作废', '2026-09-17', 0, 12, '评估调查'),
+  P('S20261110', '食堂满意度调查', '普通调查', '食堂满意度问卷', '李钊', '2026-11-10 09:00', '2026-11-20 18:00', '未开始', '2026-11-04', 0, 600, '评估调查'),
 ];
 // 补几页演示数据，用来演示分页
 for (let i = 1; i <= 14; i++) {
   const st = ['已结束', '已结束', '进行中', '草稿'][i % 4];
   state.projects.push(P(`P2026${String(i).padStart(4, '0')}`, `2026 年第 ${i} 期讲师授课评估`, '评估型调查', '讲师满意度评估', ['高源', '唐佳宁', '苏利敏'][i % 3],
-    st === '草稿' ? '' : `2026-0${(i % 9) + 1}-01 09:00`, st === '草稿' ? '' : `2026-0${(i % 9) + 1}-10 18:00`, st, `2026-0${(i % 9) + 1}-01`, st === '已结束' ? 30 + i : (st === '进行中' ? i : 0), st === '草稿' ? 0 : 40, i % 5 === 0 ? '面授管理' : '调查管理'));
+    st === '草稿' ? '' : `2026-0${(i % 9) + 1}-01 09:00`, st === '草稿' ? '' : `2026-0${(i % 9) + 1}-10 18:00`, st, `2026-0${(i % 9) + 1}-01`, st === '已结束' ? 30 + i : (st === '进行中' ? i : 0), st === '草稿' ? 0 : 40, i % 5 === 0 ? '面授管理' : '评估调查'));
 }
 state.listF = { kw: '', qn: '', status: '', type: '', source: '' };
 state.listQ = { ...state.listF };
@@ -1805,7 +1827,7 @@ state.opModal = null;
 
 const curProject = () => state.projects.find(p => p.id === state.pid) || state.projects[0];
 const isEval = p => p.type === '评估型调查';
-const fromOther = p => p.source !== '调查管理';
+const fromOther = p => p.source !== '评估调查';
 const validity = p => p.start ? `${p.start}～${p.end || '长期有效'}` : '-';
 const statusTag = s => ({ 草稿: '', 未开始: 'orange', 进行中: 'blue', 已结束: 'green', 已作废: 'red' })[s] || '';
 
@@ -1827,7 +1849,7 @@ function opRule(p, op) {
   };
   return rules[op];
 }
-const OPS = [['view', '查看'], ['edit', '编辑'], ['publish', '发布'], ['addUser', '加人员'], ['monitor', '监控'], ['stat', '统计排名'], ['copy', '复制'], ['export', '导出'], ['del', '删除'], ['abolish', '作废']];
+const OPS = [['edit', '编辑'], ['publish', '发布'], ['addUser', '调整人员'], ['monitor', '监控'], ['stat', '统计排名'], ['copy', '复制'], ['export', '导出'], ['del', '删除'], ['abolish', '作废']];
 function opsCell(p) {
   return OPS.map(([op, label]) => {
     const r = opRule(p, op);
@@ -1841,7 +1863,8 @@ function opsCell(p) {
 function listRows() {
   const f = state.listQ;
   return state.projects.filter(p => (!f.kw || p.code.includes(f.kw) || p.name.includes(f.kw)) && (!f.qn || p.qn.includes(f.qn))
-    && (!f.status || p.status === f.status) && (!f.type || p.type === f.type) && (!f.source || p.source === f.source));
+    && (!f.status || p.status === f.status) && (!f.type || p.type === f.type) && (!f.source || p.source === f.source))
+    .sort((a, b) => (b.created || '').localeCompare(a.created || '') || (b.code || '').localeCompare(a.code || ''));
 }
 
 function pageList() {
@@ -1856,7 +1879,7 @@ function pageList() {
       <label>使用问卷：<input type="text" id="fQn" value="${f.qn}" /></label>
       <label>状态：<select id="fStatus"><option value="">全部</option>${['草稿', '未开始', '进行中', '已结束', '已作废'].map(s => `<option ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
       <label>类型：<select id="fType"><option value="">全部</option>${[['普通调查', '调查问卷'], ['评估型调查', '评估问卷']].map(([v, t]) => `<option value="${v}" ${f.type === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-      <label>项目来源：<select id="fSource"><option value="">全部</option>${['调查管理', '学习地图', '面授管理', '混合培训', '远程督导'].map(s => `<option ${f.source === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+      <label>项目来源：<select id="fSource"><option value="">全部</option>${['评估调查', '学习地图', '面授管理', '混合培训', '远程督导'].map(s => `<option ${f.source === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
       <button class="btn primary" id="fGo">查询</button><button class="btn" id="fReset">重置</button>
     </div>
     <div class="row" style="margin:16px 0 12px">
@@ -1904,13 +1927,19 @@ function subnav(active) {
 // 列设置：与调查管理（新）现网一致，下拉勾选要显示的列，含「全选/不选」；勾选框列和操作列固定显示
 const LIST_COLS = [
   ['code', '编号', 'mono', p => p.code],
-  ['name', '项目名称', '', p => `<button class="btn link" data-op="${p.status === '草稿' ? 'edit' : 'view'}" data-pid="${p.id}" ${p.status === '草稿' && opRule(p, 'edit') ? 'disabled' : ''}>${p.name}</button> <span class="tag ${isEval(p) ? 'blue' : ''}">${isEval(p) ? '评估问卷' : '调查问卷'}</span>`],
-  ['qn', '使用问卷', '', p => p.qn],
-  ['creator', '创建人', '', p => p.creator],
+  ['name', '项目名称', '', p => {
+    const viewR = opRule(p, 'view'), editR = opRule(p, 'edit');
+    const op = viewR === '' ? 'view' : (editR === '' ? 'edit' : '');
+    const nameBtn = op
+      ? `<button class="btn link" data-op="${op}" data-pid="${p.id}">${p.name}</button>`
+      : `<button class="btn link" data-opoff="${viewR || editR || '暂不可查看'}" title="${viewR || editR || ''}">${p.name}</button>`;
+    return `${nameBtn} <span class="tag ${isEval(p) ? 'blue' : ''}">${isEval(p) ? '评估问卷' : '调查问卷'}</span>`;
+  }],
   ['time', '有效时间', 'nowrap', p => p.start ? `${p.start} ～ ${p.end || '长期有效'}` : '-'],
   ['status', '状态', '', p => `<span class="tag ${statusTag(p.status)}">${p.status}</span>`],
+  ['creator', '创建人', '', p => p.creator],
   ['created', '创建日期', 'nowrap', p => p.created],
-  ['fill', '已填/下发', 'num', p => p.total ? `${p.done}/${p.total}` : '--'],
+  ['fill', '已完成/总人数', 'num', p => p.total ? `${p.done}/${p.total}` : '--'],
   ['source', '项目来源', '', p => p.source],
 ];
 state.listCols = LIST_COLS.map(c => c[0]);
@@ -2257,25 +2286,78 @@ function pager(n, pages) {
 }
 
 /* ---------- 查看（只读） ---------- */
+state.detailTab = 'info';
+function detailActs(p) {
+  const btn = (op, label, cls = 'btn') => {
+    const r = opRule(p, op);
+    if (r === null || r === undefined) return '';
+    return r
+      ? `<button class="btn" disabled title="${r}">${label}</button>`
+      : `<button class="${cls}" data-op="${op}" data-pid="${p.id}">${label}</button>`;
+  };
+  return `${btn('edit', '编辑')}${btn('addUser', '调整人员')}${btn('monitor', '监控')}${isEval(p) ? btn('stat', '统计排名', 'btn primary') : ''}${btn('export', '导出')}`;
+}
+function detailPeople(p) {
+  if (isEval(p)) {
+    return `<div class="card"><h2>被评测对象与评测关系（${state.projObjects.length} 个对象）</h2>
+      <div class="scroll"><table>
+        <thead><tr><th>被评测对象</th><th>来源</th><th>评测关系</th><th>评测人</th></tr></thead>
+        <tbody>${state.projObjects.map(o => `<tr><td>${o.name}</td><td><span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span></td>
+          <td>${o.rels.map(r => r.name).join('、') || '-'}</td>
+          <td class="note">${o.rels.map(r => `${r.name || '评测人'}：${r.who || (r.pick && r.pick.length ? pickText(r.pick) : '未选择')}`).join('；')}</td></tr>`).join('')}</tbody>
+      </table></div>
+      <p class="note" style="margin-top:12px">${opRule(p, 'addUser') === '' ? '进行中可点「调整人员」增删评测人；问卷和对象结构不可改。' : (opRule(p, 'edit') === '' ? '未开始前可点「编辑」改对象与关系。' : '当前状态不能改人员。')}</p>
+    </div>`;
+  }
+  const roster = PEOPLE.slice(0, Math.min(8, Math.max(3, Math.floor((p.total || 6) / 80) || 6)));
+  return `<div class="card"><h2>学员名单（示意 ${p.total || roster.length} 人）</h2>
+    <div class="scroll"><table><thead><tr><th>姓名</th><th>工号</th><th>部门</th></tr></thead>
+      <tbody>${roster.map(u => `<tr><td>${u.name}</td><td class="mono">${u.code}</td><td>${u.dept}</td></tr>`).join('')}</tbody></table></div>
+    <p class="note" style="margin-top:12px">完整名单在发布后的参与范围中维护；此处为查看示意。</p></div>`;
+}
+function detailQs(p) {
+  const qs = state.edQs;
+  return `<div class="card"><h2>问卷：${p.qn || state.edHead.title}（${qs.length} 道题）</h2>
+    <p class="note" style="margin-bottom:12px">${state.edHead.desc || '暂无问卷说明'}</p>
+    <ol class="qlist">${qs.map((q, i) => `<li><span class="note">${no(i)}</span> ${q.title}
+      <span class="tag">${q.type}</span>
+      ${isEval(p) && q.score ? `<span class="note">权重 ${state.qWeightOn ? q.weight : 1}，本题满分 ${fmt(qFull(q))}</span>` : (isEval(p) ? '<span class="note">不计分</span>' : '')}
+    </li>`).join('')}</ol>
+    <p class="note" style="margin-top:12px">${opRule(p, 'edit') === '' ? '可点「编辑」修改问卷。' : '当前状态问卷只读。'}</p>
+  </div>`;
+}
+function detailInfo(p) {
+  return `<div class="card"><h2>基本信息</h2>
+    ${[['编号', p.code], ['项目名称', p.name], ['类型', p.type], ['使用问卷', p.qn], ['有效时间', validity(p)],
+       ['状态', `<span class="tag ${statusTag(p.status)}">${p.status}</span>`], ['创建人', p.creator], ['创建日期', p.created],
+       ['项目来源', p.source], ['完成进度', p.total ? `${p.done}/${p.total}` : '--'], ['说明', state.edHead.desc || '-']]
+      .map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}
+  </div>`;
+}
+function detailSet(p) {
+  const rows = isEval(p)
+    ? [['计分题', `${scoredCount()} 道，满分 ${fmt(fullScore())} 分`], ['题目权重', state.qWeightOn ? '已开启' : '未开启'],
+       ['去掉最高/最低分', `${state.trimHi ? '去最高' : '保留最高'} / ${state.trimLo ? '去最低' : '保留最低'}`],
+       ['问卷模式', state.anon ? '匿名模式' : '管理员模式'], ['学员查看排名', state.rankVisible ? '允许' : '不允许'],
+       ['综合得分显示', state.showTotal ? '作答末尾显示总分' : '不显示'], ['提交提示', state.submitTip || '感谢你的评价！']]
+    : [['调查模式', state.anon ? '匿名' : '实名'], ['学员查看整体结果', state.set.nResult ? '允许' : '仅看自己答卷'],
+       ['扫码参与', state.set.nScan ? '允许' : '不允许'], ['游客参与', state.set.nGuest ? '允许' : '不允许'],
+       ['重复参与', state.set.nRepeat ? '允许' : '不允许']];
+  return `<div class="card"><h2>项目配置</h2>
+    ${rows.map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}
+    <p class="note" style="margin-top:12px">${opRule(p, 'edit') === '' ? '可点「编辑」进入设置页修改。' : '发布后部分配置不可改；进行中请用「调整人员」。'}</p>
+  </div>`;
+}
 function pageDetail() {
-  const p = curProject(), demo = p.id === DEMO_PID;
-  return `<div class="row between"><h1>${p.name}</h1><span class="row"><button class="btn" data-go="list">返回列表</button>
-    ${opRule(p, 'monitor') === '' ? `<button class="btn" data-op="monitor" data-pid="${p.id}">监控</button>` : ''}${opRule(p, 'stat') === '' && isEval(p) ? `<button class="btn primary" data-op="stat" data-pid="${p.id}">统计排名</button>` : ''}</span></div>
-
-  <div class="grid2">
-    <div class="card"><h2>基本信息</h2>
-      ${[['编号', p.code], ['项目名称', p.name], ['类型', p.type], ['使用问卷', p.qn], ['有效时间', validity(p)], ['状态', `<span class="tag ${statusTag(p.status)}">${p.status}</span>`], ['创建人', p.creator], ['创建日期', p.created], ['项目来源', p.source], ['说明', state.edHead.desc]]
-        .map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
-    <div class="card"><h2>计分与设置</h2>
-      ${[['计分题', `${scoredCount()} 道，满分 ${fmt(fullScore())} 分`], ['题目权重', state.qWeightOn ? '已开启' : '未开启'],
-         ['去掉最高分、最低分', state.trim ? '已开启' : '未开启'], ['调查模式', state.anon ? '匿名模式' : '管理模式'], 
-         ['学员查看排名', state.rankVisible ? '允许' : '不允许']].map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
+  const p = curProject(), tab = state.detailTab || 'info';
+  const tabs = [['info', '基本信息'], ['q', '问卷'], ['people', isEval(p) ? '对象与评测人' : '学员名单'], ['set', '项目配置']];
+  const body = ({ info: () => detailInfo(p), q: () => detailQs(p), people: () => detailPeople(p), set: () => detailSet(p) })[tab]();
+  return `<div class="row between"><h1>${p.name} <span class="tag ${statusTag(p.status)}">${p.status}</span> <span class="tag ${isEval(p) ? 'blue' : ''}">${isEval(p) ? '评估问卷' : '调查问卷'}</span></h1>
+    <span class="row"><button class="btn" data-go="list">返回列表</button>${detailActs(p)}</span></div>
+  <div class="card" style="padding-bottom:0;margin-bottom:16px">
+    <div class="tabs" role="tablist">${tabs.map(([k, t]) => `<button role="tab" data-dtab="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
   </div>
-  ${isEval(p) ? `<div class="card"><h2>被评测对象与评测关系（${state.projObjects.length} 个对象）</h2><div class="scroll"><table>
-    <thead><tr><th>被评测对象</th><th>来源</th><th>评测关系</th><th>评测人</th></tr></thead>
-    <tbody>${state.projObjects.map(o => `<tr><td>${o.name}</td><td><span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span></td>
-      <td>${o.rels.map(r => r.name).join('、')}</td><td class="note">${o.rels.map(r => `${r.name}：${r.who || '未选择'}`).join('；')}</td></tr>`).join('')}</tbody></table></div></div>` : ''}
-  <div class="card"><h2>问卷（${state.edQs.length} 道题）</h2><ol class="qlist">${state.edQs.map(q => `<li>${q.title} <span class="tag">${q.type}</span> ${q.score ? `<span class="note">权重 ${state.qWeightOn ? q.weight : 1}，本题满分 ${fmt(qFull(q))}</span>` : '<span class="note">不计分</span>'}</li>`).join('')}</ol></div>
+  ${body}
   ${state.opModal ? opModal() : ''}`;
 }
 
@@ -2463,7 +2545,7 @@ function opModal() {
     <div class="field"><label>起止时间</label><span class="row"><input type="text" id="cpStart" value="" placeholder="如 2026-11-10 09:00" style="width:150px" /> 至 <input type="text" id="cpEnd" placeholder="不填为长期有效" style="width:150px" /></span></div>
     <label class="switch"><input type="checkbox" id="cpObj" checked /> 同时复制被评测对象和评测关系（不复制答卷）</label>
     <p class="note" style="margin-top:8px">复制后为草稿，编号自动生成；问卷、计分规则和项目设置一起复制。</p>`, 520, '<button class="btn" data-omclose>取消</button><button class="btn primary" id="cpOk">复制</button>');
-  if (m.kind === 'addUser') return wrap('加人员', `
+  if (m.kind === 'addUser') return wrap('调整人员', `
     <p class="note" style="margin:8px 0 12px">进行中的项目只能追加评测人，追加后按「（发布后）增加评测人」的渠道通知；已提交的答卷不受影响。</p>
     <div class="field"><label for="auObj">被评测对象</label><select id="auObj"><option value="">全部对象</option>${state.projObjects.map(o => `<option value="${o.id}">${o.name}</option>`).join('')}</select></div>
     <div class="field"><label for="auRel">评测关系</label><select id="auRel">${REL_NAMES.map(r => `<option>${r}</option>`).join('')}</select></div>
@@ -2534,7 +2616,7 @@ function bindOps() {
   main.querySelectorAll('[data-op]').forEach(b => b.onclick = () => {
     const p = state.projects.find(x => x.id === b.dataset.pid); state.pid = p.id;
     const op = b.dataset.op;
-    if (op === 'view') { state.opModal = null; go('detail'); }
+    if (op === 'view') { state.opModal = null; state.detailTab = 'info'; go('detail'); }
     if (op === 'edit') { state.opModal = null; if (!isEval(p)) { startCreate('normal', p.qn); state.editPid = p.id; render(); return; } state.createType = 'eval'; state.editPid = p.id; state.step = 'score'; state.selQ = null; go('create'); }
     if (op === 'monitor') { state.opModal = null; state.monSel = []; go('monitor'); }
     if (op === 'stat') { if (!isEval(p)) { toast('该功能暂未开放'); return; } state.opModal = null; state.tab = 'rank'; go('result'); }
@@ -2558,7 +2640,7 @@ function bindOps() {
     const terr = timeError(main.querySelector('#cpStart').value.trim(), main.querySelector('#cpEnd').value.trim());
     if (terr) { toast(terr); return; }
     const n = state.projects.length + 1, code = `P${TODAY.replace(/-/g, '')}${String(n).padStart(2, '0')}`;
-    state.projects.unshift({ ...m.p, id: code, code, name, status: '草稿', start: main.querySelector('#cpStart').value.trim(), end: main.querySelector('#cpEnd').value.trim(), created: TODAY, done: 0, total: 0, source: '调查管理', creator: '高源' });
+    state.projects.unshift({ ...m.p, id: code, code, name, status: '草稿', start: main.querySelector('#cpStart').value.trim(), end: main.querySelector('#cpEnd').value.trim(), created: TODAY, done: 0, total: 0, source: '评估调查', creator: '高源' });
     state.opModal = null; state.page_no = 1; state.listQ = { kw: '', qn: '', status: '', type: '', source: '' }; state.listF = { ...state.listQ }; go('list'); toast(`已复制为草稿「${name}」`);
   });
   on('#auOk', 'click', () => {
@@ -2640,7 +2722,7 @@ function publishProject(name, start, end) {
   if (p) Object.assign(p, { name, start: st, end, status, total: Math.max(p.total, total) });
   else {
     const code = `P${TODAY.replace(/-/g, '')}${String(state.projects.length + 1).padStart(2, '0')}`;
-    p = P(code, name, isNormal() ? '普通调查' : '评估型调查', state.edHead.title, '高源', st, end, status, TODAY, 0, isNormal() ? state.normalSel.length : total, '调查管理');
+    p = P(code, name, isNormal() ? '普通调查' : '评估型调查', state.edHead.title, '高源', st, end, status, TODAY, 0, isNormal() ? state.normalSel.length : total, '评估调查');
     state.projects.unshift(p);
   }
   state.editPid = null; state.pid = p.id; state.step = 'score'; state.page_no = 1;
@@ -2656,6 +2738,9 @@ function bind() {
   if (state.page === 'tplLib') bindTplLib();
   if (state.page === 'scene') bindScene();
   if (['list', 'detail', 'monitor', 'result'].includes(state.page)) bindOps();
+  if (state.page === 'detail') {
+    main.querySelectorAll('[data-dtab]').forEach(b => b.onclick = () => { state.detailTab = b.dataset.dtab; render(); });
+  }
   main.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
     state.opModal = null;
     if (b.dataset.go === 'list') { state.page_no = 1; state.listSel = []; }
