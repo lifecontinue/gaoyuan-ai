@@ -4,12 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>【调查管理】评估管理并入调查 · 研发说明</title>
+<title>【调查管理】评估并入调查 · 研发精简版</title>
 <style>
 :root {
   --bg:#F8F8F8; --card:#fff; --text:#1F1F1F; --text2:#595959; --text3:#8C8C8C;
-  --line:#E5E5E5; --border:#D9D9D9; --primary:#0152D9; --soft:#EEF4FF;
-  --ok:#52C41A; --warn:#FAAD14; --danger:#FF4D4F;
+  --line:#E5E5E5; --border:#D9D9D9; --primary:#0152D9; --soft:#EEF4FF; --warn:#FAAD14;
   --font:"PingFang-SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
@@ -17,1919 +16,589 @@ html{scroll-behavior:smooth}
 body{margin:0;font:14px/22px var(--font);color:var(--text);background:var(--bg)}
 a{color:var(--primary);text-decoration:none}
 a:hover{text-decoration:underline}
-.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .top b{font-size:16px;font-weight:500}
-.top .meta{color:var(--text3);font-size:12px;line-height:20px}
-.top .links{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;font-size:12px;align-items:center}
+.top .meta{font-size:12px;line-height:20px;color:var(--text3)}
+.top .links{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}
 .btn{height:28px;padding:0 12px;border:1px solid var(--border);border-radius:4px;background:#fff;color:var(--text);font:inherit;font-size:12px;cursor:pointer}
 .btn:hover{border-color:var(--primary);color:var(--primary)}
 .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
-.btn.primary:hover{background:#2A6BDD;border-color:#2A6BDD}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-body.editing .doc-edit{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
-body.editing .doc-edit:focus{outline-color:#2A6BDD}
-.edit-hint{display:none;font-size:12px;line-height:20px;color:var(--primary);background:var(--soft);padding:8px 12px;border-radius:4px;margin-bottom:12px}
-body.editing .edit-hint{display:block}
-.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);box-shadow:0 4px 16px rgba(0,0,0,.12);padding:8px 14px;border-radius:4px;font-size:12px;display:none;z-index:40}
 .dirty-dot{width:6px;height:6px;border-radius:50%;background:var(--warn);display:none}
 body.has-draft .dirty-dot{display:inline-block}
-.wrap{max-width:1180px;margin:0 auto;padding:20px 24px 64px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px}
-nav{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;padding:8px 0}
-nav a{display:block;padding:6px 10px;border-radius:4px;color:var(--text2);font-size:12px;line-height:20px}
-nav a:hover,nav a:focus-visible{background:var(--soft);color:var(--primary);text-decoration:none}
-nav .g{margin:12px 0 4px;padding:0 10px;font-size:12px;color:var(--text3)}
-main{min-width:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px;margin-bottom:16px}
-.hero h1{font-size:24px;line-height:32px;font-weight:500;margin:0 0 8px}
-.hero p{margin:0;color:var(--text2);max-width:70ch}
-.tags{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+.toast{position:fixed;top:52px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);box-shadow:0 4px 16px rgba(0,0,0,.12);padding:8px 14px;border-radius:4px;font-size:12px;display:none;z-index:40}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 20px 56px;display:grid;grid-template-columns:180px minmax(0,1fr);gap:20px}
+nav{position:sticky;top:56px;align-self:start;max-height:calc(100vh - 72px);overflow:auto}
+nav a{display:block;padding:5px 8px;border-radius:4px;color:var(--text2);font-size:12px;line-height:20px}
+nav a:hover{background:var(--soft);color:var(--primary);text-decoration:none}
+nav .g{margin:10px 0 4px;padding:0 8px;font-size:12px;color:var(--text3)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:12px}
+h1{font-size:20px;line-height:28px;font-weight:500;margin:0 0 8px}
+h2{font-size:16px;line-height:24px;font-weight:500;margin:0 0 12px;scroll-margin-top:64px}
+h3{font-size:14px;line-height:22px;font-weight:500;margin:16px 0 8px;scroll-margin-top:64px}
+p,li{max-width:78ch;color:var(--text)}
+.muted{color:var(--text2)}
+.note{color:var(--text3);font-size:12px;line-height:20px}
+.callout{border-left:3px solid var(--primary);background:var(--soft);padding:10px 12px;border-radius:0 4px 4px 0;margin:12px 0;color:var(--text2);font-size:12px;line-height:20px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .tag{font-size:12px;line-height:20px;padding:0 8px;border-radius:4px;background:var(--soft);color:var(--primary)}
 .tag.gray{background:#F5F5F5;color:var(--text2)}
-.callout{border-left:3px solid var(--primary);background:var(--soft);padding:12px 16px;border-radius:0 4px 4px 0;margin:16px 0;color:var(--text2)}
-h2{font-size:16px;line-height:24px;font-weight:500;margin:28px 0 12px;padding-top:8px;scroll-margin-top:72px}
-h3{font-size:14px;line-height:22px;font-weight:500;margin:20px 0 8px;scroll-margin-top:72px}
-h4,h5,h6{font-size:14px;line-height:22px;font-weight:500;margin:16px 0 8px;scroll-margin-top:72px}
-p,li{max-width:78ch}
-ul,ol{padding-left:22px}
-table{width:100%;border-collapse:collapse;font-size:12px;line-height:20px;margin:12px 0 16px;background:#fff}
-th,td{border:1px solid var(--line);padding:8px 10px;vertical-align:top;text-align:left}
+ul{padding-left:20px;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:12px;line-height:20px;margin:8px 0 0;background:#fff}
+th,td{border:1px solid var(--line);padding:7px 8px;vertical-align:top;text-align:left}
 th{background:#F5F5F5;font-weight:500;color:var(--text2);white-space:nowrap}
-code{font-family:Consolas,monospace;font-size:12px;background:#F5F5F5;padding:0 4px;border-radius:2px}
-pre{overflow:auto;background:#F5F5F5;border:1px solid var(--line);border-radius:4px;padding:12px;font-size:12px}
-.note{color:var(--text3);font-size:12px;line-height:20px}
-hr{border:none;border-top:1px solid var(--line);margin:24px 0}
-input[type=checkbox]{margin-right:6px}
+.ck{width:36px;text-align:center}
+.id{width:48px;font-variant-numeric:tabular-nums;color:var(--text3)}
+.pri{width:52px}
+.refs{width:110px;color:var(--text3);white-space:nowrap}
+.date{width:140px}
+.note{width:160px}
+.pill{display:inline-block;padding:0 6px;border-radius:4px;background:#F5F5F5;color:var(--text2)}
+tr.done td.title{color:var(--text3);text-decoration:line-through}
+tr.done{background:#FAFFFE}
+input[type=date],input[type=text]{width:100%;height:28px;border:1px solid var(--border);border-radius:4px;padding:0 8px;font:inherit;font-size:12px;background:#fff}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary)}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
+.bar .prog{margin-left:auto;font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
+body.editing #docRoot{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+.edit-hint{display:none;font-size:12px;line-height:20px;color:var(--primary);background:var(--soft);padding:8px 12px;border-radius:4px;margin-bottom:12px}
+body.editing .edit-hint{display:block}
 @media(max-width:900px){
-  .wrap{grid-template-columns:1fr;padding:16px}
-  nav{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px}
-  nav .g{width:100%;margin:8px 0 0}
+  .wrap{grid-template-columns:1fr;padding:12px}
+  nav{position:static;display:flex;flex-wrap:wrap;gap:4px;max-height:none}
+  .refs,.note{display:none}
 }
 </style>
 </head>
 <body>
 <header class="top">
   <div>
-    <b>【调查管理】评估管理并入调查</b>
-    <div class="meta">面向内部研发 · 定稿 2026-11-06 · 负责人 高源</div>
+    <b>【调查管理】评估并入调查</b>
+    <div class="meta">研发精简版 · 定稿 2026-11-06 · 勾选进度存本机</div>
   </div>
   <div class="links">
-    <span class="dirty-dot" title="本机有未同步的草稿" aria-hidden="true"></span>
-    <button type="button" class="btn primary" id="btnEdit">编辑</button>
-    <button type="button" class="btn" id="btnSave" disabled>保存到本机</button>
-    <button type="button" class="btn" id="btnExport" disabled>导出 HTML</button>
-    <button type="button" class="btn" id="btnReset" disabled>恢复发布版</button>
-    <a href="/survey-evaluation-merge/">交互原型</a>
-    <a href="https://shuiiiiqqq.feishu.cn/docx/Oy1YdkAMTosQkXxoUmfcyTWPnbh">飞书定稿</a>
+    <span class="dirty-dot" title="有本机草稿/进度"></span>
+    <button type="button" class="btn primary" id="btnEdit">编辑正文</button>
+    <button type="button" class="btn" id="btnSaveProgress">保存进度</button>
+    <button type="button" class="btn" id="btnExport">导出 HTML</button>
+    <button type="button" class="btn" id="btnReset">清空本机进度</button>
+    <a href="/survey-evaluation-merge/">原型</a>
+    <a href="https://shuiiiiqqq.feishu.cn/docx/Oy1YdkAMTosQkXxoUmfcyTWPnbh">飞书全文</a>
   </div>
 </header>
 <div class="toast" id="toast" role="status"></div>
 <div class="wrap">
-<nav aria-label="目录">
-  <div class="g">阅读路径</div>
+<nav>
+  <div class="g">目录</div>
   <a href="#s1">1. 背景与问题</a>
-  <a href="#s2">2. 哪里做了调整</a>
-  <a href="#s3">3. 业务逻辑与功能</a>
-  <a href="#s3-1">　需求列表 Dxx</a>
-  <a href="#s3-2">　流程与计分</a>
-  <a href="#s3-4">　功能说明</a>
-  <a href="#s4">4. 验收标准</a>
+  <a href="#s2">2. 调整点</a>
+  <a href="#s3">3. 逻辑与功能</a>
+  <a href="#s3-score">　计分要点</a>
+  <a href="#s3-list">　功能 checklist</a>
+  <a href="#s4">4. 验收要点</a>
 </nav>
 <main>
-  <div class="edit-hint">编辑中：可直接改正文与表格。改完点「保存到本机」（仅当前浏览器）。「导出 HTML」可下载整页发给别人；「恢复发布版」清掉本机草稿。</div>
-  <div id="docRoot">
-  <section class="card hero" id="top">
-    <h1>【调查管理】评估管理并入调查：接入方统一入口、讲师池评测关系带权重、评估结果多维分析</h1>
-    <p>本文给公司内部开发使用：先看要解决什么、相对现网改了什么，再实现业务逻辑与功能，最后按验收打勾。依赖仓 <code>app-qsm</code>；360 评估不在范围。</p>
-    <div class="tags">
-      <span class="tag">最终稿</span>
-      <span class="tag gray">一期：调查内评估型能力</span>
-      <span class="tag gray">二期：接入方 + 迁移</span>
-      <span class="tag gray">noindex</span>
-    </div>
-    <div class="callout">建议阅读顺序：<b>1 背景 → 2 调整点 → 3.2 计分 → 3.4 页面说明 → 4 验收</b>。接口清单与迁移客户名单见文中「待确认」缺口，勿自行假设。</div>
-  </section>
+<div class="edit-hint">编辑中：可改说明文字。功能表勾选与日期请用表格控件；Ctrl+S 保存进度（本机）。</div>
+<div id="docRoot">
 
-  <section class="card" id="s1"><h2 id="1">1. 需求背景与要解决的问题</h2>
-<p>评估管理界面老旧，问卷只有单选、多选、打分、问答 4 种题型，产品侧已经多次对外答复「评估合并到调查」「评估不再迭代」；但讲师评估、综合排名、讲师满意度这条链路还有客户在用，调查管理又没有「被评对象」和计分，客户想换也换不过来。评估管理并入调查管理的方向已经确认。现在评估管理也不只是一个菜单入口：学习地图、面授、讲师中心、易培等应用都在自己的页面里「新建评估」「看评估结果」，背后调的是评估管理的接口。如果只把评估管理的菜单搬到调查，这些应用还会继续往老模块里建项目，评估管理关不掉。另外，评估和调查最大的不同有两点：题目要算分、带权重；被评对象来自讲师池，谁评谁、各方评价占多少比重要能设置。评估结果也要按对象、关系、题目、评测人来看，调查现有的「每题选项分布」统计满足不了。</p>
-<p>本轮方案：在调查管理里新增「评估型调查」，承接评估管理的出题计分、对象与评测人、监控、统计排名和学员作答；页面和操作尽量沿用调查管理（新）和评估管理现网，只补评估必需的能力，不额外做新功能。评估型调查提供一套接口，评估管理官方入口和其他应用的入口改调这套接口。关联面授项目时，讲师满意度照常回传讲师中心。评估管理的历史项目不迁移，保留查看和导出，按客户逐个迁移后停止新建；360 评估不改。</p>
-<h3 id="11">1.1【干系人】</h3>
-<ul>
-<li>申请时间：30/10/2026（产品方案），03/11/2026（合并方向确认）；需求池相关诉求 2024-10 起持续提出</li>
-<li>所属大区/提出人：—/产品</li>
-<li>联系人：高源（调查管理、评估管理）；刘金富（360 评估，确认不改 360）；江志海（讲师风采，满意度展示）；讲师中心、学习地图、面授、易培各接入方研发负责人（待指定）</li>
-<li>关联客户：通用能力，非单客定制。需求池中评估管理相关 33 条，来自 23 家客户；其中讲师评估链路相关诉求约 7 条（拉普拉斯、长电科技、贵阳银行等）；评测人加权目前北方信托在用</li>
-<li>预计收益：各应用新建评估全部落到调查，评估管理新建量降到 0；讲师评估可以按「学员、班主任、自评」分别占比出分，不用再导出后手工加权</li>
-<li>衡量指标：① 迁移开关已打开的租户，评估管理新建项目数为 0；② 评估型调查发布量 ≥ 同期评估管理新建量；③ 迁移后 1 个月内，「计分不对」「找不到评估」相关客诉不高于迁移前（数据来源待数析确认）</li>
-</ul>
-<h3 id="12">1.2【需求分析】</h3>
-<p>现状：评估管理和调查管理在同一个仓里各自维护一套项目、问卷、通知、监控和导出。评估管理有「对象 × 评测人」和计分排名，既给自己的管理页用，也通过接口给其他应用用；调查管理有完整题型和新界面。两边能力不互通。</p>
-<ul>
-<li><strong>题型不够，又换不过去</strong>：评估管理只有 4 种题型，约 9 条需求做不了；调查管理没有被评对象，也不计总分、不出排名，客户反馈「调查发布项目没办法添加讲师作为评估对象」。</li>
-<li><strong>入口分散，关不掉</strong>：其他应用直接调评估管理接口建项目，菜单下线后新项目仍在老模块里产生。</li>
-<li><strong>计分不只看题目</strong>：题目有分值和权重，评测人和被评人之间还有关系和权重；讲师评估「学员 60%、班主任 30%、自评 10%」这类常见做法，现在只能导出后手工加权。</li>
-<li><strong>讲师链路断不得</strong>：讲师满意度、晋级规则、课酬依据都依赖评估管理回传的满意度，任何切换都不能让这条数据断档。</li>
-<li><strong>讲师要成批进来</strong>：讲师评估的对象通常是一个讲师池里的讲师，一个个从讲师库挑效率低。</li>
-<li><strong>结果看不全</strong>：调查统计按题看选项分布；评估要看「谁得分高、各方怎么评、哪道题拉分、哪个评测人打分偏松或偏严」。</li>
-<li><strong>重复建设</strong>：两个模块的项目设置 80% 字段相同，通知、二维码、导出各做一遍，改一处漏一处。</li>
-</ul>
-<p>直接承担成本的是培训管理员（手工加权、来回导出）；间接受影响的是接入方研发（接口要改调用）、讲师（满意度和排名依据不透明）和研发（两套代码同时维护）。</p>
-<h3 id="13">1.3【确定需求边界】</h3>
-<p>扫过的相关能力：调查管理（新）的调查列表、新建问卷、模板库、数据统计；评估管理的创建四步、监控、统计排名、学员端、对外接口（学习地图联动、面授、讲师满意度、国药开放接口）、计分（题目权重、评测人评分加权、去高去低）；讲师中心讲师库；360 评估。</p>
-<p><strong>本轮范围</strong></p>
-<table>
-<thead>
-<tr>
-<th>模块</th>
-<th>做什么</th>
-<th>对应需求</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>调查列表</td>
-<td>新增「评估型调查」类型；列表字段、操作和状态规则对齐评估管理现网；新增、从模板新增、批量发布、导出、列设置沿用调查管理（新）</td>
-<td>D12、D15、D19</td>
-</tr>
-<tr>
-<td>模板</td>
-<td>问卷模板分「评估型调查 / 普通调查」；模板库和「从模板新增」共用一套模板</td>
-<td>D20</td>
-</tr>
-<tr>
-<td>创建①编辑问卷</td>
-<td>出题时逐题设分值、不计分、题目权重；只提供能计分的题型</td>
-<td>D04、D14</td>
-</tr>
-<tr>
-<td>创建②对象与关系</td>
-<td>从讲师库、人员、自定义添加被评测对象，一张表配置评测关系（文本，选填）、评测人和关系权重；批量导入</td>
-<td>D05、D06、D07</td>
-</tr>
-<tr>
-<td>创建③项目设置与发布</td>
-<td>复用调查管理（新）项目设置页的基本信息和调查提醒；评估管理「相关设置」的各项放在「评估设置」一组；发布时校验</td>
-<td>D12、D13</td>
-</tr>
-<tr>
-<td>监控</td>
-<td>已答 / 未答人员，回收、标记有效无效、提醒、导出</td>
-<td>D21</td>
-</tr>
-<tr>
-<td>统计排名</td>
-<td>综合排名、单项排名、附加题汇总、多维分析（关系、题目、评测人、部门）；筛选和导出</td>
-<td>D08、D09、D10</td>
-</tr>
-<tr>
-<td>学员端</td>
-<td>按对象逐个作答，暂存、提交，可见排名；从待办进入</td>
-<td>D18</td>
-</tr>
-<tr>
-<td>接口与迁移</td>
-<td>评估型调查接口；接入方入口改调；按客户逐个迁移；评估管理停止新建、历史只读</td>
-<td>D01、D02、D03</td>
-</tr>
-<tr>
-<td>讲师链路</td>
-<td>讲师满意度回传讲师中心；易培、面授评估任务可选评估型调查；关联面授时一键生成对象和评测人</td>
-<td>D22、D23、D24</td>
-</tr>
-</tbody>
-</table>
-<p><strong>不做</strong></p>
-<ul>
-<li><strong>不迁移评估管理历史数据</strong>：历史项目留在评估管理只读。</li>
-<li><strong>定制租户保持现状</strong>：定制租户（含国药等定制开放接口）继续使用评估管理，不迁移、不更新。</li>
-<li><strong>不改 360</strong>：360 按人和能力维度出个人报告；评估型调查按对象出排名。关系权重只在评估型调查里生效。</li>
-<li><strong>不做逐个评测人单独设权重</strong>：同一对象同一关系下的评测人权重相同；北方信托的评分加权属于定制，保持现状。</li>
-<li><strong>不做跨项目分析</strong>：所有分析都只在单个调查内（D11、D25 PUSH BACK）。</li>
-<li><strong>不做项目级统一关系、不做关系模板</strong>：评测关系按对象逐个设置，与评估管理现网一致（2026-11-06 撤回「先定关系再加对象」和关系模板，D16）。</li>
-<li><strong>普通调查不开放计分</strong>：计分只在评估型调查里出现。</li>
-<li><strong>讲师查看自己的评估结果</strong>：不做（D26 PUSH BACK）。</li>
-<li><strong>不加评估管理没有的新玩法</strong>：及格线 / 等级、按关系用不同问卷、标准 NPS 值、多选「最多选 N 项」和互斥选项，本期都不做。</li>
-</ul>
-<p><strong>分期与里程碑</strong>（日期待研发排期后填写，下表先定每个节点的完成标准）</p>
-<table>
-<thead>
-<tr>
-<th>里程碑</th>
-<th>内容</th>
-<th>完成标准</th>
-<th>时间</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>M0 评审定稿</td>
-<td>PRD、原型、计分规则评审通过</td>
-<td>1.3「已定」无待议项；研发确认一期工时</td>
-<td>2026-11</td>
-</tr>
-<tr>
-<td>M1 一期开发完成</td>
-<td>D04–D10、D12–D14、D18–D21</td>
-<td>第 3 章一期验收全部通过</td>
-<td>待排期</td>
-</tr>
-<tr>
-<td>M2 一期试点</td>
-<td>1 家标准租户用评估型调查，按关系加权跑完一次讲师评估</td>
-<td>结果与手工计算一致；管理员和学员没有阻断问题</td>
-<td>待排期</td>
-</tr>
-<tr>
-<td>M3 二期接入方切换</td>
-<td>D01–D03、D15、D22–D24</td>
-<td>5 个接入方改调评估型调查接口；讲师满意度新旧数据连续</td>
-<td>待排期</td>
-</tr>
-<tr>
-<td>M4 按客户迁移</td>
-<td>按客户逐个打开迁移开关并跟进使用</td>
-<td>已打开开关的租户，评估管理新建量为 0</td>
-<td>待排期</td>
-</tr>
-<tr>
-<td>M5 下线评估管理</td>
-<td>D03（停止新建、历史只读、最终下线）</td>
-<td>所有标准客户迁完；定制租户不在此列</td>
-<td>待排期</td>
-</tr>
-</tbody>
-</table>
-<p><strong>已定</strong>（2026-11-03 评审，原则：尽量沿用评估管理现有规则，不做大改；2026-11-06 补充 13–19）</p>
-<ol>
-<li>某个关系没有有效问卷：其余关系按权重重新折算（例：自评没交，学员 60%、班主任 30% 折算为 66.7%、33.3%），结果页标出「缺少自评」。</li>
-<li>讲师中心满意度：不用关系加权，沿用评估管理「有效问卷均分」；加权得分作为新字段一起返回。</li>
-<li>逐个评测人单独设权重：不做；北方信托等定制租户保持现状。</li>
-<li>去掉最高分、最低分：在每种关系内各去一次。</li>
-<li>扫码参与：评估型调查没有这个配置项（2026-11-06 用户确认，替代 2026-11-03 的「评估型也做扫码」结论）；普通调查沿用现有的「允许扫码参与」。</li>
-<li>学员选了「不计分」选项（如「没注意」）：这份答卷的应得满分扣掉这道题。</li>
-<li>得分率 = 对象得分 ÷ 问卷满分 × 100，对象得分按标准分计算（见 13），明细里保留每份答卷的原始得分。</li>
-<li>「对象评语」放二期；「作答末尾显示已评总分」一期保留（评估管理现网已有，2026-11-06 补回）。</li>
-<li>双轨迁移：不设固定双轨期，按客户逐个引导迁移，跟进每家客户的使用情况；所有客户迁移完成后下线评估管理。</li>
-<li>定制租户：保持现状，不迁移、不更新。</li>
-<li>关系模板：本期不做（2026-11-06 撤回 2026-11-03 的「租户级关系模板」结论，先与评估管理现网保持一致，D16）。</li>
-<li>「讲师池」即讲师中心的「讲师分类」，不新建讲师池对象（D05）。</li>
-<li>汇总用标准分：每份答卷先换算成标准分 = 答卷得分 ÷ 这份答卷的应得满分 × 问卷满分，关系得分、关系加权、去高去低、排名都用标准分。原因：选了「不计分」选项的答卷应得满分变小，用原始分排名会让这类对象吃亏。</li>
-<li>计分题一律必答：开启「计入得分」的题不能设为选答。</li>
-<li>分值范围：单选题分值不能为负数，扣分只放在多选题；单选、多选的最高分值必须大于 0；多选题本题最低 0 分，不倒扣到其他题；打分题最低分不小于 0、最高分不超过 10。</li>
-<li>多选题在评估型调查里不开放「最多选 N 项」和互斥选项，保证满分算得准。</li>
-<li>打分题最低分不是 0 时，得分率仍按「得分 ÷ 最高分」计算，最低档也有得分率，出题页提示说明。</li>
-<li>NPS 题按 0–10 分计入总分，本期不显示标准 NPS 值。</li>
-<li>第②步按评估管理现网做：每个对象各自设置关系、评测人和权重；评测关系是文本输入框，默认为空、可不填，不提供下拉常用值；不做项目级统一关系、不做「单独调整」、不做关系模板。</li>
-<li>关联计划：不需要，普通调查和评估型调查的项目设置都不显示（2026-11-06 用户确认）。</li>
-<li>新建时先选「普通调查 / 评估型调查」，两种类型走同一套三步，每一步按类型显示字段（2026-11-06，见 F5「按类型显示的字段」）。</li>
-</ol>
-<p><strong>待确认（缺口）</strong></p>
-<ol>
-<li>5 个接入方（评估管理官方入口、学习地图、面授管理、混合培训、远程督导）各自调用的接口、调用量，以及易培评估任务走哪个来源：由研发补充。</li>
-<li>按客户逐个迁移需要的客户使用清单（评估管理活跃租户、项目量、定制租户名单）：由数析或研发提供。</li>
-<li>作答数据增加「对象」维度的研发工时。</li>
-<li>讲师满意度接口的调用方（在 app-qsm 之外），以及讲师中心怎么用返回的分数和份数算均分。</li>
-<li>评估管理现网是否允许计分题选答、是否有及格线或等级：未核实；按「计分题必答、不做等级」执行。</li>
-<li>各里程碑日期：待研发排期。</li>
-<li>（已定 20，关闭）关联计划。</li>
-</ol>
-<p><strong>风险</strong></p>
-<table>
-<thead>
-<tr>
-<th>风险</th>
-<th>影响</th>
-<th>应对</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>接入方接口清单不全</td>
-<td>二期切换后部分入口仍调评估管理，评估管理关不掉</td>
-<td>M3 前由研发逐个接入方列接口和调用量；开关按租户打开，可随时关闭回退</td>
-</tr>
-<tr>
-<td>新旧计分口径不同</td>
-<td>迁移客户看到同一讲师得分变化</td>
-<td>未选「不计分」选项时，标准分与原始分相同；上线公告说明标准分规则</td>
-</tr>
-<tr>
-<td>讲师满意度新旧数据合并</td>
-<td>讲师中心满意度跳变</td>
-<td>满意度沿用有效问卷均分（已定 2），合并两边数据</td>
-</tr>
-</tbody>
-</table></section>
-  <section class="card" id="s2"><h2 id="2">2. 哪里做了调整</h2>
-<p>面向研发：相对<strong>评估管理现网</strong>、<strong>调查管理（新）现网</strong>，以及本需求评审过程中撤回的方案，本期明确改动如下。</p>
-<h3 id="21">2.1 相对评估管理：迁入调查，规则尽量沿用</h3>
-<table>
-<thead>
-<tr>
-<th>维度</th>
-<th>评估管理现网</th>
-<th>本期评估型调查</th>
-<th>研发含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>入口与菜单</td>
-<td>独立「评估管理」+ 各应用直连接口</td>
-<td>调查管理内新类型「评估型调查」；二期接入方改调新接口</td>
-<td>一期做调查内能力；二期切调用，评估管理按租户停新建</td>
-</tr>
-<tr>
-<td>创建流程</td>
-<td>约四步</td>
-<td>与普通调查同一套三步：①编辑问卷 → ②对象与关系 → ③项目设置与发布</td>
-<td>共用顶栏与路由，按类型显隐字段</td>
-</tr>
-<tr>
-<td>出题计分</td>
-<td>4 种题型 + 分值权重</td>
-<td>单选 / 多选 / 打分 / NPS / 不计分问答；计分规则见第 3 章</td>
-<td>评估型题型栏收窄；计分题必答</td>
-</tr>
-<tr>
-<td>对象与关系</td>
-<td>对象 × 评测人 × 关系权重</td>
-<td><strong>沿用现网</strong>：按对象逐行设关系（文本可空）、评测人、权重；支持导入</td>
-<td><strong>不做</strong>项目级统一关系、关系模板、「单独调整」</td>
-</tr>
-<tr>
-<td>结果</td>
-<td>排名、明细</td>
-<td>综合 / 单项 / 附加题 / 多维分析；标准分汇总</td>
-<td>实现标准分口径（见计分表）</td>
-</tr>
-<tr>
-<td>历史数据</td>
-<td>—</td>
-<td><strong>不迁移</strong>；历史只读，定制租户不动</td>
-<td>迁移开关按租户</td>
-</tr>
-<tr>
-<td>360</td>
-<td>独立</td>
-<td><strong>不改</strong></td>
-<td>勿动 360 仓与报告</td>
-</tr>
-</tbody>
-</table>
-<h3 id="22">2.2 相对调查管理（新）：补「对象 + 计分」，不污染普通调查</h3>
-<table>
-<thead>
-<tr>
-<th>维度</th>
-<th>普通调查</th>
-<th>评估型调查</th>
-<th>研发含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>类型</td>
-<td>仅普通调查</td>
-<td>新增类型；创建后不可改类型</td>
-<td>列表 / 模板 / 筛选加类型字段</td>
-</tr>
-<tr>
-<td>①问卷</td>
-<td>完整题型，无分值</td>
-<td>仅计分相关题型；选项分值、不计分、题目权重、计分汇总</td>
-<td>同一编辑器按类型分支</td>
-</tr>
-<tr>
-<td>②参与</td>
-<td>选择学员</td>
-<td>对象与关系表（替代学员选择）</td>
-<td>新页面 / 组件，勿复用学员选择交互硬套</td>
-</tr>
-<tr>
-<td>③设置</td>
-<td>调查模式 / 调查结果 / 参与设置（含扫码）</td>
-<td><strong>评估设置</strong>（问卷模式、去高去低、排名可见、提交提示等）；无扫码、无关联计划</td>
-<td>按类型显隐分组</td>
-</tr>
-<tr>
-<td>列表操作</td>
-<td>调查现网操作</td>
-<td>对齐评估管理状态机（进行中不可改问卷、可加人员、监控 / 统计排名等）</td>
-<td>操作置灰规则见表格</td>
-</tr>
-<tr>
-<td>统计</td>
-<td>每题选项分布</td>
-<td>评估型走排名与多维分析</td>
-<td>普通调查统计保持不变</td>
-</tr>
-<tr>
-<td>模板</td>
-<td>无类型</td>
-<td>模板带「调查类型」；评估型带分值权重</td>
-<td>模板库与从模板新增共用</td>
-</tr>
-</tbody>
-</table>
-<h3 id="23">2.3 评审中已定 / 已撤回（避免按旧方案实现）</h3>
-<p><strong>按这个做（已定摘要）</strong></p>
-<ol>
-<li>缺关系有效问卷：其余关系权重折算；结果标「缺少{关系}」。</li>
-<li>讲师满意度：有效问卷均分，不加权、不去高去低；另返回加权得分字段。</li>
-<li>去高去低：在<strong>每种关系内</strong>各去。</li>
-<li>汇总用<strong>标准分</strong> = 答卷得分 ÷ 应得满分 × 问卷满分。</li>
-<li>计分题一律必答；单选分值 ≥ 0；多选可负分但本题最低 0。</li>
-<li>评估型<strong>无扫码参与</strong>；无关联计划。</li>
-<li>新建先选普通 / 评估型，同一套三步按类型显字段。</li>
-<li>关系为文本、可空；不做关系模板、不做逐个评测人单独权重。</li>
-</ol>
-<p><strong>不要做（PUSH BACK / 撤回）</strong></p>
-<table>
-<thead>
-<tr>
-<th>项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>D16 关系模板</td>
-<td>2026-11-06 撤回，先与评估现网一致</td>
-</tr>
-<tr>
-<td>D17 评估型扫码</td>
-<td>评估现网无此配置，本期不提供</td>
-</tr>
-<tr>
-<td>D11 / D25 跨项目分析</td>
-<td>不做</td>
-</tr>
-<tr>
-<td>D26 讲师自查结果</td>
-<td>不做</td>
-</tr>
-<tr>
-<td>逐评测人独立权重</td>
-<td>不做；北方信托等定制保持现状</td>
-</tr>
-<tr>
-<td>及格线 / 等级、按关系不同问卷、标准 NPS 展示</td>
-<td>本期不做</td>
-</tr>
-</tbody>
-</table>
-<h3 id="24">2.4 相对交互原型的差异（原型 ≠ 排期范围）</h3>
-<p>可交互原型：<a href="https://www.gaoyuan-ai.xyz/survey-evaluation-merge/"><code>/survey-evaluation-merge/</code></a>（演示数据）。</p>
-<table>
-<thead>
-<tr>
-<th>原型已示意</th>
-<th>研发注意</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>场景页选模板 → 侧栏确认 → 进入编辑</td>
-<td>产品入口演示；正式实现可对齐「新增选类型 / 从模板新增」</td>
-</tr>
-<tr>
-<td>列表文案「评估调查」「调整人员」等</td>
-<td>以本 PRD 与现网文案为准上线；原型用词可能略有演示化</td>
-</tr>
-<tr>
-<td>一期页：列表、模板库、三步、监控、排名、学员端</td>
-<td>对应 D04–D10、D12–D14、D18–D21</td>
-</tr>
-<tr>
-<td>二期：接入方改调、迁移开关、满意度回传、一键生成</td>
-<td>原型可能弱示意或未做；以第 4 章二期验收为准</td>
-</tr>
-</tbody>
-</table></section>
-  <section class="card" id="s3"><h2 id="3">3. 业务逻辑与功能描述</h2>
-<h3 id="31-d01d26">3.1 需求列表（D01–D26）</h3>
-<ul>
-<li><strong>D01</strong> 评估型调查接口：覆盖创建、复制、发布、删除，维护对象和评测关系，查询学员待评列表和完成状态，完成回调，查询排名和结果，讲师满意度。接口能力与评估管理现有接口对应，清单由研发补充。</li>
-<li><strong>D02</strong> 接入方入口改调调查：评估管理官方入口、学习地图、面授管理、混合培训、远程督导在各自页面「新建评估」「查看评估」时，改为打开评估型调查页面（带入来源和来源对象）；列表显示来源。</li>
-<li><strong>D03</strong> 按客户逐个迁移：按客户打开迁移开关；开关打开后该客户各入口新建都走调查，已有评估管理项目照常查看和作答到结束；评估管理旧入口隐藏「新建项目」「复制项目」并提示去调查管理新建；所有标准客户迁完后下线评估管理。定制租户不开开关。</li>
-<li><strong>D04</strong> 题目分值和权重：出题和设分在同一页完成；只提供单选、多选、打分、NPS 和附加问题（问答）；逐题设选项分值、不计分、打分范围、题目权重、计入得分；实时显示本题满分、问卷满分和每题占比；计分设置不完整不能进入下一步。</li>
-<li><strong>D05</strong> 从讲师库、人员选择对象：「从讲师库选择」按讲师姓名、来源、等级、讲师分类筛选，多选，列表显示讲师编号和工号（同名讲师可区分）；「从人员选择」只列激活人员；加入的对象带一条空的评测关系。</li>
-<li><strong>D06</strong> 对象与关系一张表：每个对象一组行，每行一条评测关系（关系名称为文本、默认空、可不填；评测人；权重）；可添加自定义对象、添加或删除关系；支持批量导入（沿用评估管理导入模板）。</li>
-<li><strong>D07</strong> 关系权重：开启「按关系加权」后按对象设权重，每个对象合计必须 100%；对象得分按关系加权，缺关系时其余关系折算。</li>
-<li><strong>D08</strong> 统计排名：综合排名、单项排名、附加题汇总、多维分析（关系对比、题目分析、评测人分析、部门分析）。</li>
-<li><strong>D09</strong> 分析筛选：按关系、部门筛选；「去掉最高分、最低分」「按关系加权」切换时同步重算。</li>
-<li><strong>D10</strong> 导出：每个页签各自导出；答卷明细含「关系」「关系权重」。</li>
-<li><strong>D11</strong> 讲师按池看历次评估（客户诉求：讲师中心想按讲师分类看每个讲师的历次评估得分）。PUSH BACK：属于跨项目分析，本轮不做；D01 的结果接口按讲师返回单项目数据，讲师中心可先自己汇总。</li>
-<li><strong>D12</strong> 创建三步：普通调查和评估型调查走同一套三步，每一步按类型显示字段——评估型「①编辑问卷 ②对象与关系 ③项目设置与发布」，普通调查「①编辑问卷 ②选择学员 ③项目设置与发布」；三步共用顶栏，不显示步骤条，用「上一步」「下一步」切换，「下一步」前校验本步；发布后回到调查列表。</li>
-<li><strong>D13</strong> 匿名模式：评估型调查不显示调查的「调查模式」分组，沿用评估管理的「问卷模式：管理员模式 / 匿名模式」，放在第③步「评估设置」里，发布后不能修改；匿名时评测人分析和导出不显示身份（2026-11-06 补回）。</li>
-<li><strong>D14</strong> 附加问题：评估管理的附加问题即问卷里的不计分问答题，每个对象各答一次，统计排名里按对象汇总。</li>
-<li><strong>D15</strong> 来源项目管理限制：接入方创建的评估型调查在调查管理中只读基本信息、对象和关系，可监控、看结果、导出。</li>
-<li><strong>D16</strong> 关系模板管理。PUSH BACK（2026-11-06）：先与评估管理现网保持一致，本期不做；关系按对象逐个填写，批量配置用导入。</li>
-<li><strong>D17</strong> 扫码参与。PUSH BACK（2026-11-06）：评估管理没有这个配置项，评估型调查本期不提供；普通调查保持现有「允许扫码参与」不变。</li>
-<li><strong>D18</strong> 学员端作答：对象列表、逐个作答、暂存、提交、可见排名、查看我的答卷。</li>
-<li><strong>D19</strong> 调查列表对齐评估管理：列表字段、筛选、行内操作和按状态的可用规则对齐评估管理现网；新增、从模板新增、批量发布、导出、列设置沿用调查管理（新）。</li>
-<li><strong>D20</strong> 问卷模板分类型：模板库和「从模板新增」显示「调查类型」，评估型模板带分值和权重；编辑问卷时可「保存为模板」。</li>
-<li>
-<p><strong>D21</strong> 监控：已答人员和未答人员两个页签；回收问卷、标记有效 / 无效（同步重算排名）、提醒参加、导出。</p>
-</li>
-<li>
-<p><strong>D22</strong> 讲师满意度回传：关联面授项目的评估型调查，讲师库来源对象的有效问卷汇入讲师满意度，口径与评估管理一致（有效问卷均分，不加权、不去高去低）；同一面授项目下评估管理和评估型调查的数据合并计算；返回结构不变，新增加权得分字段。</p>
-</li>
-<li><strong>D23</strong> 易培 / 面授评估任务：创建评估任务时可以选择评估型调查，学员全部提交后任务状态正常回调；已引用评估管理的存量任务照常运行。</li>
-<li><strong>D24</strong> 一键生成对象和评测人：关联面授项目时，可一键把面授讲师生成为对象（来源为讲师库）、把面授学员生成为每个对象的评测人。</li>
-<li><strong>D25</strong> 跨项目汇总报表（客户诉求：评估管理、调查、360 都有客户提）。PUSH BACK：三个模块都没有，单独做成本高；先通过数据查询满足，评估型调查上线后再评估是否产品化。</li>
-<li><strong>D26</strong> 讲师查看自己的评估结果（客户诉求：讲师想看到评价明细）。PUSH BACK：属于新增能力，涉及匿名和可见范围，等满意度回传稳定后单独立项。</li>
-</ul>
-<h3 id="32">3.2 业务流程与计分规则</h3>
-<p></p>
-<p>本地文字版：</p>
-<pre><code class="language-mermaid">flowchart TD
-  A0[管理员在调查管理新增 / 从模板新增] --&gt; A
-  A1[接入方页面点「新建评估」] --&gt; A2[调用评估型调查接口，带入来源] --&gt; A
-  A[①编辑问卷：设分值和权重] --&gt; C[②添加对象：讲师库 / 人员 / 自定义 / 导入]
-  C --&gt; D[每个对象设置评测关系、评测人、权重]
-  D --&gt; F0[③项目设置：基本信息、模式、计分与结果]
-  F0 --&gt; F{发布前检查}
-  F -- 不通过 --&gt; F1[提示并停在当前步] --&gt; D
-  F -- 通过 --&gt; G[回到调查列表；评测人逐个对象作答]
-  G --&gt; M[监控：回收、标记有效无效、提醒]
-  M --&gt; H[按标准分计算关系得分，再按权重加权]
-  H --&gt; I[统计排名、导出]
-  I --&gt; J{有来源应用？}
-  J -- 是 --&gt; K[完成回调 / 满意度返回接入方]
-  J -- 否 --&gt; L[结束]
-</code></pre>
-<p>接入方：评估管理官方入口、学习地图、面授管理、混合培训、远程督导改调评估型调查接口，回调和返回内容保持不变；讲师中心的满意度接口返回结构不变，同一面授项目合并两边数据。国药等定制开放接口不切。</p>
-<p><strong>计分规则</strong></p>
-<table>
-<thead>
-<tr>
-<th>项</th>
-<th>规则</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>有效问卷</td>
-<td>已提交且未被标记无效、未被回收的答卷；暂存的答卷不计入</td>
-</tr>
-<tr>
-<td>题目得分</td>
-<td>所选选项的分值；多选题为所选计分选项分值之和（最低 0 分）；「不计分」选项和问答题不计入</td>
-</tr>
-<tr>
-<td>答卷得分</td>
-<td>各计分题得分 × 题目权重之和；未开启题目权重时权重按 1 计</td>
-</tr>
-<tr>
-<td>应得满分</td>
-<td>各计分题最高可得分值 × 题目权重之和；某份答卷选了「不计分」选项的题，这份答卷的应得满分扣掉该题（已定 6）</td>
-</tr>
-<tr>
-<td>答卷标准分</td>
-<td>答卷得分 ÷ 这份答卷的应得满分 × 问卷满分；下面各项都用标准分（已定 13）。应得满分为 0 的答卷仍是有效问卷，但不参与得分计算，明细显示「无可计分作答」</td>
-</tr>
-<tr>
-<td>关系得分</td>
-<td>某对象在某关系下有效问卷标准分的平均；开启去高去低时在该关系内按标准分去（已定 4）</td>
-</tr>
-<tr>
-<td>对象得分（按关系加权）</td>
-<td>各关系得分 × 该对象的关系权重之和；某关系无有效问卷时，其余关系按权重重新折算（已定 1）</td>
-</tr>
-<tr>
-<td>对象得分（不加权）</td>
-<td>全部有效问卷标准分的平均</td>
-</tr>
-<tr>
-<td>得分率</td>
-<td>对象得分 ÷ 问卷满分 × 100，保留 1 位小数</td>
-</tr>
-<tr>
-<td>名次</td>
-<td>按对象得分从高到低；保留 1 位小数后相同的名次相同，下一名跳过（如 1、1、3）</td>
-</tr>
-<tr>
-<td>单项得分率</td>
-<td>某题平均分 ÷ 本题最高分 × 100；单项排名以平均得分率为主</td>
-</tr>
-<tr>
-<td>评测人平均给分</td>
-<td>该评测人全部有效问卷标准分的平均；偏差 = (评测人平均给分 − 全体平均) ÷ 全体平均，超过 ±15% 标出</td>
-</tr>
-<tr>
-<td>平均分</td>
-<td>项目内全部有效问卷标准分的平均</td>
-</tr>
-<tr>
-<td>对比平均分</td>
-<td>对象得分 ÷ 平均分 × 100%，保留 1 位小数</td>
-</tr>
-<tr>
-<td>讲师满意度回传</td>
-<td>只统计讲师库来源的对象，按「讲师 × 面授项目」汇总有效问卷的总分和份数；不加权、不去掉最高最低分，与评估管理现有口径一致（已定 2、D22）</td>
-</tr>
-</tbody>
-</table>
-<p>示例：满分 50。讲师张明，学员 4 份 42、45、38、47，班主任 1 份 40，自评 1 份 48；权重学员 60%、班主任 30%、自评 10%。</p>
-<ul>
-<li>学员关系得分 43.0；对象得分 = 43.0 × 60% + 40 × 30% + 48 × 10% = 42.6，得分率 85.2。</li>
-<li>开启去掉最高分和最低分：学员剩 42、45，关系得分 43.5；班主任、自评只有 1 份不去；对象得分 42.9，得分率 85.8。</li>
-<li>自评未提交：(43.0 × 60% + 40 × 30%) ÷ 90% = 42.0，得分率 84.0，结果页标「缺少自评」。</li>
-<li>关闭按关系加权：6 份平均 = 260 ÷ 6 = 43.3，得分率 86.7。</li>
-<li>某份答卷前 4 题 39 分、第 5 题（满分 5）选「没注意」：应得满分 45，标准分 = 39 ÷ 45 × 50 = 43.3。</li>
-</ul>
-<h3 id="33">3.3 产品原型与页面清单</h3>
-<p>可交互原型：<a href="https://www.gaoyuan-ai.xyz/survey-evaluation-merge/">评估型调查原型</a>（演示数据，计算与 2.2 示例一致），下图为统计排名页。</p>
-<p><p class='note'>（定稿附图见本地 PRD / 飞书文档）</p></p>
-<p>页面清单（每个页面的字段和规则见 2.4 功能说明）：</p>
-<table>
-<thead>
-<tr>
-<th>页面</th>
-<th>入口</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>调查列表</td>
-<td>调查管理 → 调查管理页签</td>
-</tr>
-<tr>
-<td>从模板新增（右侧抽屉）</td>
-<td>调查列表「从模板新增」</td>
-</tr>
-<tr>
-<td>模板库</td>
-<td>调查管理 → 模板库页签</td>
-</tr>
-<tr>
-<td>新建 / 编辑：①编辑问卷、②对象与关系、③项目设置与发布</td>
-<td>调查列表「新增」选评估型调查；行内「编辑」</td>
-</tr>
-<tr>
-<td>查看</td>
-<td>行内「查看」或点项目名称</td>
-</tr>
-<tr>
-<td>监控</td>
-<td>行内「监控」</td>
-</tr>
-<tr>
-<td>统计排名</td>
-<td>行内「统计排名」</td>
-</tr>
-<tr>
-<td>学员端（手机）</td>
-<td>待办</td>
-</tr>
-</tbody>
-</table>
-<h3 id="34">3.4 功能列表与功能说明</h3>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>功能描述</th>
-<th>对应需求</th>
-<th>类型</th>
-<th>优先级</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>调查列表：评估型调查类型；字段、筛选、行内操作和状态规则对齐评估管理现网</td>
-<td>D19、D15</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>2</td>
-<td>调查列表操作栏：列设置、新增（选类型）、从模板新增、批量发布、导出（勾选多个打包 zip）；分页</td>
-<td>D19</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>3</td>
-<td>复制项目：改名称和起止时间，可同时复制对象和关系；校验时间</td>
-<td>D19</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>4</td>
-<td>从模板新增：自定义 / 系统模板，显示调查类型，只列启用模板，预览、使用</td>
-<td>D20</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>5</td>
-<td>模板库：筛选、列设置、新增模板、导入、批量停用 / 启用；行内预览、编辑、停用 / 启用、使用、复制、删除</td>
-<td>D20</td>
-<td>后台功能</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>6</td>
-<td>①编辑问卷：题型栏、逐题设分值和权重、计分汇总、编辑操作、校验、保存为模板</td>
-<td>D04、D14、D20</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>7</td>
-<td>②对象与关系：讲师库、人员、自定义添加对象；一张表配置关系、评测人、权重；选择评测人弹窗</td>
-<td>D05、D06、D07</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>8</td>
-<td>~~②关系模板~~（本期不做，D16 PUSH BACK）</td>
-<td>D16</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>9</td>
-<td>②批量导入：沿用评估管理导入模板，逐行显示结果，可下载错误列表</td>
-<td>D06</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>10</td>
-<td>③项目设置与发布：基本信息（含说明）、评估设置（问卷模式、计算总分和平均分、问卷结果、综合得分显示、提交提示）、调查提醒（含修改起止时间）；发布时校验</td>
-<td>D12、D13</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>11</td>
-<td>三步顶栏：上一步、下一步（先校验）、保存并关闭、取消；发布后回到列表</td>
-<td>D12</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>12</td>
-<td>查看：基本信息、计分与设置、对象与关系、问卷</td>
-<td>D19</td>
-<td>后台功能</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>13</td>
-<td>监控：已答 / 未答人员，筛选，回收、标记有效 / 无效、提醒、导出，查看答卷</td>
-<td>D21</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>14</td>
-<td>统计排名：综合排名（绘图、有效问卷、查看明细）</td>
-<td>D08、D09</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>15</td>
-<td>统计排名：单项排名、附加题汇总</td>
-<td>D08、D14</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>16</td>
-<td>统计排名：多维分析（关系对比、题目分析、评测人分析、部门分析）</td>
-<td>D08</td>
-<td>后台功能</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>17</td>
-<td>统计排名：按关系、部门筛选；去高去低、按关系加权切换重算；各页签导出</td>
-<td>D09、D10</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>18</td>
-<td>计分：按 2.2 计分规则计算标准分、关系得分、对象得分、得分率、名次</td>
-<td>D07</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>19</td>
-<td>问卷模式为匿名时，监控、评测人分析和导出不显示评测人身份</td>
-<td>D13</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>20</td>
-<td>~~扫码参与~~（评估型调查不提供，D17 PUSH BACK）</td>
-<td>D17</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>21</td>
-<td>学员端：对象列表、逐个作答、暂存、提交、可见排名、查看我的答卷、全部完成</td>
-<td>D18</td>
-<td>学员端</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>22</td>
-<td>评估型调查接口</td>
-<td>D01</td>
-<td>接口</td>
-<td>P0（二期）</td>
-</tr>
-<tr>
-<td>23</td>
-<td>接入方入口改调评估型调查，带入来源和来源对象</td>
-<td>D02</td>
-<td>接口</td>
-<td>P0（二期）</td>
-</tr>
-<tr>
-<td>24</td>
-<td>按客户迁移开关；评估管理旧入口隐藏新建、复制</td>
-<td>D03</td>
-<td>后台功能</td>
-<td>P0（二期）</td>
-</tr>
-<tr>
-<td>25</td>
-<td>来源项目只读，列表提示来源</td>
-<td>D15</td>
-<td>后台功能</td>
-<td>P0（二期）</td>
-</tr>
-<tr>
-<td>26</td>
-<td>讲师满意度接口返回结构不变，同一面授项目下合并评估管理和评估型调查的数据</td>
-<td>D22</td>
-<td>接口</td>
-<td>P0（二期）</td>
-</tr>
-<tr>
-<td>27</td>
-<td>易培、面授创建评估任务时可选评估型调查，完成状态正常回调</td>
-<td>D23</td>
-<td>接口</td>
-<td>P0（二期）</td>
-</tr>
-<tr>
-<td>28</td>
-<td>关联面授项目时一键生成讲师对象和学员评测人</td>
-<td>D24</td>
-<td>后台功能</td>
-<td>P1（二期）</td>
-</tr>
-<tr>
-<td>29</td>
-<td>移除评测人：未提交可移除，已提交不能移除</td>
-<td>D06</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>30</td>
-<td>导出：对象信息、综合排名、单项排名、答卷明细（一个评测人对一个对象一行，每题一列；含关系和关系权重），异步导出，任务列表可见进度</td>
-<td>D10</td>
-<td>后台功能</td>
-<td>P0</td>
-</tr>
-</tbody>
-</table>
-<h4 id="_1">功能说明</h4>
-<h5 id="f1-13">F1 调查列表（功能 1–3）</h5>
-<p>说明：调查管理的调查列表同时列出普通调查和评估型调查。评估型调查的字段和操作对齐评估管理现网列表；普通调查行为不变。</p>
-<p>页面结构：顶部页签「调查管理 / 模板库 / 系统设置」，右侧「回收站、系统管理员、帮助中心」，与调查管理（新）一致。</p>
-<p>筛选字段：</p>
-<table>
-<thead>
-<tr>
-<th>字段</th>
-<th>控件</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>项目编号/名称</td>
-<td>输入框</td>
-<td>模糊匹配编号或名称</td>
-</tr>
-<tr>
-<td>使用问卷</td>
-<td>输入框</td>
-<td>模糊匹配问卷名称</td>
-</tr>
-<tr>
-<td>状态</td>
-<td>下拉</td>
-<td>草稿、未开始、进行中、已结束、已作废</td>
-</tr>
-<tr>
-<td>类型</td>
-<td>下拉</td>
-<td>评估型调查、普通调查</td>
-</tr>
-<tr>
-<td>项目来源</td>
-<td>下拉</td>
-<td>调查管理、学习地图、面授管理、混合培训、远程督导</td>
-</tr>
-</tbody>
-</table>
-<p>按钮「查询」「重置」。</p>
-<p>操作栏（从左到右）：</p>
-<table>
-<thead>
-<tr>
-<th>按钮</th>
-<th>规则</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>列设置（⚙）</td>
-<td>下拉勾选要显示的列，含「全选/不选」；勾选框列和操作列固定显示</td>
-</tr>
-<tr>
-<td>新增</td>
-<td>弹窗选「普通调查 / 评估型调查」，创建后类型不能修改；评估型调查进入①编辑问卷</td>
-</tr>
-<tr>
-<td>从模板新增</td>
-<td>打开右侧抽屉，见 F2</td>
-</tr>
-<tr>
-<td>发布</td>
-<td>勾选后可用；只发布所选里的草稿，其他状态跳过并提示数量</td>
-</tr>
-<tr>
-<td>导出</td>
-<td>不勾选时导出当前列表；勾选 1 个导出该调查的 xlsx；勾选多个打包成 zip</td>
-</tr>
-</tbody>
-</table>
-<p>列表列：勾选、编号、项目名称（下方显示类型标签）、使用问卷、创建人、有效时间（开始～结束，结束为空显示「长期有效」）、状态、创建日期、已填/下发、项目来源、操作。分页：首页、上一页、下一页、末页，每页 10 / 20 / 50 条，跳转到第 n 页。</p>
-<p>行内操作与状态规则（不可用的操作置灰，悬停显示原因）：</p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>草稿</th>
-<th>未开始</th>
-<th>进行中</th>
-<th>已结束</th>
-<th>已作废</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>查看</td>
-<td>置灰「草稿还没有发布，请点编辑」</td>
-<td>可用</td>
-<td>可用</td>
-<td>可用</td>
-<td>可用</td>
-</tr>
-<tr>
-<td>编辑</td>
-<td>可用</td>
-<td>可用</td>
-<td>置灰「进行中只能追加评测人，不能修改问卷和对象」</td>
-<td>置灰</td>
-<td>置灰</td>
-</tr>
-<tr>
-<td>发布</td>
-<td>可用</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>加人员</td>
-<td>—</td>
-<td>—</td>
-<td>可用（仅评估型）</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>监控</td>
-<td>置灰「还没有开始作答」</td>
-<td>置灰</td>
-<td>可用</td>
-<td>可用</td>
-<td>置灰「已作废的项目不能监控」</td>
-</tr>
-<tr>
-<td>统计排名</td>
-<td>置灰「还没有答卷」</td>
-<td>置灰</td>
-<td>可用</td>
-<td>可用</td>
-<td>置灰「已作废的项目不统计」</td>
-</tr>
-<tr>
-<td>复制</td>
-<td>可用</td>
-<td>可用</td>
-<td>可用</td>
-<td>可用</td>
-<td>可用</td>
-</tr>
-<tr>
-<td>导出</td>
-<td>置灰「还没有答卷可导出」</td>
-<td>置灰</td>
-<td>可用</td>
-<td>可用</td>
-<td>置灰</td>
-</tr>
-<tr>
-<td>删除</td>
-<td>可用（确认后删除，不能恢复）</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>作废</td>
-<td>—</td>
-<td>可用</td>
-<td>可用</td>
-<td>—</td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-<p>来源项目（非调查管理创建）的编辑、加人员、删除、作废置灰，提示「由{来源应用}创建，请到{来源应用}修改」（D15）。</p>
-<p>流程：
-- 发布：确认后，开始时间未到为「未开始」，否则为「进行中」；开始时间为空时立即开始。
-- 作废：确认弹窗可填作废原因；作废后评测人不能再作答，已提交的答卷保留，可查看和导出；不能撤销。
-- 加人员：选被评测对象（可选全部）、评测关系、人员，追加后按「增加评测人」消息提醒通知；已提交答卷不受影响。
-- 复制：弹窗填项目名称（默认「原名称_副本」）、起止时间（格式 2026-11-10 09:00，结束须晚于开始），勾选「同时复制被评测对象和评测关系（不复制答卷）」；复制后为草稿，问卷、计分规则和项目设置一起复制。</p>
-<h5 id="f2-45">F2 从模板新增与模板库（功能 4–5）</h5>
-<p>说明：模板库和「从模板新增」是同一套问卷模板。模板多一个属性「调查类型」（评估型调查 / 普通调查）；评估型模板带选项分值和题目权重。</p>
-<p>从模板新增（右侧抽屉）：
-- 页签「自定义模板 / 系统模板」；筛选「编号/名称」「调查类型」，按钮「查询」「重置」。
-- 列：模板名称、模板编号、调查类型、模板类型、操作（预览、使用）。只列状态为「启用」的模板。
-- 预览：抽屉内显示题目列表、调查类型、题数。
-- 使用：评估型模板进入①编辑问卷，题目、选项分值和权重一起带入，模板「使用次数」+1；普通调查模板走普通调查新建流程。</p>
-<p>模板库：</p>
-<table>
-<thead>
-<tr>
-<th>区域</th>
-<th>字段 / 控件</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>页签</td>
-<td>自定义模板、系统模板</td>
-</tr>
-<tr>
-<td>筛选</td>
-<td>编号/名称、模板状态（启用 / 停用 / 草稿）、创建人、创建人部门、调查类型；查询、重置（系统模板页签只有编号/名称、模板状态、调查类型）</td>
-</tr>
-<tr>
-<td>操作栏</td>
-<td>列设置、新增模板、导入、停用、启用（停用、启用需勾选后可用）</td>
-</tr>
-<tr>
-<td>列表</td>
-<td>勾选、模板名称、模板编号、调查类型、创建人、创建日期、模板状态、使用次数、操作</td>
-</tr>
-<tr>
-<td>行内操作</td>
-<td>预览、编辑、停用 / 启用、···（使用、复制、删除）</td>
-</tr>
-</tbody>
-</table>
-<p>规则：
-- 新增模板：选调查类型；评估型进入①编辑问卷的模板模式（只有题目编辑，没有②③步），顶栏「预览、取消、保存模板」；保存后为草稿，启用后才出现在「从模板新增」里。
-- 编辑模板：同上；修改不影响已经用过它的调查。
-- 使用：只有启用的模板能用。
-- 复制：生成「原名称_副本」的自定义模板，状态草稿。
-- 删除：被调查用过（使用次数 &gt; 0）的模板不能删除，只能停用；删除前弹窗确认。
-- 系统模板：平台维护，只能预览、使用和复制。
-- 导入：上传 Excel 生成自定义模板（沿用现网）。
-- 编辑问卷时「保存为模板」：题目、选项分值、题目权重一起保存为自定义模板。</p>
-<h5 id="f3-1-6">F3 ①编辑问卷（功能 6）</h5>
-<p>说明：沿用调查管理（新）「新建问卷」页，左侧题型栏、中间问卷画布、右侧设置；评估型调查只提供能计分的题型，出题和设分在同一处完成。</p>
-<p>题型：选择题（单选、多选）、评分题（打分、NPS）、附加问题（问答，不计分）。矩阵题、填空、文件上传本期不在评估型调查里提供。</p>
-<p>每种题型的计分字段：</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>字段</th>
-<th>本题满分</th>
-<th>校验</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>单选</td>
-<td>每个选项：选项文字、分值（≥ 0，可填 0.5 步长）、不计分</td>
-<td>最高选项分值 × 权重</td>
-<td>选项文字不能为空；未设不计分的选项必须填分值；不能为负；至少 1 个计分选项；最高分值 &gt; 0</td>
-</tr>
-<tr>
-<td>多选</td>
-<td>同单选，分值可为负（扣分项）</td>
-<td>正分值之和 × 权重；本题最低 0 分</td>
-<td>同单选，但允许负分；最高分值 &gt; 0</td>
-</tr>
-<tr>
-<td>打分</td>
-<td>打分范围：最低分 至 最高分，每级 1 分</td>
-<td>最高分 × 权重</td>
-<td>最低分 ≥ 0；最高分 ≤ 10；最高分 &gt; 最低分</td>
-</tr>
-<tr>
-<td>NPS</td>
-<td>0–10，选几分得几分</td>
-<td>10 × 权重</td>
-<td>—</td>
-</tr>
-<tr>
-<td>问答</td>
-<td>无计分设置</td>
-<td>—</td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-<p>通用字段：题目、说明、计入得分（开关，关闭后作为附加问题，分值保留）、本题必答（计分题固定必答，显示「计分题必答」）、题目权重（问卷级「题目权重」开关打开后逐题填写，&gt; 0，可填小数；关闭时每题按 1 倍）。</p>
-<p>右侧「问卷设置」（不选题时）：题目权重开关；计分汇总（计分题数、满分）；逐题表「题、权重、满分、占比」，点题号定位到该题。</p>
-<p>编辑操作：</p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>入口</th>
-<th>结果</th>
-<th>出错或拦截时</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>新增题目</td>
-<td>点左侧题型</td>
-<td>新题插在当前选中题目后面，没选中时放最后，直接进入编辑</td>
-<td>编辑中点「取 消」，新题直接移除</td>
-</tr>
-<tr>
-<td>编辑题目</td>
-<td>点画布里的题目</td>
-<td>进入编辑：题目、说明、选项、分值、不计分；右侧显示计分设置</td>
-<td>有错误时标签显示「未完成」，点「完 成」提示原因</td>
-</tr>
-<tr>
-<td>自动保存</td>
-<td>编辑中点其他题目或问卷标题</td>
-<td>当前题的修改保留</td>
-<td>有错误的题保留「未完成」标签，不拦截切换</td>
-</tr>
-<tr>
-<td>取消编辑</td>
-<td>「取 消」</td>
-<td>恢复到进入编辑前的内容</td>
-<td>—</td>
-</tr>
-<tr>
-<td>上移 / 下移</td>
-<td>题目工具条</td>
-<td>与相邻题互换位置</td>
-<td>第一题不能上移、最后一题不能下移</td>
-</tr>
-<tr>
-<td>复制题目</td>
-<td>工具条「复制」</td>
-<td>复制本题（含分值和权重），插在原题后面</td>
-<td>—</td>
-</tr>
-<tr>
-<td>删除题目</td>
-<td>工具条「删除」</td>
-<td>弹窗确认后删除</td>
-<td>点「取消」不删除</td>
-</tr>
-<tr>
-<td>编辑标题和说明</td>
-<td>点画布顶部标题</td>
-<td>可改问卷标题、说明</td>
-<td>标题为空时提示「请填写问卷标题」</td>
-</tr>
-<tr>
-<td>预览</td>
-<td>顶栏「预览」</td>
-<td>弹出学员作答样式，可试答，不保存</td>
-<td>—</td>
-</tr>
-<tr>
-<td>保存为模板</td>
-<td>顶栏「保存为模板」</td>
-<td>填模板名称后保存为自定义模板</td>
-<td>有未完成的题时提示并定位；名称为空不能保存</td>
-</tr>
-<tr>
-<td>保存并关闭</td>
-<td>顶栏「保存并关闭」</td>
-<td>保存草稿，回到调查列表</td>
-<td>有未完成的题也能保存，提示「还有 n 道题未完成」</td>
-</tr>
-<tr>
-<td>取消（离开）</td>
-<td>顶栏「取消」</td>
-<td>没有修改时直接回到列表</td>
-<td>有未保存的修改时弹窗「放弃本次编辑？」</td>
-</tr>
-<tr>
-<td>下一步</td>
-<td>顶栏「下一步」</td>
-<td>进入②对象与关系</td>
-<td>没有计分题时提示「至少需要 1 道计分题」；有未完成的题时提示第一道并定位</td>
-</tr>
-</tbody>
-</table>
-<h5 id="f4-2-79">F4 ②对象与关系（功能 7–9）</h5>
-<p>说明：一张表完成「谁被评、谁来评、占多少」。每个被评测对象一组行，每行一条评测关系。与评估管理现网第 2 步一致，替代普通调查的「选择参与学员」。</p>
-<p>表格字段：</p>
-<table>
-<thead>
-<tr>
-<th>列</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>勾选</td>
-<td>勾选后可「添加评测人」（批量，弹窗里填评测关系、选人，加到每个所选对象下）、「移除」</td>
-</tr>
-<tr>
-<td>被评测对象</td>
-<td>名称（自定义对象可编辑）、来源标签（讲师库 / 人员 / 自定义）和「添加介绍 / 编辑介绍」（≤ 1000 字，评估管理「添加介绍」）；开启按关系加权且合计不是 100% 时，红字显示「权重合计 n%」</td>
-</tr>
-<tr>
-<td>评测关系</td>
-<td>文本输入框，默认为空，最多 20 字，可不填（如学员、班主任、自评、上级）</td>
-</tr>
-<tr>
-<td>评测人</td>
-<td>默认「未选择」；点「选择」从人员名单里选，选好后显示人名</td>
-</tr>
-<tr>
-<td>权重</td>
-<td>0–100 的数字（开启按关系加权时显示）</td>
-</tr>
-<tr>
-<td>操作</td>
-<td>每行「删除」；对象的最后一行另有「添加关系」，点击后在下面新增一行（同一对象的各行上下对齐）；每个对象默认只有一行关系</td>
-</tr>
-</tbody>
-</table>
-<p>表格上方：按钮「从讲师库选择」「从人员选择」「添加自定义对象」「批量导入」；开关「按关系加权」。</p>
-<p>添加对象：</p>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>字段与规则</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>从讲师库选择</td>
-<td>弹窗筛选：讲师姓名、讲师来源、讲师等级、讲师分类（树形，即讲师池，取讲师中心讲师分类）；只列启用讲师；可多选、全选本页；已添加的显示「已添加」不能再选；每个对象带一条空的评测关系（权重 100%）</td>
-</tr>
-<tr>
-<td>从人员选择</td>
-<td>弹窗筛选：姓名 / 工号、部门；只列激活人员；多选加入，每个对象带一条空的评测关系</td>
-</tr>
-<tr>
-<td>添加自定义对象</td>
-<td>表格新增一行，名称可编辑，带一条空的评测关系</td>
-</tr>
-<tr>
-<td>批量导入</td>
-<td>见下</td>
-</tr>
-</tbody>
-</table>
-<p>选择评测人（弹窗）：
-- 本期评测人只支持「指定人员」：弹窗按姓名 / 工号、部门筛选激活人员，可全选当前列表，显示已选名单。面授学员、对象本人（自评）、对象的直属上级等自动来源本期不做（2026-11-06，先简化）。
-- 表格里直接显示人名（超过 2 人显示「张三、李四 等 n 人」）；没选时显示「未选择」。
-- 底部显示「共 n 名评测人」；没有评测人时「确定」置灰。</p>
-<p>批量导入：
-- 模板沿用评估管理 <code>addObjectUserTemplate.xls</code>（工作表「组织列表」），列：被评测对象<em>、评测关系、评测人工号</em>、评测人姓名*、被评测对象介绍。
-- 规则沿用现网：对象名称 ≤ 20 字，最多 2000 个不同对象；介绍 ≤ 1000 字，图片导入后线上编辑；评测人工号和姓名须为平台已有、激活状态且一一对应；评测关系自由输入，可不填。
-- 导入结果：同名对象合并；同一对象同一关系的评测人合并为「指定人员」；新出现的关系权重为 0，导入后在表格里填。弹窗显示「共 n 行，成功 x 行，失败 y 行；新增 m 个被评测对象」和逐行结果，失败原因用红色标出，可「下载错误列表」。</p>
-<p>评测人移除：未提交的评测人可以移除；已提交某对象答卷的评测人不能移除，提示「该评测人已提交，不能移除」。需要「全部评测人评全部对象」时，勾选全部对象后「添加评测人」一次加齐。</p>
-<p>下一步校验（③发布时也会再检查一次）：</p>
-<table>
-<thead>
-<tr>
-<th>校验项</th>
-<th>不通过时的提示</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>至少 1 个被评测对象</td>
-<td>请先添加被评测对象</td>
-</tr>
-<tr>
-<td>每个对象至少 1 条评测关系</td>
-<td>有对象还没有评测关系</td>
-</tr>
-<tr>
-<td>开启按关系加权时，每个对象的关系权重合计 100%</td>
-<td>「{对象名}」的关系权重合计为 {n}%，需要等于 100%</td>
-</tr>
-<tr>
-<td>每条关系都选了评测人</td>
-<td>「{对象名}」有关系还没有选评测人</td>
-</tr>
-<tr>
-<td>开启按关系加权时，有多条关系的对象每条关系都要填名称</td>
-<td>「{对象名}」有多条关系，按关系加权时请填写关系名称</td>
-</tr>
-</tbody>
-</table>
-<h5 id="f5-3-1011">F5 ③项目设置与发布，三步顶栏（功能 10–11）</h5>
-<p>说明：复用调查管理（新）的「项目设置」页（现网截图 <code>10-inbox/chat/2026-11-06-survey-settings-page/</code>），保留「基本信息」「调查提醒」两组；「调查模式」「调查结果」分组只有普通调查有；评测人（普通调查的选择学员）统一在第②步设置。评估管理第 4 步「相关设置」里的每一项都保留，放在一组「评估设置」（对照见 <code>20-intake/2026-10/oem-merge-into-survey/02-create-flow-review.md</code>「2026-11-06 设置项补回」）。</p>
-<p>页面：居中白卡，分三组：基本信息、评估设置、调查提醒；后两组可折叠。</p>
-<table>
-<thead>
-<tr>
-<th>分组</th>
-<th>字段</th>
-<th>控件与规则</th>
-<th>来源</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>基本信息</td>
-<td>调查编号 *</td>
-<td>输入框，默认自动生成，可修改，必填，≤ 30 字</td>
-<td>调查 / 评估管理都有</td>
-</tr>
-<tr>
-<td></td>
-<td>调查名称 *</td>
-<td>输入框，默认取问卷标题，≤ 50 字，必填</td>
-<td>都有</td>
-</tr>
-<tr>
-<td></td>
-<td>发起方</td>
-<td>输入框，≤ 15 字</td>
-<td>都有</td>
-</tr>
-<tr>
-<td></td>
-<td>项目期限</td>
-<td>开始时间 - 结束日期；提示「可不设置项目期限，若不设置，项目发布后需要手动回收问卷」；结束须晚于开始</td>
-<td>都有</td>
-</tr>
-<tr>
-<td></td>
-<td>说明</td>
-<td>多行文本，≤ 2000 字，告知评测人本次评估的目的和注意事项</td>
-<td>评估管理「说明」</td>
-</tr>
-<tr>
-<td>评估设置</td>
-<td>问卷模式</td>
-<td>管理员模式 / 匿名模式（单选），发布后不能修改（D13）</td>
-<td>评估管理</td>
-</tr>
-<tr>
-<td></td>
-<td>计算总分和平均分</td>
-<td>勾选「去掉最高分」「去掉最低分」，可只选其一；在每种评测关系内各去一份，份数不足时不去</td>
-<td>评估管理</td>
-</tr>
-<tr>
-<td></td>
-<td>问卷结果</td>
-<td>允许学员查看排名 / 禁止学员查看（单选）；允许时学员端显示当前排名和综合得分</td>
-<td>评估管理</td>
-</tr>
-<tr>
-<td></td>
-<td>综合得分显示</td>
-<td>勾选「作答时末尾显示已评项总分」</td>
-<td>评估管理</td>
-</tr>
-<tr>
-<td></td>
-<td>提交提示</td>
-<td>输入框，默认「感谢你的评价！」，评测人全部提交后显示</td>
-<td>评估管理</td>
-</tr>
-<tr>
-<td>调查提醒</td>
-<td>消息发布、调查作废、临时新增学员、移除学员、修改起止时间、未参加提醒、期限到期提醒</td>
-<td>每项一个开关 + 渠道多选（邮件通知、站内短信、手机短信、企业微信、钉钉、飞书），开关打开后渠道可选，默认勾选站内短信；期限到期提醒另有「提前 n 天提醒　每 n 天提醒一次」</td>
-<td>调查的提醒项；「修改起止时间」来自评估管理，「临时新增学员」「移除学员」对应评估的增加、移除评测人</td>
-</tr>
-</tbody>
-</table>
-<p>不显示：关联计划（已定 20）、调查模式和调查结果分组（只有普通调查有）、调查范围、允许游客参与、允许重复参与。</p>
-<p>按类型显示的字段（新建时选择类型，创建后不能修改）：</p>
-<table>
-<thead>
-<tr>
-<th>步骤</th>
-<th>字段 / 分组</th>
-<th>普通调查</th>
-<th>评估型调查</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>①编辑问卷</td>
-<td>题型栏</td>
-<td>选择题、评分题、文本输入题</td>
-<td>选择题、评分题、附加问题（不计分）</td>
-</tr>
-<tr>
-<td></td>
-<td>选项分值、不计分、题目权重、计分汇总</td>
-<td>不显示</td>
-<td>显示（F3）</td>
-</tr>
-<tr>
-<td></td>
-<td>右侧设置</td>
-<td>本题必答、逻辑跳转</td>
-<td>本题必答（计分题固定必答）、计分设置</td>
-</tr>
-<tr>
-<td></td>
-<td>「下一步」校验</td>
-<td>题目完整</td>
-<td>题目完整、至少 1 道计分题</td>
-</tr>
-<tr>
-<td>②参与人</td>
-<td>页面</td>
-<td>选择学员（从人员名单选，可移除）</td>
-<td>对象与关系（F4）</td>
-</tr>
-<tr>
-<td>③项目设置</td>
-<td>基本信息</td>
-<td>调查编号、调查名称、发起方、项目期限</td>
-<td>同左 + 说明</td>
-</tr>
-<tr>
-<td></td>
-<td>调查模式</td>
-<td>匿名模式（开关）</td>
-<td>不显示（用评估设置的「问卷模式」）</td>
-</tr>
-<tr>
-<td></td>
-<td>调查结果</td>
-<td>允许学员查看（看问卷整体统计）</td>
-<td>不显示（用评估设置的「问卷结果」）</td>
-</tr>
-<tr>
-<td></td>
-<td>参与设置</td>
-<td>允许扫码参与、允许游客参与、允许重复参与</td>
-<td>不显示</td>
-</tr>
-<tr>
-<td></td>
-<td>评估设置</td>
-<td>不显示</td>
-<td>问卷模式、计算总分和平均分、问卷结果、综合得分显示、提交提示</td>
-</tr>
-<tr>
-<td></td>
-<td>调查提醒</td>
-<td>消息发布、调查作废、临时新增学员、移除学员、未参加提醒、期限到期提醒</td>
-<td>同左 + 修改起止时间</td>
-</tr>
-<tr>
-<td></td>
-<td>发布校验</td>
-<td>至少选择 1 名学员</td>
-<td>第②步各项校验、至少 1 道计分题</td>
-</tr>
-<tr>
-<td>入口</td>
-<td>新增、从模板新增、列表「编辑」</td>
-<td>都按项目或模板的类型进入对应流程</td>
-<td>同左</td>
-</tr>
-</tbody>
-</table>
-<p>发布校验：点「发布」时依次检查第②步的校验项、「问卷至少 1 道计分题」、调查编号和名称必填、项目期限先后；有不通过的，提示第一条原因，不发布。</p>
-<p>三步顶栏：左侧标题「新建调查 / 编辑调查」和「评估型调查」标签，右侧按钮；不显示步骤条。</p>
-<table>
-<thead>
-<tr>
-<th>步骤</th>
-<th>按钮</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>①编辑问卷</td>
-<td>预览、保存为模板、保存并关闭、取消、下一步</td>
-</tr>
-<tr>
-<td>②对象与关系</td>
-<td>上一步、保存并关闭、取消、下一步</td>
-</tr>
-<tr>
-<td>③项目设置与发布</td>
-<td>上一步、发布、保存并关闭（与调查管理（新）项目设置页一致）</td>
-</tr>
-</tbody>
-</table>
-<p>规则：用「上一步」回到前一步，「下一步」先校验本步再进入；发布成功后回到调查列表，新项目排在第一条，编辑的项目原位更新。</p>
-<h5 id="f6-1213">F6 查看与监控（功能 12–13）</h5>
-<p>查看：项目名称和「返回列表」「监控」「统计排名」按钮；基本信息（编号、名称、类型、使用问卷、有效时间、状态、创建人、创建日期、来源）；计分与设置（计分题和满分、题目权重、按关系加权、去高去低、调查模式、学员查看排名）；被评测对象与评测关系；问卷题目（含权重和本题满分）。</p>
-<p>监控：</p>
-<table>
-<thead>
-<tr>
-<th>页签</th>
-<th>筛选</th>
-<th>列</th>
-<th>操作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>已答人员（n）</td>
-<td>工号/姓名、部门、被评测对象、状态（有效 / 无效 / 已回收）</td>
-<td>勾选、工号、姓名、部门、被评测对象、关系、提交时间、答卷总分、状态、查看答卷</td>
-<td>回收问卷、标记有效、标记无效（勾选后可用）；导出已答人员、导出评估答卷</td>
-</tr>
-<tr>
-<td>未答人员（n）</td>
-<td>工号/姓名、部门、被评测对象</td>
-<td>勾选、工号、姓名、部门、被评测对象、关系、作答状态（未开始 / 已暂存）</td>
-<td>提醒参加（勾选后可用）、全部提醒、导出未答人员</td>
-</tr>
-</tbody>
-</table>
-<p>规则：标记无效或回收的答卷不计入统计排名，排名同步重算；回收后评测人可以重新作答；提醒参加按项目设置的消息渠道发送。</p>
-<h5 id="f7-1419">F7 统计排名（功能 14–19）</h5>
-<p>顶部：项目名称、「返回列表」「监控」；筛选「关系」「部门」，开关「去掉最高分、最低分」「按关系加权」（筛选了某个关系时不加权）；右侧显示「有效问卷 n 份　满分 x 分」。</p>
-<table>
-<thead>
-<tr>
-<th>页签</th>
-<th>列 / 内容</th>
-<th>操作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>综合排名</td>
-<td>勾选、排名、被评测对象、加权得分（或得分）、得分率、平均分、对比平均分、有效问卷 n 份、各关系完成（缺少某关系时标「缺少{关系}」）、查看明细</td>
-<td>绘图（勾选的对象，不勾选时全部，最多 15 个；可切换得分 / 得分率）、导出；点「有效问卷」看答卷列表，去高去低时被去掉的答卷标灰</td>
-</tr>
-<tr>
-<td>单项排名</td>
-<td>选题目；排名、被评测对象、平均得分率、本题平均分、加权得分、对比平均分、有效问卷、查看明细</td>
-<td>左侧勾选题目和对象后「绘图」；导出</td>
-</tr>
-<tr>
-<td>附加题汇总</td>
-<td>选附加题；被评测对象、回答数、最近回答、查看明细</td>
-<td>导出</td>
-</tr>
-<tr>
-<td>多维分析 · 关系对比</td>
-<td>每个对象各关系平均分，以及关系之间的差值（如自评 − 学员），差值绝对值 ≥ 5 分标红</td>
-<td>导出</td>
-</tr>
-<tr>
-<td>多维分析 · 题目分析</td>
-<td>每道计分题的权重、平均得分率、各对象该题平均分、本题第一</td>
-<td>导出</td>
-</tr>
-<tr>
-<td>多维分析 · 评测人分析</td>
-<td>评测人、关系、部门、已评、平均给分、与平均偏差、提示（偏差超过 ±15% 标出）</td>
-<td>导出</td>
-</tr>
-<tr>
-<td>多维分析 · 部门分析</td>
-<td>按对象部门：对象数、平均得分、得分率；按评测人部门：答卷数、平均给分</td>
-<td>导出</td>
-</tr>
-</tbody>
-</table>
-<p>答题情况弹窗（从「查看明细」「有效问卷」「查看答卷」进入）：评测人、关系、提交时间、状态、答卷总分；逐题显示题目、题型、作答、得分、权重、加权得分；选了「不计分」选项的题显示「不计分」。</p>
-<p>计分按 2.2 计分规则；导出内容与页面一致，答卷明细含「关系」「关系权重」。</p>
-<h5 id="f8-2021">F8 学员端（功能 20–21）</h5>
-<table>
-<thead>
-<tr>
-<th>页面</th>
-<th>内容与规则</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>对象列表</td>
-<td>「请对以下讲师分别评价，已完成 x/y」、进度条、搜索被评测对象；每个对象显示关系、讲师等级、讲师分类和状态（未开始 / 已暂存 / 已提交）；开启排名可见时显示「当前排名 n　综合得分 x 分」；按钮「去评价」「继续评价」「查看我的答卷」</td>
-</tr>
-<tr>
-<td>作答页</td>
-<td>顶部「被评测对象 {对象}」和进度 n/N；底部「暂存」「提交」；提交时校验必答题，提示「第 n 题还没有作答」；已提交的只能查看</td>
-</tr>
-<tr>
-<td>全部完成</td>
-<td>显示提交提示；来源应用此时收到完成回调</td>
-</tr>
-</tbody>
-</table>
-<p>提交后答卷进入管理端：监控的已答 / 未答人数和统计排名同步更新。</p>
-<h5 id="f9-2228">F9 接口、讲师链路与迁移（功能 22–28，二期）</h5>
-<ul>
-<li>评估型调查接口：创建、复制、发布、删除；维护对象、关系、评测人；学员待评列表、完成状态、完成回调；排名和结果查询；讲师满意度（返回结构不变，新增加权得分字段）。接口清单由研发补充（待确认 1）。</li>
-<li>接入方：评估管理官方入口、学习地图、面授管理、混合培训、远程督导、讲师中心、易培。切换后在各自页面「新建评估」「查看评估」时打开评估型调查页面，带入来源和来源对象；回调和返回内容不变。</li>
-<li>迁移开关（按租户）：打开后该租户各入口新建都走调查；已有评估管理项目照常查看和作答到结束。评估管理旧入口顶部提示「评估管理已并入调查管理，新建评估请到调查管理」，按钮「去新建评估型调查」，「新建项目」「复制项目」隐藏，历史项目可查看排名和导出。</li>
-<li>
-<p>来源项目：基本信息、对象和关系只读，列表提示「由{来源应用}创建，请到{来源应用}修改」；监控、统计排名、导出可用；学员从来源应用进入作答。</p>
-</li>
-<li>
-<p>讲师满意度回传（D22）：只统计讲师库来源的对象，按「讲师 × 面授项目」汇总有效问卷的总分和份数，不加权、不去高去低；同一面授项目下评估管理和评估型调查的数据合并（满意度 = 两边有效问卷总分之和 ÷ 份数之和）；接口返回结构不变，新增加权得分字段。</p>
-</li>
-<li>易培 / 面授评估任务（D23）：创建评估任务时可选评估型调查；学员全部提交后回调完成状态；存量任务照常运行。</li>
-<li>一键生成（D24）：关联面授项目时，「一键生成」把面授讲师生成为对象、面授学员生成为每个对象的评测人，确认后执行。</li>
-<li>评估管理停止新建（D03）：</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>场景</th>
-<th>处理</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>迁移开关打开后的标准租户</td>
-<td>评估管理列表隐藏「新建项目」「复制项目」；页面顶部提示「评估管理已并入调查管理，新建评估请到调查管理」，按钮「去新建评估型调查」</td>
-</tr>
-<tr>
-<td>历史项目</td>
-<td>可查看、看排名、导出；不能再编辑对象和评测人</td>
-</tr>
-<tr>
-<td>进行中的项目</td>
-<td>照常作答到结束时间</td>
-</tr>
-<tr>
-<td>定制租户</td>
-<td>不开开关，行为与现网一致</td>
-</tr>
-</tbody>
-</table></section>
-  <section class="card" id="s4"><h2 id="4">4. 验收标准</h2>
-<p>一期：</p>
-<p>调查列表与模板</p>
-<ul>
-<li>[ ] 调查列表「类型」选「评估型调查」后只列评估型调查；状态为「进行中」的项目「编辑」置灰，悬停提示「进行中只能追加评测人，不能修改问卷和对象」，「加人员」可用。</li>
-<li>[ ] 草稿的「查看」「监控」「统计排名」置灰并显示原因；「删除」确认后项目从列表消失。</li>
-<li>[ ] 勾选 3 个项目（含 1 个草稿）点「发布」：草稿发布，另外 2 个跳过，提示「已发布 1 个项目，2 个不是草稿，已跳过」。</li>
-<li>[ ] 不勾选点「导出」导出当前列表；勾选 1 个导出该调查 xlsx；勾选 3 个导出 zip。</li>
-<li>[ ] 列设置取消「使用问卷」后，表格不显示该列；「全选/不选」取消全部后只剩勾选列和操作列。</li>
-<li>[ ] 复制时开始时间填「2026/11/10」提示格式错误；结束时间早于开始时间提示「结束时间需要晚于开始时间」；复制成功后新项目为草稿、排在第一条。</li>
-<li>[ ] 从模板新增只列启用的模板；在模板库停用某模板后，抽屉里不再出现；启用后重新出现。</li>
-<li>[ ] 使用评估型模板后进入①编辑问卷，题目、分值和权重与模板一致；该模板使用次数 +1。</li>
-<li>[ ] 被调查用过的模板「删除」置灰；未用过的模板删除前弹窗确认。</li>
-<li>[ ] 编辑问卷时「保存为模板」后，模板库自定义模板里出现该模板，调查类型为「评估型调查」。</li>
-</ul>
-<p>①编辑问卷与计分</p>
-<ul>
-<li>[ ] 题目权重开启后，出题页「满分」= 各计分题最高分值 × 权重之和；关闭后按权重 1 计算；计分汇总表每题显示占比，合计 100%。</li>
-<li>[ ] 单选题选项分值为 5、4、3、2、1，另有「没注意」设为不计分：本题满分 = 5 × 权重；学员选「没注意」时本题不计分，这份答卷的应得满分扣掉这道题再换算标准分（例：前 4 题 39 分、应得满分 45，标准分 43.3）。</li>
-<li>[ ] 单选题清空某个选项的分值、又没勾不计分：题目标签显示「未完成」，点「完 成」提示「请为每个选项填写分值，或设为不计分」；点「下一步」定位到这道题。</li>
-<li>[ ] 单选题某个选项填 -1，或全部选项填 0：分别提示「单选题分值不能为负数」「最高分值需要大于 0」。</li>
-<li>[ ] 打分题范围 0 至 10、权重 1.5：本题满分 15；最高分填 12 提示「最高分不能超过 10」；最低分改成 10 时提示「最高分需要大于最低分」。</li>
-<li>[ ] 多选题选项分值 2、1、-1：本题满分 = 3 × 权重；学员选了 2 和 -1 时本题得 1 分；只选 -1 时本题得 0 分。</li>
-<li>[ ] NPS 题本题满分 = 10 × 权重；问答题右侧没有计分设置。</li>
-<li>[ ] 计分题的「本题必答」显示「计分题必答」，不能关闭；关闭「计入得分」后可以设为选答。</li>
-<li>[ ] 题型栏只有单选、多选、打分、NPS 和问答（附加问题，不计分）。</li>
-<li>[ ] 选中第 2 题后点「多选」，新题出现在第 3 位并进入编辑；点「取 消」新题被移除。</li>
-<li>[ ] 第 1 题「上移」置灰；「复制」后原题后面出现一道相同的题（含分值和权重）；「删除」弹窗确认后才删除。</li>
-<li>[ ] 有未保存的修改时点「取消」，弹窗「放弃本次编辑？」；删除所有计分题后点「下一步」，提示「至少需要 1 道计分题」。</li>
-</ul>
-<p>②对象与关系</p>
-<ul>
-<li>[ ] 「从讲师库选择」按讲师分类「营销管理」筛选后只列该分类讲师；勾选 2 人加入后，对象表多 2 个对象，每人带一条空的评测关系、权重 100%；已加入的讲师在弹窗里显示「已添加」。</li>
-<li>[ ] 「从人员选择」只列激活人员，加入后来源显示「人员」并带工号。</li>
-<li>[ ] 新加入的对象评测关系为空，可以直接输入「讲师评测」，也可以不填；只有一条关系且已选评测人时可以进入下一步。</li>
-<li>[ ] 开启按关系加权时，一个对象有两条关系都没填名称，点「下一步」提示「「{对象名}」有多条关系，按关系加权时请填写关系名称」。</li>
-<li>[ ] 把张明的「学员」权重从 60% 改成 50%，对象格显示「权重合计 90%」（红色），点「下一步」提示「「张明」的关系权重合计为 90%，需要等于 100%」；其他对象不受影响。</li>
-<li>[ ] 新加的关系评测人显示「未选择」，「下一步」被拦截，提示「「{对象名}」有关系还没有选评测人」；选择评测人弹窗里没有评测人来源选项，只能从人员名单里选，选 3 人后表格显示「张三、李四 等 3 人」。</li>
-<li>[ ] 批量导入的模板列为「被评测对象<em>、评测关系、评测人工号</em>、评测人姓名*、被评测对象介绍」；工号不存在、工号姓名不对应的行失败并显示原因，可下载错误列表；新导入的关系权重为 0，补齐前「下一步」被拦截。</li>
-</ul>
-<p>③项目设置与发布、三步顶栏</p>
-<ul>
-<li>[ ] 新增时选「普通调查」：依次是「编辑问卷」「选择学员」「项目设置与发布」，编辑问卷不显示分值和权重，项目设置有调查模式、调查结果、参与设置，没有评估设置；不选学员时「下一步」提示「请先选择学员」。</li>
-<li>[ ] 新建评估型调查依次是「编辑问卷」「对象与关系」「项目设置与发布」三步，三步顶栏位置和样式一致，不显示步骤条；第①步有未完成的题时「下一步」被拦截。</li>
-<li>[ ] 结束时间不填时显示「长期有效」，可以发布；结束时间早于开始时间时不能发布。</li>
-<li>[ ] 发布成功后回到调查列表，新项目排在第一条；开始时间晚于今天时状态为「未开始」。</li>
-<li>[ ] 从列表「编辑」进入时标题为「编辑调查」，发布后原项目更新，不新增一条。</li>
-</ul>
-<p>监控与统计排名</p>
-<ul>
-<li>[ ] 监控里把一份答卷标记为无效后，统计排名的有效问卷份数减 1，对象得分重算；再标记为有效后恢复。</li>
-<li>[ ] 按 2.2 示例数据：对象得分 42.6、得分率 85.2；开启去高去低 42.9、85.8；自评未提交 42.0、84.0 且标「缺少自评」；关闭按关系加权 43.3、86.7。</li>
-<li>[ ] 两个对象得分都是 42.6：名次都显示 1，下一个对象显示 3。</li>
-<li>[ ] 单项排名第一列是平均得分率；关系对比中张明的学员、班主任、自评平均分分别为 43.0、40.0、48.0。</li>
-<li>[ ] 评测人分析中，平均给分偏离全体平均超过 15% 的评测人被标出；按关系筛选「学员」后，各页签只统计学员关系的答卷，对象得分不再加权。</li>
-<li>[ ] 第③步只有「基本信息」「评估设置」「调查提醒」三组，没有关联计划、调查模式、调查结果和调查范围；评估设置里没有「允许扫码参与」。</li>
-<li>[ ] 评估设置里只勾「去掉最高分」：每种关系只去掉一份最高分，最低分保留；两项都勾时与统计排名的「去掉最高分、最低分」结果一致。</li>
-<li>[ ] 问卷模式选匿名：发布后不能修改；监控、评测人分析和导出不显示评测人姓名、工号、部门。</li>
-<li>[ ] 勾选「作答时末尾显示已评项总分」：学员作答页底部显示当前已评项总分，随作答变化。</li>
-<li>[ ] 提交提示改成「谢谢参与」：学员全部提交后显示「谢谢参与」。</li>
-<li>[ ] 调查提醒里有「修改起止时间」，打开后可选渠道。</li>
-<li>[ ] 勾选 2 个对象点「添加评测人」，填评测关系「上级」并选 1 人：两个对象下各多一行「上级」关系；对象原来只有一行空关系时，直接填到这一行。</li>
-<li>[ ] 对象「添加介绍」保存后按钮变成「编辑介绍」，再次打开内容还在。</li>
-<li>[ ] 勾选 4 个对象，一次「添加评测人」选 3 人：每名评测人的待评列表都有 4 个对象，共 12 份待答。</li>
-<li>[ ] 对象 A 的评测人是甲、乙，对象 B 的评测人是乙：甲只看到 A，乙看到 A、B。</li>
-<li>[ ] 评测人已提交某对象的答卷后，移除该评测人失败并提示「该评测人已提交，不能移除」；未提交的可以移除。</li>
-<li>[ ] 从讲师库选择时，两名同名讲师可以通过讲师编号或工号区分。</li>
-<li>[ ] 各页签导出与页面数据一致；答卷明细一个评测人对一个对象一行、每题一列，每行有「关系」「关系权重」；导出在导出任务列表可见进度并能下载。</li>
-<li>[ ] 只有 1 份有效问卷时开启去掉最高分，该份不被去掉，得分等于这份答卷的标准分。</li>
-<li>[ ] 暂存未提交、被标记无效或被回收的答卷不计入得分和有效份数。</li>
-<li>[ ] 问卷里的不计分问答题，在附加题汇总里能按对象看到全部文字回答，并能导出。</li>
-</ul>
-<p>学员端</p>
-<ul>
-<li>[ ] 对象列表显示「已完成 x/y」；暂存后状态为「已暂存」、按钮为「继续评价」，再次进入已填内容还在；必答题未答时提交提示「第 n 题还没有作答」；全部提交后显示提交提示。</li>
-<li>[ ] 学员提交后，监控的已答人数 +1、未答人数 −1，统计排名同步更新。</li>
-<li>[ ] 开启「允许学员查看排名」时，每个对象显示「当前排名 n　综合得分 x 分」，与统计排名一致；关闭后不显示。</li>
-<li>[ ] 普通调查的参与设置里仍有「允许扫码参与」；评估型调查的项目设置里没有。</li>
-</ul>
-<p>二期：</p>
-<ul>
-<li>[ ] 在学习地图、面授、讲师中心、易培点「新建评估」，打开的是评估型调查页面，来源和来源对象已带入；调查列表来源列显示对应应用。</li>
-<li>[ ] 学习地图里的评估型调查全部提交后，学习地图收到完成回调，阶段状态与使用评估管理时一致。</li>
-<li>[ ] 讲师中心满意度接口：同一面授项目下评估管理和评估型调查都有数据时，满意度 = 两边有效问卷总分之和 ÷ 份数之和；返回中新增加权得分字段，原有字段不变。</li>
-<li>[ ] 迁移开关关闭时，各接入方入口行为与现网一致；打开后接入方在评估管理里新建项目的数量为 0，已有评估管理项目照常查看和作答。</li>
-<li>[ ] 评估管理旧入口隐藏「新建项目」「复制项目」，显示去调查管理新建的提示。</li>
-<li>[ ] 国药等定制接口行为与现网一致。</li>
-<li>[ ] 只有评估管理数据的面授项目，讲师满意度与上线前一致；满意度不受「去掉最高分、最低分」影响。</li>
-<li>[ ] 易培创建评估任务时可以选评估型调查；学员全部提交后，易培任务状态变为已完成；已引用评估管理的存量易培、面授任务照常作答和回调。</li>
-<li>[ ] 一键生成后，面授讲师全部成为对象（来源为讲师库），面授学员成为每个对象的评测人。</li>
-<li>[ ] 迁移开关打开后，该租户的评估管理历史项目可查看排名和导出，不能编辑对象和评测人；进行中的项目照常作答到结束时间。</li>
-<li>[ ] 本需求不改动 360 评估：360 项目的计分和报告与上线前一致。</li>
-<li>[ ] 混合培训、远程督导创建的评估型调查，在调查管理里基本信息、对象和关系只读，列表提示「由{来源应用}创建，请到{来源应用}修改」；监控、统计排名、导出可用。</li>
-</ul></section>
-
-  <p class="note">源 Markdown：<code>30-prd/oem-merge-into-survey/prd-oem-merge-into-survey-2026-11-03.md</code>。本页可浏览器内编辑并保存到本机；冲突时以飞书定稿与本地 Markdown 为准。</p>
+<section class="card" id="s1">
+  <h2>1. 背景与要解决的问题</h2>
+  <h1>在调查管理落地「评估型调查」，承接评估管理的计分、对象关系与排名</h1>
+  <p class="muted">评估管理界面与题型落后，对外已多次答复「合并到调查」；但讲师评估、加权排名、满意度回传仍在用。调查没有「被评对象」和计分，客户换不过去。各应用（学习地图、面授、易培等）仍直连接评估接口，只搬菜单关不掉评估管理。</p>
+  <ul>
+    <li><b>题型与体验</b>：评估只有 4 种题型；调查题型新，但无对象、不计总分、不出排名。</li>
+    <li><b>入口分散</b>：接入方继续往老模块建项目，评估管理下不了线。</li>
+    <li><b>计分复杂</b>：题目权重 + 关系权重；缺关系要折算；要标准分，避免「不计分」选项拖累排名。</li>
+    <li><b>讲师链路</b>：满意度回传讲师中心不能断；历史数据不迁移，按租户开关。</li>
+  </ul>
+  <div class="callout">一期：调查内评估型能力（列表/模板/三步/监控/排名/学员）。二期：接口、接入方改调、迁移开关、满意度与一键生成。不改 360；定制租户保持现状。</div>
+  <div class="tags">
+    <span class="tag">仓 app-qsm</span>
+    <span class="tag gray">类型创建后不可改</span>
+    <span class="tag gray">普通调查不计分</span>
   </div>
+</section>
+
+<section class="card" id="s2">
+  <h2>2. 哪里做了调整</h2>
+  <h3>相对评估管理</h3>
+  <ul>
+    <li>入口迁到调查「评估型调查」；创建改为与普通调查同一套<strong>三步</strong>（按类型显隐字段）。</li>
+    <li>对象与关系<strong>沿用现网按对象逐行配置</strong>；不做关系模板、项目级统一关系、逐评测人独立权重。</li>
+    <li>汇总改用<strong>标准分</strong>；去高去低在<strong>每种关系内</strong>；缺关系则其余权重折算并标「缺少{关系}」。</li>
+    <li>历史项目不迁移；满意度仍「有效问卷均分」，另回加权得分字段。</li>
+  </ul>
+  <h3>相对调查管理（新）</h3>
+  <ul>
+    <li>新类型；①卷面加分值权重；②「对象与关系」替代「选择学员」；③用「评估设置」替代调查模式/结果/扫码等。</li>
+    <li>评估型无扫码、无关联计划；列表操作状态机对齐评估管理（进行中不可改问卷，可加人员等）。</li>
+    <li>评估型结果走排名/多维分析，不走普通调查的选项分布。</li>
+  </ul>
+  <h3>明确不做</h3>
+  <ul><li><b>D16</b> 关系模板（本期不做）</li><li><b>D17</b> 评估型扫码参与（本期不做）</li><li><b>D11/D25</b> 跨项目分析（本期不做）</li><li><b>D26</b> 讲师自查评估结果（本期不做）</li><li><b>—</b> 逐评测人独立权重；及格线/等级；按关系不同问卷；标准 NPS 展示</li></ul>
+</section>
+
+<section class="card" id="s3">
+  <h2>3. 业务逻辑与功能描述</h2>
+  <h3 id="s3-score">计分要点（实现必看）</h3>
+  <table>
+    <thead><tr><th>项</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td>有效问卷</td><td>已提交且未标记无效、未回收；暂存不计</td></tr>
+      <tr><td>答卷得分</td><td>各计分题得分 × 题目权重之和（未开权重则权重=1）</td></tr>
+      <tr><td>应得满分</td><td>各计分题最高可得分 × 权重；选了「不计分」选项的题从该答卷应得满分中扣除</td></tr>
+      <tr><td>标准分</td><td>答卷得分 ÷ 应得满分 × 问卷满分；关系得分/加权/去高去低/排名都用标准分</td></tr>
+      <tr><td>关系得分</td><td>该关系下有效标准分均值；去高去低在关系内执行</td></tr>
+      <tr><td>对象得分</td><td>开加权：关系得分×权重（缺关系则其余折算）；不开：全部有效标准分均值</td></tr>
+      <tr><td>得分率 / 名次</td><td>对象得分÷问卷满分×100（1 位小数）；同分同名次、下一名跳号</td></tr>
+      <tr><td>满意度回传</td><td>仅讲师库对象；有效问卷均分，不加权不去高去低；同面授合并两边数据</td></tr>
+    </tbody>
+  </table>
+  <p class="note">算例与字段细则见飞书全文 2.2；原型演示：<a href="/survey-evaluation-merge/">/survey-evaluation-merge/</a></p>
+
+  <h3 id="s3-flow">主流程（一句话）</h3>
+  <p class="muted">新增选类型 → ①编辑问卷（评估型设分）→ ②对象与关系 / 选择学员 → ③项目设置发布 → 监控与排名 →（二期）接入方回调 / 满意度。</p>
+
+  <h3 id="s3-list">功能 checklist</h3>
+  <p class="muted">开发勾选完成项，并填「更新日期」。进度只存在当前浏览器；可用「导出 HTML」带走。</p>
+
+  <div class="bar">
+    <b>一期</b>
+    <span class="prog" id="prog1">0 / 0</span>
+  </div>
+  <table class="clist" data-phase="一期">
+    <thead><tr><th></th><th>#</th><th>优先级</th><th>需求</th><th>功能</th><th>更新日期</th><th>备注</th></tr></thead>
+    <tbody>
+<tr data-id="f01">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f01"></td>
+  <td class="id">F01</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D19 D15</td>
+  <td class="title">调查列表：评估型类型；字段/筛选/行内操作/状态规则对齐评估管理</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f01 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f01 备注"></td>
+</tr>
+<tr data-id="f02">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f02"></td>
+  <td class="id">F02</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D19</td>
+  <td class="title">列表操作栏：列设置、新增（选类型）、从模板新增、批量发布、导出、分页</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f02 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f02 备注"></td>
+</tr>
+<tr data-id="f03">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f03"></td>
+  <td class="id">F03</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D19</td>
+  <td class="title">复制项目：改名称与起止时间，可选复制对象与关系</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f03 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f03 备注"></td>
+</tr>
+<tr data-id="f04">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f04"></td>
+  <td class="id">F04</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D20</td>
+  <td class="title">从模板新增：类型筛选、仅启用模板、预览/使用（评估型带入分值权重）</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f04 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f04 备注"></td>
+</tr>
+<tr data-id="f05">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f05"></td>
+  <td class="id">F05</td>
+  <td class="pri"><span class="pill">P1</span></td>
+  <td class="refs">D20</td>
+  <td class="title">模板库：筛选、列设置、新增/导入、启停、预览/编辑/使用/复制/删除</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f05 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f05 备注"></td>
+</tr>
+<tr data-id="f06">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f06"></td>
+  <td class="id">F06</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D04 D14 D20</td>
+  <td class="title">①编辑问卷：计分题型、分值/权重/汇总、校验、保存为模板</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f06 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f06 备注"></td>
+</tr>
+<tr data-id="f07">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f07"></td>
+  <td class="id">F07</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D05 D06 D07</td>
+  <td class="title">②对象与关系：讲师库/人员/自定义；关系·评测人·权重；选评测人</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f07 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f07 备注"></td>
+</tr>
+<tr data-id="f09">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f09"></td>
+  <td class="id">F09</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D06</td>
+  <td class="title">②批量导入：沿用评估导入模板，逐行结果与错误列表</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f09 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f09 备注"></td>
+</tr>
+<tr data-id="f10">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f10"></td>
+  <td class="id">F10</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D12 D13</td>
+  <td class="title">③项目设置：基本信息、评估设置、调查提醒；发布校验</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f10 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f10 备注"></td>
+</tr>
+<tr data-id="f11">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f11"></td>
+  <td class="id">F11</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D12</td>
+  <td class="title">三步顶栏：上一步/下一步（先校验）/保存并关闭/取消；发布回列表</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f11 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f11 备注"></td>
+</tr>
+<tr data-id="f12">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f12"></td>
+  <td class="id">F12</td>
+  <td class="pri"><span class="pill">P1</span></td>
+  <td class="refs">D19</td>
+  <td class="title">查看：基本信息、计分与设置、对象与关系、问卷</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f12 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f12 备注"></td>
+</tr>
+<tr data-id="f13">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f13"></td>
+  <td class="id">F13</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D21</td>
+  <td class="title">监控：已答/未答；回收、有效无效、提醒、导出、看答卷</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f13 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f13 备注"></td>
+</tr>
+<tr data-id="f14">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f14"></td>
+  <td class="id">F14</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D08 D09</td>
+  <td class="title">统计排名：综合排名（绘图、有效问卷、明细）</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f14 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f14 备注"></td>
+</tr>
+<tr data-id="f15">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f15"></td>
+  <td class="id">F15</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D08 D14</td>
+  <td class="title">统计排名：单项排名、附加题汇总</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f15 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f15 备注"></td>
+</tr>
+<tr data-id="f16">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f16"></td>
+  <td class="id">F16</td>
+  <td class="pri"><span class="pill">P1</span></td>
+  <td class="refs">D08</td>
+  <td class="title">统计排名：多维分析（关系/题目/评测人/部门）</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f16 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f16 备注"></td>
+</tr>
+<tr data-id="f17">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f17"></td>
+  <td class="id">F17</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D09 D10</td>
+  <td class="title">排名筛选与开关重算；各页签导出</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f17 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f17 备注"></td>
+</tr>
+<tr data-id="f18">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f18"></td>
+  <td class="id">F18</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D07</td>
+  <td class="title">计分引擎：标准分、关系得分、对象得分、得分率、名次</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f18 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f18 备注"></td>
+</tr>
+<tr data-id="f19">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f19"></td>
+  <td class="id">F19</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D13</td>
+  <td class="title">匿名模式：监控/评测人分析/导出不露身份</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f19 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f19 备注"></td>
+</tr>
+<tr data-id="f21">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f21"></td>
+  <td class="id">F21</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D18</td>
+  <td class="title">学员端：对象列表、作答、暂存/提交、可见排名、我的答卷</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f21 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f21 备注"></td>
+</tr>
+<tr data-id="f29">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f29"></td>
+  <td class="id">F29</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D06</td>
+  <td class="title">移除评测人：未提交可移除，已提交拦截</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f29 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f29 备注"></td>
+</tr>
+<tr data-id="f30">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f30"></td>
+  <td class="id">F30</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D10</td>
+  <td class="title">导出：对象信息、综合/单项排名、答卷明细（含关系与权重），异步任务</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f30 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f30 备注"></td>
+</tr>
+    </tbody>
+  </table>
+
+  <div class="bar" style="margin-top:16px">
+    <b>二期</b>
+    <span class="prog" id="prog2">0 / 0</span>
+  </div>
+  <table class="clist" data-phase="二期">
+    <thead><tr><th></th><th>#</th><th>优先级</th><th>需求</th><th>功能</th><th>更新日期</th><th>备注</th></tr></thead>
+    <tbody>
+<tr data-id="f22">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f22"></td>
+  <td class="id">F22</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D01</td>
+  <td class="title">评估型调查接口（创建/发布/对象关系/待评/回调/排名/满意度）</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f22 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f22 备注"></td>
+</tr>
+<tr data-id="f23">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f23"></td>
+  <td class="id">F23</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D02</td>
+  <td class="title">接入方入口改调评估型调查，带来源与来源对象</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f23 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f23 备注"></td>
+</tr>
+<tr data-id="f24">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f24"></td>
+  <td class="id">F24</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D03</td>
+  <td class="title">按客户迁移开关；评估管理旧入口隐藏新建/复制</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f24 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f24 备注"></td>
+</tr>
+<tr data-id="f25">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f25"></td>
+  <td class="id">F25</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D15</td>
+  <td class="title">来源项目只读；列表提示来源应用</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f25 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f25 备注"></td>
+</tr>
+<tr data-id="f26">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f26"></td>
+  <td class="id">F26</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D22</td>
+  <td class="title">讲师满意度回传：结构不变，合并两边数据，新增加权得分字段</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f26 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f26 备注"></td>
+</tr>
+<tr data-id="f27">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f27"></td>
+  <td class="id">F27</td>
+  <td class="pri"><span class="pill">P0</span></td>
+  <td class="refs">D23</td>
+  <td class="title">易培/面授评估任务可选评估型调查并回调完成</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f27 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f27 备注"></td>
+</tr>
+<tr data-id="f28">
+  <td class="ck"><input type="checkbox" data-k="done" aria-label="完成 f28"></td>
+  <td class="id">F28</td>
+  <td class="pri"><span class="pill">P1</span></td>
+  <td class="refs">D24</td>
+  <td class="title">关联面授时一键生成讲师对象与学员评测人</td>
+  <td class="date"><input type="date" data-k="date" aria-label="f28 更新日期"></td>
+  <td class="note"><input type="text" data-k="note" placeholder="备注" aria-label="f28 备注"></td>
+</tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="card" id="s4">
+  <h2>4. 验收要点（抽样，完整用例见飞书）</h2>
+  <h3>一期必过</h3>
+  <ul>
+    <li>类型筛选、状态机置灰文案正确；批量发布只发草稿并提示跳过数量。</li>
+    <li>评估型模板带入分值权重；计分题必答；标准分与 2.2 示例（42.6 / 85.2 等）一致。</li>
+    <li>关系权重合计≠100%、缺评测人、多关系未填名称时「下一步」拦截。</li>
+    <li>普通调查三步无评估设置；评估型无扫码/关联计划；匿名发布后不可改且不露身份。</li>
+    <li>标记无效后排名份数与得分重算；学员提交后监控与排名同步。</li>
+  </ul>
+  <h3>二期必过</h3>
+  <ul>
+    <li>接入方「新建评估」打开评估型调查且带来源；完成回调行为与旧评估一致。</li>
+    <li>迁移开关开：评估管理无新建/复制；关：行为与现网一致；定制租户不切。</li>
+    <li>满意度合并计算正确且不受去高去低影响；360 行为不变。</li>
+  </ul>
+  <p class="note">勾选细项请在功能 checklist 更新；冲突以飞书定稿为准。</p>
+</section>
+
+</div>
 </main>
 </div>
 <script>
 (function () {
-  const KEY = 'survey-evaluation-merge-prd:v1';
+  const KEY = 'survey-eval-merge-prd-slim:v2';
   const root = document.getElementById('docRoot');
-  const btnEdit = document.getElementById('btnEdit');
-  const btnSave = document.getElementById('btnSave');
-  const btnExport = document.getElementById('btnExport');
-  const btnReset = document.getElementById('btnReset');
   const toastEl = document.getElementById('toast');
   let editing = false;
-  let baseline = root.innerHTML;
 
   function toast(msg) {
     toastEl.textContent = msg;
     toastEl.style.display = 'block';
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => { toastEl.style.display = 'none'; }, 2200);
+    toast._t = setTimeout(() => { toastEl.style.display = 'none'; }, 2000);
   }
-  function markAnchors() {
-    document.querySelectorAll('h3').forEach(h => {
-      const t = h.textContent || '';
-      if (t.includes('需求列表')) h.id = 's3-1';
-      if (t.includes('业务流程') || t.includes('计分')) h.id = h.id || 's3-2';
-      if (t.includes('功能列表') || t.includes('功能说明')) h.id = h.id || 's3-4';
+  function today() {
+    const d = new Date();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+  function readProgress() {
+    const data = {};
+    root.querySelectorAll('tr[data-id]').forEach(tr => {
+      data[tr.dataset.id] = {
+        done: !!tr.querySelector('[data-k=done]')?.checked,
+        date: tr.querySelector('[data-k=date]')?.value || '',
+        note: tr.querySelector('[data-k=note]')?.value || ''
+      };
+    });
+    return data;
+  }
+  function applyProgress(data) {
+    if (!data) return;
+    root.querySelectorAll('tr[data-id]').forEach(tr => {
+      const row = data[tr.dataset.id];
+      if (!row) return;
+      const ck = tr.querySelector('[data-k=done]');
+      const dt = tr.querySelector('[data-k=date]');
+      const nt = tr.querySelector('[data-k=note]');
+      if (ck) ck.checked = !!row.done;
+      if (dt) dt.value = row.date || '';
+      if (nt) nt.value = row.note || '';
+      tr.classList.toggle('done', !!row.done);
+    });
+    updateProg();
+  }
+  function updateProg() {
+    [['一期', 'prog1'], ['二期', 'prog2']].forEach(([phase, id]) => {
+      const rows = [...root.querySelectorAll('table.clist[data-phase="' + phase + '"] tr[data-id]')];
+      const done = rows.filter(r => r.querySelector('[data-k=done]')?.checked).length;
+      const el = document.getElementById(id);
+      if (el) el.textContent = done + ' / ' + rows.length;
     });
   }
-  function enhanceChecks() {
-    root.querySelectorAll('li').forEach(li => {
-      const t = li.textContent || '';
-      if (!/^\[ \]/.test(t.trim()) && !li.querySelector('input[type=checkbox]')) return;
-      if (li.querySelector('input[type=checkbox]')) return;
-      const raw = li.innerHTML.replace(/^\s*\[ \]\s*/, '');
-      li.innerHTML = '';
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.setAttribute('aria-label', '验收项');
-      li.appendChild(cb);
-      const span = document.createElement('span');
-      span.innerHTML = raw;
-      li.appendChild(span);
-    });
+  function save() {
+    const payload = {
+      progress: readProgress(),
+      prose: editing ? null : undefined,
+      html: root.innerHTML,
+      savedAt: new Date().toISOString()
+    };
+    // Store structured progress + full html snapshot for prose edits
+    localStorage.setItem(KEY, JSON.stringify({
+      progress: readProgress(),
+      html: root.innerHTML,
+      savedAt: payload.savedAt
+    }));
+    document.body.classList.add('has-draft');
+    toast('已保存到本机');
+  }
+  function load() {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      if (data.html) {
+        root.innerHTML = data.html;
+        // re-bind happens via delegation
+      }
+      if (data.progress) applyProgress(data.progress);
+      document.body.classList.add('has-draft');
+    } catch (e) {}
+    updateProg();
   }
   function setEditing(on) {
     editing = on;
     document.body.classList.toggle('editing', on);
     root.contentEditable = on ? 'true' : 'false';
-    root.classList.toggle('doc-edit', on);
-    btnEdit.textContent = on ? '完成编辑' : '编辑';
-    btnSave.disabled = !on;
-    btnExport.disabled = false;
-    btnReset.disabled = !localStorage.getItem(KEY);
-    if (on) root.focus({ preventScroll: true });
+    document.getElementById('btnEdit').textContent = on ? '完成编辑' : '编辑正文';
+    // Keep form controls usable
+    root.querySelectorAll('input').forEach(inp => {
+      if (on) inp.addEventListener('mousedown', stopEditBleed, true);
+    });
   }
-  function saveLocal() {
-    localStorage.setItem(KEY, root.innerHTML);
-    document.body.classList.add('has-draft');
-    btnReset.disabled = false;
-    toast('已保存到本机浏览器');
-  }
-  function loadLocal() {
-    const html = localStorage.getItem(KEY);
-    if (!html) return false;
-    root.innerHTML = html;
-    document.body.classList.add('has-draft');
-    btnReset.disabled = false;
-    markAnchors();
-    return true;
-  }
-  function resetPublished() {
-    if (!confirm('恢复为当前线上发布版？本机草稿会清除。')) return;
-    localStorage.removeItem(KEY);
-    root.innerHTML = baseline;
-    document.body.classList.remove('has-draft');
-    btnReset.disabled = true;
-    markAnchors();
-    enhanceChecks();
-    setEditing(false);
-    toast('已恢复发布版');
-  }
-  function exportHtml() {
-    const clone = document.documentElement.cloneNode(true);
-    clone.querySelectorAll('#btnEdit,#btnSave,#btnExport,#btnReset,.dirty-dot,.edit-hint,.toast').forEach(el => el.remove());
-    const doc = '<!DOCTYPE html>\n' + clone.outerHTML;
-    const blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'survey-evaluation-merge-prd.html';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    toast('已导出 HTML');
-  }
+  function stopEditBleed(e) { e.stopPropagation(); }
 
-  enhanceChecks();
-  markAnchors();
-  if (loadLocal()) toast('已载入本机草稿');
-  btnExport.disabled = false;
-  btnReset.disabled = !localStorage.getItem(KEY);
-
-  btnEdit.onclick = () => {
-    if (editing) { setEditing(false); toast('已退出编辑'); }
-    else setEditing(true);
-  };
-  btnSave.onclick = () => { if (editing) saveLocal(); };
-  btnExport.onclick = exportHtml;
-  btnReset.onclick = resetPublished;
-  root.addEventListener('input', () => {
-    if (editing) { btnSave.disabled = false; document.body.classList.add('has-draft'); }
+  root.addEventListener('change', e => {
+    const t = e.target;
+    if (!(t instanceof HTMLInputElement)) return;
+    const tr = t.closest('tr[data-id]');
+    if (!tr) return;
+    if (t.dataset.k === 'done') {
+      tr.classList.toggle('done', t.checked);
+      const dt = tr.querySelector('[data-k=date]');
+      if (t.checked && dt && !dt.value) dt.value = today();
+    }
+    updateProg();
+    document.body.classList.add('has-draft');
   });
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-      if (!editing) return;
-      e.preventDefault();
-      saveLocal();
+  root.addEventListener('input', e => {
+    if (e.target && e.target.matches && e.target.matches('input[data-k]')) {
+      document.body.classList.add('has-draft');
     }
   });
+
+  document.getElementById('btnEdit').onclick = () => setEditing(!editing);
+  document.getElementById('btnSaveProgress').onclick = save;
+  document.getElementById('btnReset').onclick = () => {
+    if (!confirm('清空本机勾选进度与正文草稿？')) return;
+    localStorage.removeItem(KEY);
+    location.reload();
+  };
+  document.getElementById('btnExport').onclick = () => {
+    save();
+    const clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('.top .links .btn, .dirty-dot, .edit-hint, .toast').forEach(el => el.remove());
+    const blob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'survey-evaluation-merge-prd-checklist.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('已导出');
+  };
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      save();
+    }
+  });
+
+  load();
+  updateProg();
 })();
 </script>
 </body>
