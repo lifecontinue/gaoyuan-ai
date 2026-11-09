@@ -292,9 +292,21 @@
   .filters input[type=text] { width: 160px; }
   /* 列表行高 46：单元格不换行，表格在卡片内横向滚动；操作列固定在右侧 */
   .plist td, .plist th { white-space: nowrap; }
-  .plist tr > :last-child { position: sticky; right: 0; background: #fff; box-shadow: -6px 0 6px -6px rgba(0,0,0,.12); }
-  .plist thead tr > :last-child { background: var(--block); }
-  .ops { min-width: 230px; }
+  .plist tr > :last-child {
+    position: sticky; right: 0; z-index: 2; background: #fff;
+    border-left: 1px solid var(--divider);
+    overflow: visible;
+  }
+  /* 阴影画在格子外侧（竖线左侧），盖住左侧横向滚动内容 */
+  .plist tr > :last-child::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: -12px; width: 12px;
+    pointer-events: none;
+    background: linear-gradient(to left, rgba(15, 23, 42, .14), rgba(15, 23, 42, 0));
+  }
+  .plist thead tr > :last-child { background: var(--block); z-index: 3; }
+  .plist tbody tr:hover td { background: var(--block); }
+  .plist tbody tr:hover > :last-child { background: var(--block); }
+  .ops { min-width: 230px; padding-left: 16px; }
   .op { border: none; background: none; color: var(--primary); cursor: pointer; padding: 0 8px 0 0; font: inherit; font-size: 14px; line-height: 24px; }
   .op:hover { text-decoration: underline; }
   .op.danger { color: var(--danger); }
@@ -388,33 +400,27 @@
   .ed.normal .ed-sum { display: none; }
 
   /* ===== 新增 → 选择场景页：沿用系统色和圆角，一屏左右布局 ===== */
-  .shell:has(.sc) { height: 100vh; overflow: hidden; }
-  .shell:has(.sc) main { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; padding: 12px 24px 16px; }
-  .sc { --ease: cubic-bezier(.2, .8, .2, 1); max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; min-height: 0; display: flex; flex-direction: column; }
-  .sc-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex: none; }
-  .sc-top h1 { margin: 0; }
-  .sc-hero { position: relative; overflow: hidden; border-radius: 6px; background: linear-gradient(120deg, #F3F7FF 0%, #fff 70%); padding: 10px 16px; margin-bottom: 10px; border: 1px solid #E6EEFC; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex: none; }
-  .sc-hero::after { content: ""; position: absolute; inset: -20% -30%; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.05) 44%, rgba(255,255,255,.55) 50%, rgba(185,208,247,.35) 54%, transparent 62%); transform: translateX(-75%) skewX(-18deg); animation: scBlade 4.8s ease-in-out 0.6s infinite; pointer-events: none; }
-  .sc-hero h2 { font-size: 16px; line-height: 24px; margin: 0; font-weight: 500; flex: none; }
-  .sc-hero p { color: var(--text-2); font-size: 12px; line-height: 20px; margin: 0; flex: 1; min-width: 200px; }
-  .sc-hero > * { position: relative; z-index: 1; }
-  .sc-blob { display: none; }
-  .sc-hero-steps { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 0 0 auto; }
-  .sc-hero-steps span { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 12px; background: rgba(255,255,255,.85); border: 1px solid #E6EEFC; color: var(--text-2); font-size: 12px; }
-  .sc-hero-steps b { width: 16px; height: 16px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-weight: 500; font-size: 11px; }
-  @keyframes scBlade { 0%, 18% { transform: translateX(-75%) skewX(-18deg); opacity: 0; } 28% { opacity: 1; } 62% { transform: translateX(75%) skewX(-18deg); opacity: .85; } 72%, 100% { transform: translateX(85%) skewX(-18deg); opacity: 0; } }
-
-  .sc-chips { position: relative; display: inline-flex; padding: 3px; border-radius: 8px; background: var(--block); margin-bottom: 10px; flex: none; }
-  .sc-chips button { position: relative; z-index: 1; border: none; background: none; height: 28px; padding: 0 14px; border-radius: 6px; cursor: pointer; color: var(--text-2); transition: color .2s; font-size: 13px; }
+  .app:has(.sc) { height: 100vh; height: 100dvh; overflow: hidden; }
+  .app:has(.sc) .shell { min-height: 0; height: 100%; max-height: 100%; overflow: hidden; }
+  .shell:has(.sc) { height: 100%; overflow: hidden; }
+  .shell:has(.sc) main { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; padding: 16px 40px 20px; }
+  .sc { --ease: cubic-bezier(.2, .8, .2, 1); --sc-group-h: 28px; max-width: 1320px; margin: 0 auto; width: 100%; flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 0; overflow: hidden; }
+  .sc-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex: none; }
+  .sc-chips { position: relative; display: inline-flex; padding: 4px; border-radius: 8px; background: var(--block); flex: none; }
+  .sc-chips button { position: relative; z-index: 1; border: none; background: none; height: 30px; padding: 0 16px; border-radius: 6px; cursor: pointer; color: var(--text-2); transition: color .2s; font-size: 13px; }
   .sc-chips button.on { color: var(--primary); font-weight: 500; }
-  .sc-chips .ind { position: absolute; top: 3px; height: 28px; border-radius: 6px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08); transition: left .32s var(--ease), width .32s var(--ease); }
+  .sc-chips .ind { position: absolute; top: 4px; height: 30px; border-radius: 6px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08); transition: left .32s var(--ease), width .32s var(--ease); }
+  .sc-close { width: 32px; height: 32px; border: none; border-radius: 6px; background: transparent; color: var(--text-2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .sc-close:hover { background: var(--block); color: var(--text-1); }
+  .sc-close svg { width: 16px; height: 16px; }
 
-  .sc-body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: stretch; flex: 1; min-height: 0; }
-  .sc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-content: start; overflow: auto; min-height: 0; padding-right: 2px; }
-  .sc-group { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; margin-top: 4px; padding-top: 2px; }
-  .sc-group:first-child { margin-top: 0; padding-top: 0; }
+  .sc-body { position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; }
+  .sc-left { position: absolute; inset: 0 364px 0 0; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 12px 20px 0; display: flex; flex-direction: column; gap: 16px; scrollbar-gutter: stable; }
+  .sc-block { display: flex; flex-direction: column; gap: 10px; flex: none; }
+  .sc-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .sc-group { display: flex; align-items: baseline; gap: 10px; min-height: var(--sc-group-h); }
   .sc-group b { font-weight: 500; font-size: 14px; }
-  .sc-card { position: relative; display: flex; flex-direction: column; text-align: left; background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 0; cursor: pointer; overflow: hidden;
+  .sc-card { position: relative; display: flex; flex-direction: row; align-items: stretch; text-align: left; background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 0; cursor: pointer; overflow: hidden; min-height: 96px;
     opacity: 0; transform: translateY(8px); animation: scIn .4s var(--ease) forwards; animation-delay: calc(var(--i) * 35ms);
     transition: transform .24s var(--ease), box-shadow .24s var(--ease), border-color .2s; }
   .sc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(1,82,217,.10); border-color: var(--border-strong); }
@@ -422,63 +428,76 @@
   .sc-card.on { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); animation: scIn .4s var(--ease) forwards, scBreath 2.8s ease-in-out .5s infinite; }
   @keyframes scIn { to { opacity: 1; transform: none; } }
   @keyframes scBreath { 0%, 100% { box-shadow: 0 0 0 3px var(--primary-soft); } 50% { box-shadow: 0 0 0 6px rgba(1,82,217,.08); } }
-  .sc-viz { height: 64px; background: linear-gradient(180deg, #F7FAFF, #fff); border-bottom: 1px solid var(--divider); display: flex; align-items: center; justify-content: center; }
-  .sc-viz svg { width: 120px; height: 52px; overflow: visible; }
+  .sc-viz { width: 92px; flex: none; background: linear-gradient(180deg, #F7FAFF, #fff); border-right: 1px solid var(--divider); display: flex; align-items: center; justify-content: center; }
+  .sc-viz svg { width: 76px; height: 50px; overflow: visible; }
   .sc-viz .grow { transform-box: fill-box; transform-origin: left center; transition: transform .6s var(--ease); }
   .sc-viz .pop { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--ease); }
   .sc-card:not(:hover):not(.on) .sc-viz .grow { transform: scaleX(.72); }
   .sc-card:hover .sc-viz .pop, .sc-card.on .sc-viz .pop { transform: scale(1.12); }
   .sc-viz .spin { transform-box: fill-box; transform-origin: center; transition: transform .8s var(--ease); }
   .sc-card:hover .sc-viz .spin, .sc-card.on .sc-viz .spin { transform: rotate(30deg); }
-  .sc-txt { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .sc-txt { padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
   .sc-txt .row { gap: 8px; flex-wrap: nowrap; }
   .sc-txt b { font-weight: 500; font-size: 14px; }
   .sc-txt p { color: var(--text-2); font-size: 12px; line-height: 18px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .sc-meta { margin-top: auto; padding-top: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-3); font-size: 12px; }
-  .sc-go { color: var(--primary); opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .28s var(--ease); }
+  .sc-meta { margin-top: auto; padding-top: 8px; display: flex; justify-content: space-between; align-items: center; color: var(--text-3); font-size: 12px; }
+  .sc-go { color: var(--primary); opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .28s var(--ease); font-weight: 500; }
   .sc-card:hover .sc-go, .sc-card.on .sc-go { opacity: 1; transform: none; }
-  .sc-card.blank { border: 1.5px dashed var(--primary); background: linear-gradient(180deg, #F5F9FF 0%, #fff 55%); box-shadow: inset 0 0 0 1px rgba(1,82,217,.04); }
-  .sc-card.blank::before { content: "从零开始"; position: absolute; top: 8px; right: 8px; z-index: 1; height: 20px; padding: 0 8px; border-radius: 10px; background: var(--primary); color: #fff; font-size: 11px; line-height: 20px; font-weight: 500; }
-  .sc-card.blank .sc-viz { background: radial-gradient(circle at center, rgba(1,82,217,.08), transparent 68%); border-bottom-color: #D6E4FF; }
+  .sc-card.on .sc-go { animation: scGoPulse 1.6s ease-in-out .2s 2; }
+  @keyframes scGoPulse { 0%, 100% { transform: none; } 50% { transform: translateX(3px); } }
+  .sc-card.blank { border: 1.5px dashed var(--primary); background: linear-gradient(90deg, #F5F9FF 0%, #fff 42%); box-shadow: inset 0 0 0 1px rgba(1,82,217,.04); }
+  .sc-card.blank .sc-viz { background: radial-gradient(circle at center, rgba(1,82,217,.08), transparent 68%); border-right-color: #D6E4FF; }
   .sc-card.blank .sc-txt b { color: var(--primary); }
   .sc-card.blank.on { border-style: solid; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
   .sc-card.blank .sc-go { opacity: 1; transform: none; }
 
-  .sc-pv { background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 16px 18px; overflow: auto; min-height: 0; display: flex; flex-direction: column; }
+  .sc-pv { position: absolute; top: calc(var(--sc-group-h) + 10px); right: 0; bottom: 0; width: 340px; background: #fff; border: 1px solid var(--primary); border-radius: 8px; padding: 16px 18px; overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; box-shadow: 0 0 0 3px var(--primary-soft); transition: box-shadow .28s var(--ease), border-color .2s; }
+  .sc-pv::before { content: ""; position: absolute; left: -14px; top: 28px; width: 10px; height: 2px; background: var(--primary); opacity: .55; pointer-events: none; }
+  .sc-pv.flash { animation: scPvFlash .75s var(--ease); }
+  @keyframes scPvFlash {
+    0% { box-shadow: 0 0 0 0 rgba(1,82,217,.3); }
+    40% { box-shadow: 0 0 0 10px rgba(1,82,217,.1); }
+    100% { box-shadow: 0 0 0 3px var(--primary-soft); }
+  }
   .sc-pv-in { animation: scFade .36s var(--ease); display: flex; flex-direction: column; flex: 1; min-height: 0; }
   @keyframes scFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .sc-pv h3 { font-size: 16px; line-height: 24px; font-weight: 500; margin: 6px 0 2px; }
-  .sc-pv .sec { margin-top: 14px; }
-  .sc-pv .sec > span { display: block; color: var(--text-3); font-size: 12px; margin-bottom: 6px; }
+  .sc-pv-hd { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; }
+  .sc-pv-hd h3 { font-size: 16px; line-height: 24px; font-weight: 500; margin: 0; flex: 1; min-width: 0; }
+  .sc-pv-hd .tag { flex: none; }
+  .sc-pv-cue { margin: 8px 0 0; color: var(--primary); font-size: 12px; line-height: 18px; font-weight: 500; }
+  .sc-pv-act { margin-top: 14px; }
+  .sc-pv-act .btn.primary { width: 100%; }
+  .sc-pv .sec { margin-top: 18px; }
+  .sc-pv .sec > span { display: block; color: var(--text-3); font-size: 12px; margin-bottom: 8px; }
   .sc-flow { list-style: none; display: grid; gap: 0; }
-  .sc-flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; position: relative; padding-bottom: 10px; }
+  .sc-flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; position: relative; padding-bottom: 12px; }
   .sc-flow li:last-child { padding-bottom: 0; }
   .sc-flow li::before { content: ""; position: absolute; left: 10px; top: 22px; bottom: 0; width: 1px; background: var(--divider); }
   .sc-flow li:last-child::before { display: none; }
   .sc-flow i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
   .sc-flow em { font-style: normal; display: block; color: var(--text-3); font-size: 12px; line-height: 18px; }
-  .sc-qs { list-style: none; display: grid; gap: 4px; }
-  .sc-qs li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; border-radius: 4px; background: var(--block); font-size: 12px; opacity: 0; animation: scIn .4s var(--ease) forwards; animation-delay: calc(var(--i) * 40ms + 120ms); transform: translateY(6px); }
+  .sc-qs { list-style: none; display: grid; gap: 6px; }
+  .sc-qs li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 4px; background: var(--block); font-size: 12px; opacity: 0; animation: scIn .4s var(--ease) forwards; animation-delay: calc(var(--i) * 40ms + 120ms); transform: translateY(6px); }
   .sc-qs li span:last-child { color: var(--text-3); flex: none; }
-  .sc-pv .foot { display: flex; gap: 12px; margin-top: auto; padding-top: 16px; }
-  .sc-pv .foot .btn.primary { flex: 1; }
   .sc-empty { color: var(--text-3); text-align: center; padding: 48px 0; }
   @media (max-width: 1100px) {
-    .shell:has(.sc) { height: auto; overflow: visible; }
+    .app:has(.sc) { height: auto; overflow: visible; }
+    .app:has(.sc) .shell, .shell:has(.sc) { height: auto; max-height: none; overflow: visible; }
     .shell:has(.sc) main { overflow: visible; height: auto; }
-    .sc { display: block; }
-    .sc-body { grid-template-columns: 1fr; }
-    .sc-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); overflow: visible; }
-    .sc-pv { position: static; }
+    .sc { display: block; overflow: visible; }
+    .sc-body { position: static; overflow: visible; height: auto; }
+    .sc-left { position: static; inset: auto; overflow: visible; height: auto; padding-right: 0; }
+    .sc-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .sc-pv { position: static; width: 100%; top: auto; right: auto; bottom: auto; margin-top: 16px; max-height: none; }
   }
   @media (max-width: 760px) {
-    .sc-hero { padding: 10px 12px; }
-    .sc-hero-steps { margin-left: 0; }
-    .sc-grid { grid-template-columns: 1fr 1fr; }
+    .shell:has(.sc) main { padding: 16px; }
+    .sc-cards { grid-template-columns: 1fr; }
+    .sc-card { min-height: 88px; }
+    .sc-viz { width: 80px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sc *, .sc *::before, .sc *::after { animation: none !important; transition: none !important; }
-    .sc-hero::after { display: none; }
     .sc-card, .sc-qs li { opacity: 1; transform: none; }
   }
 </style>
@@ -582,13 +601,11 @@ const ANSWERS = [
 const state = {
   page: 'list', step: 'score', tab: 'rank',
   qWeightOn: true, qWeights: QUESTIONS.map(q => q.weight),
-  relWeightOn: true, objects: [], objSel: [], poolOpen: false, poolSel: [],
+  objects: [], objSel: [], poolOpen: false, poolSel: [],
   poolF: { name: '', src: '', level: '', pool: '' },
-  weighted: true, relFilter: '', deptFilter: '', anon: false, selQ: null,
+  relFilter: '', deptFilter: '', anon: false, selQ: null,
 };
 const REL_NAMES = ['学员', '班主任', '自评'];
-// 每个对象在第 2 步各自设置关系权重
-function relWeight(objId, rel) { const o = state.projObjects.find(x => x.id === objId); const r = o && o.rels.find(x => x.name === rel); return r ? Number(r.weight) || 0 : 0; }
 
 /* ---------- 计分（与 PRD 2.2 一致） ---------- */
 const FULL = QUESTIONS.reduce((s, q) => s + q.max * q.weight, 0); // 50
@@ -624,16 +641,6 @@ function relScore(objId, rel) {
   return totals.length ? avg(trimmed(totals)) : null;
 }
 function objScore(objId) {
-  const useWeight = state.weighted && !state.relFilter;
-  if (useWeight) {
-    let sum = 0, w = 0; const missing = [];
-    REL_NAMES.forEach(rel => {
-      const s = relScore(objId, rel);
-      const rw = relWeight(objId, rel);
-      if (s == null) { if (rw) missing.push(rel); } else { sum += s * rw; w += rw; }
-    });
-    return { score: w ? sum / w : null, missing };
-  }
   const totals = scoredTotals(included().filter(a => a.obj === objId));
   return { score: totals.length ? avg(trimmed(totals)) : null, missing: [] };
 }
@@ -1094,16 +1101,14 @@ function bindEditor() {
   });
 }
 
-/* 第 2 步：一张表配齐「被评测对象 × 评测关系 × 评测人 × 权重」。从讲师库按讲师分类批量选，支持自定义对象和关系。 */
-// 第 ② 步按评估管理现网：每个对象自己填评测关系（文本，可不填）、评测人和权重；不提供关系模板
+/* 第 2 步：一张表配齐「被评测对象 × 评测关系 × 评测人」。从讲师库按讲师分类批量选，支持自定义对象和关系。 */
+// 第 ② 步：每个对象自己填评测关系（文本，可不填）和评测人；不提供关系模板；本期不做按关系加权
 // 新关系的评测人还没选（本期只支持指定人员）
-const newRel = weight => ({ name: '', who: '', count: 0, weight, pick: [] });
-const newRels = () => [newRel(100)];
+const newRel = () => ({ name: '', who: '', count: 0, pick: [] });
+const newRels = () => [newRel()];
 const objFromTeacher = t => ({ id: t.id, name: t.name, kind: '讲师库', no: t.no, level: t.level, dept: t.dept, pool: poolName(t.pool), rels: newRels() });
 // 演示项目已配置好的关系（结果页的演示答卷按这三种关系计分）
-const DEMO_RELS = [{ name: '学员', who: '面授学员', count: 4, weight: 60 }, { name: '班主任', who: '指定人员（赵敏）', count: 1, weight: 30, pick: ['m1'] }, { name: '自评', who: '对象本人', count: 1, weight: 10 }];
-const objSum = o => o.rels.reduce((s, r) => s + (Number(r.weight) || 0), 0);
-const objErrors = () => state.objects.filter(o => state.relWeightOn && objSum(o) !== 100);
+const DEMO_RELS = [{ name: '学员', who: '面授学员', count: 4 }, { name: '班主任', who: '指定人员（赵敏）', count: 1, pick: ['m1'] }, { name: '自评', who: '对象本人', count: 1 }];
 
 // 普通调查第 ② 步：选择学员（调查范围），与评估型的评测人统一放在第 ② 步
 state.normalSel = [];
@@ -1118,7 +1123,6 @@ function stepPeople() {
 function stepRel() {
   if (isNormal()) return stepPeople();
   const nRel = state.objects.reduce((s, o) => s + o.rels.length, 0);
-  const errs = objErrors();
   const sel = state.objSel;
   return `<div class="card">
     <h2>被评测对象与评测关系</h2>
@@ -1127,17 +1131,15 @@ function stepRel() {
       <button class="btn" id="openPeople">从人员选择</button>
       <button class="btn" id="addCustom">添加自定义对象</button>
       <button class="btn" id="openImport">批量导入</button>
-      <label class="switch" style="margin-left:16px"><input type="checkbox" class="tg" id="relWeightOn" ${state.relWeightOn ? 'checked' : ''} /> 按关系加权</label>
       ${sel.length ? `<span style="margin-left:16px">已选 ${sel.length} 个对象</span><button class="btn link" id="batchWho">添加评测人</button><button class="btn link" id="removeSel">移除</button>` : ''}
     </div>
     <div class="scroll"><table class="reltable">
       <thead><tr><th style="width:36px"><input type="checkbox" id="selAll" aria-label="全选" ${sel.length && sel.length === state.objects.length ? 'checked' : ''} /></th>
-        <th>被评测对象</th><th>评测关系</th><th>评测人</th>${state.relWeightOn ? '<th>权重</th>' : ''}<th>操作</th></tr></thead>
-      <tbody>${state.objects.length ? state.objects.map((o, oi) => objRows(o, oi)).join('') : `<tr><td colspan="6" class="muted">还没有被评测对象，先从讲师库选择</td></tr>`}</tbody>
+        <th>被评测对象</th><th>评测关系</th><th>评测人</th><th>操作</th></tr></thead>
+      <tbody>${state.objects.length ? state.objects.map((o, oi) => objRows(o, oi)).join('') : `<tr><td colspan="5" class="muted">还没有被评测对象，先从讲师库选择</td></tr>`}</tbody>
     </table></div>
     <div class="row between" style="margin-top:12px">
-      <span class="note">共 ${state.objects.length} 个对象，${nRel} 条评测关系</span>
-      ${errs.length ? `<span class="err">${errs.length} 个对象的权重合计不等于 100%</span>` : (state.relWeightOn ? '<span class="ok">所有对象权重合计 100%</span>' : '<span class="note">关闭后所有有效问卷同等计算</span>')}
+      <span class="note">共 ${state.objects.length} 个对象，${nRel} 条评测关系；对象得分按全部有效答卷同等计算</span>
     </div>
   </div>
   ${state.poolOpen ? poolDialog() : ''}${state.importOpen ? importDialog() : ''}${state.peopleOpen ? peopleDialog() : ''}${state.whoPick ? whoDialog() : ''}${state.introEdit != null ? introDialog() : ''}`;
@@ -1153,19 +1155,17 @@ function introDialog() {
 }
 
 function objRows(o, oi) {
-  const n = Math.max(1, o.rels.length), sum = objSum(o), on = state.objSel.includes(oi);
+  const n = Math.max(1, o.rels.length), on = state.objSel.includes(oi);
   const meta = o.kind === '讲师库' ? `${o.level}　${o.no}　${o.pool}` : (o.kind === '自定义' ? '自定义对象' : o.dept);
   const head = `<td rowspan="${n}" class="objcell"><input type="checkbox" data-osel="${oi}" ${on ? 'checked' : ''} aria-label="选择${o.name}" /></td>
     <td rowspan="${n}" class="objcell">
-      <span class="row" style="gap:8px;flex-wrap:nowrap">${o.kind === '自定义' ? `<input type="text" value="${o.name}" data-oname="${oi}" aria-label="对象名称" style="width:140px" />` : `<b title="${meta}">${o.name}</b>`}<span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span><button class="btn link" data-intro="${oi}" style="font-size:12px">${o.intro ? '编辑介绍' : '添加介绍'}</button></span>
-      ${state.relWeightOn && sum !== 100 ? `<div class="note err">权重合计 ${sum}%</div>` : ''}</td>`;
+      <span class="row" style="gap:8px;flex-wrap:nowrap">${o.kind === '自定义' ? `<input type="text" value="${o.name}" data-oname="${oi}" aria-label="对象名称" style="width:140px" />` : `<b title="${meta}">${o.name}</b>`}<span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span><button class="btn link" data-intro="${oi}" style="font-size:12px">${o.intro ? '编辑介绍' : '添加介绍'}</button></span></td>`;
   const add = `<button class="btn link" data-addrel="${oi}">添加关系</button>`;
   const relRow = (r, ri) => `<tr class="${ri === o.rels.length - 1 ? 'objlast' : ''}">${ri === 0 ? head : ''}
       <td><input type="text" value="${r.name}" data-rname="${oi}.${ri}" placeholder="选填" maxlength="20" aria-label="评测关系" style="width:120px" /></td>
       <td class="nowrap">${r.pick && r.pick.length ? pickText(r.pick) : '<span class="err">未选择</span>'} <button class="btn link" data-pickwho="${oi}.${ri}">选择</button></td>
-      ${state.relWeightOn ? `<td><input type="number" min="0" max="100" value="${r.weight}" data-rweight="${oi}.${ri}" aria-label="权重" /> %</td>` : ''}
       <td class="nowrap"><span class="row" style="gap:12px;flex-wrap:nowrap"><button class="btn link" data-delrel="${oi}.${ri}">删除</button>${ri === o.rels.length - 1 ? add : ''}</span></td></tr>`;
-  return o.rels.length ? o.rels.map(relRow).join('') : `<tr class="objlast">${head}<td colspan="${state.relWeightOn ? 3 : 2}" class="err">还没有评测关系</td><td>${add}</td></tr>`;
+  return o.rels.length ? o.rels.map(relRow).join('') : `<tr class="objlast">${head}<td colspan="2" class="err">还没有评测关系</td><td>${add}</td></tr>`;
 }
 
 function poolDialog() {
@@ -1264,7 +1264,7 @@ function importDialog() {
     <div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn" id="importCancel">取消</button><button class="btn primary" id="importOk">上传并导入</button></div>
   </div></div>`;
 }
-// 导入：同名对象合并；同一对象同一关系的评测人合并为「指定人员」；新关系权重为 0，导入后在表格里填
+// 导入：同名对象合并；同一对象同一关系的评测人合并为「指定人员」
 function runImport() {
   const rows = IMPORT_ROWS.map(cells => ({ cells, err: checkImportRow(cells) })), added = [];
   rows.filter(r => !r.err).forEach(({ cells: [obj, rel, code, , intro] }) => {
@@ -1272,7 +1272,7 @@ function runImport() {
     let o = state.objects.find(x => x.name === obj);
     if (!o) { o = { id: 'imp' + (state.objects.length + 1), name: obj, kind: '自定义', intro, rels: [] }; state.objects.push(o); added.push(obj); }
     let r = o.rels.find(x => x.name === name);
-    if (!r) { r = { name, who: '', count: 0, weight: 0, pick: [] }; o.rels.push(r); }
+    if (!r) { r = { name, who: '', count: 0, pick: [] }; o.rels.push(r); }
     r.pick = [...new Set([...(r.pick || []), person.id])]; r.who = whoLabel('指定人员', r.pick, o); r.count = r.pick.length;
   });
   state.importRes = { rows, ok: rows.filter(r => !r.err).length, added };
@@ -1353,7 +1353,7 @@ function bindWho() {
       const el = main.querySelector('#wpRel'), relName = el ? el.value.trim() : '';
       w.batch.forEach(i => {
         const o = state.objects[i], blank = o.rels.length === 1 && !o.rels[0].name && !(o.rels[0].pick || []).length;
-        const r = { name: relName, who: whoLabel('指定人员', w.sel, o), count: w.sel.length, weight: blank ? o.rels[0].weight : 0, pick: [...w.sel] };
+        const r = { name: relName, who: whoLabel('指定人员', w.sel, o), count: w.sel.length, pick: [...w.sel] };
         if (blank) o.rels[0] = r; else o.rels.push(r);
       });
       const n = w.batch.length; state.whoPick = null; state.objSel = []; render(); toast(`已为 ${n} 个对象添加评测人`); return;
@@ -1384,7 +1384,6 @@ function bindRel() {
     state.customN = (state.customN || 0) + 1;
     state.objects.push({ id: 'c' + state.customN, name: '自定义对象 ' + state.customN, kind: '自定义', rels: newRels() }); render();
   });
-  on('#relWeightOn', 'change', e => { state.relWeightOn = e.target.checked; render(); });
   on('#selAll', 'change', e => { state.objSel = e.target.checked ? state.objects.map((_, i) => i) : []; render(); });
   main.querySelectorAll('[data-osel]').forEach(c => c.onchange = () => {
     const i = Number(c.dataset.osel); state.objSel = c.checked ? [...state.objSel, i] : state.objSel.filter(x => x !== i); render();
@@ -1396,9 +1395,8 @@ function bindRel() {
   on('#removeSel', 'click', () => { state.objects = state.objects.filter((_, i) => !state.objSel.includes(i)); state.objSel = []; render(); });
   main.querySelectorAll('[data-oname]').forEach(i => i.onchange = () => { state.objects[i.dataset.oname].name = i.value || '未命名对象'; });
   main.querySelectorAll('[data-rname]').forEach(i => i.onchange = () => { const [o, r] = at(i.dataset.rname); state.objects[o].rels[r].name = i.value.trim(); render(); });
-  main.querySelectorAll('[data-rweight]').forEach(i => i.onchange = () => { const [o, r] = at(i.dataset.rweight); state.objects[o].rels[r].weight = Number(i.value) || 0; render(); });
   main.querySelectorAll('[data-delrel]').forEach(b => b.onclick = () => { const [o, r] = at(b.dataset.delrel); state.objects[o].rels.splice(r, 1); render(); });
-  main.querySelectorAll('[data-addrel]').forEach(b => b.onclick = () => { state.objects[b.dataset.addrel].rels.push(newRel(0)); render(); });
+  main.querySelectorAll('[data-addrel]').forEach(b => b.onclick = () => { state.objects[b.dataset.addrel].rels.push(newRel()); render(); });
   main.querySelectorAll('[data-pickwho]').forEach(b => b.onclick = () => {
     const [o, r] = at(b.dataset.pickwho), rel = state.objects[o].rels[r];
     state.whoPick = { o, r, src: '指定人员', sel: [...(rel.pick || [])], q: '', dept: '' }; render();
@@ -1435,17 +1433,14 @@ function bindRel() {
 }
 
 state.projObjects = OBJECTS.map(t => ({ ...objFromTeacher(t), rels: DEMO_RELS.map(r => ({ ...r, pick: r.pick ? [...r.pick] : undefined })) }));
-state.objects = OBJECTS.map(t => ({ ...objFromTeacher(t), rels: [{ name: '', who: '指定人员（周一、吴二 等 4 人）', count: 4, weight: 100, pick: ['s1', 's2', 's3', 's4'] }] }));
+state.objects = OBJECTS.map(t => ({ ...objFromTeacher(t), rels: [{ name: '', who: '指定人员（周一、吴二 等 4 人）', count: 4, pick: ['s1', 's2', 's3', 's4'] }] }));
 
 // 第 ② 步「下一步」和第 ③ 步「发布前检查」共用
 function relChecks() {
-  const bad = objErrors();
   return [
     [state.objects.length > 0, '至少 1 个被评测对象', '请先添加被评测对象'],
     [state.objects.every(o => o.rels.length > 0), '每个对象至少 1 种评测关系', '有对象还没有评测关系'],
-    [!bad.length, '每个对象的关系权重合计 100%', bad.length ? `「${bad[0].name}」的关系权重合计为 ${objSum(bad[0])}%，需要等于 100%` : ''],
     [state.objects.every(o => o.rels.every(r => r.count > 0)), '每条关系都选了评测人', (() => { const o = state.objects.find(x => x.rels.some(r => !(r.count > 0))); return o ? `「${o.name}」有关系还没有选评测人` : ''; })()],
-    [!state.relWeightOn || state.objects.every(o => o.rels.length < 2 || o.rels.every(r => r.name.trim())), '按关系加权时每条关系都有名称', (() => { const o = state.objects.find(x => x.rels.length > 1 && x.rels.some(r => !r.name.trim())); return o ? `「${o.name}」有多条关系，按关系加权时请填写关系名称` : ''; })()],
   ];
 }
 const TIME_RE = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
@@ -2013,11 +2008,11 @@ function useTemplate(t) {
   toast(`已使用模板「${t.name}」${t.type === '评估型调查' ? '，题目、分值和权重已带入' : '，题目已带入'}`);
 }
 /* 新增 → 选择场景：每个场景就是一份内置模板，带好题目、计分和流程说明。
-   选中后右侧说明「接下来要做什么」，点「用这个场景开始」进入第 1 步编辑问卷。空白场景不带题目。 */
+   选中后右侧说明「接下来要做什么」，点「使用该模板」进入第 1 步编辑问卷。空白场景不带题目。 */
 const SC_Q = { S: '打分', R: '单选', M: '多选', N: 'NPS', Q: '问答' };
 const SCENES = [
   { id: 'teach', type: 'eval', viz: 'rank', name: '讲师授课评估', desc: '课程结束后学员给讲师打分，按讲师排名。', obj: '讲师（从讲师库选）', who: '学员、班主任', out: '讲师排名、各题得分，结果回传讲师库', sample: true },
-  { id: 'r360', type: 'eval', viz: 'radar', name: '360 度能力评估', desc: '上级、同事、下属和本人从不同角度打分，按关系权重汇总。', obj: '员工', who: '上级、同事、下属、自评', out: '按关系加权的总分和排名',
+  { id: 'r360', type: 'eval', viz: 'radar', name: '360 度能力评估', desc: '上级、同事、下属和本人从不同角度打分，汇总成能力画像。', obj: '员工', who: '上级、同事、下属、自评', out: '多关系答卷汇总的总分和排名',
     qs: [['沟通协作', 'S'], ['执行力', 'S'], ['团队管理', 'S'], ['专业能力', 'S'], ['综合评价', 'Q']] },
   { id: 'course', type: 'eval', viz: 'score', name: '课程开发评审', desc: '评委给内训师的课程作品打分，选出优秀课程。', obj: '课程作品（自定义对象）', who: '评委', out: '作品排名，可去掉最高分和最低分',
     qs: [['课程目标清晰', 'S'], ['内容结构合理', 'S'], ['素材制作质量', 'S'], ['改进建议', 'Q']] },
@@ -2031,8 +2026,8 @@ const SCENES = [
     qs: [['工作环境', 'R'], ['薪酬福利', 'R'], ['职业发展', 'R'], ['其他建议', 'Q']] },
   { id: 'info', type: 'normal', viz: 'form', name: '信息收集', desc: '报名、登记一类的基础信息收集。', who: '选定学员，或扫码参与', out: '可导出的填写明细',
     qs: [['姓名', 'Q'], ['所在部门', 'R'], ['入职时间', 'Q']] },
-  { id: 'blankEval', type: 'eval', viz: 'plus', blank: true, name: '空白评估问卷', desc: '从零开始出题，给讲师、员工或课程打分排名。', obj: '讲师、人员或自定义对象', who: '进入后按关系指定评测人', out: '对象排名', qs: [] },
-  { id: 'blankNormal', type: 'normal', viz: 'plus', blank: true, name: '空白调查问卷', desc: '从零开始出题，收集意见和反馈。', who: '进入后选择参与人', out: '每题选项分布', qs: [] },
+  { id: 'blankEval', type: 'eval', viz: 'plus', blank: true, name: '空白评估问卷', desc: '', obj: '讲师、人员或自定义对象', who: '进入后按关系指定评测人', out: '对象排名', qs: [] },
+  { id: 'blankNormal', type: 'normal', viz: 'plus', blank: true, name: '空白调查问卷', desc: '', who: '进入后选择参与人', out: '每题选项分布', qs: [] },
 ];
 const SC_FILTERS = [['all', '全部'], ['normal', '调查问卷'], ['eval', '评估问卷']];
 state.scene = { f: 'all', sel: 'need', ind: null };
@@ -2057,11 +2052,13 @@ const scTag = s => s.type === 'eval' ? '<span class="tag blue">评估问卷</spa
 
 function scCard(s, i) {
   const qs = scQs(s), n = qs.length, scoredN = qs.filter(q => q[2]).length;
-  const meta = s.blank ? '不带题目，进入后自己加' : `${n} 道题${s.type === 'eval' ? ` · ${scoredN} 道计分` : ''}`;
-  return `<button class="sc-card ${s.blank ? 'blank' : ''} ${state.scene.sel === s.id ? 'on' : ''}" data-scene="${s.id}" style="--i:${i}" aria-pressed="${state.scene.sel === s.id}">
+  const on = state.scene.sel === s.id;
+  const meta = s.blank ? '自定义创建' : `${n} 道题${s.type === 'eval' ? ` · ${scoredN} 道计分` : ''}`;
+  const go = s.blank ? '空白开始 →' : (on ? '右侧确认 →' : '查看 →');
+  return `<button class="sc-card ${s.blank ? 'blank' : ''} ${on ? 'on' : ''}" data-scene="${s.id}" style="--i:${i}" aria-pressed="${on}">
     <span class="sc-viz">${scViz(s)}</span>
-    <span class="sc-txt"><span class="row"><b>${s.name}</b></span><p>${s.desc}</p>
-      <span class="sc-meta"><span>${meta}</span><span class="sc-go">${s.blank ? '空白开始 →' : '查看 →'}</span></span></span>
+    <span class="sc-txt"><span class="row"><b>${s.name}</b></span>${s.desc ? `<p>${s.desc}</p>` : ''}
+      <span class="sc-meta"><span>${meta}</span><span class="sc-go">${go}</span></span></span>
   </button>`;
 }
 function scPreview(s) {
@@ -2070,11 +2067,13 @@ function scPreview(s) {
     ? [['编辑问卷', s.blank ? '从左侧题型添加题目，给每道题设分值和权重' : '题目和分值已带好，可以改'], ['对象与关系', `被评对象：${s.obj}；评测人：${s.who}`], ['项目设置', '设时间、提醒和查看权限，然后发布']]
     : [['编辑问卷', s.blank ? '从左侧题型添加题目' : '题目已带好，可以改'], ['选择学员', `参与人：${s.who}`], ['项目设置', '设时间和提醒，然后发布']];
   return `<div class="sc-pv-in">
-    ${scTag(s)}<h3>${s.name}</h3><p class="note" style="font-size:13px">${s.desc}</p>
+    <div class="sc-pv-hd"><h3>${s.name}</h3>${scTag(s)}</div>
+    ${s.desc ? `<p class="note" style="font-size:13px">${s.desc}</p>` : ''}
+    <p class="sc-pv-cue">${s.blank ? '自定义创建 · 进入后自己加题' : '已选中 · 确认后进入编辑'}</p>
+    <div class="sc-pv-act"><button class="btn primary" id="scUse">使用该模板</button></div>
     <div class="sec"><span>接下来三步</span><ol class="sc-flow">${flow.map((f, i) => `<li><i>${i + 1}</i><div>${f[0]}<em>${f[1]}</em></div></li>`).join('')}</ol></div>
     <div class="sec"><span>${s.blank ? '题目' : `带好的题目（${qs.length} 道）`}</span>
       ${qs.length ? `<ol class="sc-qs">${qs.map((q, i) => `<li style="--i:${i}"><span>${q[0]}</span><span>${SC_Q[q[1]]}${ev ? (q[2] ? ' · 计分' : ' · 附加问题') : ''}</span></li>`).join('')}</ol>` : '<p class="note">不带题目，进入后自己添加。</p>'}</div>
-    <div class="foot"><button class="btn primary" id="scUse">用这个场景开始</button></div>
   </div>`;
 }
 function pageScene() {
@@ -2086,22 +2085,18 @@ function pageScene() {
     ? [['normal', '调查问卷', '收集意见和反馈，按题统计'], ['eval', '评估问卷', '给讲师、员工、课程打分并排名']]
     : [[f, f === 'eval' ? '评估问卷' : '调查问卷', f === 'eval' ? '给讲师、员工、课程打分并排名' : '收集意见和反馈，按题统计']];
   let i = 0;
-  const step3 = f === 'eval' ? '选对象' : f === 'normal' ? '选学员' : '选对象或学员';
-  const grid = groups.map(([k, t, d]) => {
+  const left = groups.map(([k, t, d]) => {
     const items = list.filter(s => s.type === k);
     const templates = items.filter(s => !s.blank), blanks = items.filter(s => s.blank);
-    return `<div class="sc-group"><b>${t}</b><span class="note">${d}</span></div>${templates.map(s => scCard(s, i++)).join('')}${blanks.map(s => scCard(s, i++)).join('')}`;
+    return `<div class="sc-block"><div class="sc-group"><b>${t}</b><span class="note">${d}</span></div><div class="sc-cards">${templates.map(s => scCard(s, i++)).join('')}${blanks.map(s => scCard(s, i++)).join('')}</div></div>`;
   }).join('');
   return `<div class="sc">
-    <div class="sc-top"><button class="btn link" id="scBack">‹ 返回列表</button></div>
-    <section class="sc-hero">
-      <h2>这次想做什么？</h2>
-      <p>选场景会带好题目和流程，进去后都能改；也可以从空白开始。</p>
-      <div class="sc-hero-steps"><span><b>1</b>选场景</span><span><b>2</b>编辑问卷</span><span><b>3</b>${step3}</span><span><b>4</b>设置并发布</span></div>
-    </section>
-    <div class="sc-chips" role="tablist" aria-label="问卷类型"><span class="ind"></span>${SC_FILTERS.map(([k, t]) => `<button role="tab" data-scf="${k}" class="${f === k ? 'on' : ''}" aria-selected="${f === k}">${t}</button>`).join('')}</div>
+    <div class="sc-bar">
+      <div class="sc-chips" role="tablist" aria-label="问卷类型"><span class="ind"></span>${SC_FILTERS.map(([k, t]) => `<button role="tab" data-scf="${k}" class="${f === k ? 'on' : ''}" aria-selected="${f === k}">${t}</button>`).join('')}</div>
+      <button class="sc-close" id="scClose" aria-label="关闭" title="关闭"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
     <div class="sc-body">
-      <div class="sc-grid">${grid}</div>
+      <div class="sc-left">${left}</div>
       <aside class="sc-pv" id="scPv" aria-live="polite">${scPreview(scById(state.scene.sel))}</aside>
     </div>
   </div>`;
@@ -2129,21 +2124,44 @@ function bindScene() {
     state.scene.f = b.dataset.scf;
     render();
   });
+  const flashPv = () => {
+    const pv = main.querySelector('#scPv');
+    pv.classList.remove('flash');
+    void pv.offsetWidth;
+    pv.classList.add('flash');
+  };
   main.querySelectorAll('[data-scene]').forEach(c => {
     c.onclick = () => {
       const s = scById(c.dataset.scene);
-      // 空白卡：一点就进编辑；模板卡：先选中看右侧说明，双击或点「用这个场景开始」再进入
+      // 空白卡：一点就进编辑；模板卡：先选中看右侧说明，双击或点「使用该模板」再进入
       if (s.blank) { startScene(s); return; }
+      const same = state.scene.sel === s.id;
       state.scene.sel = s.id;
-      main.querySelectorAll('[data-scene]').forEach(x => { x.classList.toggle('on', x === c); x.setAttribute('aria-pressed', x === c); });
-      main.querySelector('#scPv').innerHTML = scPreview(s);
+      main.querySelectorAll('[data-scene]').forEach(x => {
+        const on = x === c;
+        x.classList.toggle('on', on);
+        x.setAttribute('aria-pressed', on);
+        const go = x.querySelector('.sc-go');
+        if (go && !x.classList.contains('blank')) go.textContent = on ? '右侧确认 →' : '查看 →';
+      });
+      const pv = main.querySelector('#scPv');
+      pv.innerHTML = scPreview(s);
       main.querySelector('#scUse').onclick = () => startScene(s);
-      if (window.innerWidth <= 1100) main.querySelector('#scPv').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!same) flashPv();
+      if (window.innerWidth <= 1100) pv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
     c.ondblclick = () => startScene(scById(c.dataset.scene));
   });
   main.querySelector('#scUse').onclick = () => startScene(scById(state.scene.sel));
-  main.querySelector('#scBack').onclick = () => go('list');
+  main.querySelector('#scClose').onclick = () => go('list');
+  const left = main.querySelector('.sc-left');
+  if (left) left.addEventListener('wheel', e => {
+    if (left.scrollHeight <= left.clientHeight + 1) return;
+    const top = left.scrollTop, max = left.scrollHeight - left.clientHeight;
+    const next = Math.max(0, Math.min(max, top + e.deltaY));
+    if (next !== top) { left.scrollTop = next; e.preventDefault(); e.stopPropagation(); }
+  }, { passive: false });
+  requestAnimationFrame(flashPv);
 }
 function bindTplLib() {
   const L = state.lib, on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
@@ -2249,14 +2267,14 @@ function pageDetail() {
       ${[['编号', p.code], ['项目名称', p.name], ['类型', p.type], ['使用问卷', p.qn], ['有效时间', validity(p)], ['状态', `<span class="tag ${statusTag(p.status)}">${p.status}</span>`], ['创建人', p.creator], ['创建日期', p.created], ['项目来源', p.source], ['说明', state.edHead.desc]]
         .map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
     <div class="card"><h2>计分与设置</h2>
-      ${[['计分题', `${scoredCount()} 道，满分 ${fmt(fullScore())} 分`], ['题目权重', state.qWeightOn ? '已开启' : '未开启'], ['按关系加权', state.relWeightOn ? '已开启，按对象各自设置' : '未开启'],
+      ${[['计分题', `${scoredCount()} 道，满分 ${fmt(fullScore())} 分`], ['题目权重', state.qWeightOn ? '已开启' : '未开启'],
          ['去掉最高分、最低分', state.trim ? '已开启' : '未开启'], ['调查模式', state.anon ? '匿名模式' : '管理模式'], 
          ['学员查看排名', state.rankVisible ? '允许' : '不允许']].map(([k, v]) => `<div class="field"><label>${k}</label><span>${v}</span></div>`).join('')}</div>
   </div>
   ${isEval(p) ? `<div class="card"><h2>被评测对象与评测关系（${state.projObjects.length} 个对象）</h2><div class="scroll"><table>
-    <thead><tr><th>被评测对象</th><th>来源</th><th>评测关系与权重</th><th>评测人</th></tr></thead>
+    <thead><tr><th>被评测对象</th><th>来源</th><th>评测关系</th><th>评测人</th></tr></thead>
     <tbody>${state.projObjects.map(o => `<tr><td>${o.name}</td><td><span class="tag ${o.kind === '讲师库' ? 'blue' : ''}">${o.kind}</span></td>
-      <td>${o.rels.map(r => `${r.name} ${r.weight}%`).join('、')}</td><td class="note">${o.rels.map(r => `${r.name}：${r.who || '未选择'}`).join('；')}</td></tr>`).join('')}</tbody></table></div></div>` : ''}
+      <td>${o.rels.map(r => r.name).join('、')}</td><td class="note">${o.rels.map(r => `${r.name}：${r.who || '未选择'}`).join('；')}</td></tr>`).join('')}</tbody></table></div></div>` : ''}
   <div class="card"><h2>问卷（${state.edQs.length} 道题）</h2><ol class="qlist">${state.edQs.map(q => `<li>${q.title} <span class="tag">${q.type}</span> ${q.score ? `<span class="note">权重 ${state.qWeightOn ? q.weight : 1}，本题满分 ${fmt(qFull(q))}</span>` : '<span class="note">不计分</span>'}</li>`).join('')}</ol></div>
   ${state.opModal ? opModal() : ''}`;
 }
@@ -2329,12 +2347,10 @@ function pageResult() {
         <select id="relFilter" aria-label="关系"><option value="">全部关系</option>${REL_NAMES.map(r => `<option ${state.relFilter === r ? 'selected' : ''}>${r}</option>`).join('')}</select>
         <select id="deptFilter" aria-label="对象部门"><option value="">全部部门</option>${depts.map(d => `<option ${state.deptFilter === d ? 'selected' : ''}>${d}</option>`).join('')}</select>
         <label class="switch"><input type="checkbox" class="tg" id="trim" ${state.trim ? 'checked' : ''} /> 去掉最高分、最低分</label>
-        <label class="switch"><input type="checkbox" class="tg" id="weighted" ${state.weighted ? 'checked' : ''} ${state.relFilter ? 'disabled' : ''} /> 按关系加权</label>
-
       </div>
       <span class="note">有效问卷 ${nValid} 份　满分 ${FULL} 分</span>
     </div>
-    ${state.relFilter ? `<p class="note" style="margin-top:8px">已筛选「${state.relFilter}」，只统计该关系的答卷，对象得分不加权。</p>` : ''}
+    ${state.relFilter ? `<p class="note" style="margin-top:8px">已筛选「${state.relFilter}」，只统计该关系的答卷。</p>` : ''}
   </div>
   <div class="card">
     <div class="tabs" role="tablist">${tabs.map(([k, t]) => `<button role="tab" data-tab="${k}" class="${state.tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
@@ -2351,12 +2367,12 @@ function compositeRows() {
     .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
 }
 function tabComposite() {
-  const rows = compositeRows(), w = state.weighted && !state.relFilter, sel = state.rankSel;
+  const rows = compositeRows(), sel = state.rankSel;
   return `<div class="row between" style="margin-bottom:12px">
       <span class="note">勾选对象后点「绘图」，不勾选时画全部对象，最多 15 个。</span>
       <span class="row"><button class="btn" id="drawRank">绘图</button><button class="btn" data-exp="综合排名">导出</button></span></div>
   <div class="scroll"><table>
-    <thead><tr><th><input type="checkbox" id="rkAll" aria-label="全选" ${sel.length === rows.length ? 'checked' : ''} /></th><th>排名</th><th>被评测对象</th><th class="num">${w ? '加权得分' : '得分'}</th><th class="num">得分率</th><th class="num">平均分</th><th class="num">对比平均分</th><th>有效问卷</th><th>各关系完成</th><th>操作</th></tr></thead>
+    <thead><tr><th><input type="checkbox" id="rkAll" aria-label="全选" ${sel.length === rows.length ? 'checked' : ''} /></th><th>排名</th><th>被评测对象</th><th class="num">得分</th><th class="num">得分率</th><th class="num">平均分</th><th class="num">对比平均分</th><th>有效问卷</th><th>各关系完成</th><th>操作</th></tr></thead>
     <tbody>${rows.map((r, i) => `<tr><td><input type="checkbox" data-rk="${r.o.id}" ${sel.includes(r.o.id) ? 'checked' : ''} aria-label="选择${r.o.name}" /></td>
       <td>${rankOf(rows, i, 'score')}</td><td>${r.o.name}</td><td class="num">${r1(r.score)}</td><td class="num">${r.score == null ? '-' : r1(r.score / FULL * 100)}</td>
       <td class="num">${r1(r.pAvg)}</td><td class="num">${r.pAvg && r.score != null ? r1(r.score / r.pAvg * 100) + '%' : '-'}</td>
@@ -2365,7 +2381,7 @@ function tabComposite() {
         const n = included().filter(a => a.obj === r.o.id && a.rel === rel).length;
         return n ? `<span class="tag">${rel} ${n}</span>` : `<span class="tag orange">缺少${rel}</span>`;
       }).join(' ')}</td><td><button class="btn link" data-odetail="${r.o.id}">查看明细</button></td></tr>`).join('')}</tbody></table></div>
-  <p class="note" style="margin-top:12px">得分 = ${w ? '各关系有效问卷平均分 × 该对象的关系权重之和；某关系没有有效问卷时，其余关系按权重折算' : '有效问卷总分之和 ÷ 有效份数'}${state.trim ? '；开启去掉最高分、最低分时，在每种关系内各去一份' : ''}。平均分 = 全部有效问卷总分 ÷ 有效份数；对比平均分 = 得分 ÷ 平均分 × 100%。标记无效、已回收的答卷不计入。</p>`;
+  <p class="note" style="margin-top:12px">得分 = 有效问卷总分之和 ÷ 有效份数${state.trim ? '；开启去掉最高分、最低分时，在每种关系内各去一份' : ''}。平均分 = 全部有效问卷总分 ÷ 有效份数；对比平均分 = 得分 ÷ 平均分 × 100%。标记无效、已回收的答卷不计入。</p>`;
 }
 
 function qAvg(objId, qi, list) { return avg((list || included()).filter(a => !objId || a.obj === objId).map(a => a.s[qi])); }
@@ -2456,7 +2472,7 @@ function opModal() {
   if (m.kind === 'chart') {
     const ids = (state.rankSel.length ? state.rankSel : compositeRows().map(r => r.o.id)).slice(0, 15);
     const items = compositeRows().filter(r => ids.includes(r.o.id)).map((r, i) => ({ label: r.o.name, v: m.mode === 'rate' ? (r.score == null ? null : r.score / FULL * 100) : r.score, color: COLORS[0] }));
-    return wrap('综合排名图表', `<div class="row" style="margin:12px 0"><label class="switch"><input type="radio" name="chm" data-chm="score" ${m.mode !== 'rate' ? 'checked' : ''} /> ${state.weighted && !state.relFilter ? '加权得分' : '得分'}</label><label class="switch"><input type="radio" name="chm" data-chm="rate" ${m.mode === 'rate' ? 'checked' : ''} /> 得分率</label></div>
+    return wrap('综合排名图表', `<div class="row" style="margin:12px 0"><label class="switch"><input type="radio" name="chm" data-chm="score" ${m.mode !== 'rate' ? 'checked' : ''} /> 得分</label><label class="switch"><input type="radio" name="chm" data-chm="rate" ${m.mode === 'rate' ? 'checked' : ''} /> 得分率</label></div>
       ${bars(items, m.mode === 'rate' ? 100 : FULL, m.mode === 'rate' ? '%' : ' 分')}<p class="note">共 ${items.length} 个对象${state.rankSel.length ? '（已勾选）' : '（全部）'}；满分 ${FULL} 分。</p>`, 720);
   }
   if (m.kind === 'chartSingle') {
@@ -2469,11 +2485,11 @@ function opModal() {
   if (m.kind === 'valid') {
     const o = objById(m.obj), list = included().filter(a => a.obj === o.id), flags = trimFlags(o.id), sc = objScore(o.id);
     return wrap(`有效问卷：${o.name}`, `<p class="note" style="margin:8px 0 12px">有效问卷 ${list.length} 份；得分 ${r1(sc.score)}。${state.trim ? '已开启去掉最高分、最低分：每种关系内各去掉一份最高分和一份最低分（份数不足时不去），去掉的答卷标灰，不参与计算。' : '未开启去掉最高分、最低分，全部有效问卷参与计算。'}</p>
-      <table><thead><tr><th>工号</th><th>姓名</th><th>部门</th><th>关系</th><th class="num">分数</th><th class="num">关系权重</th><th>计算</th><th>操作</th></tr></thead>
+      <table><thead><tr><th>工号</th><th>姓名</th><th>部门</th><th>关系</th><th class="num">分数</th><th>计算</th><th>操作</th></tr></thead>
       <tbody>${list.map((a, i) => `<tr class="${flags[akey(a)] ? 'removed' : ''}"><td class="mono">${state.anon ? '-' : CODES[a.who]}</td><td>${whoName(a.who, i)}</td><td>${state.anon ? '-' : evalInfo(a.who).dept}</td><td>${a.rel}</td>
-        <td class="num">${total(a) ?? '无可计分作答'}</td><td class="num">${state.weighted && !state.relFilter ? relWeight(o.id, a.rel) + '%' : '-'}</td><td>${flags[akey(a)] ? `<span class="tag">${flags[akey(a)]}</span>` : '计入'}</td>
+        <td class="num">${total(a) ?? '无可计分作答'}</td><td>${flags[akey(a)] ? `<span class="tag">${flags[akey(a)]}</span>` : '计入'}</td>
         <td><button class="btn link" data-ans="${akey(a)}">查看答卷</button></td></tr>`).join('')}</tbody></table>
-      <div class="calc">${REL_NAMES.map(rel => { const s = relScore(o.id, rel); return s == null ? '' : `<span>${rel}平均 ${r1(s)}${state.weighted && !state.relFilter ? ` × ${relWeight(o.id, rel)}%` : ''}</span>`; }).join('')}<b>得分 ${r1(sc.score)}</b></div>`, 760,
+      <div class="calc">${REL_NAMES.map(rel => { const s = relScore(o.id, rel); return s == null ? '' : `<span>${rel}平均 ${r1(s)}</span>`; }).join('')}<b>得分 ${r1(sc.score)}</b></div>`, 760,
       `<button class="btn" data-exp="有效问卷明细">导出</button><button class="btn" data-omclose>关闭</button>`);
   }
   if (m.kind === 'odetail') {
@@ -2671,7 +2687,6 @@ function bind() {
   on('#relFilter', 'change', e => { state.relFilter = e.target.value; render(); });
   on('#deptFilter', 'change', e => { state.deptFilter = e.target.value; render(); });
   on('#trim', 'change', e => { state.trim = e.target.checked; render(); });
-  on('#weighted', 'change', e => { state.weighted = e.target.checked; render(); });
   on('#exportBtn', 'click', () => toast('已加入导出任务，可在导出任务列表下载'));
 }
 document.querySelectorAll('[data-app]').forEach(a => a.onclick = () => toast('该功能暂未开放'));
