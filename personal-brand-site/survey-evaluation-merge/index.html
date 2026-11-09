@@ -267,7 +267,7 @@
   .stu-text { width: 100%; min-height: 72px; border: 1px solid var(--border); border-radius: 4px; padding: 8px; font: inherit; }
   .stu-ops { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-top: 12px; }
   .stu-ops .btn { height: 40px; }
-  .stu-icon { width: 56px; height: 56px; border-radius: 50%; margin: 48px auto 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; }
+  .stu-icon { width: 56px; height: 56px; border-radius: 50%; margin: 48px auto 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; }
   .stu-icon.ok { background: var(--success); }
   .stu-icon.warn { background: var(--warning); }
   @media (max-width: 760px) { .stu-wrap { grid-template-columns: 1fr; } .phone { width: 100%; } }
@@ -422,24 +422,24 @@
   .sc { --ease: cubic-bezier(.2, .8, .2, 1); --sc-group-h: 28px; max-width: 1320px; margin: 0 auto; width: 100%; flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 0; overflow: hidden; }
   .sc-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex: none; }
   .sc-chips { position: relative; display: inline-flex; padding: 4px; border-radius: 8px; background: var(--block); flex: none; }
-  .sc-chips button { position: relative; z-index: 1; border: none; background: none; height: 30px; padding: 0 16px; border-radius: 6px; cursor: pointer; color: var(--text-2); transition: color .2s; font-size: 13px; }
+  .sc-chips button { position: relative; z-index: 1; border: none; background: none; height: 32px; padding: 0 16px; border-radius: 6px; cursor: pointer; color: var(--text-2); transition: color .2s; font-size: 14px; line-height: 22px; }
   .sc-chips button.on { color: var(--primary); font-weight: 500; }
-  .sc-chips .ind { position: absolute; top: 4px; height: 30px; border-radius: 6px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08); transition: left .32s var(--ease), width .32s var(--ease); }
+  .sc-chips .ind { position: absolute; top: 4px; height: 32px; border-radius: 6px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08); transition: left .32s var(--ease), width .32s var(--ease); }
   .sc-close { width: 32px; height: 32px; border: none; border-radius: 6px; background: transparent; color: var(--text-2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex: none; }
   .sc-close:hover { background: var(--block); color: var(--text-1); }
   .sc-close svg { width: 16px; height: 16px; }
 
   .sc-body { position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; }
-  .sc-left { position: absolute; inset: 0 364px 0 0; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 10px 20px 0; display: flex; flex-direction: column; gap: 16px; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #C4C4C4 transparent; }
+  .sc-left { position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 4px 20px 0; display: flex; flex-direction: column; gap: 20px; scrollbar-width: thin; scrollbar-color: #C4C4C4 transparent; }
   .sc-left::-webkit-scrollbar { width: 8px; }
   .sc-left::-webkit-scrollbar-track { background: transparent; margin: 6px 0; }
   .sc-left::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
   .sc-left::-webkit-scrollbar-thumb:hover { background: #B5B5B5; border: 2px solid transparent; background-clip: padding-box; }
-  .sc-block { display: flex; flex-direction: column; gap: 10px; flex: none; }
-  .sc-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .sc-block { display: flex; flex-direction: column; gap: 12px; flex: none; }
+  .sc-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .sc-group { display: flex; align-items: baseline; gap: 10px; min-height: var(--sc-group-h); }
-  .sc-group b { font-weight: 500; font-size: 14px; }
-  .sc-card { position: relative; display: flex; flex-direction: row; align-items: stretch; text-align: left; background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 0; cursor: pointer; overflow: hidden; min-height: 96px;
+  .sc-group b { font-weight: 500; font-size: 16px; line-height: 24px; }
+  .sc-card { position: relative; display: flex; flex-direction: row; align-items: stretch; text-align: left; background: #fff; border: 1px solid var(--divider); border-radius: 8px; padding: 0; cursor: pointer; overflow: hidden; min-height: 120px;
     opacity: 0; transform: translateY(8px); animation: scIn .4s var(--ease) forwards; animation-delay: calc(var(--i) * 35ms);
     transition: transform .24s var(--ease), box-shadow .24s var(--ease), border-color .2s; }
   .sc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(1,82,217,.10); border-color: var(--border-strong); }
@@ -447,77 +447,90 @@
   .sc-card.on { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); animation: scIn .4s var(--ease) forwards, scBreath 2.8s ease-in-out .5s infinite; }
   @keyframes scIn { to { opacity: 1; transform: none; } }
   @keyframes scBreath { 0%, 100% { box-shadow: 0 0 0 3px var(--primary-soft); } 50% { box-shadow: 0 0 0 6px rgba(1,82,217,.08); } }
-  .sc-viz { width: 92px; flex: none; background: linear-gradient(180deg, #F7FAFF, #fff); border-right: 1px solid var(--divider); display: flex; align-items: center; justify-content: center; }
-  .sc-viz svg { width: 76px; height: 50px; overflow: visible; }
+  .sc-viz { width: 108px; flex: none; background: linear-gradient(180deg, #F7FAFF, #fff); border-right: 1px solid var(--divider); display: flex; align-items: center; justify-content: center; }
+  .sc-viz svg { width: 88px; height: 56px; overflow: visible; }
   .sc-viz .grow { transform-box: fill-box; transform-origin: left center; transition: transform .6s var(--ease); }
   .sc-viz .pop { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--ease); }
   .sc-card:not(:hover):not(.on) .sc-viz .grow { transform: scaleX(.72); }
   .sc-card:hover .sc-viz .pop, .sc-card.on .sc-viz .pop { transform: scale(1.12); }
   .sc-viz .spin { transform-box: fill-box; transform-origin: center; transition: transform .8s var(--ease); }
   .sc-card:hover .sc-viz .spin, .sc-card.on .sc-viz .spin { transform: rotate(30deg); }
-  .sc-txt { padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .sc-txt { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
   .sc-txt .row { gap: 8px; flex-wrap: nowrap; }
-  .sc-txt b { font-weight: 500; font-size: 14px; }
-  .sc-txt p { color: var(--text-2); font-size: 12px; line-height: 18px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .sc-meta { margin-top: auto; padding-top: 8px; display: flex; justify-content: space-between; align-items: center; color: var(--text-3); font-size: 12px; }
+  .sc-txt b { font-weight: 500; font-size: 14px; line-height: 22px; }
+  .sc-txt p { color: var(--text-2); font-size: 12px; line-height: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sc-meta { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; color: var(--text-3); font-size: 12px; line-height: 20px; }
   .sc-go { color: var(--primary); opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .28s var(--ease); font-weight: 500; }
   .sc-card:hover .sc-go, .sc-card.on .sc-go { opacity: 1; transform: none; }
   .sc-card.on .sc-go { animation: scGoPulse 1.6s ease-in-out .2s 2; }
   @keyframes scGoPulse { 0%, 100% { transform: none; } 50% { transform: translateX(3px); } }
-  .sc-card.blank { border: 1.5px dashed var(--primary); background: linear-gradient(90deg, #F5F9FF 0%, #fff 42%); box-shadow: inset 0 0 0 1px rgba(1,82,217,.04); }
-  .sc-card.blank .sc-viz { background: radial-gradient(circle at center, rgba(1,82,217,.08), transparent 68%); border-right-color: #D6E4FF; }
-  .sc-card.blank .sc-txt b { color: var(--primary); }
+  /* 空白卡：只轻区分，不抢视觉 */
+  .sc-card.blank { border: 1px dashed var(--border); background: #fff; box-shadow: none; }
+  .sc-card.blank .sc-viz { background: var(--block); border-right-color: var(--divider); }
+  .sc-card.blank .sc-txt b { color: var(--text-2); }
   .sc-card.blank:hover, .sc-card.blank:focus-visible {
-    border-style: solid; border-color: var(--primary); background: linear-gradient(90deg, #EEF4FF 0%, #fff 48%);
-    box-shadow: 0 0 0 3px var(--primary-soft), 0 8px 20px rgba(1,82,217,.10); outline: none;
+    border-style: dashed; border-color: var(--border-strong); background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06); outline: none;
   }
-  .sc-card.blank:active { transform: none; box-shadow: 0 0 0 4px rgba(1,82,217,.16); }
+  .sc-card.blank:active { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
   .sc-card.blank.on { border-style: solid; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
 
-  .sc-pv { position: absolute; top: calc(var(--sc-group-h) + 10px); right: 0; bottom: 0; width: 340px; background: #fff; border: 1px solid var(--primary); border-radius: 8px; padding: 16px 18px; overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; box-shadow: 0 0 0 3px var(--primary-soft); transition: box-shadow .28s var(--ease), border-color .2s; }
-  .sc-pv::before { content: ""; position: absolute; left: -14px; top: 28px; width: 10px; height: 2px; background: var(--primary); opacity: .55; pointer-events: none; }
-  .sc-pv.flash { animation: scPvFlash .75s var(--ease); }
-  @keyframes scPvFlash {
-    0% { box-shadow: 0 0 0 0 rgba(1,82,217,.3); }
-    40% { box-shadow: 0 0 0 10px rgba(1,82,217,.1); }
-    100% { box-shadow: 0 0 0 3px var(--primary-soft); }
+  /* 右侧预览：盖在卡片上，不挤布局 */
+  .sc-pv {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 360px; z-index: 4;
+    background: #fff; border: none; border-left: 1px solid var(--divider); border-radius: 0;
+    padding: 20px 20px 24px; overflow: auto; overscroll-behavior: contain;
+    display: flex; flex-direction: column;
+    box-shadow: -8px 0 24px rgba(15, 23, 42, .08);
+    transform: translateX(104%); opacity: 0; pointer-events: none;
+    transition: transform .28s var(--ease), opacity .22s var(--ease);
   }
-  .sc-pv-in { animation: scFade .36s var(--ease); display: flex; flex-direction: column; flex: 1; min-height: 0; }
-  @keyframes scFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .sc.has-pv .sc-pv, .sc-pv.open { transform: none; opacity: 1; pointer-events: auto; }
+  .sc-pv.flash { animation: scPvFlash .7s var(--ease); }
+  @keyframes scPvFlash {
+    0% { box-shadow: -8px 0 24px rgba(1,82,217,.18); }
+    100% { box-shadow: -8px 0 24px rgba(15, 23, 42, .08); }
+  }
+  .sc-pv-in { animation: scFade .32s var(--ease); display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  @keyframes scFade { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
   .sc-pv-hd { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; }
   .sc-pv-hd h3 { font-size: 16px; line-height: 24px; font-weight: 500; margin: 0; flex: 1; min-width: 0; }
   .sc-pv-hd .tag { flex: none; }
-  .sc-pv-cue { margin: 8px 0 0; color: var(--primary); font-size: 12px; line-height: 18px; font-weight: 500; }
-  .sc-pv-act { margin-top: 14px; }
-  .sc-pv-act .btn.primary { width: 100%; }
-  .sc-pv .sec { margin-top: 18px; }
-  .sc-pv .sec > span { display: block; color: var(--text-3); font-size: 12px; margin-bottom: 8px; }
+  .sc-pv-cue { margin: 8px 0 0; color: var(--primary); font-size: 12px; line-height: 20px; font-weight: 500; }
+  .sc-pv-act { margin-top: 16px; }
+  .sc-pv-act .btn.primary { width: 100%; height: 36px; }
+  .sc-pv .sec { margin-top: 20px; }
+  .sc-pv .sec > span { display: block; color: var(--text-3); font-size: 12px; line-height: 20px; margin-bottom: 8px; }
   .sc-flow { list-style: none; display: grid; gap: 0; }
-  .sc-flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; position: relative; padding-bottom: 12px; }
+  .sc-flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; position: relative; padding-bottom: 12px; font-size: 14px; line-height: 22px; }
   .sc-flow li:last-child { padding-bottom: 0; }
   .sc-flow li::before { content: ""; position: absolute; left: 10px; top: 22px; bottom: 0; width: 1px; background: var(--divider); }
   .sc-flow li:last-child::before { display: none; }
   .sc-flow i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
-  .sc-flow em { font-style: normal; display: block; color: var(--text-3); font-size: 12px; line-height: 18px; }
-  .sc-qs { list-style: none; display: grid; gap: 6px; }
-  .sc-qs li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 4px; background: var(--block); font-size: 12px; opacity: 0; animation: scIn .4s var(--ease) forwards; animation-delay: calc(var(--i) * 40ms + 120ms); transform: translateY(6px); }
-  .sc-qs li span:last-child { color: var(--text-3); flex: none; }
-  .sc-empty { color: var(--text-3); text-align: center; padding: 48px 0; }
+  .sc-flow em { font-style: normal; display: block; color: var(--text-3); font-size: 12px; line-height: 20px; }
+  .sc-qs { list-style: none; display: grid; gap: 8px; }
+  .sc-qs li { display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 4px; background: var(--block); font-size: 14px; line-height: 22px; opacity: 0; animation: scIn .4s var(--ease) forwards; animation-delay: calc(var(--i) * 40ms + 120ms); transform: translateY(6px); }
+  .sc-qs li span:last-child { color: var(--text-3); flex: none; font-size: 12px; line-height: 20px; }
+  .sc-empty { color: var(--text-3); text-align: center; padding: 48px 0; font-size: 14px; }
   @media (max-width: 1100px) {
     .app:has(.sc) { height: auto; overflow: visible; }
     .app:has(.sc) .shell, .shell:has(.sc) { height: auto; max-height: none; overflow: visible; }
     .shell:has(.sc) main { overflow: visible; height: auto; }
     .sc { display: block; overflow: visible; }
     .sc-body { position: static; overflow: visible; height: auto; }
-    .sc-left { position: static; inset: auto; overflow: visible; height: auto; padding-right: 0; }
+    .sc-left { position: static; inset: auto; overflow: visible; height: auto; }
     .sc-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .sc-pv { position: static; width: 100%; top: auto; right: auto; bottom: auto; margin-top: 16px; max-height: none; }
+    .sc-pv, .sc.has-pv .sc-pv, .sc-pv.open {
+      position: static; width: 100%; transform: none; opacity: 1; pointer-events: auto;
+      margin-top: 16px; max-height: none; border: 1px solid var(--divider); border-radius: 8px; box-shadow: none;
+    }
+    .sc-pv[hidden] { display: none !important; }
   }
   @media (max-width: 760px) {
     .shell:has(.sc) main { padding: 16px; }
     .sc-cards { grid-template-columns: 1fr; }
-    .sc-card { min-height: 88px; }
-    .sc-viz { width: 80px; }
+    .sc-card { min-height: 104px; }
+    .sc-viz { width: 88px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sc *, .sc *::before, .sc *::after { animation: none !important; transition: none !important; }
@@ -2077,7 +2090,7 @@ const SCENES = [
   { id: 'blankNormal', type: 'normal', viz: 'plus', blank: true, name: '空白调查问卷', desc: '', who: '进入后选择参与人', out: '每题选项分布', qs: [] },
 ];
 const SC_FILTERS = [['all', '全部'], ['normal', '调查问卷'], ['eval', '评估问卷']];
-state.scene = { f: 'all', sel: 'need', ind: null };
+state.scene = { f: 'all', sel: null, open: false, ind: null };
 const scById = id => SCENES.find(s => s.id === id);
 // [题目, 题型代号, 是否计分]；讲师授课评估直接用编辑器的演示问卷
 const scQs = s => s.sample ? EVAL_SAMPLE.qs.map(q => [q.title, Object.keys(SC_Q).find(k => SC_Q[k] === q.type), q.score]) : s.qs.map(([t, k]) => [t, k, s.type === 'eval' && k === 'S']);
@@ -2101,7 +2114,7 @@ function scCard(s, i) {
   const qs = scQs(s), n = qs.length, scoredN = qs.filter(q => q[2]).length;
   const on = state.scene.sel === s.id;
   const meta = s.blank ? '自定义创建' : `${n} 道题${s.type === 'eval' ? ` · ${scoredN} 道计分` : ''}`;
-  const go = s.blank ? '空白开始 →' : (on ? '右侧确认 →' : '查看 →');
+  const go = s.blank ? '空白开始 →' : (on ? '侧栏确认 →' : '查看 →');
   return `<button class="sc-card ${s.blank ? 'blank' : ''} ${on ? 'on' : ''}" data-scene="${s.id}" style="--i:${i}" aria-pressed="${on}">
     <span class="sc-viz">${scViz(s)}</span>
     <span class="sc-txt"><span class="row"><b>${s.name}</b></span>${s.desc ? `<p>${s.desc}</p>` : ''}
@@ -2115,8 +2128,8 @@ function scPreview(s) {
     : [['编辑问卷', s.blank ? '从左侧题型添加题目' : '题目已带好，可以改'], ['选择学员', `参与人：${s.who}`], ['项目设置', '设时间和提醒，然后发布']];
   return `<div class="sc-pv-in">
     <div class="sc-pv-hd"><h3>${s.name}</h3>${scTag(s)}</div>
-    ${s.desc ? `<p class="note" style="font-size:13px">${s.desc}</p>` : ''}
-    <p class="sc-pv-cue">${s.blank ? '自定义创建 · 进入后自己加题' : '已选中 · 确认后进入编辑'}</p>
+    ${s.desc ? `<p class="note">${s.desc}</p>` : ''}
+    <p class="sc-pv-cue">${s.blank ? '自定义创建 · 进入后自己加题' : '已选中 · 点下方按钮进入编辑'}</p>
     <div class="sc-pv-act"><button class="btn primary" id="scUse">使用该模板</button></div>
     <div class="sec"><span>接下来三步</span><ol class="sc-flow">${flow.map((f, i) => `<li><i>${i + 1}</i><div>${f[0]}<em>${f[1]}</em></div></li>`).join('')}</ol></div>
     <div class="sec"><span>${s.blank ? '题目' : `带好的题目（${qs.length} 道）`}</span>
@@ -2127,7 +2140,8 @@ function pageScene() {
   const f = state.scene.f || 'all';
   state.scene.f = f;
   const list = SCENES.filter(s => f === 'all' || s.type === f);
-  if (!list.some(s => s.id === state.scene.sel)) state.scene.sel = list[0].id;
+  if (state.scene.sel && !list.some(s => s.id === state.scene.sel)) { state.scene.sel = null; state.scene.open = false; }
+  const open = !!(state.scene.open && state.scene.sel);
   const groups = f === 'all'
     ? [['normal', '调查问卷', '收集意见和反馈，按题统计'], ['eval', '评估问卷', '给讲师、员工、课程打分并排名']]
     : [[f, f === 'eval' ? '评估问卷' : '调查问卷', f === 'eval' ? '给讲师、员工、课程打分并排名' : '收集意见和反馈，按题统计']];
@@ -2137,14 +2151,14 @@ function pageScene() {
     const templates = items.filter(s => !s.blank), blanks = items.filter(s => s.blank);
     return `<div class="sc-block"><div class="sc-group"><b>${t}</b><span class="note">${d}</span></div><div class="sc-cards">${templates.map(s => scCard(s, i++)).join('')}${blanks.map(s => scCard(s, i++)).join('')}</div></div>`;
   }).join('');
-  return `<div class="sc">
+  return `<div class="sc ${open ? 'has-pv' : ''}">
     <div class="sc-bar">
       <div class="sc-chips" role="tablist" aria-label="问卷类型"><span class="ind"></span>${SC_FILTERS.map(([k, t]) => `<button role="tab" data-scf="${k}" class="${f === k ? 'on' : ''}" aria-selected="${f === k}">${t}</button>`).join('')}</div>
       <button class="sc-close" id="scClose" aria-label="关闭" title="关闭"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <div class="sc-body">
       <div class="sc-left">${left}</div>
-      <aside class="sc-pv" id="scPv" aria-live="polite">${scPreview(scById(state.scene.sel))}</aside>
+      <aside class="sc-pv ${open ? 'open' : ''}" id="scPv" aria-live="polite" ${open ? '' : 'hidden'}>${open ? scPreview(scById(state.scene.sel)) : ''}</aside>
     </div>
   </div>`;
 }
@@ -2173,34 +2187,68 @@ function bindScene() {
   });
   const flashPv = () => {
     const pv = main.querySelector('#scPv');
+    if (!pv || pv.hidden) return;
     pv.classList.remove('flash');
     void pv.offsetWidth;
     pv.classList.add('flash');
   };
+  const openPv = s => {
+    const sc = main.querySelector('.sc');
+    const pv = main.querySelector('#scPv');
+    state.scene.sel = s.id;
+    state.scene.open = true;
+    sc?.classList.add('has-pv');
+    pv.hidden = false;
+    pv.classList.add('open');
+    pv.innerHTML = scPreview(s);
+    main.querySelector('#scUse').onclick = () => startScene(s);
+  };
+  const clearCards = () => {
+    main.querySelectorAll('[data-scene]').forEach(x => {
+      x.classList.remove('on');
+      x.setAttribute('aria-pressed', 'false');
+      const go = x.querySelector('.sc-go');
+      if (go && !x.classList.contains('blank')) go.textContent = '查看 →';
+    });
+  };
+  const closePv = () => {
+    if (!state.scene.open && !state.scene.sel) return;
+    state.scene.sel = null;
+    state.scene.open = false;
+    main.querySelector('.sc')?.classList.remove('has-pv');
+    const pv = main.querySelector('#scPv');
+    if (pv) { pv.classList.remove('open', 'flash'); pv.hidden = true; pv.innerHTML = ''; }
+    clearCards();
+  };
   main.querySelectorAll('[data-scene]').forEach(c => {
     c.onclick = () => {
       const s = scById(c.dataset.scene);
-      // 空白卡：一点就进编辑；模板卡：先选中看右侧说明，双击或点「使用该模板」再进入
+      // 空白卡：一点就进编辑；模板卡：点开右侧侧栏预览，再点「使用该模板」进入
       if (s.blank) { startScene(s); return; }
-      const same = state.scene.sel === s.id;
-      state.scene.sel = s.id;
+      const same = state.scene.open && state.scene.sel === s.id;
+      openPv(s);
       main.querySelectorAll('[data-scene]').forEach(x => {
         const on = x === c;
         x.classList.toggle('on', on);
         x.setAttribute('aria-pressed', on);
         const go = x.querySelector('.sc-go');
-        if (go && !x.classList.contains('blank')) go.textContent = on ? '右侧确认 →' : '查看 →';
+        if (go && !x.classList.contains('blank')) go.textContent = on ? '侧栏确认 →' : '查看 →';
       });
-      const pv = main.querySelector('#scPv');
-      pv.innerHTML = scPreview(s);
-      main.querySelector('#scUse').onclick = () => startScene(s);
       if (!same) flashPv();
-      if (window.innerWidth <= 1100) pv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (window.innerWidth <= 1100) main.querySelector('#scPv')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
     c.ondblclick = () => startScene(scById(c.dataset.scene));
   });
-  main.querySelector('#scUse').onclick = () => startScene(scById(state.scene.sel));
+  const scUse = main.querySelector('#scUse');
+  if (scUse) scUse.onclick = () => startScene(scById(state.scene.sel));
   main.querySelector('#scClose').onclick = () => go('list');
+  // 点卡片/侧栏/顶栏以外的空白处：取消选中并收起侧栏
+  main.querySelector('.sc')?.addEventListener('click', e => {
+    if (!state.scene.open) return;
+    const t = e.target;
+    if (t.closest('[data-scene], #scPv, .sc-chips, .sc-close, .sc-bar')) return;
+    closePv();
+  });
   const left = main.querySelector('.sc-left');
   if (left) left.addEventListener('wheel', e => {
     if (left.scrollHeight <= left.clientHeight + 1) return;
@@ -2208,7 +2256,7 @@ function bindScene() {
     const next = Math.max(0, Math.min(max, top + e.deltaY));
     if (next !== top) { left.scrollTop = next; e.preventDefault(); e.stopPropagation(); }
   }, { passive: false });
-  requestAnimationFrame(flashPv);
+  if (state.scene.open) requestAnimationFrame(flashPv);
 }
 function bindTplLib() {
   const L = state.lib, on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
@@ -2768,7 +2816,7 @@ function bind() {
   main.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { state.step = b.dataset.step; render(); });
   main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { state.tab = b.dataset.tab; render(); });
   const on = (sel, ev, fn) => { const el = main.querySelector(sel); if (el) el.addEventListener(ev, fn); };
-  on('#newSurvey', 'click', () => { state.scene.f = 'all'; state.scene.sel = 'need'; go('scene'); });
+  on('#newSurvey', 'click', () => { state.scene.f = 'all'; state.scene.sel = null; state.scene.open = false; go('scene'); });
   on('#rankVisSet', 'change', e => { state.rankVisible = e.target.checked; });
   on('#trimSet', 'change', e => { state.trim = e.target.checked; });
   main.querySelectorAll('[data-scan]').forEach(r => r.onchange = () => { state.stu.scanRule = r.dataset.scan; });
