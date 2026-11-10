@@ -5,12 +5,6 @@
   "outputDirectory": ".",
   "cleanUrls": false,
   "trailingSlash": true,
-  "rewrites": [
-    {
-      "source": "/api/classroom-roles/:path*",
-      "destination": "https://ai-classroom-roles-agent.vercel.app/:path*"
-    }
-  ],
   "headers": [
     {
       "source": "/assets/img/room.webp",
