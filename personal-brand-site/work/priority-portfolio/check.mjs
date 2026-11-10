@@ -92,9 +92,8 @@ eq("area grows with frequency", areaHi > areaLo, true);
 
 const assessed = data.items.map((it) => Score.assessItem(it));
 eq("none dropped", assessed.filter((a) => a.plot.x == null || a.plot.y == null).length, 0);
-eq("new qw", assessed.filter((a) => a.quickWin.eligible).length, 0);
-const near = data.items.filter((it, i) => assessed[i].quickWin.legacyNear).map((it) => it.id).sort();
-eq("legacy qw near", near.join(","), "TH-gp-empty-resource,TH-ops-lottery-once");
+const suggested = data.items.filter((it, i) => assessed[i].quickWin.eligible).map((it) => it.id).sort();
+eq("suggested qw", suggested.join(","), "TH-gp-empty-resource,TH-ops-lottery-once");
 const lottery = assessed[data.items.findIndex((it) => it.id === "TH-ops-lottery-once")];
 const emptyRes = assessed[data.items.findIndex((it) => it.id === "TH-gp-empty-resource")];
 eq("lottery priority mode", lottery.priority.mode, "provisional");
