@@ -6,6 +6,7 @@
   <title>未完成需求优先组合</title>
   <meta name="description" content="高源负责范围内尚未完成开发的需求优先组合。默认展示全部可画图主题。坐标为 AI 相对初评，不是工时或排期承诺。">
   <meta name="robots" content="noindex, noarchive, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,6 +15,7 @@
       <span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
       <span>高源 · 需求组合</span>
     </div>
+    <p class="viewer-note">咨询式决策视图 · 不是排期表</p>
   </header>
 
   <main class="canvas" id="app">
@@ -30,10 +32,18 @@
 
     <p class="notice" id="stale-notice" hidden></p>
 
+    <section class="qw-strip" id="qw-strip" hidden>
+      <div class="qw-copy">
+        <h2>先看 Quick win</h2>
+        <p id="qw-rule">成本 ≤ 2 且优先级 ≥ 4，且归属明确。这是建议，不是已批准排期；未入选不等于低价值。</p>
+      </div>
+      <div class="qw-cards" id="qw-list"></div>
+    </section>
+
     <div class="view-switch" role="tablist" aria-label="图上范围">
-      <button type="button" class="view-btn is-active" id="view-all" aria-pressed="true">全部可画图</button>
-      <button type="button" class="view-btn" id="view-advancing" aria-pressed="false">正在推进、归属明确</button>
-      <button type="button" class="view-btn" id="view-quickwin" aria-pressed="false">Quick win 建议</button>
+      <button type="button" class="view-btn is-active" id="view-all" aria-pressed="true">全部可画图 515</button>
+      <button type="button" class="view-btn" id="view-advancing" aria-pressed="false">正在推进 38</button>
+      <button type="button" class="view-btn" id="view-quickwin" aria-pressed="false">Quick win 2</button>
     </div>
 
     <div class="filters" role="search">
@@ -60,8 +70,53 @@
           <option value="">全部分层</option>
         </select>
       </label>
-      <p class="caption" id="scope-caption">数据集尚未注入。图和清单会在真实数据到位后填写，不会用占位需求代替。</p>
     </div>
+
+    <div class="workspace">
+      <section class="chart-card" aria-labelledby="chart-title">
+        <div class="chart-head">
+          <div>
+            <h2 id="chart-title">成本 × 优先级</h2>
+            <p class="chart-sub" id="chart-sub">左上淡色区是 Quick win。气泡面积与反馈频次成正比；空心为频次未知。虚线描边：归属待确认；点线内圈：成本信心低。同一格重叠不是更高分数，点开右侧清单查看。</p>
+          </div>
+          <div class="zoom-tools">
+            <button type="button" class="btn" id="zoom-out" aria-label="缩小">−</button>
+            <button type="button" class="btn" id="zoom-reset">复位</button>
+            <button type="button" class="btn" id="zoom-in" aria-label="放大">+</button>
+          </div>
+        </div>
+        <p class="chart-count" id="chart-count"></p>
+        <div class="chart-frame" id="chart-frame">
+          <svg id="chart" role="img" aria-labelledby="chart-title chart-sub"></svg>
+          <p class="chart-empty" id="chart-empty">数据集尚未注入。真实需求到位后，气泡会出现在对应的成本与优先级档位上。现在不会用虚构条目填充这张图。</p>
+        </div>
+        <div class="legend" id="legend"></div>
+        <p class="jitter-note" id="jitter-note">同一成本与优先级档堆在真实坐标上。点击聚集后，右侧列出全部条目；展开散开只为辨认，坐标仍是原 1–5 分。坐标为 AI 相对初评，不是工时或排期承诺。</p>
+      </section>
+
+      <aside class="inspector" id="inspector" aria-labelledby="inspector-title">
+        <div class="inspector-head">
+          <div>
+            <h2 id="inspector-title">详情与重叠清单</h2>
+            <p class="inspector-sub" id="inspector-sub">悬停看摘要。点击气泡或表格行，详情固定在此栏，可滚动。重叠格会在此列出全部条目，可用产品筛选。</p>
+            <div class="float-meta" id="inspector-meta"></div>
+          </div>
+          <button type="button" class="icon-close" id="inspector-close" hidden aria-label="关闭详情">×</button>
+        </div>
+        <div class="inspector-tools" id="inspector-tools" hidden>
+          <label>簇内产品
+            <select id="cluster-product">
+              <option value="">全部产品</option>
+            </select>
+          </label>
+        </div>
+        <div class="inspector-body" id="inspector-body">
+          <p class="inspector-placeholder">尚未选中条目。可从 Quick win、气泡或下方表格进入。</p>
+        </div>
+      </aside>
+    </div>
+
+    <p class="caption" id="scope-caption">数据集尚未注入。图和清单会在真实数据到位后填写，不会用占位需求代替。</p>
 
     <section class="kpis" aria-label="范围计数">
       <div class="kpi">
@@ -72,9 +127,9 @@
       <div class="kpi">
         <p class="kpi-label">正在推进、归属明确</p>
         <p class="kpi-value num" id="kpi-advancing">—</p>
-        <p class="kpi-note">可用上方筛选查看，不是默认唯一范围</p>
+        <p class="kpi-note">筛选查看，不是默认全集</p>
       </div>
-      <div class="kpi">
+      <div class="kpi kpi-win">
         <p class="kpi-label">Quick win 建议</p>
         <p class="kpi-value num" id="kpi-quickwin">—</p>
         <p class="kpi-note" id="kpi-quickwin-note">未入选不等于低价值，不是已批准排期</p>
@@ -91,32 +146,11 @@
       </div>
     </section>
 
-    <section class="chart-card" aria-labelledby="chart-title">
-      <div class="chart-head">
-        <div>
-          <h2 id="chart-title">成本与优先级</h2>
-          <p class="chart-sub" id="chart-sub">默认展示全部可画图主题。左上淡色区域是 Quick win 建议区。气泡面积与反馈频次成正比（不是半径成正比）；空心表示频次未知。虚线描边表示归属待确认；点线内圈表示成本信心低。产品用颜色区分，并以文字图例标明。各主题频次不能相加当作客户数。</p>
-        </div>
-        <div class="zoom-tools">
-          <button type="button" class="btn" id="zoom-out" aria-label="缩小">−</button>
-          <button type="button" class="btn" id="zoom-reset">复位</button>
-          <button type="button" class="btn" id="zoom-in" aria-label="放大">+</button>
-        </div>
-      </div>
-      <p class="chart-count" id="chart-count"></p>
-      <div class="chart-frame" id="chart-frame">
-        <svg id="chart" role="img" aria-labelledby="chart-title chart-sub"></svg>
-        <p class="chart-empty" id="chart-empty">数据集尚未注入。真实需求到位后，气泡会出现在对应的成本与优先级档位上。现在不会用虚构条目填充这张图。</p>
-      </div>
-      <div class="legend" id="legend"></div>
-      <p class="jitter-note" id="jitter-note">同一成本与优先级档会堆在真实坐标上，聚集不是更高成本或更高优先级。点击聚集可展开列表，或在下方表格点选定位。展开时的微小散开只为辨认，不改变 1–5 分。坐标为 AI 相对初评，不是工时或排期承诺。</p>
-    </section>
-
     <section class="list-card" aria-labelledby="list-title">
       <div class="list-head">
         <div>
           <h2 id="list-title">可画图明细</h2>
-          <p class="list-sub" id="list-sub">默认包含全部可画图主题。点击一行可在图上定位。当前筛选不会把否决、现有支持和排除清单说成已经看完。</p>
+          <p class="list-sub" id="list-sub">默认包含全部可画图主题。点击一行可在图上定位，并在右侧打开详情。当前筛选不会把否决、现有支持和排除清单说成已经看完。</p>
         </div>
       </div>
       <div class="table-wrap">
@@ -136,145 +170,127 @@
           <tbody></tbody>
         </table>
       </div>
+      <button type="button" class="btn list-more" id="list-more" hidden>加载更多</button>
     </section>
 
-    <section class="list-card" aria-labelledby="unplotted-title">
-      <div class="list-head">
-        <div>
-          <h2 id="unplotted-title">否决主题（仅列表）</h2>
-          <p class="list-sub" id="unplotted-sub">这些主题不进入气泡图，始终在本表列出，供核对范围。</p>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="table-unplotted">
-          <thead>
-            <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>分层</th>
-              <th>状态</th>
-              <th class="num">成本</th>
-              <th class="num">优先级</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+    <section class="list-card audit-wrap" aria-labelledby="audit-title">
+      <h2 id="audit-title">范围边界（不进气泡图）</h2>
+      <p class="list-sub">筛选不会把这些清单说成已经看完。数量用于核对，不是可以忽略。</p>
 
-    <section class="list-card" aria-labelledby="supported-title">
-      <div class="list-head">
-        <div>
-          <h2 id="supported-title">现有支持</h2>
-          <p class="list-sub" id="supported-sub">产品评估为现有能力可满足，不进入未完成开发气泡。</p>
+      <details class="audit" open>
+        <summary>否决主题（仅列表）<span class="audit-count" id="count-unplotted"></span></summary>
+        <p class="list-sub" id="unplotted-sub">这些主题不进入气泡图，始终可展开核对。</p>
+        <div class="table-wrap">
+          <table class="data" id="table-unplotted">
+            <thead>
+              <tr>
+                <th>需求</th>
+                <th>产品</th>
+                <th>分层</th>
+                <th>状态</th>
+                <th class="num">成本</th>
+                <th class="num">优先级</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="table-supported">
-          <thead>
-            <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>状态</th>
-              <th>归属</th>
-              <th>原因</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+      </details>
 
-    <section class="list-card" aria-labelledby="duplicate-title">
-      <div class="list-head">
-        <div>
-          <h2 id="duplicate-title">重复需求、未能映射</h2>
-          <p class="list-sub" id="duplicate-sub">池结论为重复，且未能并入已还原主题。仍单独列出，不因标签而丢掉记录。</p>
+      <details class="audit">
+        <summary>现有支持<span class="audit-count" id="count-supported"></span></summary>
+        <p class="list-sub" id="supported-sub">产品评估为现有能力可满足，不进入未完成开发气泡。</p>
+        <div class="table-wrap">
+          <table class="data" id="table-supported">
+            <thead>
+              <tr>
+                <th>需求</th>
+                <th>产品</th>
+                <th>状态</th>
+                <th>归属</th>
+                <th>原因</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="table-duplicate">
-          <thead>
-            <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>状态</th>
-              <th>归属</th>
-              <th>原因</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+      </details>
 
-    <section class="list-card" aria-labelledby="unscored-title" id="section-unscored">
-      <div class="list-head">
-        <div>
-          <h2 id="unscored-title">未匹配、尚无成本（待评估）</h2>
-          <p class="list-sub" id="unscored-sub">纳入负责范围但尚未并入主题、因此没有成本或优先级的记录。最终数据中本表应为空；若出现条目会全部列出，不能只看气泡图。</p>
+      <details class="audit">
+        <summary>重复需求、未能映射<span class="audit-count" id="count-duplicate"></span></summary>
+        <p class="list-sub" id="duplicate-sub">池结论为重复，且未能并入已还原主题。仍单独列出，不因标签而丢掉记录。</p>
+        <div class="table-wrap">
+          <table class="data" id="table-duplicate">
+            <thead>
+              <tr>
+                <th>需求</th>
+                <th>产品</th>
+                <th>状态</th>
+                <th>归属</th>
+                <th>原因</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="table-unscored">
-          <thead>
-            <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>状态</th>
-              <th>归属</th>
-              <th>缺什么 / 原因</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+      </details>
 
-    <section class="list-card" aria-labelledby="deferred-title" id="section-deferred">
-      <div class="list-head">
-        <div>
-          <h2 id="deferred-title">暂缓、否决、现有支持等分层</h2>
-          <p class="list-sub" id="deferred-sub">池结论为后续考虑、暂不考虑、现有支持、重复等，分层保留，不进入默认气泡或 Quick win。</p>
+      <details class="audit" id="section-unscored">
+        <summary>未匹配、尚无成本（待评估）<span class="audit-count" id="count-unscored"></span></summary>
+        <p class="list-sub" id="unscored-sub">纳入负责范围但尚未并入主题、因此没有成本或优先级的记录。最终数据中本表应为空。</p>
+        <div class="table-wrap">
+          <table class="data" id="table-unscored">
+            <thead>
+              <tr>
+                <th>需求</th>
+                <th>产品</th>
+                <th>状态</th>
+                <th>归属</th>
+                <th>缺什么 / 原因</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="table-deferred">
-          <thead>
-            <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>状态</th>
-              <th>归属</th>
-              <th>原因</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+      </details>
 
-    <section class="list-card" aria-labelledby="excluded-title">
-      <div class="list-head">
-        <div>
-          <h2 id="excluded-title">已完成开发、已排除（审计）</h2>
-          <p class="list-sub">这些需求不进入气泡图。即使上面使用了筛选，本清单仍单独列出，用来核对完成开发是否被误收或漏收。</p>
+      <details class="audit" id="section-deferred">
+        <summary>暂缓等分层<span class="audit-count" id="count-deferred"></span></summary>
+        <p class="list-sub" id="deferred-sub">池结论为后续考虑、暂不考虑等，分层保留，不进入默认气泡或 Quick win。</p>
+        <div class="table-wrap">
+          <table class="data" id="table-deferred">
+            <thead>
+              <tr>
+                <th>需求</th>
+                <th>产品</th>
+                <th>状态</th>
+                <th>归属</th>
+                <th>原因</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="table-excluded">
-          <thead>
-            <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>状态</th>
-              <th>归属</th>
-              <th>排除原因</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      </details>
+
+      <details class="audit">
+        <summary>已完成开发、已排除（审计）<span class="audit-count" id="count-excluded"></span></summary>
+        <p class="list-sub">这些需求不进入气泡图。用来核对完成开发是否被误收或漏收。</p>
+        <div class="table-wrap">
+          <table class="data" id="table-excluded">
+            <thead>
+              <tr>
+                <th>需求</th>
+                <th>产品</th>
+                <th>状态</th>
+                <th>归属</th>
+                <th>排除原因</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
     </section>
 
   </main>
@@ -291,7 +307,7 @@
   </aside>
 
   <noscript>
-    <p style="padding:24px 32px;font-family:sans-serif;color:#0b1f3a;">需要浏览器启用脚本才能查看气泡图和清单。数据文件为同目录 data.js 或 dataset.json，本页无后端、不收集凭据。</p>
+    <p style="padding:24px 32px;font-family:sans-serif;color:#0b1f3a;">需要浏览器启用脚本才能查看气泡图和清单。数据文件为同目录 data.js，本页无后端、不收集凭据。</p>
   </noscript>
 
   <script src="core.js"></script>

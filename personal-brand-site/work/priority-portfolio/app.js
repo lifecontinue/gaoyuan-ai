@@ -24,8 +24,9 @@
     pinnedLocked: false,
     expandedCell: null,
     visiblePlots: [],
-    listLimit: 80,
-    listOffset: 0
+    listLimit: 40,
+    clusterProduct: "",
+    clusterLimit: 40
   };
 
   var els = {};
@@ -139,7 +140,7 @@
     var m = d.meta;
     setText(els.title, m.title);
     document.title = m.title;
-    var lede = "高源负责范围内、尚未完成开发的需求。默认展示全部可画图主题，不是只展示正在推进的部分。横坐标是开发成本，纵坐标是建议优先级；左上为 Quick win 建议区。";
+    var lede = "高源负责范围内、尚未完成开发的需求。默认展示全部可画图主题，不是只展示正在推进的 38 条。横坐标是开发成本，纵坐标是建议优先级；左上为 Quick win 建议区。";
     lede += m.costScale.disclaimer;
     if (d.awaiting) lede += "数据集尚未注入，本页不用虚构需求填充。";
     else {
@@ -229,8 +230,48 @@
     setText(els.kpiVisibleNote, "当前图上 " + sum.visible + "（" + viewLabel + "）/ 可画图全集 " + sum.evaluable);
     var extra = "当前是「" + viewLabel + "」，图上 " + sum.visible + " / 可画图 " + sum.evaluable + " · 主题 " + (sum.evaluable + rejected) + " · 否决仅列表 " + rejected + " · 覆盖 " + owned + "，缺口 " + missing + "。否决、现有支持和排除清单始终在下方，不因筛选被当作已经看完。各主题频次不能相加当作客户数。";
     setText(els.caption, extra);
-    if (els.chartCount) setText(els.chartCount, extra);
+    if (els.chartCount) setText(els.chartCount, "图上 " + sum.visible + " / 可画图 " + sum.evaluable);
+    renderQuickWins();
+    if (els.countUnplotted) setText(els.countUnplotted, String(rejected));
+    if (els.countSupported) setText(els.countSupported, String((d.alreadySupported || []).length));
+    if (els.countDuplicate) setText(els.countDuplicate, String((d.duplicateUnmapped || []).length));
+    if (els.countUnscored) setText(els.countUnscored, String((d.unscored || []).length));
+    if (els.countDeferred) setText(els.countDeferred, String((d.deferred || []).length));
+    if (els.countExcluded) setText(els.countExcluded, String((d.excludedCompleted || []).length));
     return sum;
+  }
+
+  function renderQuickWins() {
+    var box = els.qwList;
+    var strip = els.qwStrip;
+    if (!box || !strip) return;
+    clear(box);
+    if (!state.data || state.data.awaiting) {
+      strip.hidden = true;
+      return;
+    }
+    var wins = state.data.items.filter(function (it) { return it.quickWin; });
+    strip.hidden = wins.length === 0;
+    if (els.qwRule && state.data.meta.quickWin && state.data.meta.quickWin.rule) {
+      setText(els.qwRule, state.data.meta.quickWin.rule + " 这是建议，不是已批准排期。");
+    }
+    wins.forEach(function (it) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "qw-card";
+      btn.setAttribute("data-id", it.id);
+      var strong = document.createElement("strong");
+      strong.textContent = it.title;
+      var span = document.createElement("span");
+      span.textContent = (it.productLabel || "") + " · 成本 " + it.cost + " / 优先级 " + it.priority;
+      btn.appendChild(strong);
+      btn.appendChild(span);
+      btn.addEventListener("click", function () {
+        setViewMode("quickwin");
+        openItem(it, true, null);
+      });
+      box.appendChild(btn);
+    });
   }
 
   function setViewButtons() {
@@ -248,6 +289,8 @@
     state.filters.viewMode = mode;
     state.filters.quickWinOnly = mode === "quickwin";
     state.expandedCell = null;
+    state.listLimit = 40;
+    state.clusterLimit = 40;
     setViewButtons();
     renderInteractive();
   }
@@ -517,7 +560,7 @@
           if (!inPlot(layout, { x: pt.px, y: pt.py })) return;
           var it = pt.item;
           var gB = svgEl("g", {
-            class: "bubble",
+            class: (state.pinned && state.pinned.type === "item" && state.pinned.id === it.id) ? "bubble is-selected" : "bubble",
             "data-id": it.id,
             "data-cell": key,
             tabindex: "0",
@@ -548,7 +591,7 @@
       if (!inPlot(layout, { x: cx, y: cy })) return;
       var ids = idxs.map(function (i) { return points[i].item.id; });
       var badge = svgEl("g", {
-        class: "cluster",
+        class: (state.expandedCell === key) ? "cluster is-selected" : "cluster",
         "data-ids": ids.join(","),
         "data-cell": key,
         tabindex: "0",
@@ -709,14 +752,9 @@
       emptyRow(table, 8, d.items.length ? "当前筛选下没有可评估需求。请放宽筛选，或查看下方审计与未评分清单。" : "没有可评估需求。");
       return;
     }
-    /* 窗口化渲染，避免一次性插入过多行 */
-    var start = 0;
-    var end = items.length;
-    if (items.length > 400) {
-      /* 仍提供全量，但分批插入 */
-    }
+    var shown = items.slice(0, state.listLimit || 40);
     var frag = document.createDocumentFragment();
-    items.forEach(function (it) {
+    shown.forEach(function (it) {
       var tr = document.createElement("tr");
       tr.tabIndex = 0;
       tr.dataset.id = it.id;
@@ -762,6 +800,10 @@
       frag.appendChild(tr);
     });
     tb.appendChild(frag);
+    if (els.listMore) {
+      els.listMore.hidden = shown.length >= items.length;
+      els.listMore.textContent = "加载更多（已显示 " + shown.length + " / " + items.length + "）";
+    }
   }
 
   function renderAuditTable(table, rows, emptyMsg, reasonKey) {
@@ -792,12 +834,32 @@
   }
 
   /* ---------- float window ---------- */
-  function hideFloat() {
+  function hideHoverFloat() {
+    if (!els.float) return;
     els.float.hidden = true;
     els.float.classList.remove("is-open");
+    state.hoverId = null;
+  }
+
+  function clearInspector() {
+    if (!els.inspectorBody) return;
+    if (els.inspectorClose) els.inspectorClose.hidden = true;
+    if (els.inspectorTools) els.inspectorTools.hidden = true;
+    setText(els.inspectorTitle, "详情与重叠清单");
+    if (els.inspectorSub) setText(els.inspectorSub, "悬停看摘要。点击气泡或表格行，详情固定在此栏，可滚动。重叠格会在此列出全部条目。");
+    clear(els.inspectorBody);
+    var p = document.createElement("p");
+    p.className = "inspector-placeholder";
+    p.textContent = "尚未选中条目。可从 Quick win、气泡或下方表格进入。";
+    els.inspectorBody.appendChild(p);
+  }
+
+  function hideFloat() {
+    hideHoverFloat();
     state.pinned = null;
     state.pinnedLocked = false;
     state.hoverId = null;
+    clearInspector();
   }
 
   function placeFloat(px, py) {
@@ -869,26 +931,26 @@
     parent.appendChild(kv);
   }
 
-  function fillItemFloat(item) {
-    setText(els.floatTitle, item.title);
-    clear(els.floatMeta);
+  function fillItemInto(titleEl, metaEl, bodyEl, item, locked) {
+    setText(titleEl, item.title);
+    clear(metaEl);
     function metaChip(text) {
       var s = document.createElement("span");
       s.textContent = text;
-      els.floatMeta.appendChild(s);
+      metaEl.appendChild(s);
     }
     if (item.productLabel) metaChip(item.productLabel);
     if (item.status) metaChip(item.status);
     if (item.ownership) metaChip("归属 " + item.ownership);
     if (item.quickWin) metaChip(state.data.meta.quickWin.label || "Quick win");
     if ((item.confidence || "") === "low") metaChip("成本信心低");
-    if (state.pinnedLocked) {
+    if (locked) {
       var pin = document.createElement("span");
       pin.className = "pin-flag";
-      pin.textContent = "已固定，可滚动查看；再点空白或关闭按钮可收起";
-      els.floatMeta.appendChild(pin);
+      pin.textContent = "已固定，可滚动查看；关闭或 Escape 可收起";
+      metaEl.appendChild(pin);
     }
-    var body = els.floatBody;
+    var body = bodyEl;
     clear(body);
     addKv(body, "原描述", item.description || "—");
     addKv(body, "合并来源", item.sources && item.sources.length ? item.sources : null, true);
@@ -909,6 +971,21 @@
     if (item.excludedCompletedParts) addKv(body, "已关闭的子项", item.excludedCompletedParts);
     if (item.customer) addKv(body, "客户", item.customer);
     if (item.eval) addKv(body, "池结论", item.eval);
+  }
+
+  function fillItemFloat(item) {
+    fillItemInto(els.floatTitle, els.floatMeta, els.floatBody, item, false);
+  }
+
+  function fillInspectorItem(item) {
+    if (!els.inspectorBody) {
+      fillItemFloat(item);
+      return;
+    }
+    if (els.inspectorClose) els.inspectorClose.hidden = false;
+    if (els.inspectorTools) els.inspectorTools.hidden = true;
+    setText(els.inspectorSub, "条目详情已固定。坐标仍是 AI 相对初评，不是工时。");
+    fillItemInto(els.inspectorTitle, els.inspectorMeta || els.floatMeta, els.inspectorBody, item, true);
   }
 
   function fillAuditFloat(item) {
@@ -943,11 +1020,81 @@
     addKv(body, "成本 / 优先级", "本条没有用于画图的成本或优先级初评，因此不在气泡图上。");
   }
 
+  function clusterItems(ids) {
+    return ids.map(itemById).filter(Boolean).filter(function (it) {
+      if (!state.clusterProduct) return true;
+      return it.product === state.clusterProduct;
+    });
+  }
+
+  function fillClusterInspector(ids) {
+    var all = ids.map(itemById).filter(Boolean);
+    var first = all[0];
+    var coord = first ? ("成本 " + first.cost + " / 优先级 " + first.priority) : "";
+    setText(els.inspectorTitle, "重叠 " + ids.length + " 条");
+    setText(els.inspectorSub, coord + "。聚集不是更高分数。点一条查看详情；展开散开只为辨认。");
+    if (els.inspectorClose) els.inspectorClose.hidden = false;
+    if (els.inspectorTools) els.inspectorTools.hidden = false;
+    if (els.inspectorMeta) {
+      clear(els.inspectorMeta);
+      var s = document.createElement("span");
+      s.textContent = coord + " · 未改坐标";
+      els.inspectorMeta.appendChild(s);
+    }
+    if (els.clusterProduct) {
+      var products = [];
+      var seen = Object.create(null);
+      all.forEach(function (it) {
+        if (!it.product || seen[it.product]) return;
+        seen[it.product] = true;
+        products.push({ id: it.product, label: (it.productLabel || it.product) });
+      });
+      fillSelect(els.clusterProduct, products, "全部产品", state.clusterProduct);
+    }
+    var items = clusterItems(ids);
+    var shown = items.slice(0, state.clusterLimit);
+    clear(els.inspectorBody);
+    var p = document.createElement("p");
+    p.className = "cluster-meta";
+    p.textContent = "列出 " + shown.length + " / " + items.length + (state.clusterProduct ? "（已按产品筛选）" : "");
+    els.inspectorBody.appendChild(p);
+    var ul = document.createElement("ul");
+    ul.className = "cluster-list";
+    shown.forEach(function (it) {
+      var li = document.createElement("li");
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = it.title + " · " + (it.productLabel || "") + " · 频次 " + (it.frequencyUnknown ? "未知" : it.frequency);
+      btn.addEventListener("click", function () {
+        openItem(it, true, null);
+        highlightRow(it.id);
+      });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+    els.inspectorBody.appendChild(ul);
+    if (shown.length < items.length) {
+      var more = document.createElement("button");
+      more.type = "button";
+      more.className = "btn list-more";
+      more.textContent = "继续列出（" + shown.length + " / " + items.length + "）";
+      more.addEventListener("click", function () {
+        state.clusterLimit += 40;
+        fillClusterInspector(ids);
+      });
+      els.inspectorBody.appendChild(more);
+    }
+  }
+
   function fillClusterFloat(ids) {
+    if (els.inspectorBody) {
+      fillClusterInspector(ids);
+      return;
+    }
     setText(els.floatTitle, "重叠 " + ids.length + " 条需求");
     clear(els.floatMeta);
     var s = document.createElement("span");
-    s.textContent = "这些主题落在同一成本与优先级档，聚集并不代表更高成本或更高优先级。点一条查看详情；展开只为辨认，坐标仍是原 1–5 分。";
+    s.textContent = "这些主题落在同一成本与优先级档，聚集并不代表更高成本或更高优先级。";
     els.floatMeta.appendChild(s);
     var body = els.floatBody;
     clear(body);
@@ -959,7 +1106,7 @@
       var li = document.createElement("li");
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.textContent = it.title + " · " + (it.productLabel || "") + " · 成本 " + it.cost + " / 优先级 " + it.priority;
+      btn.textContent = it.title + " · " + (it.productLabel || "");
       btn.addEventListener("click", function () {
         openItem(it, true, null);
         highlightRow(it.id);
@@ -973,21 +1120,18 @@
   function openItem(item, lock, ev) {
     state.pinned = { type: "item", id: item.id };
     state.pinnedLocked = !!lock;
-    if (item.cost != null && item.priority != null) {
+    if (lock && item.cost != null && item.priority != null) {
       state.expandedCell = Core.cellKey(item.cost, item.priority);
     }
-    fillItemFloat(item);
-    var x = ev && ev.clientX != null ? ev.clientX : window.innerWidth - 24;
-    var y = ev && ev.clientY != null ? ev.clientY : 120;
-    if (!ev) {
-      var row = els.tableItems.querySelector('tr[data-id="' + cssEscape(item.id) + '"]');
-      if (row) {
-        var r = row.getBoundingClientRect();
-        x = r.right;
-        y = r.top;
-      }
+    if (lock) {
+      hideHoverFloat();
+      fillInspectorItem(item);
+    } else {
+      fillItemFloat(item);
+      var x = ev && ev.clientX != null ? ev.clientX : window.innerWidth - 24;
+      var y = ev && ev.clientY != null ? ev.clientY : 120;
+      placeFloat(x, y);
     }
-    placeFloat(x, y);
     renderChart();
     highlightRow(item.id);
   }
@@ -995,13 +1139,16 @@
   function openCluster(ids, lock, ev, cellKey) {
     state.pinned = { type: "cluster", ids: ids };
     state.pinnedLocked = !!lock;
+    state.clusterProduct = "";
+    state.clusterLimit = 40;
     if (cellKey) state.expandedCell = cellKey;
     else if (ids && ids[0]) {
       var first = itemById(ids[0]);
       if (first) state.expandedCell = Core.cellKey(first.cost, first.priority);
     }
+    hideHoverFloat();
     fillClusterFloat(ids);
-    placeFloat(ev ? ev.clientX : 80, ev ? ev.clientY : 80);
+    if (!els.inspectorBody) placeFloat(ev ? ev.clientX : 80, ev ? ev.clientY : 80);
     renderChart();
   }
 
@@ -1015,7 +1162,10 @@
     rows.forEach(function (row) {
       if (row.dataset.id === id) {
         row.classList.add("is-active");
-        if (row.scrollIntoView) row.scrollIntoView({ block: "nearest" });
+        var box = els.tableItems.getBoundingClientRect();
+        if (row.scrollIntoView && box.top >= 0 && box.bottom <= window.innerHeight) {
+          row.scrollIntoView({ block: "nearest" });
+        }
       } else row.classList.remove("is-active");
     });
   }
@@ -1024,10 +1174,12 @@
   function bind() {
     els.query.addEventListener("input", function () {
       state.filters.query = els.query.value;
+      state.listLimit = 40;
       renderInteractive();
     });
     els.product.addEventListener("change", function () {
       state.filters.productSelect = els.product.value || "";
+      state.listLimit = 40;
       renderInteractive();
     });
     els.status.addEventListener("change", function () {
@@ -1095,7 +1247,7 @@
       cancelHide();
       hideTimer = setTimeout(function () {
         if (!state.pinnedLocked) hideFloatAndRefresh();
-      }, 280);
+      }, 600);
     }
     els.chart.addEventListener("pointerover", function (ev) {
       var bubble = ev.target.closest && ev.target.closest(".bubble");
@@ -1120,13 +1272,9 @@
       scheduleHide();
     });
     els.float.addEventListener("click", function () {
-      /* 进入浮窗并点击即固定，便于滚动和点来源链接。 */
-      if (state.pinned && !state.pinnedLocked) {
-        state.pinnedLocked = true;
-        if (state.pinned.type === "item") {
-          var item = itemById(state.pinned.id);
-          if (item) fillItemFloat(item);
-        }
+      if (state.pinned && !state.pinnedLocked && state.pinned.type === "item") {
+        var hoverItem = itemById(state.pinned.id);
+        if (hoverItem) openItem(hoverItem, true, null);
       }
     });
     els.chart.addEventListener("click", function (ev) {
@@ -1210,17 +1358,29 @@
     });
     document.addEventListener("click", function (ev) {
       if (!state.pinnedLocked) return;
-      if (els.float.contains(ev.target)) return;
-      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]"))) return;
+      if (els.float && els.float.contains(ev.target)) return;
+      if (els.inspector && els.inspector.contains(ev.target)) return;
+      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]") || ev.target.closest("tr[data-audit-id]") || ev.target.closest(".qw-card") || ev.target.closest(".list-more") || ev.target.closest("details"))) return;
       hideFloatAndRefresh();
     });
 
+    if (els.inspectorClose) els.inspectorClose.addEventListener("click", hideFloatAndRefresh);
+    if (els.listMore) {
+      els.listMore.addEventListener("click", function () {
+        state.listLimit += 40;
+        renderItemsTable();
+      });
+    }
+    if (els.clusterProduct) {
+      els.clusterProduct.addEventListener("change", function () {
+        state.clusterProduct = els.clusterProduct.value || "";
+        state.clusterLimit = 40;
+        if (state.pinned && state.pinned.type === "cluster") fillClusterInspector(state.pinned.ids);
+      });
+    }
+
     window.addEventListener("resize", function () {
       renderChart();
-      if (state.pinned && state.pinnedLocked && state.pinned.type === "item") {
-        var item = itemById(state.pinned.id);
-        if (item) placeFloat(window.innerWidth - 24, 120);
-      }
     });
   }
 
@@ -1426,6 +1586,24 @@
     els.floatMeta = $("float-meta");
     els.floatBody = $("float-body");
     els.floatClose = $("float-close");
+    els.qwStrip = $("qw-strip");
+    els.qwList = $("qw-list");
+    els.qwRule = $("qw-rule");
+    els.inspector = $("inspector");
+    els.inspectorTitle = $("inspector-title");
+    els.inspectorSub = $("inspector-sub");
+    els.inspectorMeta = $("inspector-meta");
+    els.inspectorBody = $("inspector-body");
+    els.inspectorClose = $("inspector-close");
+    els.inspectorTools = $("inspector-tools");
+    els.clusterProduct = $("cluster-product");
+    els.listMore = $("list-more");
+    els.countUnplotted = $("count-unplotted");
+    els.countSupported = $("count-supported");
+    els.countDuplicate = $("count-duplicate");
+    els.countUnscored = $("count-unscored");
+    els.countDeferred = $("count-deferred");
+    els.countExcluded = $("count-excluded");
     bind();
     loadDataset();
   });
