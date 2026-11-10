@@ -32,6 +32,18 @@ eq("filter advancing", Core.applyFilters(data.items, { viewMode: "advancing" }).
 eq("filter qw", Core.applyFilters(data.items, { viewMode: "quickwin" }).length, 2);
 const qw = data.items.filter((i) => i.quickWin).map((i) => i.id).sort();
 eq("qw ids", qw.join(","), "TH-gp-empty-resource,TH-ops-lottery-once");
+const plots = Core.spreadAllCells(Core.layoutItems(data.items));
+eq("spread count", plots.length, 515);
+let crossed = 0;
+plots.forEach((p) => {
+  if (Math.round(p.x) !== p.item.cost || Math.round(p.y) !== p.item.priority) crossed += 1;
+  if (Math.abs(p.x - p.item.cost) > 0.38 + 1e-9) crossed += 1;
+  if (Math.abs(p.y - p.item.priority) > 0.38 + 1e-9) crossed += 1;
+});
+eq("spread stays in cell", crossed, 0);
+const cell33 = plots.filter((p) => p.item.cost === 3 && p.item.priority === 3);
+eq("cell33 spread nodes", cell33.length, 191);
+eq("cell33 not stacked", new Set(cell33.map((p) => p.x.toFixed(4) + "," + p.y.toFixed(4))).size, 191);
 if (fails.length) {
   console.error(fails.join("\n"));
   process.exit(1);

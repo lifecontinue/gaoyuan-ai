@@ -534,6 +534,35 @@
     return out;
   }
 
+  /* 默认同档散开，只为看见每一个节点。位移不超过 0.38，最近整数仍是原档。 */
+  function spreadAllCells(plots, maxRadius) {
+    var cap = maxRadius == null ? 0.38 : maxRadius;
+    var groups = Object.create(null);
+    asArray(plots).forEach(function (p, i) {
+      var key = p.cellKey;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(i);
+    });
+    Object.keys(groups).forEach(function (key) {
+      var idxs = groups[key];
+      var n = idxs.length;
+      if (n <= 1) return;
+      var golden = Math.PI * (3 - Math.sqrt(5));
+      var seed = hashId(plots[idxs[0]].item.id);
+      var reach = Math.min(cap, 0.045 * Math.sqrt(n) + 0.04);
+      idxs.forEach(function (idx, i) {
+        var r = reach * Math.sqrt((i + 0.5) / n);
+        var theta = (seed % 360) * (Math.PI / 180) + i * golden;
+        var plot = plots[idx];
+        plot.x = plot.item.cost + r * Math.cos(theta);
+        plot.y = plot.item.priority + r * Math.sin(theta);
+        plot.jittered = true;
+        plot.spread = true;
+      });
+    });
+    return plots;
+  }
+
   /* 仅在用户展开某一档时使用，位移不超过 0.2 档，并标明坐标未改。 */
   function expandCluster(plots, key) {
     var idxs = [];
@@ -747,6 +776,7 @@
     summarize: summarize,
     jitterItems: jitterItems,
     layoutItems: layoutItems,
+    spreadAllCells: spreadAllCells,
     expandCluster: expandCluster,
     cellKey: cellKey,
     frequencyExtent: frequencyExtent,

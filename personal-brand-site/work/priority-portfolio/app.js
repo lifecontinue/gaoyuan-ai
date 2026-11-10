@@ -386,29 +386,52 @@
     var g = svgEl("g", { "clip-path": "url(#plot-clip)" });
     svg.appendChild(g);
 
-    /* quick win region */
+    function plotRect(x0, y0, x1, y1, fill) {
+      var a = project(layout, sc, x0, y0);
+      var b = project(layout, sc, x1, y1);
+      return svgEl("rect", {
+        x: Math.min(a.x, b.x),
+        y: Math.min(a.y, b.y),
+        width: Math.abs(b.x - a.x),
+        height: Math.abs(b.y - a.y),
+        fill: fill
+      });
+    }
+    /* 四象限：分界在 3。左上（低成本、高优先）是更值得看的一块，对应 frontier 图里被标出的象限。 */
+    g.appendChild(plotRect(sc.xMin, 3, 3, sc.yMax, "#e7f3ec"));
+    g.appendChild(plotRect(3, 3, sc.xMax, sc.yMax, "#f6f3ec"));
+    g.appendChild(plotRect(sc.xMin, sc.yMin, 3, 3, "#f4f5f7"));
+    g.appendChild(plotRect(3, sc.yMin, sc.xMax, 3, "#f8f1f1"));
+
     var qw0 = project(layout, sc, sc.xMin, sc.qw.priorityMin);
     var qw1 = project(layout, sc, sc.qw.costMax + 0.5, sc.yMax);
-    var qwRect = svgEl("rect", {
+    g.appendChild(svgEl("rect", {
       x: Math.min(qw0.x, qw1.x),
       y: Math.min(qw0.y, qw1.y),
       width: Math.abs(qw1.x - qw0.x),
       height: Math.abs(qw1.y - qw0.y),
-      fill: "#e8f0ea"
-    });
-    g.appendChild(qwRect);
-    var qwLabelAt = project(layout, sc, sc.xMin + 0.12, sc.yMax - 0.12);
-    if (qwLabelAt.x > layout.pad.l && qwLabelAt.y > layout.pad.t) {
-      var qwLab = svgEl("text", {
-        x: Math.max(layout.pad.l + 8, qwLabelAt.x),
-        y: Math.max(layout.pad.t + 14, qwLabelAt.y),
-        fill: "#1e4d32",
+      fill: "#d5ebdf"
+    }));
+
+    function cornerLabel(x, y, text, fill, anchor) {
+      var p = project(layout, sc, x, y);
+      if (p.x < layout.pad.l - 4 || p.x > layout.w - layout.pad.r + 4) return;
+      if (p.y < layout.pad.t - 4 || p.y > layout.h - layout.pad.b + 4) return;
+      var lab = svgEl("text", {
+        x: p.x,
+        y: p.y,
+        fill: fill,
         "font-size": 12,
-        "font-weight": 600
+        "font-weight": 600,
+        "text-anchor": anchor || "start"
       });
-      qwLab.textContent = sc.qw.label || "Quick win";
-      g.appendChild(qwLab);
+      lab.textContent = text;
+      g.appendChild(lab);
     }
+    cornerLabel(sc.xMin + 0.12, sc.yMax - 0.08, "优先看", "#1e4d32", "start");
+    cornerLabel(sc.xMax - 0.12, sc.yMax - 0.08, "择要投入", "#6a5b3a", "end");
+    cornerLabel(sc.xMin + 0.12, sc.yMin + 0.28, "有余力再做", "#5c6570", "start");
+    cornerLabel(sc.xMax - 0.12, sc.yMin + 0.28, "暂缓", "#7a4a4a", "end");
 
     /* grid + ticks */
     var ticks = [];
@@ -429,6 +452,19 @@
         stroke: "#e5e5e5", "stroke-width": 1
       }));
     });
+
+    var splitX = project(layout, sc, 3, sc.yMin);
+    var splitX2 = project(layout, sc, 3, sc.yMax);
+    var splitY = project(layout, sc, sc.xMin, 3);
+    var splitY2 = project(layout, sc, sc.xMax, 3);
+    g.appendChild(svgEl("line", {
+      x1: splitX.x, y1: splitX.y, x2: splitX2.x, y2: splitX2.y,
+      stroke: "#0b1f3a", "stroke-width": 1.25, "stroke-opacity": 0.55
+    }));
+    g.appendChild(svgEl("line", {
+      x1: splitY.x, y1: splitY.y, x2: splitY2.x, y2: splitY2.y,
+      stroke: "#0b1f3a", "stroke-width": 1.25, "stroke-opacity": 0.55
+    }));
 
     /* baseline (bottom and left of data domain, heavier) */
     var b0 = project(layout, sc, sc.xMin, sc.cost.min ? sc.priority.min : sc.yMin);
@@ -493,10 +529,11 @@
     }
     empty.hidden = true;
 
-    var plots = Core.layoutItems(items);
-    if (state.expandedCell) Core.expandCluster(plots, state.expandedCell);
+    var plots = Core.spreadAllCells(Core.layoutItems(items));
     var extent = Core.frequencyExtent(items);
-    var rOpts = { rMin: 6, rMax: 22, rUnknown: 8 };
+    var rOpts = items.length > 40
+      ? { rMin: 3.2, rMax: 11, rUnknown: 4 }
+      : { rMin: 7, rMax: 18, rUnknown: 8 };
     var points = plots.map(function (plot) {
       var p = project(layout, sc, plot.x, plot.y);
       var r = Core.bubbleRadius(plot.item, extent, rOpts);
@@ -516,15 +553,23 @@
       var pending = it.ownershipKey === "ownership_pending";
       var low = (it.confidence || "") === "low";
       var hollow = it.frequencyUnknown || it.frequency === null;
+      gB.appendChild(svgEl("circle", {
+        cx: pt.px,
+        cy: pt.py,
+        r: pt.r + 0.7,
+        fill: "#ffffff",
+        stroke: "none",
+        "pointer-events": "none"
+      }));
       var circle = svgEl("circle", {
         cx: pt.px,
         cy: pt.py,
         r: pt.r,
         fill: hollow ? "#ffffff" : it.color,
         stroke: it.color,
-        "stroke-width": pending || hollow ? 1.6 : 1.1,
+        "stroke-width": pending || hollow ? 1.6 : 1,
         "stroke-dasharray": pending ? "4 2.5" : null,
-        "fill-opacity": hollow ? 1 : (low ? 0.45 : 0.88)
+        "fill-opacity": hollow ? 1 : (low ? 0.55 : 0.92)
       });
       if (state.pinned && state.pinned.type === "item" && state.pinned.id === it.id) {
         circle.setAttribute("stroke-width", "2.5");
@@ -551,70 +596,66 @@
       grouped[k].push(i);
     });
 
+    var drawOrder = points.map(function (pt, i) { return i; });
+    drawOrder.sort(function (a, b) { return points[a].r - points[b].r; });
+    drawOrder.forEach(function (i) {
+      var pt = points[i];
+      if (!inPlot(layout, { x: pt.px, y: pt.py })) return;
+      var it = pt.item;
+      var gB = svgEl("g", {
+        class: (state.pinned && state.pinned.type === "item" && state.pinned.id === it.id) ? "bubble is-selected" : "bubble",
+        "data-id": it.id,
+        "data-cell": pt.cellKey,
+        tabindex: "0",
+        role: "button",
+        "aria-label": it.title + "，" + it.productLabel + "，成本 " + it.cost + "，优先级 " + it.priority
+      });
+      drawBubbleMark(gB, pt, it);
+      if (state.camera.k >= 2.4 || items.length <= 18) {
+        var label = svgEl("text", {
+          x: pt.px + pt.r + 4,
+          y: pt.py + 4,
+          fill: "#0b1f3a",
+          "font-size": 11,
+          "pointer-events": "none"
+        });
+        var t = it.title;
+        label.textContent = t.length > 14 ? t.slice(0, 13) + "…" : t;
+        gB.appendChild(label);
+      }
+      g.appendChild(gB);
+    });
+
     Object.keys(grouped).forEach(function (key) {
       var idxs = grouped[key];
-      var expanded = state.expandedCell === key;
-      if (idxs.length === 1 || expanded) {
-        idxs.forEach(function (i) {
-          var pt = points[i];
-          if (!inPlot(layout, { x: pt.px, y: pt.py })) return;
-          var it = pt.item;
-          var gB = svgEl("g", {
-            class: (state.pinned && state.pinned.type === "item" && state.pinned.id === it.id) ? "bubble is-selected" : "bubble",
-            "data-id": it.id,
-            "data-cell": key,
-            tabindex: "0",
-            role: "button",
-            "aria-label": it.title + "，" + it.productLabel + "，成本 " + it.cost + "，优先级 " + it.priority
-          });
-          drawBubbleMark(gB, pt, it);
-          if (expanded || state.camera.k >= 1.8 || items.length <= 18) {
-            var label = svgEl("text", {
-              x: pt.px + pt.r + 4,
-              y: pt.py + 4,
-              fill: "#0b1f3a",
-              "font-size": 11
-            });
-            var t = it.title;
-            label.textContent = t.length > 14 ? t.slice(0, 13) + "…" : t;
-            gB.appendChild(label);
-          }
-          g.appendChild(gB);
-        });
-        return;
-      }
-      /* 未展开的聚集：画在真实坐标上，计数不是频次之和。 */
-      var pt0 = points[idxs[0]];
-      var cx = 0, cy = 0;
-      idxs.forEach(function (i) { cx += points[i].px; cy += points[i].py; });
-      cx /= idxs.length; cy /= idxs.length;
-      if (!inPlot(layout, { x: cx, y: cy })) return;
+      if (idxs.length < 8) return;
+      var anchor = project(layout, sc, points[idxs[0]].item.cost, points[idxs[0]].item.priority + 0.46);
+      if (!inPlot(layout, anchor)) return;
       var ids = idxs.map(function (i) { return points[i].item.id; });
       var badge = svgEl("g", {
-        class: (state.expandedCell === key) ? "cluster is-selected" : "cluster",
+        class: "cell-count",
         "data-ids": ids.join(","),
         "data-cell": key,
         tabindex: "0",
         role: "button",
-        "aria-label": "同一档位聚集 " + idxs.length + " 条，打开查看。聚集不是更高成本或更高优先级。"
+        "aria-label": "同一档 " + idxs.length + " 条，打开清单。散开不是更高成本或更高优先级。"
       });
-      badge.appendChild(svgEl("circle", {
-        cx: cx, cy: cy, r: 16,
+      badge.appendChild(svgEl("rect", {
+        x: anchor.x - 16,
+        y: anchor.y - 11,
+        width: 32,
+        height: 16,
+        rx: 3,
         fill: "#ffffff",
-        stroke: "#0b1f3a",
-        "stroke-width": 1.5
-      }));
-      badge.appendChild(svgEl("circle", {
-        cx: cx - 4, cy: cy + 2, r: 10,
-        fill: "none",
         stroke: "#0b1f3a",
         "stroke-width": 1
       }));
       var ct = svgEl("text", {
-        x: cx, y: cy + 4,
+        x: anchor.x,
+        y: anchor.y + 1,
         "text-anchor": "middle",
         fill: "#0b1f3a",
-        "font-size": 11,
+        "font-size": 10,
         "font-variant": "tabular-nums",
         "pointer-events": "none"
       });
@@ -1222,7 +1263,7 @@
 
     var dragging = null;
     els.chart.addEventListener("pointerdown", function (ev) {
-      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cluster"))) return;
+      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster"))) return;
       dragging = { x: ev.clientX, y: ev.clientY, cx: state.camera.x, cy: state.camera.y, id: ev.pointerId };
       els.chart.setPointerCapture(ev.pointerId);
     });
@@ -1278,7 +1319,7 @@
       }
     });
     els.chart.addEventListener("click", function (ev) {
-      var cluster = ev.target.closest && ev.target.closest(".cluster");
+      var cluster = ev.target.closest && (ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
       if (cluster) {
         ev.stopPropagation();
         var ids = (cluster.getAttribute("data-ids") || "").split(",").filter(Boolean);
@@ -1294,7 +1335,7 @@
     });
     els.chart.addEventListener("keydown", function (ev) {
       var bubble = ev.target.closest && ev.target.closest(".bubble");
-      var cluster = ev.target.closest && ev.target.closest(".cluster");
+      var cluster = ev.target.closest && (ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
       if ((ev.key === "Enter" || ev.key === " ") && (bubble || cluster)) {
         ev.preventDefault();
         if (cluster) {
@@ -1360,7 +1401,7 @@
       if (!state.pinnedLocked) return;
       if (els.float && els.float.contains(ev.target)) return;
       if (els.inspector && els.inspector.contains(ev.target)) return;
-      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]") || ev.target.closest("tr[data-audit-id]") || ev.target.closest(".qw-card") || ev.target.closest(".list-more") || ev.target.closest("details"))) return;
+      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]") || ev.target.closest("tr[data-audit-id]") || ev.target.closest(".qw-card") || ev.target.closest(".list-more") || ev.target.closest("details"))) return;
       hideFloatAndRefresh();
     });
 
