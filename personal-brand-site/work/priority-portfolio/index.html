@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>未完成需求优先组合</title>
+  <meta name="description" content="高源负责范围内尚未完成开发的需求优先组合。默认展示全部可画图主题。坐标为 AI 相对初评，不是工时或排期承诺。">
+  <meta name="robots" content="noindex, noarchive, nofollow">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="viewer">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span>高源 · 需求组合</span>
+    </div>
+  </header>
+
+  <main class="canvas" id="app">
+    <div class="title-row">
+      <div>
+        <h1 id="page-title">未完成需求优先组合</h1>
+        <p class="lede" id="page-lede">高源负责范围内、尚未完成开发的需求。默认展示全部可画图主题。横坐标是开发成本，纵坐标是建议优先级，均为 AI 相对初评（1–5），不是工时或排期承诺。</p>
+      </div>
+      <div class="title-actions">
+        <button type="button" class="btn" id="btn-json" disabled>下载 JSON</button>
+        <button type="button" class="btn btn-primary" id="btn-csv" disabled>下载 CSV</button>
+      </div>
+    </div>
+
+    <p class="notice" id="stale-notice" hidden></p>
+
+    <div class="view-switch" role="tablist" aria-label="图上范围">
+      <button type="button" class="view-btn is-active" id="view-all" aria-pressed="true">全部可画图</button>
+      <button type="button" class="view-btn" id="view-advancing" aria-pressed="false">正在推进、归属明确</button>
+      <button type="button" class="view-btn" id="view-quickwin" aria-pressed="false">Quick win 建议</button>
+    </div>
+
+    <div class="filters" role="search">
+      <label>搜索
+        <input type="search" id="filter-query" placeholder="标题、描述、来源或编号" autocomplete="off" disabled>
+      </label>
+      <label>产品
+        <select id="filter-product" disabled>
+          <option value="">全部产品</option>
+        </select>
+      </label>
+      <label>状态
+        <select id="filter-status" disabled>
+          <option value="">全部状态</option>
+        </select>
+      </label>
+      <label>归属
+        <select id="filter-ownership" disabled>
+          <option value="">全部归属</option>
+        </select>
+      </label>
+      <label>分层
+        <select id="filter-layer" disabled>
+          <option value="">全部分层</option>
+        </select>
+      </label>
+      <p class="caption" id="scope-caption">数据集尚未注入。图和清单会在真实数据到位后填写，不会用占位需求代替。</p>
+    </div>
+
+    <section class="kpis" aria-label="范围计数">
+      <div class="kpi">
+        <p class="kpi-label">可画图（默认全部展示）</p>
+        <p class="kpi-value num" id="kpi-evaluable">—</p>
+        <p class="kpi-note" id="kpi-visible-note">当前图上显示见说明</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">正在推进、归属明确</p>
+        <p class="kpi-value num" id="kpi-advancing">—</p>
+        <p class="kpi-note">可用上方筛选查看，不是默认唯一范围</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">Quick win 建议</p>
+        <p class="kpi-value num" id="kpi-quickwin">—</p>
+        <p class="kpi-note" id="kpi-quickwin-note">未入选不等于低价值，不是已批准排期</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">否决（仅列表）</p>
+        <p class="kpi-value num" id="kpi-rejected">—</p>
+        <p class="kpi-note">不进入气泡图，见下方清单</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">负责范围覆盖</p>
+        <p class="kpi-value num" id="kpi-coverage">—</p>
+        <p class="kpi-note" id="kpi-coverage-note">源记录覆盖情况</p>
+      </div>
+    </section>
+
+    <section class="chart-card" aria-labelledby="chart-title">
+      <div class="chart-head">
+        <div>
+          <h2 id="chart-title">成本与优先级</h2>
+          <p class="chart-sub" id="chart-sub">默认展示全部可画图主题。左上淡色区域是 Quick win 建议区。气泡面积与反馈频次成正比（不是半径成正比）；空心表示频次未知。虚线描边表示归属待确认；点线内圈表示成本信心低。产品用颜色区分，并以文字图例标明。各主题频次不能相加当作客户数。</p>
+        </div>
+        <div class="zoom-tools">
+          <button type="button" class="btn" id="zoom-out" aria-label="缩小">−</button>
+          <button type="button" class="btn" id="zoom-reset">复位</button>
+          <button type="button" class="btn" id="zoom-in" aria-label="放大">+</button>
+        </div>
+      </div>
+      <p class="chart-count" id="chart-count"></p>
+      <div class="chart-frame" id="chart-frame">
+        <svg id="chart" role="img" aria-labelledby="chart-title chart-sub"></svg>
+        <p class="chart-empty" id="chart-empty">数据集尚未注入。真实需求到位后，气泡会出现在对应的成本与优先级档位上。现在不会用虚构条目填充这张图。</p>
+      </div>
+      <div class="legend" id="legend"></div>
+      <p class="jitter-note" id="jitter-note">同一成本与优先级档会堆在真实坐标上，聚集不是更高成本或更高优先级。点击聚集可展开列表，或在下方表格点选定位。展开时的微小散开只为辨认，不改变 1–5 分。坐标为 AI 相对初评，不是工时或排期承诺。</p>
+    </section>
+
+    <section class="list-card" aria-labelledby="list-title">
+      <div class="list-head">
+        <div>
+          <h2 id="list-title">可画图明细</h2>
+          <p class="list-sub" id="list-sub">默认包含全部可画图主题。点击一行可在图上定位。当前筛选不会把否决、现有支持和排除清单说成已经看完。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-items">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>状态</th>
+              <th>归属</th>
+              <th class="num">成本</th>
+              <th class="num">优先级</th>
+              <th>频次</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="list-card" aria-labelledby="unplotted-title">
+      <div class="list-head">
+        <div>
+          <h2 id="unplotted-title">否决主题（仅列表）</h2>
+          <p class="list-sub" id="unplotted-sub">这些主题不进入气泡图，始终在本表列出，供核对范围。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-unplotted">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>分层</th>
+              <th>状态</th>
+              <th class="num">成本</th>
+              <th class="num">优先级</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="list-card" aria-labelledby="supported-title">
+      <div class="list-head">
+        <div>
+          <h2 id="supported-title">现有支持</h2>
+          <p class="list-sub" id="supported-sub">产品评估为现有能力可满足，不进入未完成开发气泡。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-supported">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>状态</th>
+              <th>归属</th>
+              <th>原因</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="list-card" aria-labelledby="duplicate-title">
+      <div class="list-head">
+        <div>
+          <h2 id="duplicate-title">重复需求、未能映射</h2>
+          <p class="list-sub" id="duplicate-sub">池结论为重复，且未能并入已还原主题。仍单独列出，不因标签而丢掉记录。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-duplicate">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>状态</th>
+              <th>归属</th>
+              <th>原因</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="list-card" aria-labelledby="unscored-title" id="section-unscored">
+      <div class="list-head">
+        <div>
+          <h2 id="unscored-title">未匹配、尚无成本（待评估）</h2>
+          <p class="list-sub" id="unscored-sub">纳入负责范围但尚未并入主题、因此没有成本或优先级的记录。最终数据中本表应为空；若出现条目会全部列出，不能只看气泡图。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-unscored">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>状态</th>
+              <th>归属</th>
+              <th>缺什么 / 原因</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="list-card" aria-labelledby="deferred-title" id="section-deferred">
+      <div class="list-head">
+        <div>
+          <h2 id="deferred-title">暂缓、否决、现有支持等分层</h2>
+          <p class="list-sub" id="deferred-sub">池结论为后续考虑、暂不考虑、现有支持、重复等，分层保留，不进入默认气泡或 Quick win。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-deferred">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>状态</th>
+              <th>归属</th>
+              <th>原因</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="list-card" aria-labelledby="excluded-title">
+      <div class="list-head">
+        <div>
+          <h2 id="excluded-title">已完成开发、已排除（审计）</h2>
+          <p class="list-sub">这些需求不进入气泡图。即使上面使用了筛选，本清单仍单独列出，用来核对完成开发是否被误收或漏收。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="table-excluded">
+          <thead>
+            <tr>
+              <th>需求</th>
+              <th>产品</th>
+              <th>状态</th>
+              <th>归属</th>
+              <th>排除原因</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <aside class="float" id="float" hidden role="dialog" aria-modal="false" aria-labelledby="float-title">
+    <div class="float-head">
+      <div>
+        <h3 id="float-title"></h3>
+        <div class="float-meta" id="float-meta"></div>
+      </div>
+      <button type="button" class="icon-close" id="float-close" aria-label="关闭">×</button>
+    </div>
+    <div class="float-body" id="float-body"></div>
+  </aside>
+
+  <noscript>
+    <p style="padding:24px 32px;font-family:sans-serif;color:#0b1f3a;">需要浏览器启用脚本才能查看气泡图和清单。数据文件为同目录 data.js 或 dataset.json，本页无后端、不收集凭据。</p>
+  </noscript>
+
+  <script src="core.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
