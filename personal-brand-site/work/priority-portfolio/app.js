@@ -1001,7 +1001,11 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.textContent = it.title;
+      btn.addEventListener("pointerdown", function (downEv) {
+        downEv.stopPropagation();
+      });
       btn.addEventListener("click", function (clickEv) {
+        clickEv.preventDefault();
         clickEv.stopPropagation();
         openItem(it, true, null);
       });
@@ -1393,6 +1397,9 @@
     if (lock) {
       hideHoverFloat();
       fillInspectorItem(item);
+      if (els.inspector && els.inspector.scrollIntoView) {
+        els.inspector.scrollIntoView({ block: "nearest" });
+      }
     } else {
       fillItemFloat(item);
       var x = ev && ev.clientX != null ? ev.clientX : window.innerWidth - 24;
@@ -1514,7 +1521,6 @@
     }
     function scheduleHide() {
       cancelHide();
-      hideTimer = setTimeout(hideHoverFloat, 280);
     }
     function hoverFromTarget(target, ev) {
       var bubble = target.closest && target.closest(".bubble");
@@ -1620,15 +1626,26 @@
     bindAuditTable(els.tableDuplicate);
     bindAuditTable(els.tableExcluded);
 
-    els.floatClose.addEventListener("click", hideFloatAndRefresh);
+    els.floatClose.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      hideHoverFloat();
+    });
     document.addEventListener("keydown", function (ev) {
-      if (ev.key === "Escape") hideFloatAndRefresh();
+      if (ev.key !== "Escape") return;
+      if (els.float && !els.float.hidden) hideHoverFloat();
+      else hideFloatAndRefresh();
     });
     document.addEventListener("click", function (ev) {
+      var inFloat = els.float && els.float.contains(ev.target);
+      var inList = ev.target.closest && ev.target.closest(".cluster-list button, tr[data-id], tr[data-audit-id]");
+      if (inFloat || inList) return;
+      if (els.float && !els.float.hidden) {
+        var inChartHit = ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
+        if (!inChartHit) hideHoverFloat();
+      }
       if (!state.pinnedLocked) return;
-      if (els.float && els.float.contains(ev.target)) return;
       if (els.inspector && els.inspector.contains(ev.target)) return;
-      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]") || ev.target.closest("tr[data-audit-id]") || ev.target.closest(".list-tools") || ev.target.closest(".sort-btn") || ev.target.closest("details"))) return;
+      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster") || ev.target.closest(".list-tools") || ev.target.closest(".sort-btn") || ev.target.closest("details"))) return;
       hideFloatAndRefresh();
     });
 
