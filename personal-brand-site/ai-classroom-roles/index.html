@@ -1558,7 +1558,7 @@
         var _classroomApiOverride = localStorage.getItem("classroomApi");
         var _host = (typeof location !== "undefined" && location.hostname) || "";
         if (_classroomApiOverride) CLASSROOM_API = _classroomApiOverride;
-        else if (/gaoyuan-ai\.xyz$/i.test(_host)) CLASSROOM_API = "/api/classroom-roles";
+        else if (/gaoyuan-ai\.xyz$/i.test(_host)) CLASSROOM_API = "/classroom-agent";
         else if (!/vercel\.app$/i.test(_host)) {
           // 设置页润色：本地探活失败则用线上
           fetch("http://127.0.0.1:8768/health", { mode: "cors", cache: "no-store" })
@@ -3021,7 +3021,7 @@
       var TIP_COURSE = "嗨，我是这节课的 AI 讲师。刚才课上刚过完「设备管理目标体系」的四层拆解——结合你这边的实际工作，你觉得现在最卡的是哪一层？随便聊聊就行。";
       var VERCEL_CLASSROOM_API = "https://ai-classroom-roles-agent.vercel.app";
       var LOCAL_CLASSROOM_API = "http://127.0.0.1:8768";
-      var SAME_ORIGIN_CLASSROOM_API = "/api/classroom-roles";
+      var SAME_ORIGIN_CLASSROOM_API = "/classroom-agent";
       var CLASSROOM_API = VERCEL_CLASSROOM_API;
       var classroomApiResolve = null;
       function resolveClassroomApi() {

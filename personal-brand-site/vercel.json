@@ -5,6 +5,16 @@
   "outputDirectory": ".",
   "cleanUrls": false,
   "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/classroom-agent/:path*/",
+      "destination": "https://ai-classroom-roles-agent.vercel.app/:path*"
+    },
+    {
+      "source": "/classroom-agent/:path*",
+      "destination": "https://ai-classroom-roles-agent.vercel.app/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/img/room.webp",
