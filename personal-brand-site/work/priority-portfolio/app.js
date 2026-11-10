@@ -3,6 +3,8 @@
   "use strict";
 
   var Core = window.PortfolioCore;
+  var Score = window.PortfolioScore;
+  var STORE_KEY = "pp-assessment-v1";
   var NS = "http://www.w3.org/2000/svg";
 
   var state = {
@@ -26,7 +28,9 @@
     visiblePlots: [],
     listLimit: 40,
     clusterProduct: "",
-    clusterLimit: 40
+    clusterLimit: 40,
+    weights: null,
+    overrides: {}
   };
 
   var els = {};
@@ -104,6 +108,115 @@
     state.pinnedLocked = false;
     state.filters.hiddenProducts = Object.create(null);
     renderAll();
+  }
+
+  function loadStore() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (!raw || typeof raw !== "object") return;
+      if (raw.weights) state.weights = Score.cloneWeights(raw.weights);
+      if (raw.overrides && typeof raw.overrides === "object") state.overrides = raw.overrides;
+    } catch (e) { /* 本地存储不可用时只用建议权重 */ }
+  }
+
+  function saveStore() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        kind: "priority-portfolio-personal-assessment",
+        note: "个人评估，不会写回飞书或 Linear",
+        weights: state.weights,
+        overrides: state.overrides
+      }));
+    } catch (e) { /* 忽略配额或隐私模式 */ }
+  }
+
+  function reassess() {
+    if (!state.data || state.data.awaiting || !Score) return;
+    state.data.items.forEach(function (it) {
+      if (it.legacyQuickWin == null) it.legacyQuickWin = !!it.quickWin;
+      it.assessment = Score.assessItem(it, state.weights, state.overrides[it.id] || {});
+      it.quickWin = it.assessment.quickWin.eligible;
+    });
+  }
+
+  function coordLabel(it, axis) {
+    var a = it.assessment;
+    if (!a) return String(it[axis]);
+    var side = a[axis];
+    if (side.mode === "weighted" && side.value != null) return side.value.toFixed(1);
+    return String(it[axis]) + " 旧档";
+  }
+
+  function buildWeightControls() {
+    if (!Score || !els.weightCost) return;
+    function fill(host, ids) {
+      clear(host);
+      var h = document.createElement("h3");
+      h.textContent = ids[0] === "complexity" ? "成本" : "优先级";
+      host.appendChild(h);
+      ids.forEach(function (id) {
+        var def = Score.METRICS.filter(function (m) { return m.id === id; })[0];
+        var row = document.createElement("label");
+        row.className = "weight-row";
+        var name = document.createElement("span");
+        name.textContent = def.label;
+        var input = document.createElement("input");
+        input.type = "range";
+        input.min = "0";
+        input.max = "100";
+        input.step = "1";
+        input.dataset.metric = id;
+        input.value = String(Math.round(state.weights[id] * 100));
+        input.setAttribute("aria-label", def.label + " 建议权重");
+        var pct = document.createElement("span");
+        pct.className = "num";
+        pct.textContent = Math.round(state.weights[id] * 100) + "%";
+        input.addEventListener("input", function () {
+          var raw = {};
+          host.parentNode.querySelectorAll("input[type=range]").forEach(function (el) {
+            raw[el.dataset.metric] = Number(el.value);
+          });
+          state.weights = Score.normalizeWeights(Object.assign({}, state.weights, raw));
+          syncWeightInputs();
+          saveStore();
+          var pinned = state.pinned && state.pinned.type === "item" ? state.pinned.id : "";
+          renderAll();
+          if (pinned) {
+            var item = itemById(pinned);
+            if (item) openItem(item, true, null);
+          }
+        });
+        row.appendChild(name);
+        row.appendChild(input);
+        row.appendChild(pct);
+        host.appendChild(row);
+      });
+    }
+    fill(els.weightCost, Score.COST_IDS);
+    fill(els.weightPriority, Score.PRIORITY_IDS);
+    if (els.weightFormula) setText(els.weightFormula, Score.formulaText());
+    syncWeightReadout();
+  }
+
+  function syncWeightInputs() {
+    document.querySelectorAll("#weight-panel input[type=range]").forEach(function (el) {
+      var pct = Math.round(state.weights[el.dataset.metric] * 100);
+      el.value = String(pct);
+      var label = el.parentNode && el.parentNode.querySelector(".num");
+      if (label) label.textContent = pct + "%";
+    });
+    syncWeightReadout();
+  }
+
+  function syncWeightReadout() {
+    if (!els.weightReadout || !state.weights) return;
+    function line(ids) {
+      return ids.map(function (id) {
+        var def = Score.METRICS.filter(function (m) { return m.id === id; })[0];
+        return def.label + " " + Math.round(state.weights[id] * 100) + "%";
+      }).join(" · ");
+    }
+    setText(els.weightReadout, "当前建议权重。成本：" + line(Score.COST_IDS) + "。优先级：" + line(Score.PRIORITY_IDS) + "。");
   }
 
   /* ---------- filters & counts ---------- */
@@ -224,8 +337,8 @@
     if (els.kpiRejected) setText(els.kpiRejected, String(rejected));
     if (els.kpiCoverage) setText(els.kpiCoverage, String(owned));
     if (els.kpiCoverageNote) setText(els.kpiCoverageNote, "缺口 " + missing);
-    var qw = d.meta.quickWin;
-    setText(els.kpiQuickNote, "未入选不等于低价值。" + (qw.rule || "不是已批准排期。"));
+    setText(els.kpiQuickNote, "须两边都是加权结果，且归属已确认。旧档暂用不算。未入选不等于低价值。");
+    if (els.viewQuickwin) els.viewQuickwin.textContent = "Quick win " + sum.quickWinsAll;
     var viewLabel = state.filters.viewMode === "advancing" ? "正在推进、归属明确" : (state.filters.viewMode === "quickwin" ? "仅 Quick win 建议" : "全部可画图");
     setText(els.kpiVisibleNote, "当前图上 " + sum.visible + "（" + viewLabel + "）/ 可画图全集 " + sum.evaluable);
     var extra = "当前是「" + viewLabel + "」，图上 " + sum.visible + " / 可画图 " + sum.evaluable + " · 主题 " + (sum.evaluable + rejected) + " · 否决仅列表 " + rejected + " · 覆盖 " + owned + "，缺口 " + missing + "。否决、现有支持和排除清单始终在下方，不因筛选被当作已经看完。各主题频次不能相加当作客户数。";
@@ -250,28 +363,31 @@
       strip.hidden = true;
       return;
     }
-    var wins = state.data.items.filter(function (it) { return it.quickWin; });
-    strip.hidden = wins.length === 0;
-    if (els.qwRule && state.data.meta.quickWin && state.data.meta.quickWin.rule) {
-      setText(els.qwRule, state.data.meta.quickWin.rule + " 这是建议，不是已批准排期。");
-    }
-    wins.forEach(function (it) {
+    var wins = state.data.items.filter(function (it) { return it.assessment && it.assessment.quickWin.eligible; });
+    var near = state.data.items.filter(function (it) { return it.assessment && it.assessment.quickWin.legacyNear; });
+    strip.hidden = wins.length + near.length === 0;
+    if (els.qwRule && Score) setText(els.qwRule, Score.QUICK_WIN.rule);
+    function addCard(it, nearMiss) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "qw-card";
+      btn.className = nearMiss ? "qw-card is-near" : "qw-card";
       btn.setAttribute("data-id", it.id);
       var strong = document.createElement("strong");
       strong.textContent = it.title;
       var span = document.createElement("span");
-      span.textContent = (it.productLabel || "") + " · 成本 " + it.cost + " / 优先级 " + it.priority;
+      var a = it.assessment;
+      span.textContent = (nearMiss ? "旧档落在区间，分项未齐。 " : "") + (it.productLabel || "") + " · 图上 " + coordLabel(it, "cost") + " / " + coordLabel(it, "priority") + " · 旧档 " + it.cost + " / " + it.priority;
+      if (nearMiss && a) span.textContent += "。 " + a.quickWin.reasons[0];
       btn.appendChild(strong);
       btn.appendChild(span);
       btn.addEventListener("click", function () {
-        setViewMode("quickwin");
+        if (!nearMiss) setViewMode("quickwin");
         openItem(it, true, null);
       });
       box.appendChild(btn);
-    });
+    }
+    wins.forEach(function (it) { addCard(it, false); });
+    near.forEach(function (it) { addCard(it, true); });
   }
 
   function setViewButtons() {
@@ -403,8 +519,9 @@
     g.appendChild(plotRect(sc.xMin, sc.yMin, 3, 3, "#f4f5f7"));
     g.appendChild(plotRect(3, sc.yMin, sc.xMax, 3, "#f8f1f1"));
 
-    var qw0 = project(layout, sc, sc.xMin, sc.qw.priorityMin);
-    var qw1 = project(layout, sc, sc.qw.costMax + 0.5, sc.yMax);
+    var qwRule = Score ? Score.QUICK_WIN : sc.qw;
+    var qw0 = project(layout, sc, sc.xMin, qwRule.priorityMin);
+    var qw1 = project(layout, sc, qwRule.costMax, sc.yMax);
     g.appendChild(svgEl("rect", {
       x: Math.min(qw0.x, qw1.x),
       y: Math.min(qw0.y, qw1.y),
@@ -529,7 +646,11 @@
     }
     empty.hidden = true;
 
-    var plots = Core.spreadAllCells(Core.layoutItems(items));
+    var plots = Core.layoutItems(items.map(function (it) {
+      var a = it.assessment;
+      if (!a || a.plot.x == null || a.plot.y == null) return it;
+      return Object.assign({}, it, { cost: a.plot.x, priority: a.plot.y });
+    }));
     var extent = Core.frequencyExtent(items);
     var rOpts = items.length > 40
       ? { rMin: 3.2, rMax: 11, rUnknown: 4 }
@@ -813,8 +934,8 @@
       ptd.appendChild(prod);
       td(tr, it.status, "", "状态");
       td(tr, it.ownership, "", "归属");
-      td(tr, it.cost, "num", "成本");
-      td(tr, it.priority, "num", "优先级");
+      td(tr, coordLabel(it, "cost"), "num", "成本");
+      td(tr, coordLabel(it, "priority"), "num", "优先级");
       var ftd = td(tr, "", "", "频次");
       ftd.textContent = "";
       if (it.frequencyUnknown) {
@@ -1012,6 +1133,93 @@
     if (item.excludedCompletedParts) addKv(body, "已关闭的子项", item.excludedCompletedParts);
     if (item.customer) addKv(body, "客户", item.customer);
     if (item.eval) addKv(body, "池结论", item.eval);
+    addKv(body, "旧版坐标（保留对照）", "成本 " + item.cost + " / 优先级 " + item.priority);
+    addKv(body, "原池或 Linear 优先级", item.originalPriority == null || item.originalPriority === "" ? "源数据未记录" : String(item.originalPriority));
+    if (locked && item.assessment) renderMetricTable(body, item);
+  }
+
+  function renderMetricTable(body, item) {
+    var a = item.assessment;
+    var head = document.createElement("p");
+    head.className = "cluster-meta";
+    head.textContent = a.plot.explain + "。成本覆盖 " + Math.round(a.cost.coverage * 100) + "%，区间 " + (a.cost.low == null ? "—" : a.cost.low + "–" + a.cost.high) + "。优先级覆盖 " + Math.round(a.priority.coverage * 100) + "%，区间 " + (a.priority.low == null ? "—" : a.priority.low + "–" + a.priority.high) + "。";
+    body.appendChild(head);
+    var table = document.createElement("table");
+    table.className = "metric-table";
+    var thead = document.createElement("thead");
+    var hr = document.createElement("tr");
+    ["指标", "得分", "权重", "贡献", "依据"].forEach(function (label) {
+      var th = document.createElement("th");
+      th.textContent = label;
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr);
+    table.appendChild(thead);
+    var tb = document.createElement("tbody");
+    a.metrics.forEach(function (m) {
+      var tr = document.createElement("tr");
+      var name = document.createElement("td");
+      name.textContent = m.label;
+      var score = document.createElement("td");
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label", m.label + " 个人评分");
+      var blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "待确认";
+      sel.appendChild(blank);
+      [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].forEach(function (n) {
+        var opt = document.createElement("option");
+        opt.value = String(n);
+        opt.textContent = Number.isInteger(n) ? String(n) : n.toFixed(1);
+        sel.appendChild(opt);
+      });
+      sel.value = m.score == null ? "" : String(m.score);
+      sel.addEventListener("change", function () {
+        if (!state.overrides[item.id]) state.overrides[item.id] = {};
+        if (sel.value === "") delete state.overrides[item.id][m.id];
+        else state.overrides[item.id][m.id] = Number(sel.value);
+        saveStore();
+        renderAll();
+        var again = itemById(item.id);
+        if (again) openItem(again, true, null);
+      });
+      score.appendChild(sel);
+      var kind = document.createElement("div");
+      kind.textContent = (m.kind === "personal" ? "个人评估" : m.kind === "fact" ? "事实" : m.kind === "estimate" ? "AI 初评" : "待确认") + " · 置信 " + (m.confidence === "none" ? "无" : m.confidence);
+      score.appendChild(kind);
+      var w = document.createElement("td");
+      w.textContent = Math.round(m.weight * 100) + "%";
+      var c = document.createElement("td");
+      c.textContent = m.contribution == null ? "—" : String(m.contribution);
+      var ev = document.createElement("td");
+      ev.textContent = m.quote || m.reason || "—";
+      tr.appendChild(name);
+      tr.appendChild(score);
+      tr.appendChild(w);
+      tr.appendChild(c);
+      tr.appendChild(ev);
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    body.appendChild(table);
+    if (item.sources && item.sources.length) {
+      var src = document.createElement("p");
+      src.className = "cluster-meta";
+      item.sources.forEach(function (s, i) {
+        if (i) src.appendChild(document.createTextNode(" · "));
+        if (s.url) {
+          var link = document.createElement("a");
+          link.href = s.url;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          link.textContent = s.label || s.id || s.url;
+          src.appendChild(link);
+        } else {
+          src.appendChild(document.createTextNode(s.label || s.id || "来源"));
+        }
+      });
+      body.appendChild(src);
+    }
   }
 
   function fillItemFloat(item) {
@@ -1510,6 +1718,7 @@
   }
 
   function renderAll() {
+    reassess();
     renderMeta();
     renderFilterControls();
     renderInteractive();
@@ -1645,6 +1854,57 @@
     els.countUnscored = $("count-unscored");
     els.countDeferred = $("count-deferred");
     els.countExcluded = $("count-excluded");
+    els.weightCost = $("weight-cost");
+    els.weightPriority = $("weight-priority");
+    els.weightFormula = $("weight-formula");
+    els.weightReadout = $("weight-readout");
+    state.weights = Score.cloneWeights(Score.DEFAULT_WEIGHTS);
+    loadStore();
+    buildWeightControls();
+    if ($("weight-reset")) $("weight-reset").addEventListener("click", function () {
+      state.weights = Score.cloneWeights(Score.DEFAULT_WEIGHTS);
+      syncWeightInputs();
+      saveStore();
+      renderAll();
+    });
+    if ($("override-reset")) $("override-reset").addEventListener("click", function () {
+      state.overrides = {};
+      saveStore();
+      renderAll();
+    });
+    if ($("btn-export-assessment")) $("btn-export-assessment").addEventListener("click", function () {
+      var payload = {
+        kind: "priority-portfolio-personal-assessment",
+        note: "个人评估，不会写回飞书或 Linear",
+        exportedAt: new Date().toISOString(),
+        weights: state.weights,
+        overrides: state.overrides
+      };
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "priority-portfolio-assessment.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+    var importer = $("btn-import-assessment");
+    if (importer) importer.addEventListener("change", function () {
+      var file = importer.files && importer.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var raw = JSON.parse(String(reader.result || ""));
+          if (raw.weights) state.weights = Score.cloneWeights(raw.weights);
+          if (raw.overrides && typeof raw.overrides === "object") state.overrides = raw.overrides;
+          syncWeightInputs();
+          saveStore();
+          renderAll();
+        } catch (e) { /* 无效 JSON 不改当前评估 */ }
+      };
+      reader.readAsText(file);
+    });
     bind();
     loadDataset();
   });

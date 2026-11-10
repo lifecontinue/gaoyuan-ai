@@ -72,12 +72,33 @@
       </label>
     </div>
 
+    <section class="weights" id="weight-panel" aria-label="建议权重">
+      <div class="weights-head">
+        <h2>建议权重</h2>
+        <p id="weight-formula"></p>
+      </div>
+      <div class="weight-axes">
+        <div id="weight-cost"></div>
+        <div id="weight-priority"></div>
+      </div>
+      <p id="weight-readout"></p>
+      <div class="weight-actions">
+        <button type="button" class="btn" id="weight-reset">重置建议权重</button>
+        <button type="button" class="btn" id="override-reset">清除单项修改</button>
+        <button type="button" class="btn" id="btn-export-assessment">导出个人评估 JSON</button>
+        <label class="btn file-btn">导入 JSON
+          <input type="file" id="btn-import-assessment" accept="application/json">
+        </label>
+      </div>
+      <p class="list-sub">这些是建议权重，不是已确认策略。拖动后立刻重算。导出的 JSON 只供本页和 IDE 对照，不会改飞书或 Linear。</p>
+    </section>
+
     <div class="workspace">
       <section class="chart-card" aria-labelledby="chart-title">
         <div class="chart-head">
           <div>
             <h2 id="chart-title">成本 × 优先级</h2>
-            <p class="chart-sub" id="chart-sub">四象限以成本 3、优先级 3 为界。左上是低成本高优先；其中更深的一块才是 Quick win（成本≤2 且优先级≥4）。每个点是一条需求。同档散开不超过 0.38，最近整数仍是原档。面积与反馈频次成正比，空心为频次未知。</p>
+            <p class="chart-sub" id="chart-sub">四象限以 3 为界。坐标是建议权重下的分项结果，只显示一位小数；分项不够时仍用旧的 1–5 档，不把同一档打散。气泡面积仍只由反馈频次决定。Quick win 要两边都是加权结果，且归属已确认。</p>
           </div>
           <div class="zoom-tools">
             <button type="button" class="btn" id="zoom-out" aria-label="缩小">−</button>
@@ -91,7 +112,7 @@
           <p class="chart-empty" id="chart-empty">数据集尚未注入。真实需求到位后，气泡会出现在对应的成本与优先级档位上。现在不会用虚构条目填充这张图。</p>
         </div>
         <div class="legend" id="legend"></div>
-        <p class="jitter-note" id="jitter-note">默认画出当前筛选下的每一个节点，不收成数字。象限按整数档判断，不按散开后的位置改判。点一个节点看详情；点档位上的数字可打开该档清单。坐标为 AI 相对初评，不是工时或排期承诺。</p>
+        <p class="jitter-note" id="jitter-note">无法再拆开的主题仍会重叠。点节点看每个分项的得分、权重和依据；点档位数字打开重叠清单。坐标是 AI 初评，不是工时，也不是已确认的排期。</p>
       </section>
 
       <aside class="inspector" id="inspector" aria-labelledby="inspector-title">
@@ -311,6 +332,7 @@
   </noscript>
 
   <script src="core.js"></script>
+  <script src="score.js"></script>
   <script src="data.js"></script>
   <script src="app.js"></script>
 </body>

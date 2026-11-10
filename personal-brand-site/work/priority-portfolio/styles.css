@@ -739,6 +739,44 @@ table.data tbody tr:focus-visible { outline: 2px solid var(--ink); outline-offse
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
+.weights {
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 12px 16px 14px;
+}
+.weights h2 { margin: 0; font-size: 14px; }
+.weight-formula, #weight-formula, #weight-readout {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--muted);
+}
+.weight-axes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+  margin-top: 8px;
+}
+.weight-row {
+  display: grid;
+  grid-template-columns: minmax(8em, 11em) 1fr 3em;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  margin: 4px 0;
+}
+.weight-row input[type="range"] { width: 100%; }
+.weight-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.file-btn input { display: none; }
+.metric-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+.metric-table th, .metric-table td { border-top: 1px solid var(--border); padding: 6px 4px; vertical-align: top; text-align: left; }
+.metric-table select { height: 28px; max-width: 7em; }
+.qw-card.is-near { background: var(--surface); }
+@media (max-width: 800px) {
+  .weight-axes { grid-template-columns: 1fr; }
+}
 .cell-count { cursor: pointer; }
 .bubble { cursor: pointer; }
 .bubble.is-selected circle:first-child {
