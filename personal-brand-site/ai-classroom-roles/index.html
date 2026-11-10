@@ -3375,10 +3375,9 @@
           });
       }
 
-      function stopTts() {
+      // 只停音效，不中断本轮文字回答（音量开关用）
+      function stopAudioOnly() {
         ttsQueueToken += 1;
-        streamToken += 1;
-        turnSeq += 1;
         if (ttsAbort) {
           var abort = ttsAbort;
           ttsAbort = null;
@@ -3406,15 +3405,29 @@
           try { el.removeAttribute("src"); el.load(); } catch (e6) {}
         }
         if (window.speechSynthesis) window.speechSynthesis.cancel();
-        setStatusBar("");
-        chatLog.querySelectorAll(".ai-msg.is-speaking, .ai-msg.is-talking").forEach(function (el2) {
-          el2.classList.remove("is-speaking", "is-talking");
+        chatLog.querySelectorAll(".ai-msg.is-speaking").forEach(function (el2) {
+          el2.classList.remove("is-speaking");
         });
         chatLog.querySelectorAll(".ai-msg-action.is-playing").forEach(function (el3) {
           el3.classList.remove("is-playing");
         });
-        chatLog.querySelectorAll(".ai-cursor-blink").forEach(function (el4) {
-          el4.classList.remove("ai-cursor-blink");
+        // 音文同步被掐断时，把未出完的字一次性补全
+        chatLog.querySelectorAll(".ai-msg.bot .ai-cursor-blink").forEach(function (pEl) {
+          var msg = pEl.closest(".ai-msg");
+          var full = msg && msg.getAttribute("data-reply-text");
+          if (full) pEl.textContent = full;
+          pEl.classList.remove("ai-cursor-blink");
+        });
+      }
+
+      // 停止回答：停音效 + 打断出字/回合（停止键、新建会话等）
+      function stopTts() {
+        stopAudioOnly();
+        streamToken += 1;
+        turnSeq += 1;
+        setStatusBar("");
+        chatLog.querySelectorAll(".ai-msg.is-talking").forEach(function (el2) {
+          el2.classList.remove("is-talking");
         });
       }
 
@@ -4603,7 +4616,8 @@
           var next = !isSoundOn();
           setSoundOn(next);
           syncVolumeBtn();
-          if (!next) stopTts();
+          // 关音量只停播报，不中断本轮文字回答
+          if (!next) stopAudioOnly();
         });
       }
 
