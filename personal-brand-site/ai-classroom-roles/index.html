@@ -763,8 +763,11 @@
       flex-shrink: 0;
     }#view-learning .tbc-sider-window-root.chat-style-3 #btn-ai-close{
       flex-shrink: 0; margin-right: 0; z-index: 2;
-    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-icon-btn img{
+    }#view-learning .tbc-sider-window-root.chat-style-3 .__header-icon-btn img,
+    #view-learning .tbc-sider-window-root.chat-style-3 .__header-icon-btn .ai-vol-icon{
       display: block; width: 16px; height: 16px; pointer-events: none;
+    }#view-learning .tbc-sider-window-root.chat-style-3 #btn-ai-volume.is-muted{
+      color: #8c8c8c;
     }#view-learning .tbc-sider-window-root.chat-style-3 .__header-icon-btn:hover,
     #view-learning .tbc-sider-window-root.chat-style-3 .__header-icon-btn:focus-visible{
       background: #f5f5f5; outline: none; color: var(--bj-text);
@@ -1558,7 +1561,7 @@
         var _classroomApiOverride = localStorage.getItem("classroomApi");
         var _host = (typeof location !== "undefined" && location.hostname) || "";
         if (_classroomApiOverride) CLASSROOM_API = _classroomApiOverride;
-        else if (/gaoyuan-ai\.xyz$/i.test(_host)) CLASSROOM_API = "/classroom-agent";
+        else if (/gaoyuan-ai\.xyz$/i.test(_host)) CLASSROOM_API = "/api/classroom-roles";
         else if (!/vercel\.app$/i.test(_host)) {
           // 设置页润色：本地探活失败则用线上
           fetch("http://127.0.0.1:8768/health", { mode: "cors", cache: "no-store" })
@@ -2462,6 +2465,10 @@
         </div>
         <div class="__header-btn-group">
           <div class="ai-agents-strip" id="ai-agents-strip" role="list" aria-label="参与本次课堂讨论的角色"></div>
+          <button type="button" class="__header-icon-btn" id="btn-ai-volume" data-tip="关闭音量" aria-label="关闭音量" aria-pressed="true">
+            <svg class="ai-vol-icon ai-vol-on" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.35 5C14.01 4.57 14.89 5.05 14.89 5.84V18.4c0 .79-.88 1.27-1.54.84L9.27 16.6H6.4A1.4 1.4 0 0 1 5 15.14V9.09A1.4 1.4 0 0 1 6.4 7.69h2.87l4.07-2.63ZM16.75 7.01c.31-.24.76-.18 1 .31A8.1 8.1 0 0 1 19.37 12a8.1 8.1 0 0 1-1.62 4.86c-.24.49-.69.55-1 .31-.31-.24-.37-.69-.13-1A6.6 6.6 0 0 0 17.95 12a6.6 6.6 0 0 0-1.33-3.98c-.24-.31-.18-.76.13-1Z" fill="currentColor"/></svg>
+            <svg class="ai-vol-icon ai-vol-off" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden><path d="M13.35 5C14.01 4.57 14.89 5.05 14.89 5.84V18.4c0 .79-.88 1.27-1.54.84L9.27 16.6H6.4A1.4 1.4 0 0 1 5 15.14V9.09A1.4 1.4 0 0 1 6.4 7.69h2.87l4.07-2.63ZM16.2 9.3l1.1-1.1 1.4 1.4 1.4-1.4 1.1 1.1-1.4 1.4 1.4 1.4-1.1 1.1-1.4-1.4-1.4 1.4-1.1-1.1 1.4-1.4-1.4-1.4Z" fill="currentColor"/></svg>
+          </button>
           <a class="__header-btn-rtr" id="btn-ai-rtr" href="https://tbc.21tb.com/rtr-frontend/iris" target="_blank" rel="noopener noreferrer" title="打开 AI企业智慧大脑">AI企业智慧大脑</a>
           <button type="button" class="__header-icon-btn" id="btn-ai-close" data-tip="关闭" aria-label="关闭">
             <img src="./assets/icons/icon-close.svg?v=bj2" width="16" height="16" alt="" />
@@ -3021,7 +3028,7 @@
       var TIP_COURSE = "嗨，我是这节课的 AI 讲师。刚才课上刚过完「设备管理目标体系」的四层拆解——结合你这边的实际工作，你觉得现在最卡的是哪一层？随便聊聊就行。";
       var VERCEL_CLASSROOM_API = "https://ai-classroom-roles-agent.vercel.app";
       var LOCAL_CLASSROOM_API = "http://127.0.0.1:8768";
-      var SAME_ORIGIN_CLASSROOM_API = "/classroom-agent";
+      var SAME_ORIGIN_CLASSROOM_API = "/api/classroom-roles";
       var CLASSROOM_API = VERCEL_CLASSROOM_API;
       var classroomApiResolve = null;
       function resolveClassroomApi() {
@@ -3153,7 +3160,32 @@
         "</div>";
 
       var streamToken = 0;
-      var STREAM_MS = 26;
+      var PLAYBACK_RATE = 1.5;
+      var STREAM_MS = Math.max(12, Math.round(26 / PLAYBACK_RATE));
+      var SOUND_KEY = "21tb.prototype.aiClassroomSound";
+      function isSoundOn() {
+        try {
+          var v = localStorage.getItem(SOUND_KEY);
+          if (v === "0" || v === "false") return false;
+        } catch (_e) {}
+        return true;
+      }
+      function setSoundOn(on) {
+        try { localStorage.setItem(SOUND_KEY, on ? "1" : "0"); } catch (_e) {}
+      }
+      function syncVolumeBtn() {
+        var btn = document.getElementById("btn-ai-volume");
+        if (!btn) return;
+        var on = isSoundOn();
+        btn.classList.toggle("is-muted", !on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.setAttribute("aria-label", on ? "关闭音量" : "打开音量");
+        btn.setAttribute("data-tip", on ? "关闭音量" : "打开音量");
+        var onIcon = btn.querySelector(".ai-vol-on");
+        var offIcon = btn.querySelector(".ai-vol-off");
+        if (onIcon) onIcon.hidden = !on;
+        if (offIcon) offIcon.hidden = on;
+      }
 
       function escapeHtml(s) {
         return String(s)
@@ -3454,7 +3486,7 @@
           u.lang = "zh-CN";
           var voice = pickZhVoice();
           if (voice) u.voice = voice;
-          u.rate = item.role && item.role.type === "teacher" ? 0.95 : 1.05;
+          u.rate = (item.role && item.role.type === "teacher" ? 0.95 : 1.05) * PLAYBACK_RATE;
           u.pitch = item.role && item.role.type === "teacher" ? 0.9 : 1.2;
           var started = false;
           setTimeout(function () {
@@ -3516,6 +3548,7 @@
           el.onerror = function () { finish(false); };
           el.muted = false;
           el.volume = 1;
+          try { el.playbackRate = PLAYBACK_RATE; } catch (_pr) {}
           el.src = url;
           var p = el.play();
           if (p && p.then) {
@@ -3554,17 +3587,19 @@
               var src = audioCtx.createBufferSource();
               ttsSource = src;
               src.buffer = buffer;
+              try { src.playbackRate.value = PLAYBACK_RATE; } catch (_pr2) {}
               src.connect(audioCtx.destination);
               src.onended = function () { finish(true); };
               src.start(0);
+              var playDur = (buffer.duration || 2) / PLAYBACK_RATE;
               if (onStart) {
                 var t0 = audioCtx.currentTime;
                 onStart({
                   now: function () { return audioCtx.currentTime - t0; },
-                  duration: function () { return buffer.duration; }
+                  duration: function () { return playDur; }
                 });
               }
-              var ms = Math.max(1500, Math.ceil((buffer.duration || 2) * 1000) + 800);
+              var ms = Math.max(1000, Math.ceil(playDur * 1000) + 600);
               setTimeout(function () { finish(true); }, ms);
             } catch (e2) {
               finish(false);
@@ -4064,7 +4099,7 @@
             appendDivider("已停止本次回答", turnId);
             return;
           }
-          return playRoleSequence(replies, opts.withTts !== false, turnId).then(function () {
+          return playRoleSequence(replies, opts.withTts !== false && isSoundOn(), turnId).then(function () {
             if (turn !== turnSeq) {
               appendDivider("已停止本次回答", turnId);
             } else if (replies.terminal === "close_session") {
@@ -4525,6 +4560,10 @@
           stopTts();
           return;
         }
+        if (!isSoundOn()) {
+          setStatusBar("音量已关闭，打开后可播放语音", "warn");
+          return;
+        }
         stopTts();
         unlockAudio();
         var roleId = msg.getAttribute("data-role-id") || "";
@@ -4544,6 +4583,17 @@
           if (ok) setStatusBar("");
         });
       });
+
+      var btnVolume = document.getElementById("btn-ai-volume");
+      if (btnVolume) {
+        syncVolumeBtn();
+        btnVolume.addEventListener("click", function () {
+          var next = !isSoundOn();
+          setSoundOn(next);
+          syncVolumeBtn();
+          if (!next) stopTts();
+        });
+      }
 
       panel.addEventListener("pointerdown", function () { unlockAudio(); }, { once: false });
       if (window.speechSynthesis) {
