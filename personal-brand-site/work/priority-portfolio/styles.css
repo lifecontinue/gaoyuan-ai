@@ -291,6 +291,27 @@ h2 {
   display: block;
   touch-action: none;
 }
+.chart-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font-size: 14px;
+}
+.chart-loading[hidden] { display: none; }
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 .chart-empty {
   position: absolute;
   left: 72px;
@@ -715,6 +736,51 @@ table.data tbody tr:focus-visible { outline: 2px solid var(--ink); outline-offse
   min-height: 0;
 }
 .inspector-body .kv dd { white-space: pre-wrap; }
+.req-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 12px;
+  margin: 0 0 12px;
+  background: var(--surface);
+}
+.req-card button.card-open {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--ink);
+  font-weight: 600;
+}
+.detail-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 31, 58, 0.28);
+  z-index: 50;
+}
+.detail-scrim[hidden] { display: none; }
+.detail-panel {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  bottom: 24px;
+  width: min(440px, calc(100vw - 32px));
+  z-index: 60;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+.detail-panel[hidden] { display: none; }
+.detail-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.detail-head h2 { margin: 0; font-size: 16px; }
+.detail-body { overflow: auto; margin-top: 12px; }
+.boundary-entry { margin: 16px 0 0; }
+.node-square rect { fill: #ffffff; stroke: #0b1f3a; }
 .cluster-meta {
   font-size: 12px;
   color: var(--muted);
@@ -765,9 +831,16 @@ table.data tbody tr:focus-visible { outline: 2px solid var(--ink); outline-offse
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: 12px 16px 14px;
+  padding: 8px 16px 14px;
 }
-.weights h2 { margin: 0; font-size: 14px; }
+.weights summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 6px 0;
+}
+.weights:not([open]) { padding-bottom: 8px; }
 .weight-formula, #weight-formula, #weight-readout {
   margin: 6px 0 0;
   font-size: 12px;

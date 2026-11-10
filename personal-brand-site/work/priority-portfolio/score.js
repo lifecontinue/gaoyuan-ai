@@ -40,7 +40,7 @@
     priorityMin: 4,
     ownershipKey: "current_owner",
     label: "Quick win",
-    rule: "建议阈值：加权成本 ≤ 2 且加权优先级 ≥ 4，并且成本和优先级都不是旧档暂用。归属必须是 current_owner（需求池当前负责人包含高源）。待确认归属和仅 Linear 跟进不算已确认承诺。这是建议，不是已批准排期。"
+    rule: "建议：图上成本 ≤ 2 且优先级 ≥ 4，并且归属是 current_owner（需求池当前负责人包含高源）。待确认归属不列入。这是建议，不是已批准排期。"
   };
 
   var MIN_SCORED = 2;
@@ -309,10 +309,8 @@
   function quickWinOf(item, cost, priority) {
     var reasons = [];
     var numeric = cost.value != null && priority.value != null && cost.value <= QUICK_WIN.costMax && priority.value >= QUICK_WIN.priorityMin;
-    var bothWeighted = cost.mode === "weighted" && priority.mode === "weighted";
     var owned = ownershipConfirmed(item);
     if (!numeric) reasons.push("坐标没有同时满足成本 ≤ " + QUICK_WIN.costMax + " 且优先级 ≥ " + QUICK_WIN.priorityMin);
-    if (!bothWeighted) reasons.push("成本或优先级仍是旧档暂用，分项覆盖不足，不列入 Quick win 建议");
     if (!owned) {
       reasons.push(item.ownershipKey === "ownership_pending"
         ? "归属待确认，不能当成已确认承诺"
@@ -320,8 +318,8 @@
     }
     var legacyNumeric = item.cost != null && item.priority != null && item.cost <= QUICK_WIN.costMax && item.priority >= QUICK_WIN.priorityMin;
     return {
-      eligible: numeric && bothWeighted && owned,
-      legacyNear: legacyNumeric && owned && !(numeric && bothWeighted && owned),
+      eligible: numeric && owned,
+      legacyNear: legacyNumeric && owned && !(numeric && owned),
       owned: owned,
       reasons: reasons
     };
@@ -342,7 +340,7 @@
     var plot = {
       x: cost.value,
       y: priority.value,
-      explain: (cost.mode === "weighted" ? "成本是分项加权" : "成本暂用旧档") + "，" + (priority.mode === "weighted" ? "优先级是分项加权" : "优先级暂用旧档")
+      explain: (cost.mode === "weighted" ? "成本按分项加权" : "成本沿用原评分") + "，" + (priority.mode === "weighted" ? "优先级按分项加权" : "优先级沿用原评分")
     };
     return {
       metrics: metrics,

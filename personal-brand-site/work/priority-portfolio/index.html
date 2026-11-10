@@ -63,9 +63,9 @@
       </label>
     </div>
 
-    <section class="weights" id="weight-panel" aria-label="建议权重">
+    <details class="weights" id="weight-panel">
+      <summary>建议权重</summary>
       <div class="weights-head">
-        <h2>建议权重</h2>
         <p id="weight-formula"></p>
       </div>
       <div class="weight-axes">
@@ -74,6 +74,7 @@
       </div>
       <p id="weight-readout"></p>
       <div class="weight-actions">
+        <button type="button" class="btn btn-primary" id="weight-save">保存并重算</button>
         <button type="button" class="btn" id="weight-reset">重置建议权重</button>
         <button type="button" class="btn" id="override-reset">清除单项修改</button>
         <button type="button" class="btn" id="btn-export-assessment">导出个人评估 JSON</button>
@@ -81,15 +82,15 @@
           <input type="file" id="btn-import-assessment" accept="application/json">
         </label>
       </div>
-      <p class="list-sub">这些是建议权重，不是已确认策略。拖动后立刻重算。导出的 JSON 只供本页和 IDE 对照，不会改飞书或 Linear。</p>
-    </section>
+      <p class="list-sub">这些是建议权重，不是已确认策略。调整后点保存，才会按新权重重算并刷新象限图。导出的 JSON 只留在本机，不会改飞书或 Linear。</p>
+    </details>
 
     <div class="workspace">
       <section class="chart-card" aria-labelledby="chart-title">
         <div class="chart-head">
           <div>
             <h2 id="chart-title">成本 × 优先级</h2>
-            <p class="chart-sub" id="chart-sub">只标四象限。悬停看该位置的需求清单，点击后在右侧看详情。可以缩放和拖拽。</p>
+            <p class="chart-sub" id="chart-sub">只标四象限。同档需求收在方格里。悬停看清单，点一条后在右侧看详情。先放大，再拖动视线。</p>
           </div>
           <div class="zoom-tools">
             <button type="button" class="btn" id="zoom-out" aria-label="缩小">−</button>
@@ -101,6 +102,10 @@
         <div class="chart-frame" id="chart-frame">
           <svg id="chart" role="img" aria-labelledby="chart-title chart-sub"></svg>
           <p class="chart-empty" id="chart-empty">数据集尚未注入。真实需求到位后，气泡会出现在对应的成本与优先级档位上。现在不会用虚构条目填充这张图。</p>
+          <div class="chart-loading" id="chart-loading" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <span>正在按新权重重算</span>
+          </div>
         </div>
         <div class="legend" id="legend"></div>
         <p class="jitter-note" id="jitter-note">无法再拆开的主题仍会重叠。点节点看每个分项的得分、权重和依据；点档位数字打开重叠清单。坐标是 AI 初评，不是工时，也不是已确认的排期。</p>
@@ -171,12 +176,10 @@
             <tr>
               <th><button type="button" class="sort-btn" data-sort="title">需求</button></th>
               <th><button type="button" class="sort-btn" data-sort="product">产品</button></th>
-              <th><button type="button" class="sort-btn" data-sort="status">状态</button></th>
-              <th><button type="button" class="sort-btn" data-sort="ownership">归属</button></th>
               <th class="num"><button type="button" class="sort-btn" data-sort="cost">成本</button></th>
               <th class="num"><button type="button" class="sort-btn" data-sort="priority">优先级</button></th>
               <th class="num"><button type="button" class="sort-btn" data-sort="frequency">频次</button></th>
-              <th>说明</th>
+              <th>标记</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -187,8 +190,6 @@
           <select id="list-sort">
             <option value="title">需求</option>
             <option value="product">产品</option>
-            <option value="status">状态</option>
-            <option value="ownership">归属</option>
             <option value="cost">成本</option>
             <option value="priority">优先级</option>
             <option value="frequency">频次</option>
@@ -210,7 +211,10 @@
       </div>
     </section>
 
-    <section class="list-card audit-wrap" aria-labelledby="audit-title">
+    <p class="boundary-entry"><button type="button" class="btn" id="open-boundary">范围边界</button></p>
+
+    <section class="list-card audit-wrap" id="boundary-page" aria-labelledby="audit-title" hidden>
+      <button type="button" class="btn" id="close-boundary">返回组合</button>
       <h2 id="audit-title">范围边界（不进气泡图）</h2>
       <p class="list-sub">筛选不会把这些清单说成已经看完。数量用于核对，不是可以忽略。</p>
 
@@ -331,6 +335,15 @@
     </section>
 
   </main>
+
+  <div class="detail-scrim" id="detail-scrim" hidden></div>
+  <aside class="detail-panel" id="detail-panel" hidden aria-labelledby="detail-title">
+    <div class="detail-head">
+      <h2 id="detail-title">需求详情</h2>
+      <button type="button" class="icon-close" id="detail-close" aria-label="关闭详情">×</button>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </aside>
 
   <aside class="float" id="float" hidden role="dialog" aria-modal="false" aria-labelledby="float-title">
     <div class="float-head">

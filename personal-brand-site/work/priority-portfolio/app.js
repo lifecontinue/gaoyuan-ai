@@ -34,7 +34,9 @@
     clusterProduct: "",
     clusterLimit: 40,
     weights: null,
-    overrides: {}
+    draftWeights: null,
+    overrides: {},
+    marks: {}
   };
 
   var els = {};
@@ -120,6 +122,7 @@
       if (!raw || typeof raw !== "object") return;
       if (raw.weights) state.weights = Score.cloneWeights(raw.weights);
       if (raw.overrides && typeof raw.overrides === "object") state.overrides = raw.overrides;
+      if (raw.marks && typeof raw.marks === "object") state.marks = raw.marks;
     } catch (e) { /* 本地存储不可用时只用建议权重 */ }
   }
 
@@ -129,7 +132,8 @@
         kind: "priority-portfolio-personal-assessment",
         note: "个人评估，不会写回飞书或 Linear",
         weights: state.weights,
-        overrides: state.overrides
+        overrides: state.overrides,
+        marks: state.marks
       }));
     } catch (e) { /* 忽略配额或隐私模式 */ }
   }
@@ -145,10 +149,11 @@
 
   function coordLabel(it, axis) {
     var a = it.assessment;
-    if (!a) return String(it[axis]);
-    var side = a[axis];
-    if (side.mode === "weighted" && side.value != null) return side.value.toFixed(1);
-    return String(it[axis]) + " 旧档";
+    var value = a && a[axis] && a[axis].value != null ? a[axis].value : it[axis];
+    if (value == null || value === "") return "—";
+    var n = Number(value);
+    if (!isFinite(n)) return String(value);
+    return Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : n.toFixed(1);
   }
 
   function buildWeightControls() {
@@ -170,7 +175,7 @@
         input.max = "100";
         input.step = "1";
         input.dataset.metric = id;
-        input.value = String(Math.round(state.weights[id] * 100));
+        input.value = String(Math.round((state.draftWeights || state.weights)[id] * 100));
         input.setAttribute("aria-label", def.label + " 建议权重");
         var pct = document.createElement("span");
         pct.className = "num";
@@ -180,15 +185,8 @@
           host.parentNode.querySelectorAll("input[type=range]").forEach(function (el) {
             raw[el.dataset.metric] = Number(el.value);
           });
-          state.weights = Score.normalizeWeights(Object.assign({}, state.weights, raw));
+          state.draftWeights = Score.normalizeWeights(Object.assign({}, state.draftWeights || state.weights, raw));
           syncWeightInputs();
-          saveStore();
-          var pinned = state.pinned && state.pinned.type === "item" ? state.pinned.id : "";
-          renderAll();
-          if (pinned) {
-            var item = itemById(pinned);
-            if (item) openItem(item, true, null);
-          }
         });
         row.appendChild(name);
         row.appendChild(input);
@@ -204,7 +202,8 @@
 
   function syncWeightInputs() {
     document.querySelectorAll("#weight-panel input[type=range]").forEach(function (el) {
-      var pct = Math.round(state.weights[el.dataset.metric] * 100);
+      var src = state.draftWeights || state.weights;
+      var pct = Math.round(src[el.dataset.metric] * 100);
       el.value = String(pct);
       var label = el.parentNode && el.parentNode.querySelector(".num");
       if (label) label.textContent = pct + "%";
@@ -213,11 +212,12 @@
   }
 
   function syncWeightReadout() {
-    if (!els.weightReadout || !state.weights) return;
+    var src = state.draftWeights || state.weights;
+    if (!els.weightReadout || !src) return;
     function line(ids) {
       return ids.map(function (id) {
         var def = Score.METRICS.filter(function (m) { return m.id === id; })[0];
-        return def.label + " " + Math.round(state.weights[id] * 100) + "%";
+        return def.label + " " + Math.round(src[id] * 100) + "%";
       }).join(" · ");
     }
     setText(els.weightReadout, "当前建议权重。成本：" + line(Score.COST_IDS) + "。优先级：" + line(Score.PRIORITY_IDS) + "。");
@@ -341,7 +341,7 @@
     if (els.kpiRejected) setText(els.kpiRejected, String(rejected));
     if (els.kpiCoverage) setText(els.kpiCoverage, String(owned));
     if (els.kpiCoverageNote) setText(els.kpiCoverageNote, "缺口 " + missing);
-    setText(els.kpiQuickNote, "须两边都是加权结果，且归属已确认。旧档暂用不算。未入选不等于低价值。");
+    setText(els.kpiQuickNote, "图上成本 ≤ 2 且优先级 ≥ 4，且归属已确认。这是建议，不是已批准排期。");
     if (els.viewQuickwin) els.viewQuickwin.textContent = "Quick win " + sum.quickWinsAll;
     var viewLabel = state.filters.viewMode === "advancing" ? "正在推进、归属明确" : (state.filters.viewMode === "quickwin" ? "仅 Quick win 建议" : "全部可画图");
     setText(els.kpiVisibleNote, "当前图上 " + sum.visible + "（" + viewLabel + "）/ 可画图全集 " + sum.evaluable);
@@ -623,72 +623,85 @@
       grouped[k].push(i);
     });
 
-    var drawOrder = points.map(function (pt, i) { return i; });
-    drawOrder.sort(function (a, b) { return points[a].r - points[b].r; });
-    drawOrder.forEach(function (i) {
-      var pt = points[i];
-      if (!inPlot(layout, { x: pt.px, y: pt.py })) return;
-      var it = pt.item;
-      var gB = svgEl("g", {
-        class: (state.pinned && state.pinned.type === "item" && state.pinned.id === it.id) ? "bubble is-selected" : "bubble",
-        "data-id": it.id,
-        "data-cell": pt.cellKey,
-        tabindex: "0",
-        role: "button",
-        "aria-label": it.title + "，" + it.productLabel + "，成本 " + it.cost + "，优先级 " + it.priority
-      });
-      drawBubbleMark(gB, pt, it);
-      if (state.camera.k >= 2.4 || items.length <= 18) {
-        var label = svgEl("text", {
-          x: pt.px + pt.r + 4,
-          y: pt.py + 4,
-          fill: "#0b1f3a",
-          "font-size": 11,
-          "pointer-events": "none"
-        });
-        var t = it.title;
-        label.textContent = t.length > 14 ? t.slice(0, 13) + "…" : t;
-        gB.appendChild(label);
-      }
-      g.appendChild(gB);
-    });
-
     Object.keys(grouped).forEach(function (key) {
-      var idxs = grouped[key];
-      if (idxs.length < 8) return;
-      var anchor = project(layout, sc, points[idxs[0]].item.cost, points[idxs[0]].item.priority + 0.46);
-      if (!inPlot(layout, anchor)) return;
-      var ids = idxs.map(function (i) { return points[i].item.id; });
-      var badge = svgEl("g", {
-        class: "cell-count",
-        "data-ids": ids.join(","),
+      var members = grouped[key].map(function (i) { return points[i]; }).filter(function (pt) {
+        return inPlot(layout, { x: pt.px, y: pt.py });
+      });
+      if (!members.length) return;
+      if (members.length === 1) {
+        var alone = members[0];
+        var one = svgEl("g", {
+          class: (state.pinned && state.pinned.type === "item" && state.pinned.id === alone.item.id) ? "bubble is-selected" : "bubble",
+          "data-id": alone.item.id,
+          "data-cell": key,
+          tabindex: "0",
+          role: "button",
+          "aria-label": alone.item.title + "，" + alone.item.productLabel + "，成本 " + coordLabel(alone.item, "cost") + "，优先级 " + coordLabel(alone.item, "priority")
+        });
+        drawBubbleMark(one, alone, alone.item);
+        g.appendChild(one);
+        return;
+      }
+      var cx = 0;
+      var cy = 0;
+      members.forEach(function (pt) { cx += pt.px; cy += pt.py; });
+      cx /= members.length;
+      cy /= members.length;
+      var shown = members.slice(0, 25);
+      var cols = Math.ceil(Math.sqrt(shown.length));
+      var gap = 8;
+      var side = Math.max(36, cols * gap + 14);
+      var box = svgEl("g", {
+        class: "node-square",
         "data-cell": key,
+        "data-ids": members.map(function (pt) { return pt.item.id; }).join(","),
         tabindex: "0",
         role: "button",
-        "aria-label": "同一档 " + idxs.length + " 条，打开清单。散开不是更高成本或更高优先级。"
+        "aria-label": "同一位置 " + members.length + " 条"
       });
-      badge.appendChild(svgEl("rect", {
-        x: anchor.x - 16,
-        y: anchor.y - 11,
-        width: 32,
-        height: 16,
-        rx: 3,
+      box.appendChild(svgEl("rect", {
+        x: cx - side / 2,
+        y: cy - side / 2,
+        width: side,
+        height: side,
+        rx: 4,
         fill: "#ffffff",
         stroke: "#0b1f3a",
         "stroke-width": 1
       }));
-      var ct = svgEl("text", {
-        x: anchor.x,
-        y: anchor.y + 1,
+      shown.forEach(function (pt, i) {
+        var col = i % cols;
+        var row = Math.floor(i / cols);
+        var dot = svgEl("g", {
+          class: "bubble",
+          "data-id": pt.item.id,
+          "data-cell": key,
+          tabindex: "0",
+          role: "button",
+          "aria-label": pt.item.title
+        });
+        var hollow = pt.item.frequencyUnknown || pt.item.frequency === null;
+        dot.appendChild(svgEl("circle", {
+          cx: cx - side / 2 + 8 + col * gap,
+          cy: cy - side / 2 + 8 + row * gap,
+          r: 2.6,
+          fill: hollow ? "#ffffff" : pt.item.color,
+          stroke: pt.item.color,
+          "stroke-width": 1
+        }));
+        box.appendChild(dot);
+      });
+      var count = svgEl("text", {
+        x: cx,
+        y: cy + side / 2 - 3,
         "text-anchor": "middle",
         fill: "#0b1f3a",
         "font-size": 10,
-        "font-variant": "tabular-nums",
         "pointer-events": "none"
       });
-      ct.textContent = String(idxs.length);
-      badge.appendChild(ct);
-      g.appendChild(badge);
+      count.textContent = String(members.length);
+      box.appendChild(count);
+      g.appendChild(box);
     });
   }
 
@@ -808,7 +821,7 @@
     var items = visibleItems();
     var d = state.data;
     if (d.awaiting) {
-      emptyRow(table, 8, "等待数据集注入。");
+      emptyRow(table, 6, "等待数据集注入。");
       setText(els.listSub, "可搜索的完整可评估清单。筛选会同时作用于图和本表，不会把未列出的部分说成已经看完。");
       return;
     }
@@ -817,7 +830,7 @@
     var tb = table.tBodies[0];
     clear(tb);
     if (!items.length) {
-      emptyRow(table, 8, d.items.length ? "当前筛选下没有可评估需求。请放宽筛选，或查看下方审计与未评分清单。" : "没有可评估需求。");
+      emptyRow(table, 6, d.items.length ? "当前筛选下没有可评估需求。请放宽筛选，或查看范围边界。" : "没有可评估需求。");
       updateListTools(0, 1);
       return;
     }
@@ -845,8 +858,6 @@
       prod.appendChild(sw);
       prod.appendChild(document.createTextNode(it.productLabel || it.product || "—"));
       ptd.appendChild(prod);
-      td(tr, it.status, "", "状态");
-      td(tr, it.ownership, "", "归属");
       td(tr, coordLabel(it, "cost"), "num", "成本");
       td(tr, coordLabel(it, "priority"), "num", "优先级");
       var ftd = td(tr, "", "", "频次");
@@ -860,18 +871,29 @@
         ftd.classList.add("num");
         ftd.textContent = String(it.frequency);
       }
-      var note = td(tr, "", "", "说明");
+      var note = td(tr, "", "", "标记");
       note.textContent = "";
-      if (it.quickWin) {
-        var w = document.createElement("span");
-        w.className = "pill pill-win";
-        w.textContent = d.meta.quickWin.label || "Quick win";
-        note.appendChild(w);
-      }
-      if (it.mergedFrom && it.mergedFrom.length) {
-        note.appendChild(document.createTextNode((it.quickWin ? " " : "") + "合并 " + it.mergedFrom.length + " 条"));
-      }
-      if (!note.childNodes.length) note.textContent = "—";
+      var mark = document.createElement("select");
+      mark.setAttribute("aria-label", "标记 " + it.title);
+      ["", "建议推进", "再观察", "暂缓", "不做"].forEach(function (name) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name || "未标记";
+        mark.appendChild(opt);
+      });
+      mark.value = state.marks[it.id] || "";
+      mark.addEventListener("click", function (ev) { ev.stopPropagation(); });
+      mark.addEventListener("change", function (ev) {
+        ev.stopPropagation();
+        if (mark.value) state.marks[it.id] = mark.value;
+        else delete state.marks[it.id];
+        saveStore();
+      });
+      note.appendChild(mark);
+      tr.querySelector(".title").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        openDetailPanel(it);
+      });
       frag.appendChild(tr);
     });
     tb.appendChild(frag);
@@ -1248,6 +1270,30 @@
     fillItemInto(els.floatTitle, els.floatMeta, els.floatBody, item, false);
   }
 
+  function openDetailPanel(item) {
+    var panel = $("detail-panel");
+    var scrim = $("detail-scrim");
+    var body = $("detail-body");
+    var title = $("detail-title");
+    if (!panel || !body) return;
+    setText(title, item.title || "需求详情");
+    clear(body);
+    var card = document.createElement("article");
+    card.className = "req-card";
+    body.appendChild(card);
+    fillItemInto(title, els.inspectorMeta || document.createElement("div"), card, item, true);
+    setText(title, item.title || "需求详情");
+    panel.hidden = false;
+    if (scrim) scrim.hidden = false;
+  }
+
+  function closeDetailPanel() {
+    var panel = $("detail-panel");
+    var scrim = $("detail-scrim");
+    if (panel) panel.hidden = true;
+    if (scrim) scrim.hidden = true;
+  }
+
   function fillInspectorItem(item) {
     if (!els.inspectorBody) {
       fillItemFloat(item);
@@ -1257,6 +1303,10 @@
     if (els.inspectorTools) els.inspectorTools.hidden = true;
     setText(els.inspectorSub, "条目详情已固定。坐标仍是 AI 相对初评，不是工时。");
     fillItemInto(els.inspectorTitle, els.inspectorMeta || els.floatMeta, els.inspectorBody, item, true);
+    var card = document.createElement("article");
+    card.className = "req-card";
+    while (els.inspectorBody.firstChild) card.appendChild(els.inspectorBody.firstChild);
+    els.inspectorBody.appendChild(card);
   }
 
   function fillAuditFloat(item) {
@@ -1335,12 +1385,16 @@
       var li = document.createElement("li");
       var btn = document.createElement("button");
       btn.type = "button";
+      btn.className = "card-open";
       btn.textContent = it.title + " · " + (it.productLabel || "") + " · 频次 " + (it.frequencyUnknown ? "未知" : it.frequency);
       btn.addEventListener("click", function () {
         openItem(it, true, null);
         highlightRow(it.id);
       });
-      li.appendChild(btn);
+      var card = document.createElement("article");
+      card.className = "req-card";
+      card.appendChild(btn);
+      li.appendChild(card);
       ul.appendChild(li);
     });
     els.inspectorBody.appendChild(ul);
@@ -1499,7 +1553,8 @@
 
     var dragging = null;
     els.chart.addEventListener("pointerdown", function (ev) {
-      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster"))) return;
+      if (state.camera.k <= 1) return;
+      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".node-square") || ev.target.closest(".cell-count") || ev.target.closest(".cluster"))) return;
       dragging = { x: ev.clientX, y: ev.clientY, cx: state.camera.x, cy: state.camera.y, id: ev.pointerId };
       els.chart.setPointerCapture(ev.pointerId);
     });
@@ -1524,7 +1579,7 @@
     }
     function hoverFromTarget(target, ev) {
       var bubble = target.closest && target.closest(".bubble");
-      var cluster = target.closest && (target.closest(".cell-count") || target.closest(".cluster"));
+      var cluster = target.closest && (target.closest(".node-square") || target.closest(".cell-count") || target.closest(".cluster"));
       var cell = bubble ? bubble.getAttribute("data-cell") : (cluster ? cluster.getAttribute("data-cell") : "");
       var ids = cell ? idsInCell(cell) : [];
       if (!ids.length && cluster) ids = (cluster.getAttribute("data-ids") || "").split(",").filter(Boolean);
@@ -1552,8 +1607,8 @@
       scheduleHide();
     });
     els.chart.addEventListener("click", function (ev) {
-      var cluster = ev.target.closest && (ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
-      if (cluster) {
+      var cluster = ev.target.closest && (ev.target.closest(".node-square") || ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
+      if (cluster && !ev.target.closest(".bubble")) {
         ev.stopPropagation();
         var ids = (cluster.getAttribute("data-ids") || "").split(",").filter(Boolean);
         openCluster(ids, true, ev, cluster.getAttribute("data-cell"));
@@ -1568,7 +1623,7 @@
     });
     els.chart.addEventListener("keydown", function (ev) {
       var bubble = ev.target.closest && ev.target.closest(".bubble");
-      var cluster = ev.target.closest && (ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
+      var cluster = ev.target.closest && (ev.target.closest(".node-square") || ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
       if ((ev.key === "Enter" || ev.key === " ") && (bubble || cluster)) {
         ev.preventDefault();
         if (cluster) {
@@ -1924,12 +1979,25 @@
     els.weightReadout = $("weight-readout");
     state.weights = Score.cloneWeights(Score.DEFAULT_WEIGHTS);
     loadStore();
-    buildWeightControls();
-    if ($("weight-reset")) $("weight-reset").addEventListener("click", function () {
-      state.weights = Score.cloneWeights(Score.DEFAULT_WEIGHTS);
+    state.draftWeights = Score.cloneWeights(state.weights);
+    function applyWeights(next) {
+      state.weights = Score.cloneWeights(next);
+      state.draftWeights = Score.cloneWeights(state.weights);
       syncWeightInputs();
-      saveStore();
-      renderAll();
+      var loading = $("chart-loading");
+      if (loading) loading.hidden = false;
+      setTimeout(function () {
+        saveStore();
+        renderAll();
+        if (loading) loading.hidden = true;
+      }, 480);
+    }
+    buildWeightControls();
+    if ($("weight-save")) $("weight-save").addEventListener("click", function () {
+      applyWeights(state.draftWeights || state.weights);
+    });
+    if ($("weight-reset")) $("weight-reset").addEventListener("click", function () {
+      applyWeights(Score.DEFAULT_WEIGHTS);
     });
     if ($("override-reset")) $("override-reset").addEventListener("click", function () {
       state.overrides = {};
@@ -1942,7 +2010,8 @@
         note: "个人评估，不会写回飞书或 Linear",
         exportedAt: new Date().toISOString(),
         weights: state.weights,
-        overrides: state.overrides
+        overrides: state.overrides,
+        marks: state.marks
       };
       var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
       var a = document.createElement("a");
@@ -1962,6 +2031,8 @@
           var raw = JSON.parse(String(reader.result || ""));
           if (raw.weights) state.weights = Score.cloneWeights(raw.weights);
           if (raw.overrides && typeof raw.overrides === "object") state.overrides = raw.overrides;
+          if (raw.marks && typeof raw.marks === "object") state.marks = raw.marks;
+          state.draftWeights = Score.cloneWeights(state.weights);
           syncWeightInputs();
           saveStore();
           renderAll();
@@ -1969,6 +2040,27 @@
       };
       reader.readAsText(file);
     });
+    if ($("open-boundary")) $("open-boundary").addEventListener("click", function () {
+      var page = $("boundary-page");
+      if (page) page.hidden = false;
+      document.querySelectorAll(".workspace, .weights, .kpis, .caption, .view-switch, .filters, .boundary-entry").forEach(function (el) {
+        el.hidden = true;
+      });
+      var list = document.querySelector(".list-card:not(.audit-wrap)");
+      if (list) list.hidden = true;
+      if (page && page.scrollIntoView) page.scrollIntoView({ block: "start" });
+    });
+    if ($("close-boundary")) $("close-boundary").addEventListener("click", function () {
+      var page = $("boundary-page");
+      if (page) page.hidden = true;
+      document.querySelectorAll(".workspace, .weights, .kpis, .caption, .view-switch, .filters, .boundary-entry").forEach(function (el) {
+        el.hidden = false;
+      });
+      var list = document.querySelector(".list-card:not(.audit-wrap)");
+      if (list) list.hidden = false;
+    });
+    if ($("detail-close")) $("detail-close").addEventListener("click", closeDetailPanel);
+    if ($("detail-scrim")) $("detail-scrim").addEventListener("click", closeDetailPanel);
     bind();
     loadDataset();
   });
