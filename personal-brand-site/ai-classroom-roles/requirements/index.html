@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>【课程学习】课堂伙伴 · 开发需求（编排 + Eval）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F6F7F9; --panel: #FFFFFF; --ink: #1B2330; --ink-2: #4A5565; --ink-3: #7A8494;
+  --line: #DDE2E8; --accent: #0152D9; --accent-soft: #E8F0FD;
+  --ok: #1F8A4C; --warn: #A15C00; --danger: #C9372C;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, monospace;
+}
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.7; }
+a { color: var(--accent); }
+.top { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line); padding: 12px 16px; }
+.top-in { max-width: 1200px; margin: 0 auto; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 16px; }
+.brand small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-3); }
+.meta-bar { font-size: 13px; color: var(--ink-2); }
+.wrap { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 240px minmax(0,1fr); gap: 28px; padding: 24px 16px 80px; }
+nav { position: sticky; top: 72px; align-self: start; max-height: calc(100vh - 90px); overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+.nav-g { font-size: 11px; letter-spacing: .08em; color: var(--ink-3); margin: 12px 0 4px; text-transform: uppercase; }
+.nav-item { display: block; padding: 6px 10px; border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: 13px; }
+.nav-item:hover, .nav-item:focus-visible { background: var(--accent-soft); color: var(--ink); }
+main { min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 28px clamp(16px, 3vw, 36px); margin-bottom: 20px; scroll-margin-top: 80px; }
+h1 { font-size: 26px; line-height: 1.35; margin: 0 0 8px; }
+h2 { font-size: 20px; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+h3 { font-size: 16px; margin: 22px 0 8px; }
+h4 { font-size: 14px; margin: 16px 0 6px; color: var(--ink-2); }
+.lede { color: var(--ink-2); max-width: 70ch; margin: 0 0 16px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 12px 0 8px; }
+.facts > div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.facts .k { font-size: 12px; color: var(--ink-3); }
+.facts .v { font-size: 15px; font-weight: 600; }
+ul, ol { padding-left: 22px; max-width: 78ch; }
+li { margin: 4px 0; }
+p { max-width: 78ch; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+pre { overflow-x: auto; background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 12.5px; line-height: 1.55; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.tbl { overflow-x: auto; margin: 10px 0 16px; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+th { background: var(--bg); color: var(--ink-2); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.tag.p0 { background: #FEE2E2; color: var(--danger); }
+.tag.p1 { background: #FEF3C7; color: var(--warn); }
+.tag.ok { background: #DCFCE7; color: var(--ok); }
+.callout { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; max-width: 78ch; }
+.callout.warn { border-left-color: var(--warn); background: #FFF7E6; }
+.rule { font-family: var(--font-mono); font-size: 12px; }
+.checklist li { list-style: none; margin-left: -8px; }
+.checklist li::before { content: "☐ "; color: var(--ink-3); }
+.foot { font-size: 12px; color: var(--ink-3); margin-top: 24px; }
+.edit-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-left: auto; }
+.edit-bar button { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.edit-bar button:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.edit-bar button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.edit-bar button:disabled { opacity: .45; cursor: not-allowed; }
+.edit-status { font-size: 12px; color: var(--ink-3); min-width: 7em; }
+body.is-editing .edit-status { color: var(--warn); }
+body.is-editing main { outline: 2px dashed var(--accent); outline-offset: 6px; border-radius: 8px; }
+body.is-editing main [contenteditable="true"]:focus { outline: none; }
+body.is-editing .card { box-shadow: inset 0 0 0 1px var(--accent-soft); }
+@media (max-width: 860px) {
+  .wrap { grid-template-columns: 1fr; }
+  nav { position: static; max-height: none; flex-direction: row; flex-wrap: wrap; }
+  .nav-g { width: 100%; }
+  .edit-bar { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">课堂伙伴 · 开发需求<small>面向研发 · 编排规格 + Eval</small></div>
+    <div class="meta-bar">
+      原型 <a href="/ai-classroom-roles/" target="_blank" rel="noopener">/ai-classroom-roles/</a>
+      · 需求 <a href="/ai-classroom-roles/requirements/" target="_blank" rel="noopener">/requirements/</a>
+      · Agent <a href="https://ai-classroom-roles-agent.vercel.app/health" target="_blank" rel="noopener">classroom_roles</a>
+    </div>
+    <div class="edit-bar" role="toolbar" aria-label="文档编辑">
+      <span class="edit-status" id="editStatus">只读</span>
+      <button type="button" id="btnEdit" class="primary">编辑</button>
+      <button type="button" id="btnSave" disabled>保存</button>
+      <button type="button" id="btnExport">导出 HTML</button>
+      <button type="button" id="btnImport" title="导入之前导出的 HTML 正文">导入</button>
+      <button type="button" id="btnReset" title="清除本机草稿，恢复线上原文">恢复默认</button>
+      <input type="file" id="importFile" accept=".html,text/html" hidden>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav aria-label="目录">
+  <div class="nav-g">Overview</div>
+  <a class="nav-item" href="#goal">1. 目标与交付</a>
+  <a class="nav-item" href="#nouns">2. 名词与范围</a>
+  <a class="nav-item" href="#features">3. 功能需求</a>
+  <div class="nav-g">AI</div>
+  <a class="nav-item" href="#orch">4. Agent 编排</a>
+  <a class="nav-item" href="#tools">4.1 工具契约</a>
+  <a class="nav-item" href="#rules">4.2 硬规则 / 兜底</a>
+  <a class="nav-item" href="#prompt">4.3 Prompt / 人设</a>
+  <a class="nav-item" href="#api">4.4 接口</a>
+  <a class="nav-item" href="#eval">5. Eval / 护栏</a>
+  <div class="nav-g">Ship</div>
+  <a class="nav-item" href="#map">6. 功能对照表</a>
+  <a class="nav-item" href="#accept">7. 验收清单</a>
+</nav>
+
+<main>
+
+<!-- 1 -->
+<section class="card" id="goal">
+  <h1>【课程学习】课堂伙伴 · 多智能体旁路问答</h1>
+  <p class="lede">给开发的开工文档：只写<strong>要做什么</strong>和<strong>必须满足的规则</strong>。AI 部分把导演编排、工具契约、确定性兜底和 Eval 写死，避免实现漂。</p>
+  <div class="facts">
+    <div><div class="k">受众</div><div class="v">前端 / 后端 / Agent</div></div>
+    <div><div class="k">架构</div><div class="v">Supervisor + Tool-calling</div></div>
+    <div><div class="k">角色</div><div class="v">讲师 ×1 + 同学 ×N</div></div>
+    <div><div class="k">默认上限</div><div class="v">max_agent_turns = 3（硬顶 6）</div></div>
+  </div>
+  <h3>本轮交付结果</h3>
+  <ol>
+    <li><strong>系统设置 · 课堂伙伴</strong>：启停、选用讲师/同学、编辑头像/名称/人设/音色、人设润色、添加伙伴生成。</li>
+    <li><strong>学习页侧栏 · 课堂伙伴</strong>：学员提问后，静默导演调度多角色可见回答 + TTS，支持停止 / 重生成 / 笔记。</li>
+    <li><strong>服务端编排</strong>：工具面固定三工具；硬规则确定性兜底；回合回退契约可测。</li>
+  </ol>
+  <p class="callout">实验室参考实现：<code>D:\software\langgraph\classroom_roles\</code>。生产可换运行时，但<strong>工具名、硬规则、Eval 用例与对外行为必须对齐</strong>。</p>
+</section>
+
+<!-- 2 -->
+<section class="card" id="nouns">
+  <h2>2. 名词与范围</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>名词</th><th>含义</th><th>产品面</th></tr></thead>
+      <tbody>
+        <tr><td>课堂伙伴</td><td>设置入口名 + 学习页侧栏品牌名</td><td>设置 / 学习页</td></tr>
+        <tr><td>讲师</td><td>唯一主讲角色，首条实质台词必须来自他</td><td>type=<code>teacher</code></td></tr>
+        <tr><td>同学</td><td>追问/补充角色，可 0～N</td><td>type=<code>student</code></td></tr>
+        <tr><td>导演</td><td>静默调度器，不输出可见台词</td><td>Supervisor LLM + 规则引擎</td></tr>
+        <tr><td>一轮 / turn</td><td>学员一次提问到终态（cue/close）</td><td>带 <code>turn_id</code></td></tr>
+        <tr><td>旁路问答</td><td>听课同时提问；结束问答不结束整课</td><td>学习页侧栏</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>配置 ↔ 运行时</h3>
+  <ul>
+    <li>设置页保存的就是对话角色本身：讲师必选 1、同学可多选。无「组班」步骤。</li>
+    <li>关闭「课堂伙伴」后：学习页用系统默认（AI 讲师 + 1 位同学），设置页不展示角色库。</li>
+    <li>服务端收到非法类型（如历史助教）丢弃；多余讲师只留第一位；无讲师则注入默认讲师。</li>
+  </ul>
+</section>
+
+<!-- 3 -->
+<section class="card" id="features">
+  <h2>3. 功能需求（要做什么）</h2>
+
+  <h3>D01 启停与默认</h3>
+  <ul>
+    <li>管理员可启用/关闭课堂伙伴。</li>
+    <li>关闭：隐藏角色库；学习页问答用默认角色（AI 讲师 + 1 同学）。</li>
+    <li>开启：保存勾选角色及其人设/音色；学习页直接读取。</li>
+  </ul>
+
+  <h3>D02 角色资料</h3>
+  <ul>
+    <li>类型仅讲师 / 同学。讲师必选且不可取消；同学可多选（可为 0）。</li>
+    <li>每位可维护：头像、名称、人设、音色。</li>
+    <li>讲师人设同样可编辑（与同学一致入口）。</li>
+  </ul>
+
+  <h3>D03 人设润色</h3>
+  <ul>
+    <li>人设框内润色入口（通用图标）；无内容不可点；润色中动画；可再次润色。</li>
+    <li>失败：回落系统默认人设 + 可重试提示（文案不含外部竞品名）。</li>
+    <li>输出结构必须含五节：Personality / Environment / Goal / Guardrails / Tone。</li>
+  </ul>
+
+  <h3>D03b 添加伙伴（同学生成）</h3>
+  <ul>
+    <li>设置页「添加伙伴」走生成流程：一次产出 name / voice / avatar 档 / prompt。</li>
+    <li><code>type</code> 固定 <code>student</code>；音色必须落在白名单；名称避开已有角色。</li>
+    <li>接口：<code>POST /role/companion</code>（可回落 <code>/prompt/generate</code> + 本地规则）。</li>
+  </ul>
+
+  <h3>D04–D06 导演调度（详见 §4）</h3>
+  <ul>
+    <li>导演仅工具决策，无可见气泡。</li>
+    <li>工具：<code>call_agent</code> / <code>cue_user</code> / <code>close_session</code>。</li>
+    <li>硬规则 + 确定性兜底；终态互斥。</li>
+  </ul>
+
+  <h3>D07 学习页对话 UI</h3>
+  <ul>
+    <li>顶栏：品牌「课堂伙伴」+ 角色头像条（讲师首位）+ 新建 / 关闭。</li>
+    <li>空会话：参与角色说明 + 推荐问题（点击即发）。</li>
+    <li>等待：讲师「正在思考」占位；发送键变「停止」。</li>
+    <li>气泡：头像 + 名 + 讲师/同学标签；同学气泡浅灰区分。</li>
+    <li>close 后分隔：「本次问答已结束 · 可继续听课，或直接提新问题」（不暴露 end_reason 代码）。</li>
+    <li>停止分隔：「已停止本次回答」。</li>
+    <li>笔记：空态 / 撰写 / 列表 / 详情（与原型四态一致）。</li>
+    <li>无障碍：读屏播报区；可见焦点；「减少动态效果」时关闭说话/思考动画。</li>
+  </ul>
+
+  <h3>D07b 打断与回退</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>操作</th><th>回答中</th><th>回答后</th><th>服务端上下文</th></tr></thead>
+      <tbody>
+        <tr><td>历史「播放」</td><td>置灰，不打断</td><td>可切播 / 停当前</td><td>不变</td></tr>
+        <tr><td>重新生成</td><td>隐藏</td><td>仅最后一轮最后卡片；整轮替换</td><td>整轮撤回后重答</td></tr>
+        <tr><td>停止 · 思考中</td><td>取消请求 + 分隔</td><td>—</td><td>问题 +「学员中途停止」，无角色台词</td></tr>
+        <tr><td>停止 · 出字/播报</td><td>保留已显文字，停语音，后续角色不出场</td><td>—</td><td>只保留已展示文字 + 停止注记</td></tr>
+        <tr><td>关面板 / 新建</td><td>等同停止；旧回合迟到数据丢弃</td><td>新建清空</td><td>同停止 / 新会话</td></tr>
+        <tr><td>错误「重试」</td><td>—</td><td>整轮重答，不重复插用户问题</td><td>先撤回失败轮</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>原则：同一时刻一个回答、一个声音；只有明确中断操作才停；没展示的台词不进上下文；过期 <code>turn_id</code> 数据丢弃。</p>
+
+  <h3>D08 文音</h3>
+  <ul>
+    <li>出字同时预取 TTS；字流与音频都就绪后播放。</li>
+    <li>不展示「正在合成」状态条。</li>
+    <li>失败：台词仍完整；语音图标变黄可点重试；可回落浏览器语音。</li>
+  </ul>
+
+  <h3>D09 观测</h3>
+  <ul>
+    <li>生产默认不回传 <code>director_trace</code>；调试可开。</li>
+    <li>须能支撑 §5 Eval 抽检。</li>
+  </ul>
+
+  <h3>异常文案（产品定稿）</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>情况</th><th>表现</th><th>文案</th></tr></thead>
+      <tbody>
+        <tr><td>回答失败 / 空 / 30s 超时</td><td>黄错误卡 + 重试</td><td>回答时间有点长，请稍后重试。</td></tr>
+        <tr><td>断网</td><td>错误卡 + 输入上方提示条</td><td>网络连接已断开…</td></tr>
+        <tr><td>&gt;10s 未返回</td><td>思考占位改慢提示，不报错</td><td>正在整理回答，请稍候</td></tr>
+        <tr><td>语音失败</td><td>图标 #FAAD14，可点重试</td><td>语音暂时无法播放，点击重试</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="card" id="orch">
+  <h2>4. Agent 编排规格</h2>
+  <p>架构：<strong>Supervisor（导演）+ Tool-calling Subagents（角色）</strong>。不做 Swarm、不做角色互 handoff、不做并行多角色抢话。</p>
+
+  <h3>运行时循环</h3>
+<pre><code>学员提问
+  → 可选 close 短路（「我知道了/再见/回到课程」且非问句）
+  → 导演 LLM 选工具（tool_choice=any，禁止可见散文）
+  → 每条工具提议先过确定性规则再执行
+  → call_agent → 子角色 LLM 出可见台词（+ 并行 TTS）
+  → 直至 cue_user | close_session | 达上限 fallback cue
+  → 前端按序出字播报</code></pre>
+
+  <h3>状态机（前端可观察）</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>状态</th><th>进入</th><th>离开</th><th>UI</th></tr></thead>
+      <tbody>
+        <tr><td>idle</td><td>初始 / 终态后</td><td>发送</td><td>可输入、可点推荐</td></tr>
+        <tr><td>thinking</td><td>请求发出</td><td>首条台词 / 错误 / 停止</td><td>讲师思考占位；发送→停止</td></tr>
+        <tr><td>streaming</td><td>有台词</td><td>播报完 / 停止 / 错误</td><td>出字+语音；历史播放/重生置灰</td></tr>
+        <tr><td>terminal_cue</td><td>cue_user</td><td>新提问</td><td>可继续问</td></tr>
+        <tr><td>terminal_close</td><td>close_session</td><td>新提问</td><td>结束分隔；主课不停</td></tr>
+        <tr><td>error</td><td>失败/超时</td><td>重试/新问</td><td>黄错误卡</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card" id="tools">
+  <h2>4.1 工具契约</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>工具</th><th>参数</th><th>语义</th><th>约束</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>call_agent</code></td>
+          <td><code>agent_id</code>, <code>instruction</code></td>
+          <td>指定名单内角色说一句可见台词</td>
+          <td>计入 turn 预算；instruction 短任务一句</td>
+        </tr>
+        <tr>
+          <td><code>cue_user</code></td>
+          <td><code>prompt?</code></td>
+          <td>交回学员继续问</td>
+          <td>与 close 互斥；讲师须已实质答过（规则兜底）</td>
+        </tr>
+        <tr>
+          <td><code>close_session</code></td>
+          <td><code>end_reason</code></td>
+          <td>结束本旁路问答（不关整课）</td>
+          <td>白名单：<code>user_done</code> | <code>user_goodbye</code> | <code>back_to_lesson</code>；close 前须有可见台词</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="callout warn">导演不得输出学员可见文本。若模型生成散文，丢弃内容，只认 tool_calls。</p>
+</section>
+
+<section class="card" id="rules">
+  <h2>4.2 硬规则与确定性兜底</h2>
+  <p>导演 LLM 只「提议」；执行前必须过规则。规则失败记入 <code>director_trace</code>（调试）/ <code>errors</code>，不把非法发言给学员。</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>规则</th><th>兜底</th></tr></thead>
+      <tbody>
+        <tr><td>R1</td><td>角色归一：仅 1 teacher + students</td><td>丢弃其他 type；多讲师只留第一；无讲师注入默认</td></tr>
+        <tr><td>R2</td><td>首条实质台词必须是讲师</td><td>同学首 call → 改派讲师</td></tr>
+        <tr><td>R3</td><td>同学禁止连说</td><td>换未发言同学或跳过；讲师可续讲</td></tr>
+        <tr><td>R4</td><td>只能 call 名单内 id</td><td>未知 id 跳过并记 error</td></tr>
+        <tr><td>R5</td><td><code>call_agent</code> ≤ N（默认 3，硬顶 6）</td><td>超限丢弃后续 call</td></tr>
+        <tr><td>R6</td><td>同学发言后须留名额给讲师回应</td><td>已无余量则 skip_student</td></tr>
+        <tr><td>R7</td><td>不得以同学收尾</td><td>终态前强制讲师回应追问（必要时 over_budget +1）</td></tr>
+        <tr><td>R8</td><td>仅最后一条讲师台词可向学员提问</td><td>中途讲师台词剥末尾问句；指令注入 mid/final 标记</td></tr>
+        <tr><td>R9</td><td>cue / close 互斥</td><td>同批只取第一个终态工具</td></tr>
+        <tr><td>R10</td><td>裸 close / 裸 cue / 无工具</td><td>先补讲师可见台词再终态；无工具 → 讲师直答 + cue</td></tr>
+        <tr><td>R11</td><td>close 短路</td><td>短句「我知道了/明白了/再见/回到课程」且无 ?/吗/呢、无否定 → 跳过导演，讲师收束 + close</td></tr>
+        <tr><td>R12</td><td>auto-terminate</td><td>同批已 call 但忘终态 → 直接 cue，省第二轮导演</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h4>Close 短路样例</h4>
+  <ul>
+    <li>命中 close：我知道了 / 明白了，谢谢 / 好的再见 / 回到课程吧</li>
+    <li>不命中（交导演）：这样写可以了吗 / 可以了？ / 懂了吗 / 我还是不明白</li>
+  </ul>
+</section>
+
+<section class="card" id="prompt">
+  <h2>4.3 Prompt / 人设 / 生成</h2>
+  <h3>导演 system（要点）</h3>
+  <ul>
+    <li>只通过工具决策；不写可见台词。</li>
+    <li>讲师首答；同学只追问/补充；同同学不连说。</li>
+    <li>优先 1～2 个 agent；同批打出 call + 终态，避免第二轮导演。</li>
+    <li>同学追问后必须再 call 讲师再终态。</li>
+  </ul>
+  <h3>子角色</h3>
+  <ul>
+    <li>system = 归一后人设（≤1600 字）+「只输出本角色台词」约束。</li>
+    <li>user = 学员问题 + 短 instruction + 同伴摘要（预览截断，禁止灌全量历史）。</li>
+    <li>讲师：中途指令带「不要向学员提问」；最后一句才允许一句反问。</li>
+    <li>长度：讲师 ≤4 句；同学 1～2 句；中文口语。</li>
+  </ul>
+  <h3>人设五节（润色 / 生成强制）</h3>
+<pre><code># Personality
+# Environment
+# Goal
+# Guardrails
+# Tone</code></pre>
+  <h3>音色白名单</h3>
+  <p><code>沉稳男声 | 低沉男声 | 活泼男声 | 亲和女声 | 清亮女声 | 平稳女声</code></p>
+  <h3>添加伙伴输出字段</h3>
+<pre><code>{
+  "type": "student",
+  "typeLabel": "同学",
+  "name": "…",          // ≤12，不与 exclude_names 冲突
+  "voice": "亲和女声",   // 必须白名单
+  "color": "#…",
+  "avatar_key": "curious|clown|noter|thinker",
+  "avatar": "奇|显|记|思",
+  "prompt": "# Personality\n…",
+  "seed": "…"
+}</code></pre>
+</section>
+
+<section class="card" id="api">
+  <h2>4.4 接口契约（实验室已实现，生产对齐行为）</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>方法</th><th>路径</th><th>用途</th><th>关键字段</th></tr></thead>
+      <tbody>
+        <tr><td>POST</td><td><code>/session/new</code></td><td>开会话</td><td>agents?, max_agent_turns? → thread_id</td></tr>
+        <tr><td>POST</td><td><code>/chat</code></td><td>一轮问答</td><td>thread_id, message, agents?, turn_id, max_agent_turns, include_trace?</td></tr>
+        <tr><td>POST</td><td><code>/turn/rollback</code></td><td>停止/重生/重试</td><td>thread_id, turn_id, shown=null|[]|[{agent_id,name,text}]</td></tr>
+        <tr><td>POST</td><td><code>/tts</code></td><td>合成</td><td>text, voice, role_type → audio_base64</td></tr>
+        <tr><td>POST</td><td><code>/prompt/generate</code></td><td>人设润色/生成</td><td>name, role_type, seed, course_hint</td></tr>
+        <tr><td>POST</td><td><code>/prompt/normalize</code></td><td>结构归一</td><td>prompt, role_type, name</td></tr>
+        <tr><td>POST</td><td><code>/role/companion</code></td><td>添加伙伴</td><td>course_hint, exclude_names[] → role</td></tr>
+        <tr><td>GET</td><td><code>/health</code></td><td>探活</td><td>tts / checkpoint 状态</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h4>/turn/rollback</h4>
+  <ul>
+    <li><code>shown=null</code>：整轮撤回（重新生成 / 重试）。</li>
+    <li><code>shown=[]</code>：思考中停止 → 只留问题 + 停止注记。</li>
+    <li><code>shown=[…]</code>：只保留已展示文字。</li>
+    <li>仅允许回退<strong>最后一轮</strong>，否则 <strong>409</strong>。</li>
+    <li>导演仍在跑：登记 deferred，跑完立即回退，返回 <code>deferred: true</code>。</li>
+    <li>同 thread 多轮请求排队，保证停止回退先于下一问读历史。</li>
+  </ul>
+  <h4>/chat 响应（生产默认）</h4>
+<pre><code>{
+  "ok": true,
+  "thread_id": "…",
+  "replies": [{ "agent_id", "name", "type", "text" }],
+  "terminal": "cue_user" | "close_session",
+  "end_reason": "user_done" | null
+  // director_trace 仅 include_trace=true
+}</code></pre>
+</section>
+
+<!-- 5 -->
+<section class="card" id="eval">
+  <h2>5. Eval / 护栏（防偏差）</h2>
+  <p>目标：规则漂移、模型偷懒/抢话、人设结构残缺在 CI 或提测前被拦住。实验室真源：<code>classroom_roles/tests/test_director_rules.py</code>。</p>
+
+  <h3>5.1 确定性单测（必须全绿，无网络）</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>用例 id</th><th>脚本化导演输入</th><th>期望</th></tr></thead>
+      <tbody>
+        <tr><td>E-first-teacher</td><td>先 call 同学</td><td>speakers 首 = teacher；trace reroute</td></tr>
+        <tr><td>E-drop-assistant</td><td>名单含 assistant</td><td>助教不发言；error unknown 或 dropped_role</td></tr>
+        <tr><td>E-one-teacher</td><td>两名讲师</td><td>只保留第一位可被 call</td></tr>
+        <tr><td>E-inject-teacher</td><td>仅同学名单</td><td>注入默认讲师且其首答</td></tr>
+        <tr><td>E-student-dedupe</td><td>同同学连 call</td><td>不连续同 id；或换人</td></tr>
+        <tr><td>E-student-then-teacher</td><td>teacher→student→cue</td><td>实际 speakers 以 teacher 收尾</td></tr>
+        <tr><td>E-budget</td><td>call 数 &gt; N</td><td>replies.length ≤ N（R7 例外可 +1 须有 trace）</td></tr>
+        <tr><td>E-mid-no-ask</td><td>多讲师句</td><td>非末句无学员问句；末句才可问</td></tr>
+        <tr><td>E-cue-close-mutex</td><td>同批 cue+close</td><td>仅一个终态</td></tr>
+        <tr><td>E-bare-close</td><td>仅 close</td><td>先有讲师可见台词再 close</td></tr>
+        <tr><td>E-close-shortcut</td><td>message=我知道了</td><td>导演 0 次调用；close；有收束台词</td></tr>
+        <tr><td>E-no-false-close</td><td>这样写可以了吗</td><td>不走短路；进导演</td></tr>
+        <tr><td>E-rollback-full</td><td>shown=null</td><td>历史回到该轮前</td></tr>
+        <tr><td>E-rollback-partial</td><td>shown 半句</td><td>上下文仅半句 + 停止注记</td></tr>
+        <tr><td>E-rollback-409</td><td>回退非最后一轮</td><td>HTTP 409</td></tr>
+        <tr><td>E-rollback-deferred</td><td>导演运行中 stop</td><td>deferred=true，结束后上下文正确</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>5.2 在线抽查（有模型，提测必跑 ≥3 题）</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>题</th><th>期望发言序（类型）</th><th>额外断言</th></tr></thead>
+      <tbody>
+        <tr><td>什么是点检？</td><td>teacher → (student?) → teacher? 或 teacher 单答</td><td>首=讲师；若有同学则不以同学收尾；仅末句可问学员</td></tr>
+        <tr><td>指标为锚怎么落到班组？</td><td>同上</td><td>call_agent 次数 ≤ 配置 N</td></tr>
+        <tr><td>我知道了</td><td>teacher 短收束</td><td>terminal=close_session；导演可 0 调</td></tr>
+        <tr><td>这样写可以了吗</td><td>teacher 主导</td><td>不误 close</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>通过标准：首答讲师 ≥90% 抽检；单轮平均 call ≤2.5（上限 3）；无导演可见气泡；无双终态。</p>
+
+  <h3>5.3 人设 / 伙伴生成 Eval</h3>
+  <ul class="checklist">
+    <li>输出含且仅按序出现五节标题（允许 Environment 存在）。</li>
+    <li><code>/role/companion</code> 的 type 永远是 student。</li>
+    <li>voice ∈ 白名单；name 不在 exclude_names；name 长度 ≤12。</li>
+    <li>seed/name/prompt 命中违规词表 → 拒绝或回落规则草稿（不把脏内容写入角色库）。</li>
+    <li>LLM 失败时规则回落仍返回可用 role（meta.draft_source=rules）。</li>
+  </ul>
+
+  <h3>5.4 产品行为回归（对照原型）</h3>
+  <ul class="checklist">
+    <li>回答中点历史播放不打断、无分隔线。</li>
+    <li>停止后服务端只收到已显示半句（抓 /turn/rollback shown）。</li>
+    <li>重新生成：先 rollback null 再 chat；用户问题不重复插入。</li>
+    <li>思考中停止：deferred 或等价；草稿保留。</li>
+  </ul>
+</section>
+
+<!-- 6 -->
+<section class="card" id="map">
+  <h2>6. 功能对照表</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>功能</th><th>需求</th><th>类型</th><th>优先级</th></tr></thead>
+      <tbody>
+        <tr><td>F01</td><td>启停课堂伙伴；关→默认角色</td><td>D01</td><td>后台</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F02</td><td>讲师必选 1；同学多选</td><td>D02</td><td>后台</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F03</td><td>头像/名称/人设/音色编辑保存</td><td>D02</td><td>后台</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F04</td><td>人设润色</td><td>D03</td><td>后台</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td>F04b</td><td>添加伙伴生成</td><td>D03b</td><td>后台+服务</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td>F05</td><td>提问触发导演；导演无气泡</td><td>D04</td><td>学员+服务</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F06</td><td>call_agent 台词按序展示</td><td>D04/D05/D07</td><td>学员+服务</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F07</td><td>选角硬规则兜底</td><td>D05</td><td>服务</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F08</td><td>cue/close 终态与 fallback</td><td>D06</td><td>服务</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>F09</td><td>顶栏头像条 + 标签</td><td>D07</td><td>学员</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td>F13</td><td>推荐问题 / 思考 / 停止 / 分隔 / a11y</td><td>D07</td><td>学员</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td>F14</td><td>打断与 turn rollback</td><td>D07b</td><td>学员+服务</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td>F10</td><td>TTS 并行，无合成条</td><td>D08</td><td>学员+服务</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td>F11</td><td>trace 调试开关</td><td>D09</td><td>服务</td><td><span class="tag">P2</span></td></tr>
+        <tr><td>F12</td><td>Eval 套件自动化</td><td>§5</td><td>工程</td><td><span class="tag">P2</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="card" id="accept">
+  <h2>7. 验收清单（可测）</h2>
+  <h3>编排 P0</h3>
+  <ul class="checklist">
+    <li>任意实质问题，首条可见台词 type=teacher。</li>
+    <li>请求带助教/第二讲师时，这些角色不发言。</li>
+    <li>无「导演」可见气泡。</li>
+    <li>max_agent_turns=3 时 call 次数 ≤3（R7 合法 +1 须可审计）。</li>
+    <li>终态仅为 cue 或 close 之一。</li>
+    <li>裸 close 会先产出可见收束台词。</li>
+    <li>「我知道了/明白了」→ close；课程主路径未结束。</li>
+    <li>cue 后同一旁路会话可继续提问。</li>
+  </ul>
+  <h3>配置 / UI P0–P1</h3>
+  <ul class="checklist">
+    <li>开关关闭：角色库不可见；学习页走默认角色。</li>
+    <li>无法取消唯一讲师勾选。</li>
+    <li>角色类型文案只有讲师/同学。</li>
+    <li>侧栏品牌与设置入口均为「课堂伙伴」。</li>
+    <li>回答中发送键为停止；停止插入正确分隔。</li>
+    <li>close 分隔不暴露 end_reason 代码。</li>
+    <li>出字过程无「正在合成语音」条。</li>
+  </ul>
+  <h3>打断 P1</h3>
+  <ul class="checklist">
+    <li>回答中历史播放置灰且不打断。</li>
+    <li>重新生成仅最后一轮；替换原答；服务端无旧答。</li>
+    <li>思考中/出字中停止的上下文符合 §3 D07b。</li>
+    <li>回答中回车不发送；停止后草稿仍在。</li>
+    <li>非最后一轮 rollback → 409。</li>
+  </ul>
+  <h3>Eval</h3>
+  <ul class="checklist">
+    <li>§5.1 单测全绿。</li>
+    <li>§5.2 至少 3 道在线题记录发言序与终态。</li>
+    <li>§5.3 伙伴生成抽检结构/白名单/type=student。</li>
+  </ul>
+
+  <p class="foot">
+    文档版本 2026-11-10 · 路径 <a href="https://www.gaoyuan-ai.xyz/ai-classroom-roles/requirements/">https://www.gaoyuan-ai.xyz/ai-classroom-roles/requirements/</a> ·
+    原型 <a href="https://www.gaoyuan-ai.xyz/ai-classroom-roles/">https://www.gaoyuan-ai.xyz/ai-classroom-roles/</a> ·
+    源 PRD <code>30-prd/ai-classroom-roles/prd-ai-classroom-roles-orchestration-2026-09-24.md</code>
+  </p>
+</section>
+
+</main>
+</div>
+<script>
+(function () {
+  const STORAGE_KEY = "gaoyuan-ai.classroom-roles.dev-spec.v1";
+  const main = document.querySelector("main");
+  const statusEl = document.getElementById("editStatus");
+  const btnEdit = document.getElementById("btnEdit");
+  const btnSave = document.getElementById("btnSave");
+  const btnExport = document.getElementById("btnExport");
+  const btnImport = document.getElementById("btnImport");
+  const btnReset = document.getElementById("btnReset");
+  const importFile = document.getElementById("importFile");
+  let editing = false;
+  let dirty = false;
+  let shippedHtml = main.innerHTML;
+
+  function fmtTime(ts) {
+    try {
+      return new Date(ts).toLocaleString("zh-CN", { hour12: false });
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function setStatus(text) {
+    statusEl.textContent = text;
+  }
+
+  function loadDraft() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function persist() {
+    const payload = {
+      savedAt: Date.now(),
+      html: main.innerHTML,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    dirty = false;
+    btnSave.disabled = true;
+    setStatus("已存 " + fmtTime(payload.savedAt));
+  }
+
+  function applyHtml(html) {
+    main.innerHTML = html;
+    if (editing) main.setAttribute("contenteditable", "true");
+  }
+
+  function enterEdit() {
+    editing = true;
+    document.body.classList.add("is-editing");
+    main.setAttribute("contenteditable", "true");
+    main.focus({ preventScroll: true });
+    btnEdit.textContent = "完成编辑";
+    btnEdit.classList.remove("primary");
+    btnSave.disabled = !dirty;
+    setStatus(dirty ? "未保存" : "编辑中");
+  }
+
+  function exitEdit(shouldSave) {
+    if (shouldSave && dirty) persist();
+    editing = false;
+    document.body.classList.remove("is-editing");
+    main.removeAttribute("contenteditable");
+    btnEdit.textContent = "编辑";
+    btnEdit.classList.add("primary");
+    const draft = loadDraft();
+    setStatus(draft ? "草稿 " + fmtTime(draft.savedAt) : "只读");
+  }
+
+  btnEdit.addEventListener("click", function () {
+    if (editing) exitEdit(true);
+    else enterEdit();
+  });
+
+  btnSave.addEventListener("click", function () {
+    persist();
+    if (editing) setStatus("已存 · 编辑中");
+  });
+
+  main.addEventListener("input", function () {
+    if (!editing) return;
+    dirty = true;
+    btnSave.disabled = false;
+    setStatus("未保存");
+  });
+
+  document.addEventListener("keydown", function (e) {
+    const meta = e.metaKey || e.ctrlKey;
+    if (meta && e.key.toLowerCase() === "s") {
+      e.preventDefault();
+      if (editing || dirty) persist();
+    }
+    if (meta && e.key.toLowerCase() === "e" && !e.shiftKey) {
+      e.preventDefault();
+      btnEdit.click();
+    }
+  });
+
+  btnExport.addEventListener("click", function () {
+    const clone = document.documentElement.cloneNode(true);
+    const bar = clone.querySelector(".edit-bar");
+    if (bar) bar.remove();
+    const scripts = clone.querySelectorAll("script");
+    scripts.forEach(function (s) { s.remove(); });
+    const bodyMain = clone.querySelector("main");
+    if (bodyMain) bodyMain.removeAttribute("contenteditable");
+    clone.querySelector("body").classList.remove("is-editing");
+    const html = "<!doctype html>\n" + clone.outerHTML;
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "ai-classroom-roles-dev-spec.html";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setStatus("已导出");
+  });
+
+  btnImport.addEventListener("click", function () {
+    importFile.click();
+  });
+
+  importFile.addEventListener("change", function () {
+    const file = importFile.files && importFile.files[0];
+    importFile.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function () {
+      const text = String(reader.result || "");
+      const doc = new DOMParser().parseFromString(text, "text/html");
+      const importedMain = doc.querySelector("main");
+      if (!importedMain) {
+        alert("导入失败：文件里没有 <main> 正文");
+        return;
+      }
+      applyHtml(importedMain.innerHTML);
+      dirty = true;
+      persist();
+      if (!editing) setStatus("已导入 " + fmtTime(Date.now()));
+      else setStatus("已导入 · 编辑中");
+    };
+    reader.readAsText(file, "utf-8");
+  });
+
+  btnReset.addEventListener("click", function () {
+    if (!confirm("清除本机草稿，恢复为当前页面原文？")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    applyHtml(shippedHtml);
+    dirty = false;
+    btnSave.disabled = true;
+    setStatus(editing ? "编辑中 · 已恢复" : "只读");
+  });
+
+  const draft = loadDraft();
+  if (draft && draft.html) {
+    applyHtml(draft.html);
+    setStatus("草稿 " + fmtTime(draft.savedAt));
+  } else {
+    setStatus("只读");
+  }
+})();
+</script>
+</body>
+</html>
