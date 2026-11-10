@@ -27,6 +27,10 @@
     expandedCell: null,
     visiblePlots: [],
     listLimit: 40,
+    listPage: 1,
+    listPageSize: 20,
+    listSortKey: "title",
+    listSortDir: "asc",
     clusterProduct: "",
     clusterLimit: 40,
     weights: null,
@@ -405,7 +409,7 @@
     state.filters.viewMode = mode;
     state.filters.quickWinOnly = mode === "quickwin";
     state.expandedCell = null;
-    state.listLimit = 40;
+    state.listPage = 1;
     state.clusterLimit = 40;
     setViewButtons();
     renderInteractive();
@@ -420,7 +424,7 @@
     return {
       w: w,
       h: h,
-      pad: { l: 52, r: 20, t: 28, b: 46 }
+      pad: { l: 20, r: 20, t: 28, b: 36 }
     };
   }
 
@@ -477,28 +481,6 @@
     defs.appendChild(clip);
     svg.appendChild(defs);
 
-    /* axes labels stay outside the zoomed clip */
-    var xlab = svgEl("text", {
-      x: layout.pad.l + (layout.w - layout.pad.l - layout.pad.r) / 2,
-      y: layout.h - 8,
-      "text-anchor": "middle",
-      fill: "#5c5a56",
-      "font-size": 12
-    });
-    xlab.textContent = sc.cost.label + "（" + sc.cost.min + "–" + sc.cost.max + "，" + sc.cost.unit + "）";
-    svg.appendChild(xlab);
-
-    var ylab = svgEl("text", {
-      x: 16,
-      y: layout.pad.t + (layout.h - layout.pad.t - layout.pad.b) / 2,
-      "text-anchor": "middle",
-      fill: "#5c5a56",
-      "font-size": 12,
-      transform: "rotate(-90 16 " + (layout.pad.t + (layout.h - layout.pad.t - layout.pad.b) / 2) + ")"
-    });
-    ylab.textContent = sc.priority.label + "（" + sc.priority.min + "–" + sc.priority.max + "，" + sc.priority.unit + "）";
-    svg.appendChild(ylab);
-
     var g = svgEl("g", { "clip-path": "url(#plot-clip)" });
     svg.appendChild(g);
 
@@ -518,17 +500,6 @@
     g.appendChild(plotRect(3, 3, sc.xMax, sc.yMax, "#f6f3ec"));
     g.appendChild(plotRect(sc.xMin, sc.yMin, 3, 3, "#f4f5f7"));
     g.appendChild(plotRect(3, sc.yMin, sc.xMax, 3, "#f8f1f1"));
-
-    var qwRule = Score ? Score.QUICK_WIN : sc.qw;
-    var qw0 = project(layout, sc, sc.xMin, qwRule.priorityMin);
-    var qw1 = project(layout, sc, qwRule.costMax, sc.yMax);
-    g.appendChild(svgEl("rect", {
-      x: Math.min(qw0.x, qw1.x),
-      y: Math.min(qw0.y, qw1.y),
-      width: Math.abs(qw1.x - qw0.x),
-      height: Math.abs(qw1.y - qw0.y),
-      fill: "#d5ebdf"
-    }));
 
     function cornerLabel(x, y, text, fill, anchor) {
       var p = project(layout, sc, x, y);
@@ -550,26 +521,6 @@
     cornerLabel(sc.xMin + 0.12, sc.yMin + 0.28, "有余力再做", "#5c6570", "start");
     cornerLabel(sc.xMax - 0.12, sc.yMin + 0.28, "暂缓", "#7a4a4a", "end");
 
-    /* grid + ticks */
-    var ticks = [];
-    for (var t = sc.cost.min; t <= sc.cost.max + 0.001; t += 1) ticks.push(t);
-    ticks.forEach(function (tick) {
-      var p0 = project(layout, sc, tick, sc.yMin);
-      var p1 = project(layout, sc, tick, sc.yMax);
-      g.appendChild(svgEl("line", {
-        x1: p0.x, y1: p0.y, x2: p1.x, y2: p1.y,
-        stroke: "#e5e5e5", "stroke-width": 1
-      }));
-    });
-    ticks.forEach(function (tick) {
-      var p0 = project(layout, sc, sc.xMin, tick);
-      var p1 = project(layout, sc, sc.xMax, tick);
-      g.appendChild(svgEl("line", {
-        x1: p0.x, y1: p0.y, x2: p1.x, y2: p1.y,
-        stroke: "#e5e5e5", "stroke-width": 1
-      }));
-    });
-
     var splitX = project(layout, sc, 3, sc.yMin);
     var splitX2 = project(layout, sc, 3, sc.yMax);
     var splitY = project(layout, sc, sc.xMin, 3);
@@ -582,51 +533,6 @@
       x1: splitY.x, y1: splitY.y, x2: splitY2.x, y2: splitY2.y,
       stroke: "#0b1f3a", "stroke-width": 1.25, "stroke-opacity": 0.55
     }));
-
-    /* baseline (bottom and left of data domain, heavier) */
-    var b0 = project(layout, sc, sc.xMin, sc.cost.min ? sc.priority.min : sc.yMin);
-    /* left + bottom of the 0.5 padding frame in unzoomed space, but draw domain  min edges */
-    var axisOrigin = project(layout, sc, sc.cost.min, sc.priority.min);
-    var axisXEnd = project(layout, sc, sc.cost.max, sc.priority.min);
-    var axisYEnd = project(layout, sc, sc.cost.min, sc.priority.max);
-    g.appendChild(svgEl("line", {
-      x1: axisOrigin.x, y1: axisOrigin.y, x2: axisXEnd.x, y2: axisXEnd.y,
-      stroke: "#0b1f3a", "stroke-width": 1.5
-    }));
-    g.appendChild(svgEl("line", {
-      x1: axisOrigin.x, y1: axisOrigin.y, x2: axisYEnd.x, y2: axisYEnd.y,
-      stroke: "#0b1f3a", "stroke-width": 1.5
-    }));
-
-    /* tick labels live outside clip so they stay readable; positions follow zoom if still in view */
-    ticks.forEach(function (tick) {
-      var px = project(layout, sc, tick, sc.priority.min);
-      if (px.x >= layout.pad.l - 8 && px.x <= layout.w - layout.pad.r + 8) {
-        var tx = svgEl("text", {
-          x: px.x,
-          y: layout.h - 28,
-          "text-anchor": "middle",
-          fill: "#5c5a56",
-          "font-size": 12,
-          "font-variant": "tabular-nums"
-        });
-        tx.textContent = String(tick);
-        svg.appendChild(tx);
-      }
-      var py = project(layout, sc, sc.cost.min, tick);
-      if (py.y >= layout.pad.t - 8 && py.y <= layout.h - layout.pad.b + 8) {
-        var ty = svgEl("text", {
-          x: layout.pad.l - 8,
-          y: py.y + 4,
-          "text-anchor": "end",
-          fill: "#5c5a56",
-          "font-size": 12,
-          "font-variant": "tabular-nums"
-        });
-        ty.textContent = String(tick);
-        svg.appendChild(ty);
-      }
-    });
 
     var items = visibleItems();
     var empty = els.chartEmpty;
@@ -912,9 +818,16 @@
     clear(tb);
     if (!items.length) {
       emptyRow(table, 8, d.items.length ? "当前筛选下没有可评估需求。请放宽筛选，或查看下方审计与未评分清单。" : "没有可评估需求。");
+      updateListTools(0, 1);
       return;
     }
-    var shown = items.slice(0, state.listLimit || 40);
+    items = sortListItems(items);
+    var pageSize = state.listPageSize || 20;
+    var pages = Math.max(1, Math.ceil(items.length / pageSize));
+    if (state.listPage > pages) state.listPage = pages;
+    if (state.listPage < 1) state.listPage = 1;
+    var start = (state.listPage - 1) * pageSize;
+    var shown = items.slice(start, start + pageSize);
     var frag = document.createDocumentFragment();
     shown.forEach(function (it) {
       var tr = document.createElement("tr");
@@ -962,10 +875,62 @@
       frag.appendChild(tr);
     });
     tb.appendChild(frag);
-    if (els.listMore) {
-      els.listMore.hidden = shown.length >= items.length;
-      els.listMore.textContent = "加载更多（已显示 " + shown.length + " / " + items.length + "）";
+    updateListTools(items.length, pages);
+    markSortHeaders();
+  }
+
+  function sortListItems(items) {
+    var key = state.listSortKey || "title";
+    var dir = state.listSortDir === "desc" ? -1 : 1;
+    function value(it) {
+      if (key === "product") return it.productLabel || it.product || "";
+      if (key === "status") return it.status || "";
+      if (key === "ownership") return it.ownership || "";
+      if (key === "cost") return it.assessment && it.assessment.plot.x != null ? it.assessment.plot.x : it.cost;
+      if (key === "priority") return it.assessment && it.assessment.plot.y != null ? it.assessment.plot.y : it.priority;
+      if (key === "frequency") return it.frequencyUnknown || it.frequency == null ? null : it.frequency;
+      return it.title || "";
     }
+    return items.slice().sort(function (a, b) {
+      var av = value(a);
+      var bv = value(b);
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir;
+      return String(av).localeCompare(String(bv), "zh") * dir;
+    });
+  }
+
+  function updateListTools(total, pages) {
+    var status = $("page-status");
+    if (status) setText(status, state.listPage + " / " + pages + " · " + total + " 条");
+    var prev = $("page-prev");
+    var next = $("page-next");
+    if (prev) prev.disabled = state.listPage <= 1;
+    if (next) next.disabled = state.listPage >= pages;
+    var dirBtn = $("list-sort-dir");
+    if (dirBtn) dirBtn.textContent = state.listSortDir === "desc" ? "降序" : "升序";
+    var sel = $("list-sort");
+    if (sel && sel.value !== state.listSortKey) sel.value = state.listSortKey;
+  }
+
+  function markSortHeaders() {
+    document.querySelectorAll("#table-items .sort-btn").forEach(function (btn) {
+      var on = btn.getAttribute("data-sort") === state.listSortKey;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function setListSort(key) {
+    if (state.listSortKey === key) state.listSortDir = state.listSortDir === "asc" ? "desc" : "asc";
+    else {
+      state.listSortKey = key;
+      state.listSortDir = (key === "cost" || key === "priority" || key === "frequency") ? "desc" : "asc";
+    }
+    state.listPage = 1;
+    renderItemsTable();
   }
 
   function renderAuditTable(table, rows, emptyMsg, reasonKey) {
@@ -1001,6 +966,59 @@
     els.float.hidden = true;
     els.float.classList.remove("is-open");
     state.hoverId = null;
+    state.hoverSig = "";
+  }
+
+  function idsInCell(cell) {
+    var seen = Object.create(null);
+    var ids = [];
+    (state.visiblePlots || []).forEach(function (pt) {
+      if (!pt || pt.cellKey !== cell || !pt.item) return;
+      if (seen[pt.item.id]) return;
+      seen[pt.item.id] = true;
+      ids.push(pt.item.id);
+    });
+    return ids;
+  }
+
+  function showHoverList(ids, ev) {
+    if (!els.float || !ids || !ids.length) return;
+    var sig = ids.join(",");
+    if (state.hoverSig === sig && !els.float.hidden) return;
+    state.hoverSig = sig;
+    var items = ids.map(itemById).filter(Boolean);
+    if (!items.length) return;
+    setText(els.floatTitle, "此处 " + items.length + " 条");
+    clear(els.floatMeta);
+    var note = document.createElement("span");
+    note.textContent = "点击一条，在右侧打开详情。";
+    els.floatMeta.appendChild(note);
+    clear(els.floatBody);
+    var ul = document.createElement("ul");
+    ul.className = "cluster-list";
+    items.slice(0, 12).forEach(function (it) {
+      var li = document.createElement("li");
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = it.title;
+      btn.addEventListener("click", function (clickEv) {
+        clickEv.stopPropagation();
+        openItem(it, true, null);
+      });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+    els.floatBody.appendChild(ul);
+    if (items.length > 12) {
+      var more = document.createElement("p");
+      more.className = "cluster-meta";
+      more.textContent = "清单先显示 12 / " + items.length + " 条。点击气泡可在右侧继续看。";
+      els.floatBody.appendChild(more);
+    }
+    var x = ev && ev.clientX != null ? ev.clientX : 24;
+    var y = ev && ev.clientY != null ? ev.clientY : 24;
+    placeFloat(x, y);
+    state.hoverId = items[0].id;
   }
 
   function clearInspector() {
@@ -1012,7 +1030,7 @@
     clear(els.inspectorBody);
     var p = document.createElement("p");
     p.className = "inspector-placeholder";
-    p.textContent = "尚未选中条目。可从 Quick win、气泡或下方表格进入。";
+    p.textContent = "尚未选中条目。悬停气泡看清单，点击后在这里看详情。";
     els.inspectorBody.appendChild(p);
   }
 
@@ -1423,20 +1441,22 @@
   function bind() {
     els.query.addEventListener("input", function () {
       state.filters.query = els.query.value;
-      state.listLimit = 40;
+      state.listPage = 1;
       renderInteractive();
     });
     els.product.addEventListener("change", function () {
       state.filters.productSelect = els.product.value || "";
-      state.listLimit = 40;
+      state.listPage = 1;
       renderInteractive();
     });
     els.status.addEventListener("change", function () {
       state.filters.status = els.status.value || "";
+      state.listPage = 1;
       renderInteractive();
     });
     els.ownership.addEventListener("change", function () {
       state.filters.ownership = els.ownership.value || "";
+      state.listPage = 1;
       renderInteractive();
     });
     if (els.quickwin) {
@@ -1452,6 +1472,7 @@
     if (els.layer) {
       els.layer.addEventListener("change", function () {
         state.filters.layer = els.layer.value || "";
+        state.listPage = 1;
         renderInteractive();
       });
     }
@@ -1492,20 +1513,25 @@
       }
     }
     function scheduleHide() {
-      if (state.pinnedLocked) return;
       cancelHide();
-      hideTimer = setTimeout(function () {
-        if (!state.pinnedLocked) hideFloatAndRefresh();
-      }, 600);
+      hideTimer = setTimeout(hideHoverFloat, 280);
+    }
+    function hoverFromTarget(target, ev) {
+      var bubble = target.closest && target.closest(".bubble");
+      var cluster = target.closest && (target.closest(".cell-count") || target.closest(".cluster"));
+      var cell = bubble ? bubble.getAttribute("data-cell") : (cluster ? cluster.getAttribute("data-cell") : "");
+      var ids = cell ? idsInCell(cell) : [];
+      if (!ids.length && cluster) ids = (cluster.getAttribute("data-ids") || "").split(",").filter(Boolean);
+      if (!ids.length && bubble) ids = [bubble.getAttribute("data-id")];
+      if (!ids.length) return;
+      cancelHide();
+      showHoverList(ids, ev);
     }
     els.chart.addEventListener("pointerover", function (ev) {
-      var bubble = ev.target.closest && ev.target.closest(".bubble");
-      if (!bubble || state.pinnedLocked) return;
-      var item = itemById(bubble.getAttribute("data-id"));
-      if (!item) return;
-      cancelHide();
-      state.hoverId = item.id;
-      openItem(item, false, ev);
+      hoverFromTarget(ev.target, ev);
+    });
+    els.chart.addEventListener("focusin", function (ev) {
+      hoverFromTarget(ev.target, ev);
     });
     els.chart.addEventListener("pointerleave", function (ev) {
       if (els.float.contains(ev.relatedTarget)) {
@@ -1516,15 +1542,8 @@
     });
     els.float.addEventListener("pointerenter", cancelHide);
     els.float.addEventListener("pointerleave", function (ev) {
-      if (state.pinnedLocked) return;
       if (els.chart.contains(ev.relatedTarget)) return;
       scheduleHide();
-    });
-    els.float.addEventListener("click", function () {
-      if (state.pinned && !state.pinnedLocked && state.pinned.type === "item") {
-        var hoverItem = itemById(state.pinned.id);
-        if (hoverItem) openItem(hoverItem, true, null);
-      }
     });
     els.chart.addEventListener("click", function (ev) {
       var cluster = ev.target.closest && (ev.target.closest(".cell-count") || ev.target.closest(".cluster"));
@@ -1609,17 +1628,45 @@
       if (!state.pinnedLocked) return;
       if (els.float && els.float.contains(ev.target)) return;
       if (els.inspector && els.inspector.contains(ev.target)) return;
-      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]") || ev.target.closest("tr[data-audit-id]") || ev.target.closest(".qw-card") || ev.target.closest(".list-more") || ev.target.closest("details"))) return;
+      if (ev.target.closest && (ev.target.closest(".bubble") || ev.target.closest(".cell-count") || ev.target.closest(".cluster") || ev.target.closest("tr[data-id]") || ev.target.closest("tr[data-audit-id]") || ev.target.closest(".list-tools") || ev.target.closest(".sort-btn") || ev.target.closest("details"))) return;
       hideFloatAndRefresh();
     });
 
     if (els.inspectorClose) els.inspectorClose.addEventListener("click", hideFloatAndRefresh);
-    if (els.listMore) {
-      els.listMore.addEventListener("click", function () {
-        state.listLimit += 40;
-        renderItemsTable();
+    var pagePrev = $("page-prev");
+    var pageNext = $("page-next");
+    var pageSize = $("page-size");
+    var listSort = $("list-sort");
+    var listSortDir = $("list-sort-dir");
+    if (pagePrev) pagePrev.addEventListener("click", function () {
+      state.listPage = Math.max(1, state.listPage - 1);
+      renderItemsTable();
+    });
+    if (pageNext) pageNext.addEventListener("click", function () {
+      state.listPage += 1;
+      renderItemsTable();
+    });
+    if (pageSize) pageSize.addEventListener("change", function () {
+      state.listPageSize = Number(pageSize.value) || 20;
+      state.listPage = 1;
+      renderItemsTable();
+    });
+    if (listSort) listSort.addEventListener("change", function () {
+      state.listSortKey = listSort.value;
+      state.listSortDir = (listSort.value === "cost" || listSort.value === "priority" || listSort.value === "frequency") ? "desc" : "asc";
+      state.listPage = 1;
+      renderItemsTable();
+    });
+    if (listSortDir) listSortDir.addEventListener("click", function () {
+      state.listSortDir = state.listSortDir === "asc" ? "desc" : "asc";
+      renderItemsTable();
+    });
+    document.querySelectorAll("#table-items .sort-btn").forEach(function (btn) {
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        setListSort(btn.getAttribute("data-sort"));
       });
-    }
+    });
     if (els.clusterProduct) {
       els.clusterProduct.addEventListener("change", function () {
         state.clusterProduct = els.clusterProduct.value || "";

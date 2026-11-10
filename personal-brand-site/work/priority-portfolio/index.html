@@ -22,7 +22,6 @@
     <div class="title-row">
       <div>
         <h1 id="page-title">未完成需求优先组合</h1>
-        <p class="lede" id="page-lede">高源负责范围内、尚未完成开发的需求。默认展示全部可画图主题。横坐标是开发成本，纵坐标是建议优先级，均为 AI 相对初评（1–5），不是工时或排期承诺。</p>
       </div>
       <div class="title-actions">
         <button type="button" class="btn" id="btn-json" disabled>下载 JSON</button>
@@ -31,14 +30,6 @@
     </div>
 
     <p class="notice" id="stale-notice" hidden></p>
-
-    <section class="qw-strip" id="qw-strip" hidden>
-      <div class="qw-copy">
-        <h2>先看 Quick win</h2>
-        <p id="qw-rule">成本 ≤ 2 且优先级 ≥ 4，且归属明确。这是建议，不是已批准排期；未入选不等于低价值。</p>
-      </div>
-      <div class="qw-cards" id="qw-list"></div>
-    </section>
 
     <div class="view-switch" role="tablist" aria-label="图上范围">
       <button type="button" class="view-btn is-active" id="view-all" aria-pressed="true">全部可画图 515</button>
@@ -98,7 +89,7 @@
         <div class="chart-head">
           <div>
             <h2 id="chart-title">成本 × 优先级</h2>
-            <p class="chart-sub" id="chart-sub">四象限以 3 为界。坐标是建议权重下的分项结果，只显示一位小数；分项不够时仍用旧的 1–5 档，不把同一档打散。气泡面积仍只由反馈频次决定。Quick win 要两边都是加权结果，且归属已确认。</p>
+            <p class="chart-sub" id="chart-sub">只标四象限。悬停看该位置的需求清单，点击后在右侧看详情。可以缩放和拖拽。</p>
           </div>
           <div class="zoom-tools">
             <button type="button" class="btn" id="zoom-out" aria-label="缩小">−</button>
@@ -119,7 +110,7 @@
         <div class="inspector-head">
           <div>
             <h2 id="inspector-title">详情与重叠清单</h2>
-            <p class="inspector-sub" id="inspector-sub">悬停看摘要。点击气泡或表格行，详情固定在此栏，可滚动。重叠格会在此列出全部条目，可用产品筛选。</p>
+            <p class="inspector-sub" id="inspector-sub">点击气泡或清单中的一条，详情固定在此栏，可滚动。</p>
             <div class="float-meta" id="inspector-meta"></div>
           </div>
           <button type="button" class="icon-close" id="inspector-close" hidden aria-label="关闭详情">×</button>
@@ -132,7 +123,7 @@
           </label>
         </div>
         <div class="inspector-body" id="inspector-body">
-          <p class="inspector-placeholder">尚未选中条目。可从 Quick win、气泡或下方表格进入。</p>
+          <p class="inspector-placeholder">尚未选中条目。悬停气泡看清单，点击后在这里看详情。</p>
         </div>
       </aside>
     </div>
@@ -178,20 +169,45 @@
         <table class="data" id="table-items">
           <thead>
             <tr>
-              <th>需求</th>
-              <th>产品</th>
-              <th>状态</th>
-              <th>归属</th>
-              <th class="num">成本</th>
-              <th class="num">优先级</th>
-              <th>频次</th>
+              <th><button type="button" class="sort-btn" data-sort="title">需求</button></th>
+              <th><button type="button" class="sort-btn" data-sort="product">产品</button></th>
+              <th><button type="button" class="sort-btn" data-sort="status">状态</button></th>
+              <th><button type="button" class="sort-btn" data-sort="ownership">归属</button></th>
+              <th class="num"><button type="button" class="sort-btn" data-sort="cost">成本</button></th>
+              <th class="num"><button type="button" class="sort-btn" data-sort="priority">优先级</button></th>
+              <th class="num"><button type="button" class="sort-btn" data-sort="frequency">频次</button></th>
               <th>说明</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
-      <button type="button" class="btn list-more" id="list-more" hidden>加载更多</button>
+      <div class="list-tools">
+        <label>排序
+          <select id="list-sort">
+            <option value="title">需求</option>
+            <option value="product">产品</option>
+            <option value="status">状态</option>
+            <option value="ownership">归属</option>
+            <option value="cost">成本</option>
+            <option value="priority">优先级</option>
+            <option value="frequency">频次</option>
+          </select>
+        </label>
+        <button type="button" class="btn" id="list-sort-dir">升序</button>
+        <div class="pager">
+          <button type="button" class="btn" id="page-prev">上一页</button>
+          <span id="page-status" class="num"></span>
+          <button type="button" class="btn" id="page-next">下一页</button>
+          <label>每页
+            <select id="page-size">
+              <option value="20" selected>20</option>
+              <option value="40">40</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </div>
+      </div>
     </section>
 
     <section class="list-card audit-wrap" aria-labelledby="audit-title">
