@@ -143,12 +143,13 @@
     return list;
   }
 
-  function pushRemote(override) {
+  function pushRemote(override, opts) {
     clearTimeout(remotePushTimer);
     const toSend = override || state;
+    const replace = opts && opts.replace;
     remotePushInFlight = fetch(STATE_API + "?t=" + Date.now(), { cache: "no-store" })
       .then(async (res) => {
-        if (res.ok) {
+        if (res.ok && !replace) {
           const raw = await res.json();
           const remoteList = Array.isArray(raw && raw.features) ? raw.features : [];
           toSend.features = unionFeatures(toSend.features, remoteList);
@@ -797,7 +798,7 @@
       state = emptyState();
       state.meta.updatedAt = new Date().toISOString();
       persistLocal();
-      pushRemote().then((data) => {
+      pushRemote(state, { replace: true }).then((data) => {
         toast(data ? "已恢复并同步" : "已恢复本机 · 云端失败");
         renderAll();
       });
