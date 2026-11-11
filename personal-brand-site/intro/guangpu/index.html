@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光谱：让岗位能力看得见</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Cpath d='M32 14v10M18 38V24h28v14M32 24v14' stroke='%23ff6e50' stroke-width='4' fill='none'/%3E%3Crect x='12' y='38' width='12' height='12' fill='%23f2f0eb'/%3E%3Crect x='26' y='38' width='12' height='12' fill='%23f2f0eb'/%3E%3Crect x='40' y='38' width='12' height='12' fill='%23f2f0eb'/%3E%3C/svg%3E">
+<!-- Editorial register (visual-explainer style guide), Chinese text faces as fallbacks inside each stack. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbf9; --surface: #f1f0ec; --border: #e2e0da; --border-bright: #8c8a85;
+    --text: #111111; --text-dim: #5a5853; --accent: #cc3418; --accent-dim: rgba(204,52,24,.13);
+    --ok: #1d7443; --warn: #836000; --risk: #a01d48; --info: #1b6a94;
+    --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+    --font-display: 'Instrument Serif', 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    --font-body: 'Instrument Sans', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', ui-monospace, monospace;
+    --t-label: .75rem; --t-small: .875rem; --t-body: 1rem; --t-lead: 1.25rem; --t-h2: 1.625rem; --t-h1: clamp(2.25rem, 5.5vw, 4rem); --t-hero: clamp(3rem, 9vw, 6.5rem);
+    --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem; --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4.5rem;
+    --r-1: 4px; --r-2: 10px;
+    --ease: cubic-bezier(.16,1,.3,1); --fast: 150ms; --med: 300ms; --slow: 500ms;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f0f0f; --surface: #1a1a19; --border: #2b2a28; --border-bright: #696763;
+      --text: #f2f0eb; --text-dim: #a4a19b; --accent: #ff6e50; --accent-dim: rgba(255,110,80,.15);
+      --ok: #6cc492; --warn: #e3b94d; --risk: #f57fa2; --info: #7cb8e8;
+      --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+    }
+  }
+
+  html { font-size: 17px; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 400 var(--t-body)/1.65 var(--font-body); text-wrap: pretty; font-kerning: normal; font-synthesis: none; -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  ::selection { background: var(--accent-dim); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  svg :focus-visible { outline: none; }
+  svg g[tabindex]:focus-visible .sh { stroke: var(--accent); stroke-width: 2.5; }
+
+  /* shell: sticky table of contents on the left at >= 1000px, sticky top bar below */
+  .shell { max-width: 80rem; margin: 0 auto; }
+  .toc { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) var(--s-5); min-width: 0; }
+  .toc-t { font: 600 var(--t-label) var(--font-mono); color: var(--text); white-space: nowrap; }
+  .toc ol { list-style: none; padding: 0; display: flex; gap: var(--s-1); overflow-x: auto; scrollbar-width: none; mask-image: linear-gradient(90deg, #000 85%, transparent); min-width: 0; }
+  .toc ol::-webkit-scrollbar { display: none; }
+  .toc a { display: block; white-space: nowrap; font: 500 var(--t-small) var(--font-body); color: var(--text-dim); text-decoration: none; padding: var(--s-1) var(--s-2); border-radius: var(--r-1); }
+  .toc a .n { font-family: var(--font-mono); font-size: var(--t-label); margin-right: var(--s-1); font-variant-numeric: tabular-nums; }
+  .toc a:hover { color: var(--text); }
+  .toc a.on { color: var(--text); background: var(--surface); box-shadow: inset 0 -2px 0 var(--accent); }
+  @media (min-width: 1000px) {
+    .shell { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: var(--s-5); padding: 0 var(--s-5); }
+    .toc { top: var(--s-7); align-self: start; flex-direction: column; align-items: stretch; border: 0; padding: var(--s-8) 0 0; margin-top: 0; background: none; }
+    .toc ol { flex-direction: column; mask-image: none; overflow: visible; border-left: 1px solid var(--border); }
+    .toc a { border-radius: 0 var(--r-1) var(--r-1) 0; padding: var(--s-1) var(--s-3); }
+    .toc a.on { box-shadow: inset 2px 0 0 var(--accent); }
+  }
+
+  main { max-width: 64rem; width: 100%; margin: 0 auto; padding: var(--s-7) var(--s-5) var(--s-8); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); min-width: 0; }
+  section, figure, header, .insight { min-width: 0; }
+  section { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-6); scroll-margin-top: var(--s-7); }
+  header { display: grid; gap: var(--s-4); }
+  h1, h2, .big { text-box: trim-both cap alphabetic; }
+  h1 { font: 400 var(--t-hero)/1.08 var(--font-display); letter-spacing: -.02em; text-wrap: balance; margin-bottom: var(--s-2); }
+  h1 .hl { color: var(--accent); white-space: nowrap; }
+  .hint { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); margin-top: var(--s-2); }
+  @media print { .hint { display: none; } }
+  h2 { font: 500 var(--t-h1)/1.12 var(--font-display); letter-spacing: -.01em; text-wrap: balance; max-width: 22em; }
+  h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; }
+  h3 { font-size: var(--t-body); line-height: 1.4; font-weight: 600; }
+  .kicker { display: grid; gap: var(--s-4); }
+  .eyebrow { display: flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); letter-spacing: .08em; color: var(--accent); }
+  .eyebrow::before { content: ''; width: 1.25rem; height: 2px; background: currentColor; }
+  .ve-label { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+  .lead { font-size: var(--t-lead); line-height: 1.6; color: var(--text-dim); max-width: 38em; }
+  .lead b { color: var(--text); font-weight: 600; }
+  .prose { max-width: 38em; }
+  .prose b { font-weight: 600; }
+  .meta { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+
+  /* insight banner between sections */
+  .insight { display: grid; gap: var(--s-2) var(--s-5); border-top: 1px solid var(--border-bright); border-bottom: 1px solid var(--border); padding: var(--s-5) 0; align-items: baseline; }
+  @media (min-width: 52rem) { .insight { grid-template-columns: 3fr 9fr; } }
+  .insight p:last-child { font: 400 var(--t-lead)/1.55 var(--font-display); color: var(--text); max-width: 34em; }
+  .insight .ve-label { color: var(--accent); }
+
+  .frame { background: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 12%, transparent) 1px, transparent 1.5px) 0 0 / 20px 20px, var(--bg); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-5); overflow-x: auto; }
+  figcaption { font-size: var(--t-body); color: var(--text-dim); margin-top: var(--s-3); max-width: 46em; }
+  .fig-n { font: 600 var(--t-label) var(--font-mono); color: var(--text); margin-right: var(--s-2); }
+  .tagx { font: 600 var(--t-label) var(--font-mono); color: var(--info); border: 1px solid currentColor; border-radius: var(--r-1); padding: 0 var(--s-1); margin-left: var(--s-2); white-space: nowrap; }
+
+  /* diagram kit */
+  .ve-svg { width: 100%; height: auto; display: block; font: 500 17px var(--font-body); }
+  .ve-n .sh { fill: url(#ve-node); stroke: var(--border-bright); stroke-width: 1.5; filter: drop-shadow(0 6px 14px var(--lift)); transition: stroke var(--fast) var(--ease), opacity var(--med) var(--ease); }
+  .ve-n .sh.is-off { stroke-dasharray: 6 5; filter: none; }
+  .ve-n.is-key .sh { fill: color-mix(in srgb, var(--accent) 11%, var(--surface)); stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 16px color-mix(in srgb, var(--accent) var(--halo), transparent)); }
+  .ve-n.is-leaf .sh { fill: color-mix(in srgb, var(--accent) 9%, var(--surface)); stroke: var(--accent); filter: none; }
+  .ve-n text { fill: var(--text); text-anchor: middle; dominant-baseline: central; font-weight: 600; }
+  .ve-n .sub { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+  .ve-n .gl { fill: none; stroke: var(--text-dim); stroke-width: 1.5; stroke-linejoin: round; }
+  .ve-n.is-key .gl { stroke: var(--accent); }
+  .ve-n[data-jump] { cursor: pointer; }
+  .ve-e { fill: none; stroke: var(--text-dim); stroke-width: 1.75; marker-end: url(#ve-ah); }
+  .ve-e.is-hot { stroke: var(--accent); stroke-width: 2.75; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 55%, transparent)); }
+  .ve-e.is-async { stroke-dasharray: 6 5; }
+  .ve-el { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+  .ve-el.l { text-anchor: end; } .ve-el.r { text-anchor: start; }
+  .ann { fill: none; stroke: var(--text-dim); stroke-width: 1; }
+  .ann-t { fill: var(--text-dim); font: 500 14px var(--font-mono); dominant-baseline: central; }
+  .ve-co circle { fill: var(--surface); stroke: var(--accent); stroke-width: 1.75; }
+  .ve-co text { fill: var(--accent); font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+  .ve-co.now circle { fill: var(--accent); } .ve-co.now text { fill: var(--surface); }
+  .ve-dim path { fill: none; stroke-width: 1; } .ve-dim .ext { stroke: var(--border-bright); } .ve-dim .ln { stroke: var(--text-dim); }
+  .ve-dim text { fill: var(--text); font: 500 14px var(--font-mono); text-anchor: middle; }
+  .ve-dim.is-key .ln { stroke: var(--accent); } .ve-dim.is-key text { fill: var(--accent); font-weight: 600; }
+  [data-flow] { fill: none; stroke: none; }
+  .ve-dots circle { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+  /* L1–L5 spectrum: one hue, lightness steps */
+  .lv { stroke: var(--accent); stroke-width: 1; }
+  .lv1 { fill: color-mix(in srgb, var(--accent) 8%, var(--bg)); } .lv2 { fill: color-mix(in srgb, var(--accent) 22%, var(--bg)); } .lv3 { fill: color-mix(in srgb, var(--accent) 38%, var(--bg)); } .lv4 { fill: color-mix(in srgb, var(--accent) 56%, var(--bg)); } .lv5 { fill: var(--accent); }
+  .lv-t { font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; fill: var(--text); pointer-events: none; }
+  .ve-steps g[data-s] .lv-t:nth-of-type(n+4) { fill: var(--surface); }
+
+  /* linked highlighting */
+  .ve-ref { text-decoration: underline dotted var(--text-dim) 1px; text-underline-offset: .22em; border-radius: var(--r-1); transition: background var(--fast) var(--ease); cursor: default; }
+  .ve-ref.is-lit { background: var(--accent-dim); text-decoration-color: var(--accent); }
+  svg [data-ref] { transition: opacity var(--med) var(--ease); }
+  svg.has-lit path[data-ref]:not(.is-lit), svg.has-lit g[data-ref]:not(.is-lit) .sh { opacity: .25; }
+  svg.has-lit g[data-ref]:not(.is-lit) text, svg.has-lit text[data-ref]:not(.is-lit) { fill: var(--text-dim); }
+  .ve-n.is-lit .sh { stroke: var(--accent); }
+
+  /* stepper */
+  .ve-steps [data-s] { transition: opacity var(--slow) var(--ease), stroke-dashoffset var(--slow) var(--ease); }
+  .ve-steps [data-s]:not(.on) { opacity: .15; }
+  .ve-steps g[data-s]:not(.on) text, .ve-steps text[data-s]:not(.on) { opacity: 0; }
+  .ve-steps path[pathLength][data-s] { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .ve-steps path[pathLength][data-s].on { stroke-dashoffset: 0; }
+  .ve-steps .ve-n.now .sh { stroke: var(--accent); stroke-width: 2.5; }
+  .ve-player { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-4); }
+  .ve-cap { grid-column: 1 / -1; list-style: none; padding: 0; min-height: 3.4em; }
+  .ve-cap li::before { content: attr(data-n); font: 600 var(--t-label) var(--font-mono); color: var(--accent); margin-right: var(--s-3); font-variant-numeric: tabular-nums; }
+  .ve-player input { accent-color: var(--accent); min-width: 0; }
+  button { font: 500 var(--t-small) var(--font-mono); color: var(--text); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-2) var(--s-3); cursor: pointer; transition: border-color var(--fast) var(--ease); }
+  button:hover, button:focus-visible { border-color: var(--accent); }
+  button[aria-pressed=true] { border-color: var(--accent); background: var(--accent-dim); }
+  html:not(.has-js) .js-only { display: none; }
+
+  /* number strip */
+  .kpis { display: flex; flex-wrap: wrap; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+  .kpi { flex: 1 1 11rem; background: var(--surface); padding: var(--s-4) var(--s-5); display: grid; gap: var(--s-2); min-width: 0; align-content: start; }
+  .big { font: 400 3rem/1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .big .unit { font: 500 var(--t-body) var(--font-body); color: var(--text-dim); margin-left: var(--s-1); letter-spacing: 0; }
+  .pips rect.on { fill: var(--accent); } .pips rect.off { fill: none; stroke: var(--border-bright); }
+  .kpi.stu .pips rect.on { fill: none; stroke: var(--text); stroke-width: 1.5; }
+
+  /* form close-up */
+  .duo { display: grid; gap: var(--s-5); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 52rem) { .duo { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+  .form { display: grid; gap: var(--s-3); max-width: 30rem; }
+  .fld { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: var(--s-3); align-items: center; }
+  .fld-l { font-weight: 600; }
+  .req { font: 600 var(--t-label) var(--font-mono); color: var(--accent); margin-left: var(--s-1); }
+  .fld-v { border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-2) var(--s-3); background: var(--surface); color: var(--text-dim); font-size: var(--t-small); min-width: 0; }
+  .rules { display: grid; gap: var(--s-3); align-content: start; }
+  .callout { background: var(--surface); border-radius: var(--r-2); padding: var(--s-4); display: grid; gap: var(--s-2); }
+
+  .chip { display: inline-flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); padding: 2px var(--s-2); border: 1px solid currentColor; border-radius: var(--r-1); white-space: nowrap; justify-self: start; }
+  .chip::before { content: ''; width: .5rem; height: .5rem; background: currentColor; }
+  .chip.ok { color: var(--ok); } .chip.ok::before { border-radius: 50%; }
+  .chip.warn { color: var(--warn); } .chip.warn::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .chip.risk { color: var(--risk); }
+  .chip.info { color: var(--info); } .chip.info::before { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+
+  /* controls */
+  .ctl { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-5); align-items: center; margin-bottom: var(--s-4); }
+  .ctl label { display: grid; gap: var(--s-1); font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); min-width: 12rem; flex: 1 1 12rem; }
+  .ctl label output { font: 600 var(--t-body) var(--font-mono); color: var(--text); font-variant-numeric: tabular-nums; }
+  .ctl input[type=range] { accent-color: var(--accent); width: 100%; }
+  .ctl .row { display: flex; align-items: center; gap: var(--s-3); }
+  .result { font-size: var(--t-body); margin-top: var(--s-4); font-variant-numeric: tabular-nums; }
+  .result b { font-weight: 600; }
+  .tree-out { display: flex; align-items: baseline; gap: var(--s-3); margin-bottom: var(--s-4); flex-wrap: wrap; }
+  .tree-out .big { color: var(--accent); }
+
+  /* chart parts */
+  .grid { stroke: var(--border); stroke-width: 1; fill: none; }
+  .ax-t { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+  .ax-n { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: end; dominant-baseline: central; }
+  .ax-n.m { text-anchor: middle; }
+  .bar { fill: var(--border-bright); transition: y var(--med) var(--ease), height var(--med) var(--ease); }
+  .bar-skip { fill: none; stroke: var(--risk); stroke-dasharray: 4 3; }
+  .bar-v, .bar-l { fill: var(--text); font: 500 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+  .bar-l { fill: var(--text-dim); }
+  .avg { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 7 4; }
+  .avg-t { fill: var(--accent); font: 600 14px var(--font-mono); dominant-baseline: central; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+  .row-l { fill: var(--text); font: 500 15px var(--font-body); dominant-baseline: central; }
+  .row-v { fill: var(--text); font: 500 14px var(--font-mono); dominant-baseline: central; }
+  .row-v.is-idx { fill: var(--accent); font-weight: 600; font-size: 16px; }
+  .hbar { fill: var(--border-bright); }
+  .hbar.is-a { fill: var(--text-dim); }
+  .hbar.is-idx { fill: var(--accent); }
+  .hbar.warned { fill: color-mix(in srgb, var(--risk) 55%, var(--bg)); }
+  .hbar.done { fill: var(--text-dim); }
+  .wline { stroke: var(--risk); stroke-width: 1.75; }
+  .tline { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+  .ln-t { fill: var(--text); font: 600 14px var(--font-mono); text-anchor: middle; }
+  .ln-t.risk, .lv-chip { fill: var(--risk); }
+  .lv-chip { font: 600 14px var(--font-mono); dominant-baseline: central; }
+  .grp-t { fill: var(--text-dim); font: 600 14px var(--font-mono); letter-spacing: .04em; }
+  .rng { stroke: var(--border-bright); stroke-width: 8; stroke-linecap: round; }
+  .pt { fill: var(--surface); stroke: var(--text); stroke-width: 1.75; }
+  .pt.key { fill: var(--accent); stroke: var(--accent); }
+  .pt-t { fill: var(--text); font: 500 14px var(--font-mono); text-anchor: middle; }
+  .pt-t.key { fill: var(--accent); font-weight: 600; }
+  .line { fill: none; stroke: var(--text); stroke-width: 1.75; }
+  .cell { fill: var(--text-dim); }
+  .seg.lo { fill: url(#hatch); stroke: var(--text-dim); stroke-width: 1; } .seg.md { fill: color-mix(in srgb, var(--text) 18%, var(--bg)); } .seg.hi { fill: var(--text-dim); }
+  .seg-t { fill: var(--text); font: 600 14px var(--font-body); text-anchor: middle; }
+  .seg-n { font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; fill: var(--text); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
+  .seg-n.hi { fill: var(--bg); stroke: none; }
+  .rank circle { fill: var(--surface); stroke: var(--border-bright); stroke-width: 1.5; }
+  .rank.first circle { stroke: var(--accent); stroke-width: 2; }
+  .rank-n { fill: var(--text); font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+  .rank-t { fill: var(--text); font: 500 16px var(--font-body); dominant-baseline: central; }
+  .blk { fill: color-mix(in srgb, var(--accent) 12%, var(--surface)); stroke: var(--accent); stroke-width: 1.5; }
+  .blk.stu { fill: none; stroke: var(--text-dim); stroke-dasharray: 5 4; }
+  .blk-n { fill: var(--text); font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+  .freq { fill: var(--text-dim); font: 500 14px var(--font-mono); dominant-baseline: central; }
+  .lane { fill: color-mix(in srgb, var(--surface) 60%, transparent); stroke: var(--border); }
+  .lane-t { fill: var(--text); font: 600 17px var(--font-body); }
+  .lane-s { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+  /* warning bands */
+  .band { stroke: var(--border-bright); stroke-width: 1; }
+  .band.b1 { fill: color-mix(in srgb, var(--risk) 42%, var(--bg)); } .band.b2 { fill: color-mix(in srgb, var(--risk) 22%, var(--bg)); } .band.b3 { fill: color-mix(in srgb, var(--warn) 22%, var(--bg)); } .band.b0 { fill: var(--bg); }
+  .band.a1 { fill: color-mix(in srgb, var(--text) 30%, var(--bg)); } .band.a2 { fill: color-mix(in srgb, var(--text) 14%, var(--bg)); } .band.a3 { fill: color-mix(in srgb, var(--text) 4%, var(--bg)); }
+  .band.cur { stroke: var(--text); stroke-width: 2.5; }
+  .band-t { fill: var(--text); font: 600 14px var(--font-body); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .mark { stroke: var(--accent); stroke-width: 3; }
+  .mark-t { fill: var(--accent); font: 600 14px var(--font-mono); text-anchor: middle; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+  .wv { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .wv-t { fill: var(--text); font: 500 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+
+  /* dashboard board */
+  .filters { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-3); align-items: center; }
+  .filt { font: 500 var(--t-small) var(--font-body); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-1) var(--s-3); color: var(--text); background: var(--surface); }
+  .filt span { color: var(--text-dim); margin-right: var(--s-2); font-family: var(--font-mono); font-size: var(--t-label); }
+  [role=tablist] { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--s-2); margin-bottom: var(--s-3); }
+  [role=tab] { text-align: left; display: grid; gap: 2px; font-family: var(--font-body); padding: var(--s-2) var(--s-3); }
+  [role=tab] .q { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+  [role=tab] .t { font-weight: 600; font-size: var(--t-body); }
+  [role=tab][aria-selected=true] { border-color: var(--accent); background: var(--accent-dim); }
+  [role=tabpanel] { display: grid; gap: var(--s-4); }
+  [role=tabpanel][hidden] { display: none; }
+  [role=tabpanel] + [role=tabpanel] { margin-top: var(--s-6); }
+  .has-js [role=tabpanel] + [role=tabpanel] { margin-top: 0; }
+  .ph { font-weight: 600; }
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--s-3); }
+  .tier { border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-3) var(--s-4); background: var(--surface); display: grid; gap: var(--s-2); align-content: start; }
+  .tier-h { display: flex; align-items: baseline; gap: var(--s-3); }
+  .tier-n { font: 400 var(--t-h2)/1 var(--font-display); }
+  .tier-s { font-size: var(--t-small); color: var(--text-dim); }
+  .tags { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .tag { font-size: var(--t-small); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: 0 var(--s-2); }
+  .tag b { font: 600 var(--t-label) var(--font-mono); margin-left: var(--s-1); }
+
+  /* small multiples */
+  .cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); gap: var(--s-4); }
+  .case { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); display: grid; gap: var(--s-3); align-content: start; }
+  .case[data-st=info] { --st: var(--info); } .case[data-st=warn] { --st: var(--warn); }
+  .case-d { font-size: var(--t-small); color: var(--text-dim); }
+  .ve-mini { width: 100%; height: auto; font: 500 14px var(--font-body); }
+  .mbox { fill: var(--bg); stroke: var(--border-bright); stroke-width: 1.5; }
+  .mbox.is-st { stroke: var(--st); stroke-width: 2; }
+  .mbox.is-off { stroke-dasharray: 5 4; }
+  .mbar { fill: var(--border-bright); }
+  .mbar.is-st { fill: none; stroke: var(--st); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .mpt { fill: var(--text-dim); } .mpt.is-st { fill: var(--st); }
+  .mini-t { fill: var(--text); font: 600 14px var(--font-body); text-anchor: middle; dominant-baseline: central; }
+  .mini-s { fill: var(--text-dim); font: 500 13px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+  .mini-s.st { fill: var(--st); font-weight: 600; }
+  .ve-mini .ve-e.is-st { stroke: var(--st); stroke-width: 2.5; }
+  .ve-mini .tline.is-st { stroke: var(--st); stroke-width: 2; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-2); }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; }
+  th { background: var(--surface); font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); text-align: left; padding: var(--s-3) var(--s-4); }
+  td { padding: var(--s-3) var(--s-4); border-top: 1px solid var(--border); vertical-align: top; }
+  td.n { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); white-space: nowrap; }
+  ol.steps { padding-left: 1.4em; display: grid; gap: var(--s-2); max-width: 38em; }
+  ol.steps li::marker { font-family: var(--font-mono); color: var(--accent); font-weight: 600; }
+
+  footer { border-top: 1px solid var(--border); max-width: 80rem; margin: 0 auto; padding: var(--s-5); font: 400 var(--t-lead) var(--font-display); color: var(--text-dim); }
+
+  .js-motion main > * { transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); }
+  .js-motion main > :not(.in) { opacity: 0; transform: translateY(1rem); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  @media print {
+    :root { --bg: #fff; --surface: #fff; --border: #e2e0da; --border-bright: #8c8a85; --text: #111111; --text-dim: #5a5853; --accent: #cc3418; --ok: #1d7443; --warn: #836000; --risk: #a01d48; --info: #1b6a94; --node-top: #fff; }
+    .toc, .ve-player button, .ve-player input, .ve-dots, .ctl, [role=tablist] { display: none !important; }
+    [role=tabpanel][hidden] { display: grid !important; }
+    .frame { overflow: visible; background: #fff; } .ve-svg { min-width: 0 !important; }
+    .frame, .case, .kpi, .tier, figure { break-inside: avoid; } h2 { break-after: avoid; }
+    svg * { filter: none !important; }
+    .js-motion main > * { opacity: 1 !important; transform: none !important; }
+    .ve-steps [data-s]:not(.on), .ve-steps g[data-s]:not(.on) text, .ve-steps text[data-s]:not(.on) { opacity: 1; }
+    .ve-steps path[pathLength][data-s] { stroke-dashoffset: 0; }
+  }
+
+  /* figure cards: each figure is its own card with a numbered chip */
+  .fig { border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); padding: var(--s-4); display: grid; gap: var(--s-3); grid-template-columns: minmax(0, 1fr); }
+  .fig figcaption { margin-top: 0; }
+  .fig-h { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+  .fig-n { font: 600 var(--t-label) var(--font-mono); color: var(--bg); background: var(--text); padding: 2px var(--s-2); border-radius: var(--r-1); margin: 0; white-space: nowrap; }
+  .fig-t { font-weight: 600; }
+  .fig .case, .fig .kit, .fig .tier, .fig .callout, .fig .kpi { background: var(--bg); }
+  .fig .ve-player { margin-top: 0; }
+  @media (max-width: 600px) { .fig { padding: var(--s-3); } .frame { padding: var(--s-3); } }
+  /* glossary terms and tooltip */
+  .term { border-bottom: 1px dotted var(--text-dim); cursor: help; border-radius: var(--r-1); }
+  .term::after { content: 'i'; display: inline-grid; place-items: center; width: 1.05em; height: 1.05em; margin-left: .15em; border: 1px solid var(--text-dim); border-radius: 50%; font: 600 .65em/1 var(--font-mono); color: var(--text-dim); vertical-align: .2em; }
+  .term:hover, .term:focus-visible { background: var(--accent-dim); }
+  .svg-term { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+  svg [data-tip] { cursor: help; }
+  svg [data-jump][data-tip] { cursor: pointer; }
+  svg text.svg-term:focus-visible { outline: none; fill: var(--accent); }
+  .tt-pop { position: fixed; z-index: 30; left: 0; top: 0; max-width: 20rem; background: var(--text); color: var(--bg); font: 400 var(--t-small)/1.55 var(--font-body); padding: var(--s-2) var(--s-3); border-radius: var(--r-1); box-shadow: 0 6px 18px var(--lift); pointer-events: none; }
+  .tt-pop[hidden] { display: none; }
+  @media print { .tt-pop { display: none !important; } .term::after { display: none; } }
+  /* built-in kit */
+  .kits { display: grid; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); gap: var(--s-4); }
+  .kit { border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); display: grid; gap: var(--s-2); align-content: start; }
+  .kit p { font-size: var(--t-body); }
+  .kit .save { font-size: var(--t-small); color: var(--text-dim); border-top: 1px solid var(--border); padding-top: var(--s-2); }
+  .kit .save b { color: var(--text); font-weight: 600; }
+  .kit-n { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+  .kit-n .big { font-size: 2.25rem; color: var(--accent); }
+  .entries { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--s-4); }
+  .picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--s-3); }
+  .pcol { display: flex; flex-direction: column; gap: var(--s-2); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-3); background: var(--surface); }
+  .pt-tag { border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-1) var(--s-2); }
+  .pt-tag.on { border-color: var(--accent); background: var(--accent-dim); font-weight: 600; }
+  .pt-add { color: var(--text-dim); font: 500 var(--t-small) var(--font-mono); }
+  .doc-header { max-width: 80rem; margin: 0 auto; padding: var(--s-5) var(--s-5) var(--s-4); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-4); border-bottom: 1px solid var(--border); }
+  .doc-brand { display: flex; align-items: center; gap: var(--s-3); text-decoration: none; color: inherit; }
+  .doc-brand img { height: 40px; width: auto; display: block; }
+  .doc-audience { margin: 0; font: 500 var(--t-small) var(--font-body); color: var(--text-dim); text-align: right; max-width: 32em; line-height: 1.55; }
+  .doc-audience b { color: var(--text); font-weight: 600; }
+  @media (max-width: 600px) { .doc-audience { text-align: left; } }
+  @media print { .doc-header { padding-top: var(--s-3); } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ve-ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>
+    <linearGradient id="ve-node" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--node-top)"/><stop offset="1" style="stop-color:var(--surface)"/></linearGradient>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" style="fill:var(--bg)"/><path d="M0 0V6" style="stroke:var(--text-dim);stroke-width:1.5"/></pattern>
+  </defs>
+</svg>
+<header class="doc-header" aria-label="产品介绍">
+  <a class="doc-brand" href="https://www.21tb.com" aria-label="时代光华">
+    <img src="assets/21tb-logo.png" alt="时代光华" width="172" height="43" />
+  </a>
+  <p class="doc-audience">光谱 · 岗位能力图谱</p>
+</header>
+<nav aria-label="其他介绍" style="max-width:80rem;margin:0 auto;padding:.5rem 1.5rem 0;display:flex;flex-wrap:wrap;gap:.5rem .75rem;font:500 .875rem 'Instrument Sans','Noto Sans SC',sans-serif">
+  <a href="../" style="color:inherit">全部</a>
+  <a href="./" aria-current="page" style="color:inherit;font-weight:600">光谱</a>
+  <a href="../race/" style="color:inherit">竞赛</a>
+  <a href="../survey/" style="color:inherit">调查</a>
+  <a href="../evaluation/" style="color:inherit">评估</a>
+  <a href="../ops/" style="color:inherit">运营工具</a>
+</nav>
+
+<div class="tt-defs" hidden><span role="tooltip" id="tt-name">给这张图谱起的名字，方便后台和学员认出它，比如“销售顾问能力图谱”。</span><span role="tooltip" id="tt-tpl">选一套现成的标签结构当起点，不用从零搭。可以选时代光华的图谱模板，也可以选自己以前建过的图谱，或者不用模板、自己从头建。</span><span role="tooltip" id="tt-pos">这张图谱服务哪个岗位。这个岗位上的学员会收到它。一个岗位只能关联一张图谱。</span><span role="tooltip" id="tt-meaning">岗位意义和关键职责：写清这个岗位为什么设、主要做哪些事。</span><span role="tooltip" id="tt-tag1">图谱最上面一层的大类能力。下面可以再分二级、三级，最多 3 级。</span><span role="tooltip" id="tt-tag2">一级标签下面再细分出来的能力。</span><span role="tooltip" id="tt-leaf">标签树最下面那一层。课程、测试题和能力等级都配在它上面，学员实际学的就是这些。</span><span role="tooltip" id="tt-lv">标签本身的程度分级，从 L1 到 L5。可以和岗位职级对应起来，让不同职级的学员看到不同的标签。</span><span role="tooltip" id="tt-enable">让图谱正式生效。生效后，关联岗位上的学员就能看到它。</span><span role="tooltip" id="tt-update">图谱启用后又改了内容，要点一下“更新”，改动才会发到学员那边。</span><span role="tooltip" id="tt-issue">把图谱发给关联岗位上的学员，他们就能开始学了。</span><span role="tooltip" id="tt-pre">学一个标签的课程之前先做的测试。只用来对比学前学后的变化，不算进总分。同一个标签只做一次。</span><span role="tooltip" id="tt-post">学完这个标签的必修课以后做的测试。后测分就是这个标签的得分。</span><span role="tooltip" id="tt-index">学员在这张岗位图谱上的总分，等于各个一级标签分的平均。</span><span role="tooltip" id="tt-entry-learn">学员在手机 App 或网页里用的入口：看自己岗位的图谱和课程，做标签前测和后测。</span><span role="tooltip" id="tt-entry-index">学员看自己成绩的入口：每个标签考了多少分，岗位总分是多少。总分是各一级标签分的平均，权重一样，没考的按 0 分算。</span><span role="tooltip" id="tt-kai">关键能力指标。建驾驶舱时，管理员挑出最关键的几项能力标签，团队在这些标签上的平均分单独画一张图。</span><span role="tooltip" id="tt-bai">基础能力指标。管理员挑出的基础能力标签，也单独画一张图，和关键能力分开看。</span><span role="tooltip" id="tt-warn">管理员给每项能力定的“警戒线”。团队得分小于或等于它就会预警，按差多少分成 1–3 级。不设的话默认是 0。</span><span role="tooltip" id="tt-target">管理员希望团队达到的分数。在图上是一条参考线，只用来对比。</span><span role="tooltip" id="tt-core">管理员在驾驶舱里标出的重点关注对象。看板上会单独列出他们的岗位能力指数。</span><span role="tooltip" id="tt-tplTags">时代光华提供的标签库，各家企业都能直接选用。用这里的标签配课程时，系统会推荐课程。</span><span role="tooltip" id="tt-selfTags">企业自己的标签库。管理员可以直接新建标签，保存自定义的图谱时也会自动生成。标签可以按分类管理，分类下面还能再分子类。</span><span role="tooltip" id="tt-gangwei">平台里的岗位。图谱和岗位一一对应：一个岗位只关联一张图谱，岗位上的学员会收到它。</span><span role="tooltip" id="tt-graph">一个岗位的能力标准，由 1–3 级能力标签组成。</span><span role="tooltip" id="tt-content">末级标签上配的东西：课程（分必修和选修）、测试题，以及适用能力等级 L1–L5。</span><span role="tooltip" id="tt-learner">关联岗位上的学员。图谱启用并下发后，他们在手机 App 或网页上就能看到。</span><span role="tooltip" id="tt-tagScore">一个末级标签的得分，就是这个标签的后测分。</span><span role="tooltip" id="tt-l1score">一级标签分：它下面各个标签分的平均。</span><span role="tooltip" id="tt-cockpit">管理员给团队管理者建的数据看板。一位管理者同时只能启用 1 个。里面的学员可以来自多张图谱，能按部门、群组、岗位、图谱筛选。成绩是前一天的。</span><span role="tooltip" id="tt-boards">能力预警、发展建议、关键能力（KAI）、基础能力（BAI）、学习进度等，一共 13 个板块。</span><span role="tooltip" id="tt-manager">团队负责人。在学员端打开自己的团队驾驶舱，查看团队数据。</span><span role="tooltip" id="tt-tplGraph">在第 1 步选了图谱模板，模板里的标签会连同课程、测试题一起带进新图谱。</span></div>
+<div class="shell">
+<nav class="toc" aria-label="目录">
+  <span class="toc-t">光谱</span>
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>总览</a></li>
+    <li><a href="#sa"><span class="n">1</span>整体结构</a></li>
+    <li><a href="#s1"><span class="n">2</span>图谱</a></li>
+    <li><a href="#st"><span class="n">3</span>标签来源</a></li>
+    <li><a href="#sk"><span class="n">4</span>平台自带</a></li>
+    <li><a href="#s2"><span class="n">5</span>学员端</a></li>
+    <li><a href="#s3"><span class="n">6</span>驾驶舱</a></li>
+    <li><a href="#s4"><span class="n">7</span>工作量</a></li>
+    <li><a href="#s5"><span class="n">8</span>使用须知</a></li>
+    <li><a href="#s6"><span class="n">9</span>落地建议</a></li>
+  </ol>
+</nav>
+
+<main>
+  <section id="s0" aria-label="总览">
+    <header>
+      <p class="eyebrow">岗位能力图谱 · 产品介绍</p>
+      <h1>光谱：<br>让岗位能力<span class="hl">看得见</span></h1>
+      <p class="lead">培训做了不少，可员工离岗位要求还差多少，很难说清。光谱把岗位要求拆成一个个能力标签，<b>每个标签都能学、能考、能看到分数</b>。</p>
+      <p class="meta">光谱分三块：<span class="ve-ref" data-ref="map" tabindex="0">图谱</span> → <span class="ve-ref" data-ref="dash" tabindex="0">学员仪表盘</span> → <span class="ve-ref" data-ref="cock" tabindex="0">驾驶舱</span></p>
+    </header>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 1</span><span class="fig-t">光谱怎么运转</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 290" style="min-width:825px" role="img" aria-label="管理员建好图谱并下发；学员学习并测试；成绩流入学员仪表盘和驾驶舱。图谱、学员仪表盘、驾驶舱是光谱的三个部分。" ><path class="ve-e" data-ref="map" d="M150 145H240"/><text class="ve-el" data-ref="map" x="195" y="136">建好</text><path class="ve-e" data-ref="map" d="M390 145H490"/><text class="ve-el" data-ref="map" x="440" y="136">下发</text><path class="ve-e is-hot" data-ref="dash" d="M640 130H700V60H760"/><text class="ve-el l" data-ref="dash" x="692" y="92">成绩流入</text><path class="ve-e is-hot" data-ref="cock" d="M640 160H700V230H760"/><text class="ve-el l" data-ref="cock" x="692" y="212">成绩流入</text><path data-flow="hit" data-every="1400" d="M565 145H700V60H850"/><path data-flow="hit" data-every="1400" d="M565 145H700V230H850"/><g class="ve-dots" aria-hidden="true"></g><g class="ve-n " transform="translate(20 105)" ><rect class="sh" width="130" height="80" rx="6"/><path class="gl" transform="translate(12 12)" d="M4.5 4.5a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M1 16c1-4 4-5.5 7-5.5s6 1.5 7 5.5"/><text x="65.0" y="28.0">管理员</text><text class="sub" x="65.0" y="54.0">配置</text></g><g class="ve-n is-key" transform="translate(240 105)" data-ref="map"><rect class="sh" width="150" height="80" rx="6"/><path class="gl" transform="translate(12 12)" d="M8 1v4M3 9V5h10v4M8 5v4M1 9h4v6H1zM6 9h4v6H6zM11 9h4v6h-4z"/><text x="75.0" y="28.0">图谱</text><text class="sub" x="75.0" y="54.0">岗位能力标准</text></g><g class="ve-n " transform="translate(490 105)" ><rect class="sh" width="150" height="80" rx="6"/><path class="gl" transform="translate(12 12)" d="M4.5 4.5a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M1 16c1-4 4-5.5 7-5.5s6 1.5 7 5.5"/><text x="75.0" y="28.0">学员</text><text class="sub" x="75.0" y="54.0">学习 · 测试</text></g><g class="ve-n " transform="translate(760 20)" data-ref="dash"><rect class="sh" width="180" height="80" rx="6"/><path class="gl" transform="translate(12 12)" d="M1 13a7 7 0 0 1 14 0M8 13l3.5-5"/><text x="90.0" y="28.0">学员仪表盘</text><text class="sub" x="90.0" y="54.0">学员看自己</text></g><g class="ve-n " transform="translate(760 190)" data-ref="cock"><rect class="sh" width="180" height="80" rx="6"/><path class="gl" transform="translate(12 12)" d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z"/><text x="90.0" y="28.0">驾驶舱</text><text class="sub" x="90.0" y="54.0">管理者看团队</text></g><g class="ve-co" transform="translate(240 105)"><circle r="11"/><text>1</text></g><g class="ve-co" transform="translate(760 20)"><circle r="11"/><text>2</text></g><g class="ve-co" transform="translate(760 190)"><circle r="11"/><text>3</text></g></svg></div>
+      <figcaption>管理员建好图谱发给学员。学员学课程、做测试，成绩会自动进到两个地方：学员自己看的仪表盘，和管理者看团队用的驾驶舱。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 2</span><span class="fig-t">每个环节要做几步</span></p>
+      <div class="kpis">
+        <div class="kpi"><span class="ve-label">管理员 · 建图谱</span><span class="big">7<span class="unit">步</span></span><svg class="pips" viewBox="0 0 140 16" width="126" height="15" role="img" aria-label="7 步"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/><rect x="41" y="1" width="14" height="14" rx="2" class="on"/><rect x="61" y="1" width="14" height="14" rx="2" class="on"/><rect x="81" y="1" width="14" height="14" rx="2" class="on"/><rect x="101" y="1" width="14" height="14" rx="2" class="on"/><rect x="121" y="1" width="14" height="14" rx="2" class="on"/></svg></div>
+        <div class="kpi"><span class="ve-label">管理员 · 设置移动端</span><span class="big">2<span class="unit">步</span></span><svg class="pips" viewBox="0 0 40 16" width="36" height="15" role="img" aria-label="2 步"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/></svg></div>
+        <div class="kpi"><span class="ve-label">管理员 · 建驾驶舱</span><span class="big">6<span class="unit">步</span></span><svg class="pips" viewBox="0 0 120 16" width="108" height="15" role="img" aria-label="6 步"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/><rect x="41" y="1" width="14" height="14" rx="2" class="on"/><rect x="61" y="1" width="14" height="14" rx="2" class="on"/><rect x="81" y="1" width="14" height="14" rx="2" class="on"/><rect x="101" y="1" width="14" height="14" rx="2" class="on"/></svg></div>
+        <div class="kpi stu"><span class="ve-label">学员 · 自己学</span><span class="big">4<span class="unit">步</span></span><svg class="pips" viewBox="0 0 80 16" width="72" height="15" role="img" aria-label="4 步"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/><rect x="41" y="1" width="14" height="14" rx="2" class="on"/><rect x="61" y="1" width="14" height="14" rx="2" class="on"/></svg></div>
+      </div>
+      <figcaption>一格是一步。实心格是管理员做的，空心格是学员自己做的。</figcaption>
+    </figure>
+  </section>
+
+  <section id="sa" aria-label="整体结构">
+    <div class="kicker"><p class="eyebrow">整体结构</p><h2>一张图看懂：谁建、谁学、谁看</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 3</span><span class="fig-t">光谱的整体结构</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 1000 470" style="min-width:860px" role="img" aria-label="整体结构。管理端：岗位和图谱一一对应，图谱包含 1–3 级标签，末级标签配课程、测试题和适用等级。图谱启用后下发给岗位上的学员。学员端：学员进入岗位学习，后测得出标签分，平均成一级标签分，再平均成胜任指数。管理者：管理员新建驾驶舱，前一天的成绩汇入，生成能力预警、发展建议等看板，管理者筛选查看。" ><rect class="lane" x="0" y="8" width="1000" height="140" rx="10"/><rect class="lane" x="0" y="165" width="1000" height="140" rx="10"/><rect class="lane" x="0" y="322" width="1000" height="140" rx="10"/><text class="lane-t" x="14" y="70">管理端</text><text class="lane-s" x="14" y="94">管理员</text><text class="lane-t" x="14" y="227">学员端</text><text class="lane-s" x="14" y="251">App · 网页</text><text class="lane-t" x="14" y="384">管理者</text><text class="lane-s" x="14" y="408">看团队</text><path class="ve-e" data-ref="a-pos a-graph" d="M230 75H300"/><text class="ve-el" data-ref="a-pos a-graph" x="265" y="66">1:1 关联</text><path class="ve-e" data-ref="a-graph a-tags" d="M410 75H480"/><text class="ve-el" data-ref="a-graph a-tags" x="445" y="66">包含</text><path class="ve-e" data-ref="a-tags a-leaf" d="M610 75H680"/><text class="ve-el" data-ref="a-tags a-leaf" x="645" y="66">细分到</text><path class="ve-e" data-ref="a-leaf a-content" d="M800 75H860"/><text class="ve-el" data-ref="a-leaf a-content" x="830" y="66">配上</text><path class="ve-e" data-ref="a-graph a-learner" d="M355 110V157H180V200"/><text class="ve-el" data-ref="a-graph a-learner" x="268" y="148">启用后下发</text><path class="ve-e" data-ref="a-learner a-learn" d="M230 240H300"/><text class="ve-el" data-ref="a-learner a-learn" x="265" y="231">进入</text><path class="ve-e" data-ref="a-learn a-score" d="M430 240H500"/><text class="ve-el" data-ref="a-learn a-score" x="465" y="231">后测得出</text><path class="ve-e" data-ref="a-score a-l1" d="M610 240H680"/><text class="ve-el" data-ref="a-score a-l1" x="645" y="231">取平均</text><path class="ve-e" data-ref="a-l1 a-index" d="M800 240H860"/><text class="ve-el" data-ref="a-l1 a-index" x="830" y="231">取平均</text><path class="ve-e is-hot" data-ref="a-score a-cock" d="M555 280V314H400V360"/><text class="ve-el" data-ref="a-score a-cock" x="478" y="306">前一天的成绩汇入</text><path class="ve-e is-async" data-ref="a-admin a-cock" d="M118 92V400H300"/><text class="ve-el" data-ref="a-admin a-cock" x="209" y="391">管理员新建</text><path class="ve-e" data-ref="a-cock a-board" d="M500 400H580"/><text class="ve-el" data-ref="a-cock a-board" x="540" y="391">生成</text><path class="ve-e" data-ref="a-board a-mgr" d="M800 400H870"/><text class="ve-el" data-ref="a-board a-mgr" x="835" y="391">筛选查看</text><path class="ve-e" data-ref="a-pos a-graph" d="M300 75H230" style="marker-end:url(#ve-ah)"/><circle cx="118" cy="92" r="4" class="pt" data-ref="a-admin"/><g class="ve-n " transform="translate(130 40)" data-ref="a-pos" data-tip="gangwei" tabindex="0" role="button" aria-label="岗位"><rect class="sh" width="100" height="70" rx="6"/><text x="50.0" y="35.0">岗位</text></g><g class="ve-n is-key" transform="translate(300 40)" data-ref="a-graph" data-tip="graph" tabindex="0" role="button" aria-label="图谱"><rect class="sh" width="110" height="70" rx="6"/><text x="55.0" y="23.0">图谱</text><text class="sub" x="55.0" y="49.0">能力标准</text></g><g class="ve-n " transform="translate(480 40)" data-ref="a-tags" data-tip="tag1" tabindex="0" role="button" aria-label="标签"><rect class="sh" width="130" height="70" rx="6"/><text x="65.0" y="23.0">标签</text><text class="sub" x="65.0" y="49.0">1–3 级</text></g><g class="ve-n " transform="translate(680 40)" data-ref="a-leaf" data-tip="leaf" tabindex="0" role="button" aria-label="末级标签"><rect class="sh" width="120" height="70" rx="6"/><text x="60.0" y="35.0">末级标签</text></g><g class="ve-n " transform="translate(860 40)" data-ref="a-content" data-tip="content" tabindex="0" role="button" aria-label="课程+测试题"><rect class="sh" width="130" height="70" rx="6"/><text x="65.0" y="23.0">课程+测试题</text><text class="sub" x="65.0" y="49.0">+ 等级 L1–L5</text></g><g class="ve-n " transform="translate(130 200)" data-ref="a-learner" data-tip="learner" tabindex="0" role="button" aria-label="学员"><rect class="sh" width="100" height="80" rx="6"/><text x="50.0" y="28.0">学员</text><text class="sub" x="50.0" y="54.0">岗位上的人</text></g><g class="ve-n " transform="translate(300 200)" data-ref="a-learn" data-tip="entry-learn" tabindex="0" role="button" aria-label="岗位学习"><rect class="sh" width="130" height="80" rx="6"/><text x="65.0" y="28.0">岗位学习</text><text class="sub" x="65.0" y="54.0">前测·课程·后测</text></g><g class="ve-n " transform="translate(500 200)" data-ref="a-score" data-tip="tagScore" tabindex="0" role="button" aria-label="标签分"><rect class="sh" width="110" height="80" rx="6"/><text x="55.0" y="28.0">标签分</text><text class="sub" x="55.0" y="54.0">= 后测分</text></g><g class="ve-n " transform="translate(680 200)" data-ref="a-l1" data-tip="l1score" tabindex="0" role="button" aria-label="一级标签分"><rect class="sh" width="120" height="80" rx="6"/><text x="60.0" y="28.0">一级标签分</text><text class="sub" x="60.0" y="54.0">下级平均</text></g><g class="ve-n " transform="translate(860 200)" data-ref="a-index" data-tip="entry-index" tabindex="0" role="button" aria-label="胜任指数"><rect class="sh" width="130" height="80" rx="6"/><text x="65.0" y="28.0">胜任指数</text><text class="sub" x="65.0" y="54.0">学员仪表盘</text></g><g class="ve-n is-key" transform="translate(300 360)" data-ref="a-cock" data-tip="cockpit" tabindex="0" role="button" aria-label="驾驶舱"><rect class="sh" width="200" height="80" rx="6"/><text x="100.0" y="28.0">驾驶舱</text><text class="sub" x="100.0" y="54.0">一位管理者 1 个</text></g><g class="ve-n " transform="translate(580 360)" data-ref="a-board" data-tip="boards" tabindex="0" role="button" aria-label="看板"><rect class="sh" width="220" height="80" rx="6"/><text x="110.0" y="28.0">看板</text><text class="sub" x="110.0" y="54.0">预警 · 建议 · KAI/BAI</text></g><g class="ve-n " transform="translate(870 360)" data-ref="a-mgr" data-tip="manager" tabindex="0" role="button" aria-label="管理者"><rect class="sh" width="120" height="80" rx="6"/><text x="60.0" y="28.0">管理者</text><text class="sub" x="60.0" y="54.0">按 4 种条件筛</text></g></svg></div>
+      <figcaption>管理员把岗位要求做成图谱发给学员，学员学完考完，分数一层层算到胜任指数，第二天汇进管理者的驾驶舱。把鼠标放在任意方框上（手机上点一下），能看到它连着哪几条线，以及一句说明。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>要知道差多少，先得有个标准。图谱就是这个岗位的能力标准。</p></div>
+
+  <section id="s1" aria-label="图谱">
+    <div class="kicker"><p class="eyebrow">图谱</p><h2>图谱：关联一个岗位，<span class="num">7</span> 步建好</h2></div>
+    <figure class="fig ve-steps">
+      <p class="fig-h"><span class="fig-n">图 4</span><span class="fig-t">建图谱的 7 步</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 236" style="min-width:825px" role="img" aria-label="建一张图谱的 7 个步骤：新增图谱（3 项必填）、编辑岗位含义、选标签（1–3 级）、给末级标签配内容、启用、设置移动端、下发。" ><path class="ve-e" data-s="2" pathLength="1" d="M126 92H148"/><path class="ve-e" data-s="3" pathLength="1" d="M264 92H286"/><path class="ve-e" data-s="4" pathLength="1" d="M402 92H424"/><path class="ve-e" data-s="5" pathLength="1" d="M540 92H562"/><path class="ve-e" data-s="6" pathLength="1" d="M678 92H700"/><path class="ve-e" data-s="7" pathLength="1" d="M816 92H838"/><g class="ve-n " transform="translate(10 50)" data-s="1" data-jump="1" tabindex="0" role="button" aria-label="第 1 步：新增图谱"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="30.0">新增图谱</text><text class="sub" x="58.0" y="56.0">3 项必填</text></g><g class="ve-co" data-s="1" transform="translate(68.0 26)"><circle r="11"/><text>1</text></g><g class="ve-n " transform="translate(148 50)" data-s="2" data-jump="2" tabindex="0" role="button" aria-label="第 2 步：编辑岗位含义" data-tip="meaning"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="42.0">编辑岗位含义</text></g><g class="ve-co" data-s="2" transform="translate(206.0 26)"><circle r="11"/><text>2</text></g><g class="ve-n " transform="translate(286 50)" data-s="3" data-jump="3" tabindex="0" role="button" aria-label="第 3 步：选标签" data-tip="tag1"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="30.0">选标签</text><text class="sub" x="58.0" y="56.0">1–3 级</text></g><g class="ve-co" data-s="3" transform="translate(344.0 26)"><circle r="11"/><text>3</text></g><g class="ve-n " transform="translate(424 50)" data-s="4" data-jump="4" tabindex="0" role="button" aria-label="第 4 步：配内容" data-tip="leaf"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="30.0">配内容</text><text class="sub" x="58.0" y="56.0">末级标签</text></g><g class="ve-co" data-s="4" transform="translate(482.0 26)"><circle r="11"/><text>4</text></g><g class="ve-n " transform="translate(562 50)" data-s="5" data-jump="5" tabindex="0" role="button" aria-label="第 5 步：启用" data-tip="enable"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="30.0">启用</text><text class="sub" x="58.0" y="56.0">改后点“更新”</text></g><g class="ve-co" data-s="5" transform="translate(620.0 26)"><circle r="11"/><text>5</text></g><g class="ve-n " transform="translate(700 50)" data-s="6" data-jump="6" tabindex="0" role="button" aria-label="第 6 步：设置移动端"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="42.0">设置移动端</text></g><g class="ve-co" data-s="6" transform="translate(758.0 26)"><circle r="11"/><text>6</text></g><g class="ve-n " transform="translate(838 50)" data-s="7" data-jump="7" tabindex="0" role="button" aria-label="第 7 步：下发" data-tip="issue"><rect class="sh" width="116" height="84" rx="6"/><text x="58.0" y="42.0">下发</text></g><g class="ve-co" data-s="7" transform="translate(896.0 26)"><circle r="11"/><text>7</text></g><path class="ann" data-s="1" d="M68.0 134V150"/><text class="ann-t" data-s="1" x="10" y="168">1 个岗位只能</text><text class="ann-t" data-s="1" x="10" y="187">有 1 张图谱</text><path class="ann" data-s="4" d="M482.0 134V150"/><g data-s="4"><rect class="lv lv1" x="424.0" y="152" width="21.6" height="18" rx="2"/><text class="lv-t" x="434.8" y="161">L1</text><rect class="lv lv2" x="447.6" y="152" width="21.6" height="18" rx="2"/><text class="lv-t" x="458.4" y="161">L2</text><rect class="lv lv3" x="471.2" y="152" width="21.6" height="18" rx="2"/><text class="lv-t" x="482.0" y="161">L3</text><rect class="lv lv4" x="494.8" y="152" width="21.6" height="18" rx="2"/><text class="lv-t" x="505.6" y="161">L4</text><rect class="lv lv5" x="518.4" y="152" width="21.6" height="18" rx="2"/><text class="lv-t" x="529.2" y="161">L5</text><text class="ann-t svg-term" tabindex="0" data-tip="lv" x="424" y="190">适用能力等级</text></g><path class="ann" data-s="5" d="M620.0 134V150"/><text class="ann-t" data-s="5" x="562" y="168">启用后改内容，</text><text class="ann-t svg-term" tabindex="0" data-tip="update" data-s="5" x="562" y="187">点“更新”才生效</text><g class="ve-dim is-key" ><path class="ext" d="M10 206V228M954 206V228"/><path class="ln" d="M10 222H954M6 226l8-8M950 226l8-8"/><text x="482.0" y="216">图谱共 7 步</text></g></svg></div>
+      <div class="ve-player js-only">
+        <ol class="ve-cap">
+          <li data-n="1/7">新增图谱：填名称、选模板、选岗位，这 3 项都必填。</li>
+          <li data-n="2/7">编辑<span class="term" tabindex="0" data-tip="meaning">岗位含义</span>：写清这个岗位为什么设、主要做哪些事。</li>
+          <li data-n="3/7">选标签：挑出这个岗位要的能力标签，最多分 3 级。</li>
+          <li data-n="4/7">给<span class="term" tabindex="0" data-tip="leaf">末级标签</span>配内容：挂上课程（分必修和选修）、测试题，再选<span class="term" tabindex="0" data-tip="lv">适用能力等级</span> L1–L5。</li>
+          <li data-n="5/7"><span class="term" tabindex="0" data-tip="enable">启用</span>：图谱开始生效。启用后再改内容，要点<span class="term" tabindex="0" data-tip="update">“更新”</span>才会生效。</li>
+          <li data-n="6/7">设置移动端：把学员要用的入口放进手机端页面。</li>
+          <li data-n="7/7"><span class="term" tabindex="0" data-tip="issue">下发</span>：图谱发到岗位上的学员那里，他们就能开始学了。</li>
+        </ol>
+        <button data-go="-1" aria-label="上一步">←</button>
+        <button data-play>播放</button>
+        <input type="range" min="0" value="0" aria-label="步骤">
+        <button data-go="1" aria-label="下一步">→</button>
+      </div>
+      <figcaption>点任意一步，或者用箭头一步步看。带虚线下划线的词，鼠标放上去（手机上点一下）有解释。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 5</span><span class="fig-t">第 1 步要填什么</span></p>
+      <div class="duo">
+        <div class="frame">
+          <div class="form" aria-label="新增图谱表单示例：图谱名称、模板、关联岗位，3 项都是必填。">
+            <p class="ve-label">第 1 步 · 新增图谱 · 示例</p>
+            <div class="fld"><span class="fld-l"><span class="term" tabindex="0" data-tip="name">图谱名称</span><span class="req">必填</span></span><span class="fld-v">如：销售顾问能力图谱</span></div>
+            <div class="fld"><span class="fld-l"><span class="term" tabindex="0" data-tip="tpl">模板</span><span class="req">必填</span></span><span class="fld-v">选择模板 ▾</span></div>
+            <div class="fld"><span class="fld-l"><span class="term" tabindex="0" data-tip="pos">关联岗位</span><span class="req">必填</span></span><span class="fld-v">选择岗位 ▾</span></div>
+            <svg class="pips" viewBox="0 0 60 16" width="54" height="15" role="img" aria-label="3 项必填"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/><rect x="41" y="1" width="14" height="14" rx="2" class="on"/></svg>
+          </div>
+        </div>
+        <div class="rules">
+          <div class="callout"><span class="chip info">规则 1</span><p>一个岗位只能有一张图谱。</p></div>
+          <div class="callout"><span class="chip info">规则 2</span><p>启用后再改内容，要点“更新”才会生效。</p></div>
+        </div>
+      </div>
+      <figcaption>建图谱第一步只要填 3 项：名称、模板、岗位。另外有两条规则要先知道：一个岗位只能有一张图谱；启用后再改内容，要点“更新”才会生效。</figcaption>
+    </figure>
+
+    <figure class="fig" id="tree-fig">
+      <p class="fig-h"><span class="fig-n">图 6</span><span class="fig-t">标签分几层，要配多少内容</span></p>
+      <div class="frame">
+        <div class="ctl js-only">
+          <label>一级标签数 <output id="t-a">3</output><input id="t-ra" type="range" min="1" max="4" value="3"></label>
+          <label>每个一级标签下的二级标签数 <output id="t-b">3</output><input id="t-rb" type="range" min="1" max="4" value="3"></label>
+        </div>
+        <div class="tree-out"><span class="big" id="t-n">9</span><span>个<span class="term" tabindex="0" data-tip="leaf">末级标签</span>要配内容 <span class="tagx">示例</span></span></div>
+        <svg class="ve-svg" id="tree-svg" viewBox="0 0 960 256" style="min-width:820px" role="img" aria-label="示例：3 个一级标签，每个下面 3 个二级标签，共 9 个末级标签。"><path class="ve-e" d="M480 62V80H166.7V98"/><path class="ve-e" d="M166.7 146V164H62.2V184"/><path class="ve-e" d="M166.7 146V164H166.7V184"/><path class="ve-e" d="M166.7 146V164H271.1V184"/><path class="ve-e" d="M480 62V80H480.0V98"/><path class="ve-e" d="M480.0 146V164H375.6V184"/><path class="ve-e" d="M480.0 146V164H480.0V184"/><path class="ve-e" d="M480.0 146V164H584.4V184"/><path class="ve-e" d="M480 62V80H793.3V98"/><path class="ve-e" d="M793.3 146V164H688.9V184"/><path class="ve-e" d="M793.3 146V164H793.3V184"/><path class="ve-e" d="M793.3 146V164H897.8V184"/><g class="ve-n " transform="translate(380 12)" ><rect class="sh" width="200" height="50" rx="6"/><path class="gl" transform="translate(12 12)" d="M8 1v4M3 9V5h10v4M8 5v4M1 9h4v6H1zM6 9h4v6H6zM11 9h4v6h-4z"/><text x="100.0" y="25.0">图谱（示例）</text></g><g class="ve-n " transform="translate(86.7 98)" ><rect class="sh" width="160" height="48" rx="6"/><text x="80.0" y="24.0">一级 A</text></g><g class="ve-n is-leaf" transform="translate(15.0 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">A1</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n is-leaf" transform="translate(119.4 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">A2</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n is-leaf" transform="translate(223.9 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">A3</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n " transform="translate(400.0 98)" ><rect class="sh" width="160" height="48" rx="6"/><text x="80.0" y="24.0">一级 B</text></g><g class="ve-n is-leaf" transform="translate(328.3 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">B1</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n is-leaf" transform="translate(432.8 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">B2</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n is-leaf" transform="translate(537.2 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">B3</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n " transform="translate(713.3 98)" ><rect class="sh" width="160" height="48" rx="6"/><text x="80.0" y="24.0">一级 C</text></g><g class="ve-n is-leaf" transform="translate(641.7 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">C1</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n is-leaf" transform="translate(746.1 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">C2</text><text class="sub" x="47.2" y="44.0">配内容</text></g><g class="ve-n is-leaf" transform="translate(850.6 184)" ><rect class="sh" width="94.4" height="60" rx="6"/><text x="47.2" y="18.0">C3</text><text class="sub" x="47.2" y="44.0">配内容</text></g></svg>
+      </div>
+      <figcaption>举个例子：3 个<span class="term" tabindex="0" data-tip="tag1">一级标签</span>，每个下面 3 个<span class="term" tabindex="0" data-tip="tag2">二级标签</span>，一共 9 个末级标签。课程、测试题和能力等级只配在末级标签上。拖动滑块，看数量怎么变。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>图谱的核心是标签。那标签从哪儿来？</p></div>
+
+  <section id="st" aria-label="标签从哪儿来">
+    <div class="kicker"><p class="eyebrow">标签从哪儿来</p><h2>标签有 <span class="num">3</span> 条来路，平台给一套，企业也能自己建</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 7</span><span class="fig-t">标签的 3 条来路</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 300" style="min-width:825px" role="img" aria-label="标签有三条来路：时代光华标签模板库，企业自建标签库，以及图谱模板。前两条在第 3 步选标签时挑选；选了图谱模板，标签会在第 1 步整套带进图谱。" ><path class="ve-e" d="M280 55H340V100H400"/><text class="ve-el" x="310" y="46">挑选</text><path class="ve-e" d="M280 145H340V130H400"/><text class="ve-el" x="310" y="166">挑选</text><path class="ve-e" d="M280 245H400"/><text class="ve-el" x="340" y="236">选用</text><path class="ve-e" d="M600 115H650V130H700"/><text class="ve-el" x="625" y="106">加入</text><path class="ve-e is-hot" d="M600 245H650V160H700"/><text class="ve-el r" x="658" y="222">整套带入</text><g class="ve-n " transform="translate(20 20)" data-tip="tplTags" tabindex="0"><rect class="sh" width="260" height="70" rx="6"/><text x="130.0" y="23.0">光华标签模板库</text><text class="sub" x="130.0" y="49.0">平台提供</text></g><g class="ve-n " transform="translate(20 110)" data-tip="selfTags" tabindex="0"><rect class="sh" width="260" height="70" rx="6"/><text x="130.0" y="23.0">企业自建标签库</text><text class="sub" x="130.0" y="49.0">管理员新建或自动生成</text></g><g class="ve-n " transform="translate(20 210)" data-tip="tplGraph" tabindex="0"><rect class="sh" width="260" height="70" rx="6"/><text x="130.0" y="23.0">图谱模板</text><text class="sub" x="130.0" y="49.0">光华模板 · 自己的旧图谱</text></g><g class="ve-n " transform="translate(400 70)" ><rect class="sh" width="200" height="90" rx="6"/><text x="100.0" y="33.0">第 3 步 · 选标签</text><text class="sub" x="100.0" y="59.0">先一级，再二、三级</text></g><g class="ve-n " transform="translate(400 210)" ><rect class="sh" width="200" height="70" rx="6"/><text x="100.0" y="35.0">第 1 步 · 选模板</text></g><g class="ve-n is-key" transform="translate(700 100)" ><rect class="sh" width="240" height="90" rx="6"/><path class="gl" transform="translate(12 12)" d="M8 1v4M3 9V5h10v4M8 5v4M1 9h4v6H1zM6 9h4v6H6zM11 9h4v6h-4z"/><text x="120.0" y="33.0">图谱里的标签</text><text class="sub" x="120.0" y="59.0">1–3 级</text></g><g class="ve-co" transform="translate(20 20)"><circle r="11"/><text>1</text></g><g class="ve-co" transform="translate(20 110)"><circle r="11"/><text>2</text></g><g class="ve-co" transform="translate(20 210)"><circle r="11"/><text>3</text></g></svg></div>
+      <figcaption>选标签时，可以从时代光华的标签模板库里挑，也可以用企业自己建的。要是第 1 步选了图谱模板，标签会整套带进来，在这个基础上改就行。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 8</span><span class="fig-t">选标签的界面长这样</span></p>
+      <div class="frame">
+        <div class="picker" aria-label="选标签界面示例：一级、二级、三级三栏。选中一级标签“产品知识”后，二级栏给它挑标签；选中二级“需求分析”后，三级栏给它挑标签。">
+          <div class="pcol"><p class="ve-label">一级标签</p><span class="pt-tag on">产品知识</span><span class="pt-tag">专业技能</span><span class="pt-tag">通用能力</span><span class="pt-add">+ 新增</span></div>
+          <div class="pcol"><p class="ve-label">二级 · 上级：产品知识</p><span class="pt-tag on">需求分析</span><span class="pt-tag">产品设计</span><span class="pt-add">+ 新增</span></div>
+          <div class="pcol"><p class="ve-label">三级 · 上级：需求分析</p><span class="pt-tag">用户调研</span><span class="pt-tag">需求文档</span><span class="pt-add">+ 新增</span></div>
+        </div>
+        <p class="tagx" style="display:inline-block;margin-top:var(--s-3)">示例</p>
+      </div>
+      <figcaption>先定一级标签，再点开其中一个，给它挑二级标签；三级也是这样。同一个标签在一张图谱里只能用一次。用的是光华模板库里的标签时，后面配课程会有推荐课程。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>很多东西平台已经备好了，管理员不用从零开始。</p></div>
+
+  <section id="sk" aria-label="平台自带，开箱可用">
+    <div class="kicker"><p class="eyebrow">平台自带</p><h2>平台自带，开箱可用</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 9</span><span class="fig-t">平台已经备好的 8 样东西</span></p>
+      <div class="kits"><div class="kit"><span class="chip ok">平台自带</span><h3>光华图谱模板</h3><p>新建图谱时选它，岗位意义、关键职责、标签、课程、测试题和能力等级会一起带过来。</p><p class="save"><b>省掉：</b>第 2–4 步不用从零做，在模板上改就行。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>光华标签模板库</h3><p>一套现成的能力标签。选标签时直接从里面挑。</p><p class="save"><b>省掉：</b>不用自己一个个想标签、起名字。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>系统推荐课程</h3><p>用的是光华模板里的标签时，配课程那一步会列出推荐课程。</p><p class="save"><b>省掉：</b>不用在课程库里一门门找。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>自己的图谱当模板</h3><p>建过的图谱可以当模板再用，也可以直接复制一份。</p><p class="save"><b>省掉：</b>相近的岗位不用重新搭一遍。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>Excel 导入模板</h3><div class="kit-n"><span class="big">2</span><svg class="pips" viewBox="0 0 40 16" width="36" height="15" role="img" aria-label="2 个"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/></svg></div><p>图谱导入、试题导入各有一份 Excel 模板。按格式填好，就能批量导入。</p><p class="save"><b>省掉：</b>题目多的时候不用一题一题录。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>学员端现成组件</h3><div class="kit-n"><span class="big">2</span><svg class="pips" viewBox="0 0 40 16" width="36" height="15" role="img" aria-label="2 个"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/></svg></div><p>“岗位学习”和“胜任指数”两个组件，放进手机端页面就能用。</p><p class="save"><b>省掉：</b>不用另外给学员做页面。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>驾驶舱现成看板</h3><div class="kit-n"><span class="big">13</span><svg class="pips" viewBox="0 0 260 16" width="234" height="15" role="img" aria-label="13 个"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/><rect x="41" y="1" width="14" height="14" rx="2" class="on"/><rect x="61" y="1" width="14" height="14" rx="2" class="on"/><rect x="81" y="1" width="14" height="14" rx="2" class="on"/><rect x="101" y="1" width="14" height="14" rx="2" class="on"/><rect x="121" y="1" width="14" height="14" rx="2" class="on"/><rect x="141" y="1" width="14" height="14" rx="2" class="on"/><rect x="161" y="1" width="14" height="14" rx="2" class="on"/><rect x="181" y="1" width="14" height="14" rx="2" class="on"/><rect x="201" y="1" width="14" height="14" rx="2" class="on"/><rect x="221" y="1" width="14" height="14" rx="2" class="on"/><rect x="241" y="1" width="14" height="14" rx="2" class="on"/></svg></div><p>能力预警、发展建议、关键能力、基础能力、各部门能力、核心成员、综合指数、细分能力、学习进度、一级和二级标签动态、标签排名、学习数据统计，一共 13 个板块。</p><p class="save"><b>省掉：</b>不用自己做报表。</p></div><div class="kit"><span class="chip ok">平台自带</span><h3>发展建议文案</h3><div class="kit-n"><span class="big">3</span><svg class="pips" viewBox="0 0 60 16" width="54" height="15" role="img" aria-label="3 个"><rect x="1" y="1" width="14" height="14" rx="2" class="on"/><rect x="21" y="1" width="14" height="14" rx="2" class="on"/><rect x="41" y="1" width="14" height="14" rx="2" class="on"/></svg></div><p>按团队得分分低、中、高 3 档，每档自动给一段建议，并列出这一档里的标签。</p><p class="save"><b>省掉：</b>不用自己写分析结论。</p></div></div>
+      <figcaption>每张卡片写了它是什么，以及能帮管理员省掉哪些事。数字旁边的小格子，一格代表一个。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>图谱发下去以后，学员自己学、自己考，分数自动算。</p></div>
+
+  <section id="s2" aria-label="学员端">
+    <div class="kicker"><p class="eyebrow">学员端</p><h2>管理员开通 <span class="num">2</span> 步，学员自己走 <span class="num">4</span> 步</h2></div>
+    <figure class="fig ve-steps">
+      <p class="fig-h"><span class="fig-n">图 10</span><span class="fig-t">开通和学习的流程</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 1040 296" style="min-width:894px" role="img" aria-label="管理员 2 步：在移动端设置中加入岗位学习、胜任指数两个入口，然后保存。学员 4 步：进入岗位学习、标签前测、学课程、后测。后测分即标签分，学员在手机 App 和网页上查看。" ><rect class="lane" x="0" y="8" width="1040" height="104" rx="10"/><rect class="lane" x="0" y="132" width="1040" height="124" rx="10"/><text class="lane-t" x="18" y="52">管理员</text><text class="lane-s" x="18" y="78">2 步 · 一次</text><text class="lane-t" x="18" y="186">学员</text><text class="lane-s" x="18" y="212">4 步 · 自助</text><path class="ve-e" data-s="2" pathLength="1" d="M350 60H400"/><path class="ve-e" data-s="3" pathLength="1" d="M455 98V122H205V152"/><text class="ve-el" data-s="3" x="330" y="116">入口出现</text><path class="ve-e" data-s="4" pathLength="1" d="M280 194H320"/><path class="ve-e" data-s="5" pathLength="1" d="M470 194H510"/><path class="ve-e" data-s="6" pathLength="1" d="M660 194H700"/><path class="ve-e is-hot" data-s="6" pathLength="1" d="M850 194H890"/><g class="ve-n" data-s="1" transform="translate(130 20)"><rect class="sh" width="220" height="80" rx="6"/><text x="110" y="28">加入 2 个入口</text><text class="sub svg-term" tabindex="0" data-tip="entry-learn" x="62" y="56">岗位学习</text><text class="sub" x="110" y="56">·</text><text class="sub svg-term" tabindex="0" data-tip="entry-index" x="158" y="56">胜任指数</text></g><g class="ve-n " transform="translate(400 20)" data-s="2"><rect class="sh" width="110" height="80" rx="6"/><text x="55.0" y="40.0">保存</text></g><g class="ve-n " transform="translate(130 152)" data-s="3"><rect class="sh" width="150" height="84" rx="6"/><text x="75.0" y="42.0">进入岗位学习</text></g><g class="ve-n " transform="translate(320 152)" data-s="4" data-tip="pre" tabindex="0"><rect class="sh is-off" width="150" height="84" rx="6"/><text x="75.0" y="30.0">标签前测</text><text class="sub" x="75.0" y="56.0">不算总分</text></g><g class="ve-n " transform="translate(510 152)" data-s="5"><rect class="sh" width="150" height="84" rx="6"/><text x="75.0" y="30.0">学课程</text><text class="sub" x="75.0" y="56.0">必修 · 选修</text></g><g class="ve-n is-key" transform="translate(700 152)" data-s="6" data-tip="post" tabindex="0"><rect class="sh" width="150" height="84" rx="6"/><text x="75.0" y="30.0">后测</text><text class="sub" x="75.0" y="56.0">= 标签分</text></g><g class="ve-n " transform="translate(890 152)" data-s="6"><rect class="sh" width="140" height="84" rx="6"/><text x="70.0" y="30.0">学员仪表盘</text><text class="sub" x="70.0" y="56.0">App · 网页</text></g><g class="ve-dim is-key" ><path class="ext" d="M130 244V282M850 244V282"/><path class="ln" d="M130 276H850M126 280l8-8M846 280l8-8"/><text x="490.0" y="270">学员共 4 步</text></g></svg></div>
+      <div class="ve-player js-only">
+        <ol class="ve-cap">
+          <li data-n="1/6">管理员：在移动端设置里放上<span class="term" tabindex="0" data-tip="entry-learn">“岗位学习”</span>和<span class="term" tabindex="0" data-tip="entry-index">“胜任指数”</span>两个入口。</li>
+          <li data-n="2/6">管理员：保存。学员那边就能看到这两个入口了。</li>
+          <li data-n="3/6">学员：打开“岗位学习”。</li>
+          <li data-n="4/6">学员：先做这个标签的<span class="term" tabindex="0" data-tip="pre">前测</span>。前测只用来对比学前学后，不算进总分。</li>
+          <li data-n="5/6">学员：学这个标签下的课程。</li>
+          <li data-n="6/6">学员：做<span class="term" tabindex="0" data-tip="post">后测</span>。后测分就是这个标签的得分，手机 App 和网页上都能看。</li>
+        </ol>
+        <button data-go="-1" aria-label="上一步">←</button>
+        <button data-play>播放</button>
+        <input type="range" min="0" value="0" aria-label="步骤">
+        <button data-go="1" aria-label="下一步">→</button>
+      </div>
+      <figcaption>管理员只开通一次。之后每个标签，学员都是这 4 步，自己就能完成。虚线框的前测不算分。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 11</span><span class="fig-t">这 2 个入口分别是什么</span></p>
+      <div class="entries">
+        <div class="callout"><span class="chip info">入口 1</span><h3>岗位学习</h3><p>学员在手机 App 或网页里用：看自己岗位的图谱和课程，做标签前测和后测。</p></div>
+        <div class="callout"><span class="chip info">入口 2</span><h3>胜任指数</h3><p>学员看自己成绩用：每个标签考了多少分，岗位总分是多少。总分是各一级标签分的平均，权重一样，没考的按 0 分算。</p></div>
+      </div>
+      <figcaption>管理员开通的就是这两个入口。一个用来学，一个用来看分。</figcaption>
+    </figure>
+
+    <figure class="fig" id="calc-fig">
+      <p class="fig-h"><span class="fig-n">图 12</span><span class="fig-t">分数是怎么算的</span></p>
+      <div class="frame">
+        <div class="ctl js-only" id="calc-ctl">
+          <div class="row"><label>二级 A1 后测分 <output>80</output><input type="range" min="0" max="100" value="80" data-i="0"></label><button type="button" aria-pressed="false" data-skip="0">未考</button></div>
+          <div class="row"><label>二级 A2 后测分 <output>60</output><input type="range" min="0" max="100" value="60" data-i="1"></label><button type="button" aria-pressed="false" data-skip="1">未考</button></div>
+          <div class="row"><label>二级 A3 后测分 <output>70</output><input type="range" min="0" max="100" value="70" data-i="2"></label><button type="button" aria-pressed="false" data-skip="2">未考</button></div>
+        </div>
+        <svg class="ve-svg" id="calc-svg" viewBox="0 0 960 280" style="min-width:820px" role="img" aria-label="分数计算示例：一级 A 等于 3 个二级标签后测分的平均；岗位胜任指数等于 3 个一级标签分的平均。"><text class="ax-t" x="40" y="20">一级 A 下的 3 个二级标签</text><path class="grid" d="M40 240.0H380"/><text class="ax-n" x="34" y="240.0">0</text><path class="grid" d="M40 150.0H380"/><text class="ax-n" x="34" y="150.0">50</text><path class="grid" d="M40 60.0H380"/><text class="ax-n" x="34" y="60.0">100</text><rect class="bar" x="70" y="96.0" width="60" height="144.0" rx="2"/><text class="bar-v" x="100" y="84.0">80</text><text class="bar-l" x="100" y="262">A1</text><rect class="bar" x="170" y="132.0" width="60" height="108.0" rx="2"/><text class="bar-v" x="200" y="120.0">60</text><text class="bar-l" x="200" y="262">A2</text><rect class="bar" x="270" y="114.0" width="60" height="126.0" rx="2"/><text class="bar-v" x="300" y="102.0">70</text><text class="bar-l" x="300" y="262">A3</text><path class="avg" d="M50 114.0H370"/><text class="avg-t" x="376" y="114.0">平均 70</text><text class="ax-t" x="520" y="20">3 个一级标签 → 胜任指数</text><text class="row-l" x="520" y="62">一级 A</text><rect class="hbar is-a" x="660" y="50" width="168.0" height="24" rx="2"/><text class="row-v is-a" x="836.0" y="62">70</text><text class="row-l" x="520" y="116">一级 B（示例）</text><rect class="hbar " x="660" y="104" width="180.0" height="24" rx="2"/><text class="row-v " x="848.0" y="116">75</text><text class="row-l" x="520" y="170">一级 C（示例）</text><rect class="hbar " x="660" y="158" width="192.0" height="24" rx="2"/><text class="row-v " x="860.0" y="170">80</text><text class="row-l" x="520" y="238">岗位胜任指数</text><rect class="hbar is-idx" x="660" y="226" width="180.0" height="24" rx="2"/><text class="row-v is-idx" x="848.0" y="238">75</text><path class="ann" d="M520 210H900"/></svg>
+        <p class="result" id="calc-out" aria-live="polite">一级 A = (A1 + A2 + A3) ÷ 3 = <b>70</b>；岗位胜任指数 = (一级 A + 一级 B + 一级 C) ÷ 3 = <b>75</b></p>
+      </div>
+      <figcaption>后测分就是标签分。一级标签的分，是它下面各二级标签后测分的平均；<span class="term" tabindex="0" data-tip="index">胜任指数</span>是各个一级标签分的平均。所有标签权重一样，没考的按 0 分算。一级 B、C 是举例用的固定值，结果保留 1 位小数。点一下“未考”试试。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>以前只能凭感觉说团队哪里弱，现在看数据就知道弱在哪、该补什么。</p></div>
+
+  <section id="s3" aria-label="驾驶舱">
+    <div class="kicker"><p class="eyebrow">驾驶舱</p><h2>驾驶舱：<span class="num">6</span> 步建好，管理者能看清团队每项能力</h2></div>
+    <figure class="fig ve-steps">
+      <p class="fig-h"><span class="fig-n">图 13</span><span class="fig-t">建驾驶舱的 6 步</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 236" style="min-width:825px" role="img" aria-label="建一个驾驶舱的 6 个步骤：填基本信息（名称、管理者、类型 3 项）、选学员、选关键能力和基础能力标签、设核心成员、设目标值和预警值、启用。" ><path class="ve-e" data-s="2" pathLength="1" d="M146 92H170"/><path class="ve-e" data-s="3" pathLength="1" d="M306 92H330"/><path class="ve-e" data-s="4" pathLength="1" d="M466 92H490"/><path class="ve-e" data-s="5" pathLength="1" d="M626 92H650"/><path class="ve-e" data-s="6" pathLength="1" d="M786 92H810"/><g class="ve-n " transform="translate(10 50)" data-s="1" data-jump="1" tabindex="0" role="button" aria-label="第 1 步：填基本信息"><rect class="sh" width="136" height="84" rx="6"/><text x="68.0" y="30.0">填基本信息</text><text class="sub" x="68.0" y="56.0">3 项</text></g><g class="ve-co" data-s="1" transform="translate(78.0 26)"><circle r="11"/><text>1</text></g><g class="ve-n " transform="translate(170 50)" data-s="2" data-jump="2" tabindex="0" role="button" aria-label="第 2 步：选学员"><rect class="sh" width="136" height="84" rx="6"/><text x="68.0" y="42.0">选学员</text></g><g class="ve-co" data-s="2" transform="translate(238.0 26)"><circle r="11"/><text>2</text></g><g class="ve-n " transform="translate(330 50)" data-s="3" data-jump="3" tabindex="0" role="button" aria-label="第 3 步：选能力标签"><rect class="sh" width="136" height="84" rx="6"/><text x="68.0" y="30.0">选能力标签</text><text class="sub" x="68.0" y="56.0">关键 · 基础</text></g><g class="ve-co" data-s="3" transform="translate(398.0 26)"><circle r="11"/><text>3</text></g><g class="ve-n " transform="translate(490 50)" data-s="4" data-jump="4" tabindex="0" role="button" aria-label="第 4 步：设核心成员" data-tip="core"><rect class="sh" width="136" height="84" rx="6"/><text x="68.0" y="42.0">设核心成员</text></g><g class="ve-co" data-s="4" transform="translate(558.0 26)"><circle r="11"/><text>4</text></g><g class="ve-n " transform="translate(650 50)" data-s="5" data-jump="5" tabindex="0" role="button" aria-label="第 5 步：设目标·预警"><rect class="sh" width="136" height="84" rx="6"/><text x="68.0" y="30.0">设目标·预警</text><text class="sub" x="68.0" y="56.0">2 个值</text></g><g class="ve-co" data-s="5" transform="translate(718.0 26)"><circle r="11"/><text>5</text></g><g class="ve-n " transform="translate(810 50)" data-s="6" data-jump="6" tabindex="0" role="button" aria-label="第 6 步：启用"><rect class="sh" width="136" height="84" rx="6"/><text x="68.0" y="30.0">启用</text><text class="sub" x="68.0" y="56.0">每人限 1 个</text></g><g class="ve-co" data-s="6" transform="translate(878.0 26)"><circle r="11"/><text>6</text></g><path class="ann" data-s="1" d="M78.0 134V150"/><text class="ann-t" data-s="1" x="10" y="168">名称 · 管理者</text><text class="ann-t" data-s="1" x="10" y="187">· 类型</text><path class="ann" data-s="3" d="M398.0 134V150"/><text class="ann-t svg-term" tabindex="0" data-tip="kai" data-s="3" x="330" y="168">关键能力（KAI）</text><text class="ann-t svg-term" tabindex="0" data-tip="bai" data-s="3" x="330" y="187">基础能力（BAI）</text><path class="ann" data-s="5" d="M718.0 134V150"/><text class="ann-t svg-term" tabindex="0" data-tip="target" data-s="5" x="650" y="168">目标值：对比</text><text class="ann-t svg-term" tabindex="0" data-tip="warn" data-s="5" x="650" y="187">预警值：分级</text><g class="ve-dim is-key" ><path class="ext" d="M10 206V228M946 206V228"/><path class="ln" d="M10 222H946M6 226l8-8M942 226l8-8"/><text x="478.0" y="216">驾驶舱共 6 步</text></g></svg></div>
+      <div class="ve-player js-only">
+        <ol class="ve-cap">
+          <li data-n="1/6">填基本信息：名称、管理者、类型，一共 3 项。</li>
+          <li data-n="2/6">选学员：选出这个驾驶舱要统计的人，比如一个部门的学员。</li>
+          <li data-n="3/6">选能力标签：定哪些标签算<span class="term" tabindex="0" data-tip="kai">关键能力</span>，哪些算<span class="term" tabindex="0" data-tip="bai">基础能力</span>。</li>
+          <li data-n="4/6">设<span class="term" tabindex="0" data-tip="core">核心成员</span>：标出要重点关注的人。</li>
+          <li data-n="5/6">设<span class="term" tabindex="0" data-tip="target">目标值</span>和<span class="term" tabindex="0" data-tip="warn">预警值</span>：目标值是一条参考线，方便对比；预警值决定预警级别。</li>
+          <li data-n="6/6">启用：一位管理者同一时间只能有 1 个启用中的驾驶舱。</li>
+        </ol>
+        <button data-go="-1" aria-label="上一步">←</button>
+        <button data-play>播放</button>
+        <input type="range" min="0" value="0" aria-label="步骤">
+        <button data-go="1" aria-label="下一步">→</button>
+      </div>
+      <figcaption>每位管理者建一次就行。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 14</span><span class="fig-t">驾驶舱回答 4 个问题</span></p>
+      <div class="filters" aria-label="筛选条件示例">
+        <span class="ve-label">筛选</span>
+        <span class="filt"><span>部门</span>全部</span><span class="filt"><span>群组</span>全部</span><span class="filt"><span>岗位</span>销售顾问</span><span class="filt"><span>图谱</span>销售顾问能力图谱</span>
+        <span class="tagx">示例数据</span>
+      </div>
+      <div role="tablist" aria-label="驾驶舱回答的 4 个问题" class="js-only" id="tabs">
+        <button role="tab" id="tab-1" aria-controls="p-1" aria-selected="true"><span class="q">问题 1</span><span class="t">整体在什么水平？</span></button>
+        <button role="tab" id="tab-2" aria-controls="p-2" aria-selected="false" tabindex="-1"><span class="q">问题 2</span><span class="t">短板在哪，要不要预警？</span></button>
+        <button role="tab" id="tab-3" aria-controls="p-3" aria-selected="false" tabindex="-1"><span class="q">问题 3</span><span class="t">重点的人怎么样？</span></button>
+        <button role="tab" id="tab-4" aria-controls="p-4" aria-selected="false" tabindex="-1"><span class="q">问题 4</span><span class="t">学得怎么样了？</span></button>
+      </div>
+      <div class="frame">
+        <div role="tabpanel" id="p-1" aria-labelledby="tab-1"><p class="ph">整体水平：综合指数的平均分、最高分、最低分，还有每个月的变化</p><svg class="ve-svg" viewBox="0 0 900 270" style="min-width:774px" role="img" aria-label="示例数据：本月综合指数平均 68，最高 91，最低 42；5 月到 10 月平均分别为 58、61、63、66、67、68。" ><text class="ax-t" x="30" y="24">本月综合指数 · 示例数据</text><path class="grid" d="M30.0 140H350.0"/><text class="ax-n m" x="30.0" y="166">0</text><text class="ax-n m" x="350.0" y="166">100</text><path class="rng" d="M164.4 140H321.2"/><circle class="pt" cx="164.4" cy="140" r="6"/><circle class="pt" cx="321.2" cy="140" r="6"/><circle class="pt key" cx="247.60000000000002" cy="140" r="8"/><text class="pt-t" x="164.4" y="190">最低 42</text><text class="pt-t" x="321.2" y="190">最高 91</text><text class="pt-t key" x="247.60000000000002" y="110">平均 68</text><text class="ax-t" x="430" y="24">综合指数平均 · 按月 · 示例数据</text><path class="grid" d="M440 220.0H880"/><text class="ax-n" x="434" y="220.0">40</text><path class="grid" d="M440 130.0H880"/><text class="ax-n" x="434" y="130.0">60</text><path class="grid" d="M440 40.0H880"/><text class="ax-n" x="434" y="40.0">80</text><polyline class="line" points="460,139.0 540,125.5 620,116.5 700,103.0 780,98.5 860,94.0"/><circle class="pt" cx="460" cy="139.0" r="3.5"/><text class="ax-n m" x="460" y="244">5 月</text><circle class="pt" cx="540" cy="125.5" r="3.5"/><text class="ax-n m" x="540" y="244">6 月</text><circle class="pt" cx="620" cy="116.5" r="3.5"/><text class="ax-n m" x="620" y="244">7 月</text><circle class="pt" cx="700" cy="103.0" r="3.5"/><text class="ax-n m" x="700" y="244">8 月</text><circle class="pt" cx="780" cy="98.5" r="3.5"/><text class="ax-n m" x="780" y="244">9 月</text><circle class="pt key" cx="860" cy="94.0" r="5"/><text class="ax-n m" x="860" y="244">10 月</text><path class="ann" d="M860 84.0V60.0"/><text class="pt-t key" x="854" y="50.0" style="text-anchor:end">10 月 68</text></svg></div>
+        <div role="tabpanel" id="p-2" aria-labelledby="tab-2"><p class="ph">短板和预警：关键能力、基础能力的团队平均分，和目标值、预警值放在一起看</p><svg class="ve-svg" viewBox="0 0 900 316" style="min-width:774px" role="img" aria-label="示例数据：关键能力和基础能力各 3 个标签的团队平均分，对比目标值 80 和预警值 60。方案呈现 58 为 3 级预警，流程规范 40 为 2 级预警，安全合规 28 为 1 级预警。" ><path class="wline" d="M510 30V304"/><text class="ln-t risk svg-term" tabindex="0" data-tip="warn" x="510" y="20">预警值 60</text><path class="tline" d="M630 30V304"/><text class="ln-t svg-term" tabindex="0" data-tip="target" x="630" y="20">目标值 80</text><text class="grp-t svg-term" tabindex="0" data-tip="kai" x="0" y="52">关键能力（KAI）</text><text class="row-l" x="0" y="85">需求分析</text><rect class="hbar" x="150" y="74" width="432" height="22" rx="2"/><text class="row-v" x="590" y="85">72</text><text class="row-l" x="0" y="119">方案呈现</text><rect class="hbar warned" x="150" y="108" width="348" height="22" rx="2"/><text class="row-v" x="506" y="119">58</text><text class="lv-chip" x="538" y="119">▲ 3 级预警</text><text class="row-l" x="0" y="153">客户沟通</text><rect class="hbar" x="150" y="142" width="486" height="22" rx="2"/><text class="row-v" x="644" y="153">81</text><text class="grp-t svg-term" tabindex="0" data-tip="bai" x="0" y="190">基础能力（BAI）</text><text class="row-l" x="0" y="223">产品知识</text><rect class="hbar" x="150" y="212" width="384" height="22" rx="2"/><text class="row-v" x="542" y="223">64</text><text class="row-l" x="0" y="257">流程规范</text><rect class="hbar warned" x="150" y="246" width="240" height="22" rx="2"/><text class="row-v" x="398" y="257">40</text><text class="lv-chip" x="430" y="257">▲ 2 级预警</text><text class="row-l" x="0" y="291">安全合规</text><rect class="hbar warned" x="150" y="280" width="168" height="22" rx="2"/><text class="row-v" x="326" y="291">28</text><text class="lv-chip" x="358" y="291">▲ 1 级预警</text></svg>
+          <p class="ph">发展建议：按团队得分分 3 档，每档给一段固定建议，并列出这一档里的标签</p><div class="tiers"><div class="tier"><p class="tier-h"><span class="tier-n">低</span><span class="ve-label">团队得分 < 60</span></p><div class="tags"><span class="tag">方案呈现 <b>58</b></span><span class="tag">流程规范 <b>40</b></span><span class="tag">安全合规 <b>28</b></span></div></div><div class="tier"><p class="tier-h"><span class="tier-n">中</span><span class="ve-label">团队得分 60–< 80</span></p><div class="tags"><span class="tag">需求分析 <b>72</b></span><span class="tag">产品知识 <b>64</b></span></div></div><div class="tier"><p class="tier-h"><span class="tier-n">高</span><span class="ve-label">团队得分 ≥ 80</span></p><div class="tags"><span class="tag">客户沟通 <b>81</b></span></div></div></div></div>
+        <div role="tabpanel" id="p-3" aria-labelledby="tab-3"><p class="ph">重点人员：每位核心成员的岗位能力指数</p><svg class="ve-svg" viewBox="0 0 900 190" style="min-width:774px" role="img" aria-label="示例数据：4 位核心成员的岗位能力指数：学员甲 85，学员乙 71，学员丙 63，学员丁 52。" ><text class="ax-t" x="0" y="20">核心成员 · 岗位能力指数 · 示例数据</text><text class="row-l" x="0" y="51">学员甲</text><rect class="hbar" x="150" y="40" width="510" height="22" rx="2"/><text class="row-v" x="668" y="51">85</text><text class="row-l" x="0" y="87">学员乙</text><rect class="hbar" x="150" y="76" width="426" height="22" rx="2"/><text class="row-v" x="584" y="87">71</text><text class="row-l" x="0" y="123">学员丙</text><rect class="hbar" x="150" y="112" width="378" height="22" rx="2"/><text class="row-v" x="536" y="123">63</text><text class="row-l" x="0" y="159">学员丁</text><rect class="hbar" x="150" y="148" width="312" height="22" rx="2"/><text class="row-v" x="470" y="159">52</text></svg></div>
+        <div role="tabpanel" id="p-4" aria-labelledby="tab-4"><p class="ph">学习进度：标签完成率，课程有多少在学、多少学完，考了多少次</p><svg class="ve-svg" viewBox="0 0 900 300" style="min-width:774px" role="img" aria-label="示例数据：6 个标签的完成率在 50% 到 95% 之间；课程学习中 12 门次，已完成 30 门次；考试数 46 次。" ><text class="ax-t" x="0" y="20">标签完成率 · 示例数据</text><text class="row-l" x="0" y="51">产品知识</text><rect class="hbar" x="110" y="40" width="285" height="22" rx="2"/><text class="row-v" x="403" y="51">95%</text><text class="row-l" x="0" y="89">需求分析</text><rect class="hbar" x="110" y="78" width="270" height="22" rx="2"/><text class="row-v" x="388" y="89">90%</text><text class="row-l" x="0" y="127">客户沟通</text><rect class="hbar" x="110" y="116" width="255" height="22" rx="2"/><text class="row-v" x="373" y="127">85%</text><text class="row-l" x="0" y="165">方案呈现</text><rect class="hbar" x="110" y="154" width="225" height="22" rx="2"/><text class="row-v" x="343" y="165">75%</text><text class="row-l" x="0" y="203">流程规范</text><rect class="hbar" x="110" y="192" width="180" height="22" rx="2"/><text class="row-v" x="298" y="203">60%</text><text class="row-l" x="0" y="241">安全合规</text><rect class="hbar" x="110" y="230" width="150" height="22" rx="2"/><text class="row-v" x="268" y="241">50%</text><text class="ax-t" x="520" y="20">课程 · 示例数据</text><rect class="hbar" x="520" y="40" width="96" height="26" rx="2"/><rect class="hbar done" x="618" y="40" width="240" height="26" rx="2"/><text class="row-v" x="520" y="88" style="text-anchor:start">学习中 12</text><text class="row-v" x="618" y="88" style="text-anchor:start">已完成 30</text><text class="ax-t" x="520" y="140">考试数 46 · 每格 1 次 · 示例数据</text><rect class="cell" x="520" y="156" width="16" height="16" rx="2"/><rect class="cell" x="542" y="156" width="16" height="16" rx="2"/><rect class="cell" x="564" y="156" width="16" height="16" rx="2"/><rect class="cell" x="586" y="156" width="16" height="16" rx="2"/><rect class="cell" x="608" y="156" width="16" height="16" rx="2"/><rect class="cell" x="630" y="156" width="16" height="16" rx="2"/><rect class="cell" x="652" y="156" width="16" height="16" rx="2"/><rect class="cell" x="674" y="156" width="16" height="16" rx="2"/><rect class="cell" x="696" y="156" width="16" height="16" rx="2"/><rect class="cell" x="718" y="156" width="16" height="16" rx="2"/><rect class="cell" x="740" y="156" width="16" height="16" rx="2"/><rect class="cell" x="762" y="156" width="16" height="16" rx="2"/><rect class="cell" x="784" y="156" width="16" height="16" rx="2"/><rect class="cell" x="806" y="156" width="16" height="16" rx="2"/><rect class="cell" x="828" y="156" width="16" height="16" rx="2"/><rect class="cell" x="520" y="178" width="16" height="16" rx="2"/><rect class="cell" x="542" y="178" width="16" height="16" rx="2"/><rect class="cell" x="564" y="178" width="16" height="16" rx="2"/><rect class="cell" x="586" y="178" width="16" height="16" rx="2"/><rect class="cell" x="608" y="178" width="16" height="16" rx="2"/><rect class="cell" x="630" y="178" width="16" height="16" rx="2"/><rect class="cell" x="652" y="178" width="16" height="16" rx="2"/><rect class="cell" x="674" y="178" width="16" height="16" rx="2"/><rect class="cell" x="696" y="178" width="16" height="16" rx="2"/><rect class="cell" x="718" y="178" width="16" height="16" rx="2"/><rect class="cell" x="740" y="178" width="16" height="16" rx="2"/><rect class="cell" x="762" y="178" width="16" height="16" rx="2"/><rect class="cell" x="784" y="178" width="16" height="16" rx="2"/><rect class="cell" x="806" y="178" width="16" height="16" rx="2"/><rect class="cell" x="828" y="178" width="16" height="16" rx="2"/><rect class="cell" x="520" y="200" width="16" height="16" rx="2"/><rect class="cell" x="542" y="200" width="16" height="16" rx="2"/><rect class="cell" x="564" y="200" width="16" height="16" rx="2"/><rect class="cell" x="586" y="200" width="16" height="16" rx="2"/><rect class="cell" x="608" y="200" width="16" height="16" rx="2"/><rect class="cell" x="630" y="200" width="16" height="16" rx="2"/><rect class="cell" x="652" y="200" width="16" height="16" rx="2"/><rect class="cell" x="674" y="200" width="16" height="16" rx="2"/><rect class="cell" x="696" y="200" width="16" height="16" rx="2"/><rect class="cell" x="718" y="200" width="16" height="16" rx="2"/><rect class="cell" x="740" y="200" width="16" height="16" rx="2"/><rect class="cell" x="762" y="200" width="16" height="16" rx="2"/><rect class="cell" x="784" y="200" width="16" height="16" rx="2"/><rect class="cell" x="806" y="200" width="16" height="16" rx="2"/><rect class="cell" x="828" y="200" width="16" height="16" rx="2"/><rect class="cell" x="520" y="222" width="16" height="16" rx="2"/></svg></div>
+      </div>
+      <figcaption>看板按 4 个问题分组，可以按部门、群组、岗位、图谱筛选。图里的数据都是举例，不是真实数据。</figcaption>
+    </figure>
+
+    <figure class="fig" id="warn-fig">
+      <p class="fig-h"><span class="fig-n">图 15</span><span class="fig-t">预警怎么分级</span></p>
+      <div class="frame">
+        <div class="ctl js-only">
+          <label>预警值 <output id="w-wv">60</output><input id="w-w" type="range" min="0" max="100" value="60"></label>
+          <label>团队得分 <output id="w-sv">45</output><input id="w-s" type="range" min="0" max="100" value="45"></label>
+        </div>
+        <svg class="ve-svg" id="warn-svg" viewBox="0 0 900 214" style="min-width:774px" role="img" aria-label="预警值 60，团队得分 45，落在 2 级预警；发展建议为低档。"></svg>
+        <p class="result" id="warn-out" aria-live="polite">预警值 60，团队得分 45：45 ≤ 48（预警值的 80%）→ <b>2 级预警</b>；发展建议档位：<b>低</b>（&lt; 60）。</p>
+      </div>
+      <figcaption>预警分 3 级：得分不超过<span class="term" tabindex="0" data-tip="warn">预警值</span>的一半是 1 级，在一半到 80% 之间是 2 级，在 80% 到预警值之间是 3 级，高过预警值就不预警。发展建议另按固定分数分档：60 以下低，60 到 80 之间中，80 及以上高。拖动滑块试试。把预警值拖到 0，会发现只有 0 分才预警。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 16</span><span class="fig-t">各档人数和排名</span></p>
+      <div class="duo">
+        <div class="frame"><svg class="ve-svg" viewBox="0 0 540 230" style="min-width:470px" role="img" aria-label="示例数据：每个标签按人数分高中低三档。需求分析 低 3 中 9 高 8；方案呈现 低 6 中 10 高 4；客户沟通 低 2 中 7 高 11。"><text class="ax-t" x="0" y="20">分档规则（个人得分）</text><rect class="seg lo" x="110.0" y="34" width="143.5" height="16"/><rect class="seg md" x="253.5" y="34" width="123.0" height="16"/><rect class="seg hi" x="376.5" y="34" width="143.5" height="16"/><text class="ax-n m" x="110.0" y="64">0</text><text class="ax-n m" x="253.5" y="64">35</text><text class="ax-n m" x="376.5" y="64">65</text><text class="ax-n m" x="520.0" y="64">100</text><text class="seg-t" x="181.75" y="82">低</text><text class="seg-t" x="315.0" y="82">中</text><text class="seg-t" x="448.24999999999994" y="82">高</text><text class="ax-t" x="0" y="116">各档人数 · 每格 1 人 · 示例数据</text><text class="row-l" x="0" y="140">需求分析</text><rect class="seg lo" x="110" y="130" width="58" height="20"/><text class="seg-n lo" x="139.0" y="140">低 3</text><rect class="seg md" x="170" y="130" width="178" height="20"/><text class="seg-n md" x="259.0" y="140">中 9</text><rect class="seg hi" x="350" y="130" width="158" height="20"/><text class="seg-n hi" x="429.0" y="140">高 8</text><text class="row-l" x="0" y="172">方案呈现</text><rect class="seg lo" x="110" y="162" width="118" height="20"/><text class="seg-n lo" x="169.0" y="172">低 6</text><rect class="seg md" x="230" y="162" width="198" height="20"/><text class="seg-n md" x="329.0" y="172">中 10</text><rect class="seg hi" x="430" y="162" width="78" height="20"/><text class="seg-n hi" x="469.0" y="172">高 4</text><text class="row-l" x="0" y="204">客户沟通</text><rect class="seg lo" x="110" y="194" width="38" height="20"/><text class="seg-n lo" x="129.0" y="204">低 2</text><rect class="seg md" x="150" y="194" width="138" height="20"/><text class="seg-n md" x="219.0" y="204">中 7</text><rect class="seg hi" x="290" y="194" width="218" height="20"/><text class="seg-n hi" x="399.0" y="204">高 11</text></svg></div>
+        <div class="frame"><svg class="ve-svg" viewBox="0 0 320 230" style="min-width:280px" role="img" aria-label="示例数据：方案呈现标签排名，只显示名次和姓名：1 学员丙，2 学员甲，3 学员戊，4 学员乙，5 学员丁。"><text class="ax-t" x="0" y="20">方案呈现 · 标签排名</text><g class="rank first"><circle cx="16" cy="50" r="13"/><text class="rank-n" x="16" y="50">1</text><text class="rank-t" x="42" y="50">学员丙</text></g><g class="rank"><circle cx="16" cy="86" r="13"/><text class="rank-n" x="16" y="86">2</text><text class="rank-t" x="42" y="86">学员甲</text></g><g class="rank"><circle cx="16" cy="122" r="13"/><text class="rank-n" x="16" y="122">3</text><text class="rank-t" x="42" y="122">学员戊</text></g><g class="rank"><circle cx="16" cy="158" r="13"/><text class="rank-n" x="16" y="158">4</text><text class="rank-t" x="42" y="158">学员乙</text></g><g class="rank"><circle cx="16" cy="194" r="13"/><text class="rank-n" x="16" y="194">5</text><text class="rank-t" x="42" y="194">学员丁</text></g><text class="ax-n" x="320" y="226" style="text-anchor:end">不显示分数</text></svg></div>
+      </div>
+      <figcaption>每个能力按人数分高、中、低三档：个人得分 35 以下算低，35 到 65 之间算中，65 及以上算高。排名只显示名次和姓名，不显示分数。数据是举例。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>管理员的活儿主要是一次性配置，上线后要维护的很少。</p></div>
+
+  <section id="s4" aria-label="实施工作量">
+    <div class="kicker"><p class="eyebrow">工作量</p><h2>管理员一次性配置 <span class="num">15</span> 步，学员不用培训</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 17</span><span class="fig-t">一共要做几步</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 900 286" style="min-width:774px" role="img" aria-label="管理员一次性配置共 15 步：图谱 7 步（每张图谱一次），移动端 2 步，驾驶舱 6 步（每位管理者一次）。学员自助 4 步，不需要培训。" ><text class="grp-t" x="40" y="34">图谱</text><rect class="blk" x="40" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="60" y="66">1</text><rect class="blk" x="88" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="108" y="66">2</text><rect class="blk" x="136" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="156" y="66">3</text><rect class="blk" x="184" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="204" y="66">4</text><rect class="blk" x="232" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="252" y="66">5</text><rect class="blk" x="280" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="300" y="66">6</text><rect class="blk" x="328" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="348" y="66">7</text><g class="ve-dim" ><path class="ext" d="M40 92V118M368 92V118"/><path class="ln" d="M40 112H368M36 116l8-8M364 116l8-8"/><text x="204.0" y="106">7 步</text></g><text class="freq" x="40" y="136">每张图谱 1 次</text><text class="grp-t" x="392" y="34">移动端</text><rect class="blk" x="392" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="412" y="66">1</text><rect class="blk" x="440" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="460" y="66">2</text><g class="ve-dim" ><path class="ext" d="M392 92V118M480 92V118"/><path class="ln" d="M392 112H480M388 116l8-8M476 116l8-8"/><text x="436.0" y="106">2 步</text></g><text class="freq" x="392" y="136">一次性</text><text class="grp-t" x="504" y="34">驾驶舱</text><rect class="blk" x="504" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="524" y="66">1</text><rect class="blk" x="552" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="572" y="66">2</text><rect class="blk" x="600" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="620" y="66">3</text><rect class="blk" x="648" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="668" y="66">4</text><rect class="blk" x="696" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="716" y="66">5</text><rect class="blk" x="744" y="46" width="40" height="40" rx="4"/><text class="blk-n" x="764" y="66">6</text><g class="ve-dim" ><path class="ext" d="M504 92V118M784 92V118"/><path class="ln" d="M504 112H784M500 116l8-8M780 116l8-8"/><text x="644.0" y="106">6 步</text></g><text class="freq" x="504" y="136">每位管理者 1 次</text><g class="ve-dim is-key" ><path class="ext" d="M40 150V178M784 150V178"/><path class="ln" d="M40 172H784M36 176l8-8M780 176l8-8"/><text x="412.0" y="166">管理员合计 15 步</text></g><text class="grp-t" x="40" y="216">学员 · 自助（不需要培训）</text><rect class="blk stu" x="40" y="228" width="40" height="40" rx="4"/><text class="blk-n" x="60" y="248">1</text><rect class="blk stu" x="88" y="228" width="40" height="40" rx="4"/><text class="blk-n" x="108" y="248">2</text><rect class="blk stu" x="136" y="228" width="40" height="40" rx="4"/><text class="blk-n" x="156" y="248">3</text><rect class="blk stu" x="184" y="228" width="40" height="40" rx="4"/><text class="blk-n" x="204" y="248">4</text><text class="freq" x="240" y="252">4 步，学员自己完成</text></svg></div>
+      <figcaption>图谱 7 步，加移动端 2 步，加驾驶舱 6 步，一共 15 步。一格是一步。图谱每张做一次，驾驶舱每位管理者做一次。</figcaption>
+    </figure>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>谁</th><th>做什么</th><th style="text-align:right">步数</th><th>多久做一次</th></tr></thead>
+        <tbody>
+          <tr><td>管理员</td><td>建图谱</td><td class="n">7 步</td><td>每张图谱一次</td></tr>
+          <tr><td>管理员</td><td>设置移动端入口</td><td class="n">2 步</td><td>一次</td></tr>
+          <tr><td>管理员</td><td>建驾驶舱</td><td class="n">6 步</td><td>每位管理者一次</td></tr>
+          <tr><td>管理员</td><td>维护图谱</td><td class="n">—</td><td>改了图谱内容，点一下“更新”</td></tr>
+          <tr><td>管理员</td><td>维护驾驶舱</td><td class="n">—</td><td>基本不用管</td></tr>
+          <tr><td>学员</td><td>学习和测试</td><td class="n">4 步</td><td>自己完成，不用培训</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>有几条规则会影响你怎么看数据，上线前最好先了解。</p></div>
+
+  <section id="s5" aria-label="使用须知">
+    <div class="kicker"><p class="eyebrow">使用须知</p><h2>上线前要知道的 <span class="num">8</span> 条规则</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 18</span><span class="fig-t">8 条规则</span></p>
+      <div class="cases"><div class="case" data-st="info"><span class="chip info">须知 · 时间</span><h3>看到的是前一天的数据</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="看到的是前一天的数据：每天凌晨，系统把前一天有考试变化的学员重算一遍。今天考完，明天才看得到。"><path class="grid" d="M10 70H230"/><path class="ann" d="M120 40V96"/><text class="mini-t" x="120" y="30">凌晨重算</text><circle class="mpt" cx="60" cy="70" r="6"/><text class="mini-s" x="60" y="98">今天考试</text><rect class="mbox is-st" x="160" y="58" width="56" height="24" rx="4"/><text class="mini-s" x="188" y="98">次日可见</text></svg><p class="case-d">每天凌晨，系统把前一天有考试变化的学员重算一遍。今天考完，明天才看得到。</p></div><div class="case" data-st="info"><span class="chip info">须知 · 范围</span><h3>调岗后就不算了</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="调岗后就不算了：只统计当前岗位和图谱岗位一致的学员。"><rect class="mbox" x="10" y="30" width="90" height="50" rx="5"/><text class="mini-t" x="55" y="50">岗位 A</text><text class="mini-s" x="55" y="68">图谱 A</text><rect class="mbox" x="140" y="30" width="90" height="50" rx="5"/><text class="mini-t" x="185" y="55">岗位 B</text><path class="ve-e is-st" d="M100 55H140"/><text class="mini-s st" x="55" y="104">不再计入</text></svg><p class="case-d">只统计当前岗位和图谱岗位一致的学员。</p></div><div class="case" data-st="warn"><span class="chip warn">留意 · 分数</span><h3>没考的按 0 分算</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="没考的按 0 分算：一级标签分和胜任指数都会被拉低。"><path class="grid" d="M10 96H230"/><rect class="mbar" x="30" y="32" width="40" height="64" rx="2"/><rect class="mbar" x="100" y="40" width="40" height="56" rx="2"/><rect class="mbar is-st is-off" x="170" y="92" width="40" height="4" rx="2"/><text class="mini-s st" x="190" y="80">未考 0</text><text class="mini-s" x="50" y="22">80</text><text class="mini-s" x="120" y="30">70</text></svg><p class="case-d">一级标签分和胜任指数都会被拉低。</p></div><div class="case" data-st="warn"><span class="chip warn">留意 · 预警</span><h3>预警值要自己设</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="预警值要自己设：不设的话，只有 0 分才会预警。"><path class="grid" d="M20 60H220"/><text class="mini-s" x="20" y="84">0</text><text class="mini-s" x="220" y="84">100</text><circle class="mpt is-st" cx="20" cy="60" r="7"/><text class="mini-s st" x="40" y="34" style="text-anchor:start">只有 0 分预警</text><path class="ann" d="M24 54L38 40"/></svg><p class="case-d">不设的话，只有 0 分才会预警。</p></div><div class="case" data-st="info"><span class="chip info">须知 · 目标值</span><h3>目标值只用来对比</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="目标值只用来对比：它在图上是一条参考线，方便对照。"><rect class="mbar" x="20" y="44" width="150" height="24" rx="2"/><path class="tline is-st" d="M196 28V86"/><text class="mini-s st" x="196" y="104">目标值</text></svg><p class="case-d">它在图上是一条参考线，方便对照。</p></div><div class="case" data-st="info"><span class="chip info">须知 · 数量</span><h3>一位管理者同时只能启用 1 个驾驶舱</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="一位管理者同时只能启用 1 个驾驶舱：同一时间只能有 1 个处于启用状态。"><rect class="mbox is-st" x="10" y="30" width="66" height="50" rx="5"/><text class="mini-s st" x="43" y="56">启用中</text><rect class="mbox is-off" x="88" y="30" width="66" height="50" rx="5"/><text class="mini-s" x="121" y="56">未启用</text><rect class="mbox is-off" x="166" y="30" width="66" height="50" rx="5"/><text class="mini-s" x="199" y="56">未启用</text></svg><p class="case-d">同一时间只能有 1 个处于启用状态。</p></div><div class="case" data-st="info"><span class="chip info">须知 · 范围</span><h3>多张图谱的学员可以放进一个驾驶舱</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="多张图谱的学员可以放进一个驾驶舱：不同图谱的标签并排显示，每个标签只统计有这个标签的学员。"><rect class="mbox" x="10" y="14" width="80" height="34" rx="4"/><text class="mini-t" x="50" y="31">图谱 A</text><rect class="mbox" x="10" y="62" width="80" height="34" rx="4"/><text class="mini-t" x="50" y="79">图谱 B</text><path class="ve-e" d="M90 31H120V50H150"/><path class="ve-e" d="M90 79H120V60H150"/><rect class="mbox is-st" x="150" y="34" width="84" height="42" rx="5"/><text class="mini-t" x="192" y="55">驾驶舱</text></svg><p class="case-d">不同图谱的标签并排显示，每个标签只统计有这个标签的学员。</p></div><div class="case" data-st="info"><span class="chip info">须知 · 规则</span><h3>预警和建议按固定规则来</h3><svg class="ve-mini" viewBox="0 0 240 110" role="img" aria-label="预警和建议按固定规则来：分档线是定好的，建议文案按档位给出。"><rect class="mbox" x="10" y="36" width="68" height="40" rx="4"/><text class="mini-t" x="44" y="56">低</text><rect class="mbox" x="86" y="36" width="68" height="40" rx="4"/><text class="mini-t" x="120" y="56">中</text><rect class="mbox" x="162" y="36" width="68" height="40" rx="4"/><text class="mini-t" x="196" y="56">高</text><text class="mini-s" x="44" y="96">&lt; 60</text><text class="mini-s" x="120" y="96">60–&lt; 80</text><text class="mini-s" x="196" y="96">≥ 80</text></svg><p class="case-d">分档线是定好的，建议文案按档位给出。</p></div></div>
+      <figcaption>一条规则一张小图。标着“留意”的两条，最容易让人看错分数和预警。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>先在小范围跑通，再铺开。</p></div>
+
+  <section id="s6" aria-label="落地建议">
+    <div class="kicker"><p class="eyebrow">落地建议</p><h2>先拿 1 个岗位、1 张图谱、1 个驾驶舱试点</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 19</span><span class="fig-t">试点路径</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 1000 196" style="min-width:860px" role="img" aria-label="试点路径：1 个岗位关联 1 张图谱（7 步），设置移动端（2 步），建 1 个驾驶舱（6 步），共 15 步；跑通后再扩展到更多岗位。" ><path class="ve-e" d="M170 80H220"/><text class="ve-el" x="195" y="71">关联</text><path class="ve-e" d="M370 80H420"/><path class="ve-e" d="M570 80H620"/><path class="ve-e is-async" d="M770 80H820"/><text class="ve-el" x="795" y="71">跑通后</text><g class="ve-n " transform="translate(20 40)" ><rect class="sh" width="150" height="80" rx="6"/><text x="75.0" y="28.0">1 个岗位</text><text class="sub" x="75.0" y="54.0">试点</text></g><g class="ve-n " transform="translate(220 40)" ><rect class="sh" width="150" height="80" rx="6"/><text x="75.0" y="28.0">1 张图谱</text><text class="sub" x="75.0" y="54.0">7 步</text></g><g class="ve-n " transform="translate(420 40)" ><rect class="sh" width="150" height="80" rx="6"/><text x="75.0" y="28.0">移动端</text><text class="sub" x="75.0" y="54.0">2 步</text></g><g class="ve-n is-key" transform="translate(620 40)" ><rect class="sh" width="150" height="80" rx="6"/><text x="75.0" y="28.0">1 个驾驶舱</text><text class="sub" x="75.0" y="54.0">6 步</text></g><g class="ve-n " transform="translate(820 40)" ><rect class="sh is-off" width="160" height="80" rx="6"/><text x="80.0" y="28.0">扩展</text><text class="sub" x="80.0" y="54.0">更多岗位</text></g><g class="ve-dim is-key" ><path class="ext" d="M220 126V174M770 126V174"/><path class="ln" d="M220 168H770M216 172l8-8M766 172l8-8"/><text x="495.0" y="162">试点配置 15 步</text></g></svg></div>
+      <figcaption>试点一共 15 步配置。跑通了，再一个岗位一个岗位往外推。</figcaption>
+    </figure>
+    <ol class="steps">
+      <li>选 1 个岗位，建 1 张图谱并下发（7 步）。可以直接用光华的图谱模板起步。</li>
+      <li>在移动端放上“岗位学习”和“胜任指数”两个入口（2 步）。</li>
+      <li>给这个岗位的团队管理者建 1 个驾驶舱，记得设好预警值（6 步）。</li>
+      <li>学员按 4 步自己学、自己考。第二天去驾驶舱看数据。</li>
+      <li>数据和流程都没问题了，再推到更多岗位。</li>
+    </ol>
+  </section>
+</main>
+</div>
+<footer>时代光华</footer>
+<div id="tt-pop" class="tt-pop" role="tooltip" hidden></div>
+<script>
+  document.documentElement.classList.add('has-js');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NS = 'http://www.w3.org/2000/svg';
+  const f1 = (v) => { const r = Math.round(v * 10) / 10; return Number.isInteger(r) ? String(r) : r.toFixed(1); };
+
+  // Linked highlighting
+  const linked = [...document.querySelectorAll('[data-ref]')], refs = (el) => el.dataset.ref.split(' ');
+  let hovered = null, focused = null;
+  const paint = () => {
+    const keys = (hovered || focused)?.dataset.ref.split(' ') ?? [];
+    for (const t of linked) t.classList.toggle('is-lit', refs(t).some((k) => keys.includes(k)));
+    for (const svg of document.querySelectorAll('svg')) svg.classList.toggle('has-lit', !!svg.querySelector('.is-lit'));
+  };
+  for (const el of linked) {
+    el.addEventListener('pointerenter', () => { hovered = el; paint(); });
+    el.addEventListener('pointerleave', () => { hovered = null; paint(); });
+    el.addEventListener('focus', () => { focused = el; paint(); });
+    el.addEventListener('blur', () => { focused = null; paint(); });
+  }
+
+  // Steppers: open on the full picture; click a step node to jump to it.
+  for (const root of document.querySelectorAll('.ve-steps')) {
+    const parts = [...root.querySelectorAll('[data-s]')], caps = [...root.querySelectorAll('.ve-cap li')];
+    const range = root.querySelector('input[type=range]'), play = root.querySelector('[data-play]');
+    const n = caps.length; let i = 0, timer = null;
+    if (range) range.max = n - 1;
+    const show = (k) => {
+      i = Math.max(0, Math.min(n - 1, k));
+      for (const el of parts) { el.classList.toggle('on', +el.dataset.s <= i + 1); el.classList.toggle('now', +el.dataset.s === i + 1); }
+      caps.forEach((c, j) => c.hidden = j !== i);
+      if (range) range.value = i;
+    };
+    const stop = () => { clearInterval(timer); timer = null; if (play) play.textContent = '播放'; };
+    root.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-go]'); if (b) { stop(); show(i + +b.dataset.go); return; }
+      const j = e.target.closest('[data-jump]'); if (j) { stop(); show(+j.dataset.jump - 1); }
+    });
+    root.addEventListener('keydown', (e) => {
+      const j = e.target.closest('[data-jump]');
+      if (j && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); stop(); show(+j.dataset.jump - 1); }
+    });
+    range?.addEventListener('input', () => { stop(); show(+range.value); });
+    play?.addEventListener('click', () => {
+      if (timer) return stop();
+      if (i === n - 1) show(0);
+      play.textContent = '暂停';
+      timer = setInterval(() => (i < n - 1 ? show(i + 1) : stop()), 3000);
+    });
+    show(n - 1);
+  }
+
+  // Tag tree (illustrative): a first-level tags x b second-level tags each.
+  const node = (x, y, w, h, t, sub, cls = '') => `<g class="ve-n ${cls}" transform="translate(${x} ${y})"><rect class="sh" width="${w}" height="${h}" rx="6"/><text x="${w / 2}" y="${h / 2 - (sub ? 12 : 0)}">${t}</text>${sub ? `<text class="sub" x="${w / 2}" y="${h / 2 + 14}">${sub}</text>` : ''}</g>`;
+  const treeSvg = (a, b) => {
+    const W = 960, n = a * b, slot = (W - 20) / n, L = 'ABCD'; let e = '', s = '';
+    s += `<g class="ve-n" transform="translate(380 12)"><rect class="sh" width="200" height="50" rx="6"/><path class="gl" transform="translate(12 12)" d="M8 1v4M3 9V5h10v4M8 5v4M1 9h4v6H1zM6 9h4v6H6zM11 9h4v6h-4z"/><text x="100" y="25">图谱（示例）</text></g>`;
+    for (let i = 0; i < a; i++) {
+      const cx = 10 + slot * b * i + slot * b / 2, w1 = Math.min(160, slot * b - 16);
+      e += `<path class="ve-e" d="M480 62V80H${cx.toFixed(1)}V98"/>`;
+      s += node((cx - w1 / 2).toFixed(1), 98, w1.toFixed(1), 48, `一级 ${L[i]}`);
+      for (let j = 0; j < b; j++) {
+        const lx = 10 + slot * (i * b + j) + slot / 2, lw = Math.min(100, slot - 10);
+        e += `<path class="ve-e" d="M${cx.toFixed(1)} 146V164H${lx.toFixed(1)}V184"/>`;
+        s += node((lx - lw / 2).toFixed(1), 184, lw.toFixed(1), 60, `${L[i]}${j + 1}`, lw >= 64 ? '配内容' : '', 'is-leaf');
+      }
+    }
+    return e + s;
+  };
+  {
+    const ra = document.getElementById('t-ra'), rb = document.getElementById('t-rb'), svg = document.getElementById('tree-svg');
+    const upd = () => {
+      const a = +ra.value, b = +rb.value;
+      document.getElementById('t-a').textContent = a; document.getElementById('t-b').textContent = b;
+      document.getElementById('t-n').textContent = a * b;
+      svg.innerHTML = treeSvg(a, b);
+      svg.setAttribute('aria-label', `示例：${a} 个一级标签，每个下面 ${b} 个二级标签，共 ${a * b} 个末级标签。`);
+    };
+    ra.addEventListener('input', upd); rb.addEventListener('input', upd);
+  }
+
+  // Score calculator (illustrative model of the stated rules).
+  {
+    const B = 75, C = 80, v = [80, 60, 70], skip = [false, false, false];
+    const svg = document.getElementById('calc-svg'), out = document.getElementById('calc-out');
+    const draw = () => {
+      const vals = v.map((x, k) => skip[k] ? 0 : x), A = (vals[0] + vals[1] + vals[2]) / 3, I = (A + B + C) / 3;
+      let s = '<text class="ax-t" x="40" y="20">一级 A 下的 3 个二级标签</text>';
+      for (const g of [0, 50, 100]) { const y = 240 - g * 1.8; s += `<path class="grid" d="M40 ${y}H380"/><text class="ax-n" x="34" y="${y}">${g}</text>`; }
+      vals.forEach((x, k) => {
+        const bx = 70 + k * 100, h = x * 1.8;
+        s += skip[k] ? `<rect class="bar-skip" x="${bx}" y="236" width="60" height="4" rx="2"/><text class="bar-v" x="${bx + 30}" y="222">未考 · 0</text>`
+          : `<rect class="bar" x="${bx}" y="${(240 - h).toFixed(1)}" width="60" height="${h.toFixed(1)}" rx="2"/><text class="bar-v" x="${bx + 30}" y="${(240 - h - 12).toFixed(1)}">${f1(x)}</text>`;
+        s += `<text class="bar-l" x="${bx + 30}" y="262">A${k + 1}</text>`;
+      });
+      const ay = 240 - A * 1.8;
+      s += `<path class="avg" d="M50 ${ay.toFixed(1)}H370"/><text class="avg-t" x="376" y="${ay.toFixed(1)}">平均 ${f1(A)}</text>`;
+      s += '<text class="ax-t" x="520" y="20">3 个一级标签 → 胜任指数</text>';
+      [['一级 A', A, 'is-a'], ['一级 B（示例）', B, ''], ['一级 C（示例）', C, ''], ['岗位胜任指数', I, 'is-idx']].forEach(([l, val, c], k) => {
+        const y = 50 + k * 54 + (k === 3 ? 14 : 0);
+        s += `<text class="row-l" x="520" y="${y + 12}">${l}</text><rect class="hbar ${c}" x="660" y="${y}" width="${(val * 2.4).toFixed(1)}" height="24" rx="2"/><text class="row-v ${c}" x="${(668 + val * 2.4).toFixed(1)}" y="${y + 12}">${f1(val)}</text>`;
+      });
+      s += '<path class="ann" d="M520 210H900"/>';
+      svg.innerHTML = s;
+      out.innerHTML = `一级 A = (${vals.map(f1).join(' + ')}) ÷ 3 = <b>${f1(A)}</b>；岗位胜任指数 = (${f1(A)} + ${B} + ${C}) ÷ 3 = <b>${f1(I)}</b>`;
+    };
+    for (const r of document.querySelectorAll('#calc-ctl input')) r.addEventListener('input', () => { v[+r.dataset.i] = +r.value; r.previousElementSibling.textContent = r.value; draw(); });
+    for (const b of document.querySelectorAll('#calc-ctl [data-skip]')) b.addEventListener('click', () => {
+      const k = +b.dataset.skip; skip[k] = !skip[k]; b.setAttribute('aria-pressed', skip[k]);
+      const inp = b.parentElement.querySelector('input'); inp.disabled = skip[k];
+      inp.previousElementSibling.textContent = skip[k] ? '未考 → 0' : inp.value; draw();
+    });
+  }
+
+  // Warning level and advice tier (illustrative model of the stated rules).
+  {
+    const rw = document.getElementById('w-w'), rs = document.getElementById('w-s'), svg = document.getElementById('warn-svg'), out = document.getElementById('warn-out');
+    const level = (w, s) => s <= .5 * w ? 1 : s <= .8 * w ? 2 : s <= w ? 3 : 0;
+    const tier = (s) => s < 60 ? '低' : s < 80 ? '中' : '高';
+    const X = (v) => 120 + v * 7.4;
+    const band = (a, b, y, cls, label, cur) => {
+      if (b <= a) return '';
+      const w = X(b) - X(a);
+      return `<rect class="band ${cls}${cur ? ' cur' : ''}" x="${X(a).toFixed(1)}" y="${y}" width="${w.toFixed(1)}" height="36"/>` + (w >= 46 ? `<text class="band-t" x="${((X(a) + X(b)) / 2).toFixed(1)}" y="${y + 18}">${label}</text>` : '');
+    };
+    const draw = () => {
+      const w = +rw.value, s = +rs.value, lv = level(w, s), t = tier(s);
+      document.getElementById('w-wv').textContent = w; document.getElementById('w-sv').textContent = s;
+      let g = '<text class="row-l" x="0" y="66">能力预警</text><text class="row-l" x="0" y="154">发展建议</text>';
+      g += band(0, .5 * w, 48, 'b1', '1 级', lv === 1) + band(.5 * w, .8 * w, 48, 'b2', '2 级', lv === 2) + band(.8 * w, w, 48, 'b3', '3 级', lv === 3) + band(w, 100, 48, 'b0', '不预警', lv === 0);
+      if (w === 0) g += `<path class="mark" style="stroke:var(--risk)" d="M${X(0)} 44V88"/><text class="wv-t" x="${X(0) + 6}" y="104" style="text-anchor:start">预警值 0：只有 0 分预警</text>`;
+      g += band(0, 60, 136, 'a1', '低 < 60', t === '低') + band(60, 80, 136, 'a2', '中', t === '中') + band(80, 100, 136, 'a3', '高 ≥ 80', t === '高');
+      if (w > 0) g += `<path class="wv" d="M${X(w)} 44V92"/><text class="wv-t" x="${X(w).toFixed(1)}" y="106">预警值 ${w}</text>`;
+      for (const k of [0, 50, 100]) g += `<text class="ax-n m" x="${X(k)}" y="196">${k}</text>`;
+      g += `<path class="mark" d="M${X(s).toFixed(1)} 40V178"/><text class="mark-t" x="${Math.min(Math.max(X(s), 150), 860).toFixed(1)}" y="30">得分 ${s}</text>`;
+      svg.innerHTML = g;
+      let why;
+      if (lv === 1) why = `${s} ≤ ${f1(.5 * w)}（预警值的 50%）→ <b>1 级预警</b>`;
+      else if (lv === 2) why = `${s} ≤ ${f1(.8 * w)}（预警值的 80%）→ <b>2 级预警</b>`;
+      else if (lv === 3) why = `${s} ≤ ${w}（预警值）→ <b>3 级预警</b>`;
+      else why = `${s} 高于预警值 ${w} → <b>不预警</b>`;
+      const rng = t === '低' ? '&lt; 60' : t === '中' ? '60–&lt; 80' : '≥ 80';
+      out.innerHTML = `预警值 ${w}，团队得分 ${s}：${why}；发展建议档位：<b>${t}</b>（${rng}）。`;
+      svg.setAttribute('aria-label', `预警值 ${w}，团队得分 ${s}，${lv ? lv + ' 级预警' : '不预警'}；发展建议为${t}档。`);
+    };
+    rw.addEventListener('input', draw); rs.addEventListener('input', draw); draw();
+  }
+
+  // Tabs (no JS: all four panels show in order)
+  {
+    const tabs = [...document.querySelectorAll('[role=tab]')];
+    const sel = (t) => {
+      for (const x of tabs) { const on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }
+    };
+    tabs.forEach((t, k) => {
+      t.addEventListener('click', () => sel(t));
+      t.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (d) { const nx = tabs[(k + d + tabs.length) % tabs.length]; sel(nx); nx.focus(); }
+      });
+    });
+    sel(tabs[0]);
+  }
+
+  // On narrow screens a wide figure scrolls inside its frame: say so once under it.
+  {
+    const hint = () => {
+      for (const fr of document.querySelectorAll('.frame')) {
+        const has = fr.nextElementSibling?.classList.contains('hint'), wide = fr.scrollWidth > fr.clientWidth + 2;
+        if (wide && !has) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = '← 左右滑动查看完整图 →'; fr.after(p); }
+        if (!wide && has) fr.nextElementSibling.remove();
+      }
+    };
+    hint(); addEventListener('resize', hint);
+  }
+
+
+  // Glossary tooltips: hover (mouse), keyboard focus, or tap. One floating box, kept inside the viewport.
+  {
+    const pop = document.getElementById('tt-pop'); let pinned = false;
+    for (const el of document.querySelectorAll('[data-tip]')) {
+      const id = 'tt-' + el.dataset.tip;
+      const prev = el.getAttribute('aria-describedby');
+      if (!prev || !prev.split(' ').includes(id)) el.setAttribute('aria-describedby', ((prev || '') + ' ' + id).trim());
+      if (!el.hasAttribute('tabindex')) el.tabIndex = 0;
+    }
+    const show = (el) => {
+      const d = document.getElementById('tt-' + el.dataset.tip); if (!d) return;
+      pop.textContent = d.textContent; pop.hidden = false;
+      const vw = document.documentElement.clientWidth, vh = window.innerHeight, r = el.getBoundingClientRect();
+      pop.style.maxWidth = Math.min(320, vw - 16) + 'px';
+      const pw = pop.offsetWidth, ph = pop.offsetHeight;
+      const left = Math.min(Math.max(8, r.left + r.width / 2 - pw / 2), vw - pw - 8);
+      let top = r.bottom + 8; if (top + ph > vh - 8) top = Math.max(8, r.top - ph - 8);
+      pop.style.left = left + 'px'; pop.style.top = top + 'px';
+    };
+    const hide = () => { pop.hidden = true; pinned = false; };
+    document.addEventListener('pointerover', (e) => { if (e.pointerType !== 'mouse' || pinned) return; const el = e.target.closest?.('[data-tip]'); if (el) show(el); });
+    document.addEventListener('pointerout', (e) => { if (e.pointerType !== 'mouse' || pinned) return; const el = e.target.closest?.('[data-tip]'); if (el && !el.contains(e.relatedTarget)) hide(); });
+    document.addEventListener('focusin', (e) => { const el = e.target.closest?.('[data-tip]'); if (el) show(el); });
+    document.addEventListener('focusout', () => { if (!pinned) hide(); });
+    document.addEventListener('click', (e) => { const el = e.target.closest?.('[data-tip]'); if (el) { pinned = true; show(el); } else hide(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+    addEventListener('scroll', () => { if (!pop.hidden) hide(); }, { passive: true });
+    addEventListener('resize', hide);
+  }
+
+  // Section nav scroll-spy
+  {
+    const links = [...document.querySelectorAll('.toc a')];
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) if (e.isIntersecting) {
+        for (const a of links) a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id);
+        try { history.replaceState(null, '', '#' + e.target.id); } catch (_) {}
+      }
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    for (const a of links) { const t = document.querySelector(a.getAttribute('href')); if (t) io.observe(t); }
+    links[0].classList.add('on');
+  }
+
+  if (!still) {
+    // Flow dots on 图 1: equal rates, because every score goes to both views.
+    for (const svg of document.querySelectorAll('svg:has([data-flow])')) {
+      const layer = svg.querySelector('.ve-dots');
+      const routes = [...svg.querySelectorAll('[data-flow]')].map((p) => ({ p, len: p.getTotalLength(), every: +p.dataset.every, next: 0 }));
+      let dots = [], visible = false, running = false;
+      const tick = (t) => {
+        if (!visible) { running = false; for (const d of dots) d.c.remove(); dots = []; return; }
+        for (const r of routes) if (t >= r.next) {
+          r.next = t + r.every;
+          const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 4); layer.append(c); dots.push({ c, r, t0: t });
+        }
+        dots = dots.filter((d) => {
+          const s = (t - d.t0) * .15;
+          if (s > d.r.len) { d.c.remove(); return false; }
+          const pt = d.r.p.getPointAtLength(s); d.c.setAttribute('cx', pt.x); d.c.setAttribute('cy', pt.y); return true;
+        });
+        requestAnimationFrame(tick);
+      };
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !running) { running = true; requestAnimationFrame(tick); } }).observe(svg);
+    }
+    // Entrance: blocks rise in once.
+    document.documentElement.classList.add('js-motion');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); e.target.classList.add('in'); }
+    }, { rootMargin: '0px 0px -5% 0px' });
+    for (const el of document.querySelectorAll('main > *')) io.observe(el);
+  }
+</script>
+</body>
+</html>

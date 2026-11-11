@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>评估：多人评多个对象，再排名</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Cpath d='M14 46h8V30h-8zM28 46h8V18h-8zM42 46h8V26h-8z' fill='%23ff6e50'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/frame.css">
+</head>
+<body>
+<header class="doc-header" aria-label="产品介绍">
+  <a class="doc-brand" href="../">时代光华 · 产品介绍</a>
+  <nav class="navset" aria-label="五份介绍">
+    <a href="../guangpu/">光谱</a>
+    <a href="../race/">竞赛</a>
+    <a href="../survey/">调查</a>
+    <a href="../evaluation/" aria-current="page">评估</a>
+    <a href="../ops/">运营工具</a>
+  </nav>
+</header>
+<div class="shell">
+<nav class="toc" aria-label="目录">
+  <span class="toc-t">评估</span>
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>总览</a></li>
+    <li><a href="#s1"><span class="n">1</span>按场景选</a></li>
+    <li><a href="#s2"><span class="n">2</span>设置</a></li>
+    <li><a href="#s3"><span class="n">3</span>分数</a></li>
+  </ol>
+</nav>
+<main>
+  <section id="s0" aria-label="总览">
+    <header>
+      <p class="eyebrow">多人评测 · 产品介绍</p>
+      <h1>评估：<br>多人评多个对象，<span class="hl">再排名</span></h1>
+      <p class="lead">同一份问卷套到很多对象上。每个对象有自己的评测人，例如上级、同事、自评。收齐后按对象排名。</p>
+    </header>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 1</span><span class="fig-t">从卷子到名次</span></p>
+      <div class="snaps">
+        <article class="snap"><div class="phone" aria-hidden="true"><span class="bone m"></span><span class="pill on"></span></div><h3>启用问卷</h3><p class="snap-one">被用过就不能改</p></article>
+        <article class="snap"><div class="phone" aria-hidden="true"><span class="bone s"></span><span class="bone m"></span><span class="bone m"></span></div><h3>谁评谁</h3><p class="snap-one">对象 + 关系</p></article>
+        <article class="snap"><div class="phone" aria-hidden="true"><div class="flow"><i>2</i><i class="on">1</i><i>3</i></div></div><h3>排名</h3><p class="snap-one">综合，或按题</p></article>
+      </div>
+    </figure>
+  </section>
+
+  <section id="s1" aria-label="按场景选">
+    <div class="kicker"><p class="eyebrow">按场景选</p><h2>要排名用评估，只要意见用调查</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">对照</span><span class="fig-t">先定这件事算不算分</span></p>
+      <div class="table-scroll">
+        <table class="pick-table">
+          <thead><tr><th>你的场景</th><th>选</th><th>关键差别</th></tr></thead>
+          <tbody>
+            <tr><td>多人评讲师、部门或一批对象，还要排出名次</td><td>评估项目</td><td>一份问卷套很多对象。每个对象单独算分</td></tr>
+            <tr><td>只收集意见，不排名</td><td>调查</td><td>没有评测关系，也没有综合排名</td></tr>
+            <tr><td>要知道是谁打的分</td><td>管理员模式</td><td>能看到答卷人。启用后不能改成匿名</td></tr>
+            <tr><td>不想看到是谁</td><td>匿名</td><td>启用后也不能改回实名</td></tr>
+            <tr><td>还要一段文字意见</td><td>附加问题</td><td>可设必答。不计分，不进排名</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>问卷只有单选、多选、打分。选择题的每个选项可以设分。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s2" aria-label="设置">
+    <div class="kicker"><p class="eyebrow">设置</p><h2>点一行，在右侧看这一步填什么</h2></div>
+    <ol class="pick">
+      <li><button type="button" data-panel="p-paper" data-title="问卷"><span class="who">问卷</span><span class="when">先启用，项目才能用</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-info" data-title="基本信息"><span class="who">基本信息</span><span class="when">编号、名称、时间、用哪份卷</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-who" data-title="对象和关系"><span class="who">对象和关系</span><span class="when">谁评谁</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-lock" data-title="发了就不能改"><span class="who">相关设置</span><span class="when">匿名、能否看排名、去极值</span><span class="go">设置</span></button></li>
+    </ol>
+  </section>
+
+  <section id="s3" aria-label="分数">
+    <div class="kicker"><p class="eyebrow">分数</p><h2>每个对象一个得分，再和全体比</h2></div>
+    <div class="fields">
+      <div class="field"><span>得分</span><span class="bar"></span><b>各卷平均</b><p class="note">这个对象收到的各份问卷总分相加，除以份数。</p></div>
+      <div class="field"><span>平均分</span><span class="bar"></span><b>全部卷平均</b><p class="note">全部问卷的评分总和，除以全部份数。</p></div>
+      <div class="field"><span>对比</span><span class="bar"></span><b>得分 ÷ 平均</b><p class="note">再乘 100%。高于 100% 就是高于全体平均。</p></div>
+      <div class="field"><span>极值</span><span class="bar"></span><b>可各去一个</b><p class="note">勾了去掉最高分和最低分后，各去掉一个再除。点「有效问卷」能看到哪些被去掉。</p></div>
+    </div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">两种排名</span><span class="fig-t">综合看人，单项看题</span></p>
+      <div class="snaps">
+        <article class="snap"><h3>综合排名</h3><p class="snap-one">一个对象一行</p><p class="note">得分、平均分、对比平均分、有效问卷份数。可以绘图。</p></article>
+        <article class="snap"><h3>单项排名</h3><p class="snap-one">一题一题比</p><p class="note">也能看一个对象在全部题目上的明细，并导出。</p></article>
+        <article class="snap"><h3>进行中</h3><p class="snap-one">还能加人</p><p class="note">已答可标有效或无效、回收、导出。未答可提醒参加。</p></article>
+      </div>
+    </figure>
+  </section>
+</main>
+</div>
+<footer>时代光华 · 评估管理</footer>
+<div class="drawer-back" id="drawer-back" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="drawer-h"><h2 id="drawer-title">设置</h2><button type="button" data-close>关闭</button></div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+<div hidden>
+  <template id="p-paper">
+    <div class="phone" aria-hidden="true"><span class="bone m"></span><span class="pill on"></span><span class="pill"></span></div>
+    <div class="fields">
+      <div class="field"><span>类别</span><span class="bar"></span><b>先有类别</b><p class="note">没有类别就不能新建问卷。</p></div>
+      <div class="field"><span>信息</span><span class="bar"></span><b>编号必填</b><p class="note">编号、名称、类别必填。说明可不填。</p></div>
+      <div class="field"><span>题型</span><span class="bar"></span><b>三种</b><p class="note">单选、多选、打分。选项可设分，也可配图。可按模板导入。</p></div>
+      <div class="field"><span>启用</span><span class="bar"></span><b>被用后锁定</b><p class="note">启用后项目才能引用。被引用后不能改、不能删，只能复制。也可以授权给别的管理员。</p></div>
+    </div>
+  </template>
+  <template id="p-info">
+    <div class="fields">
+      <div class="field"><span>必填</span><span class="bar"></span><b>四项</b><p class="note">编号、项目名称、开始时间、使用问卷。</p></div>
+      <div class="field"><span>结束</span><span class="bar"></span><b>可空</b><p class="note">空着就是长期有效。</p></div>
+      <div class="field"><span>发起方</span><span class="bar"></span><b>最多 15 字</b><p class="note">说明会告诉填写人这是评什么。</p></div>
+    </div>
+  </template>
+  <template id="p-who">
+    <div class="phone" aria-hidden="true"><span class="bone s"></span><span class="bone m"></span><span class="bone m"></span></div>
+    <div class="fields">
+      <div class="field"><span>关系</span><span class="bar"></span><b>可空</b><p class="note">例如上级、同事、自评。可以不填。</p></div>
+      <div class="field"><span>加人</span><span class="bar"></span><b>可逐个或导入</b><p class="note">导入列：被评对象、评测关系、评测人工号、评测人姓名、对象介绍。进行中仍可加人。</p></div>
+      <div class="field"><span>附加题</span><span class="bar"></span><b>不计分</b><p class="note">文字意见。可设必答。结果里单独有「附加题汇总」。</p></div>
+    </div>
+  </template>
+  <template id="p-lock">
+    <div class="fields">
+      <div class="field"><span>模式</span><span class="bar"></span><b>启用后锁定</b><p class="note">匿名，或管理员模式（能看到答卷人）。发出去就不能换。</p></div>
+      <div class="field"><span>看排名</span><span class="bar"></span><b>启用后锁定</b><p class="note">允许学员看排名，或禁止。发出去就不能换。</p></div>
+      <div class="field"><span>极值</span><span class="bar"></span><b>可勾选</b><p class="note">去掉一个最高分、一个最低分。</p></div>
+      <div class="field"><span>状态</span><span class="bar"></span><b>进行中还能加人</b><p class="note">草稿可编辑、发布、删除。未开始可编辑或作废。已作废可删除。</p></div>
+    </div>
+  </template>
+</div>
+<script src="../assets/frame.js"></script>
+</body>
+</html>

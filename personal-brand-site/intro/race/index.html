@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>竞赛：把刷题做成能打的活动</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Cpath d='M14 44h36M22 44V28h8v16M34 44V18h8v26' stroke='%23ff6e50' stroke-width='4' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/frame.css">
+<style>
+  .pick { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
+  .pick li { border-bottom: 1px solid var(--border); }
+  .pick button {
+    width: 100%; display: grid; grid-template-columns: minmax(7.5rem, 11rem) minmax(0, 1fr) auto;
+    gap: var(--s-3); align-items: baseline; text-align: left;
+    background: transparent; border: 0; border-radius: 0; padding: var(--s-4) 0;
+    font: 400 var(--t-body)/1.5 var(--font-body); color: var(--text);
+  }
+  .pick button:hover, .pick button:focus-visible { color: var(--accent); }
+  .pick .who { font-weight: 600; }
+  .pick .when { color: var(--text-dim); }
+  .pick .go { font: 600 var(--t-label) var(--font-mono); color: var(--accent); white-space: nowrap; }
+  @media (max-width: 640px) {
+    .pick button { grid-template-columns: 1fr auto; }
+    .pick .when { grid-column: 1 / -1; }
+  }
+  .cmp { width: 100%; border-collapse: collapse; min-width: 40rem; }
+  .cmp th { background: var(--surface); font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); text-align: left; padding: var(--s-3) var(--s-4); }
+  .cmp td { padding: var(--s-4); border-top: 1px solid var(--border); vertical-align: top; }
+  .cmp td:first-child { font-weight: 600; }
+  .grp { font: 600 var(--t-label) var(--font-mono); color: var(--accent); letter-spacing: .04em; }
+  .drawer-back { position: fixed; inset: 0; background: rgb(0 0 0 / .4); z-index: 40; }
+  .drawer {
+    position: fixed; top: 0; right: 0; z-index: 41; height: 100%; width: min(34rem, 100%);
+    background: var(--bg); color: var(--text); border-left: 1px solid var(--border);
+    display: grid; grid-template-rows: auto minmax(0, 1fr);
+    box-shadow: -12px 0 40px var(--lift);
+  }
+  .drawer[hidden], .drawer-back[hidden] { display: none !important; }
+  .drawer-h { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--border); }
+  .drawer-h h2 { font: 500 var(--t-h2)/1.2 var(--font-display); margin: 0; }
+  .drawer-body { overflow: auto; padding: var(--s-5); display: grid; gap: var(--s-4); align-content: start; }
+  .drawer-body h3 { font-size: var(--t-body); }
+  body.drawer-open { overflow: hidden; }
+  .snaps { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--s-4); }
+  .snap { border: 1px solid var(--border); border-radius: var(--r-2); background: var(--bg); padding: var(--s-3); display: grid; gap: var(--s-2); align-content: start; }
+  .snap h3 { font-size: var(--t-body); margin: 0; }
+  .snap-one, .field b { font: 600 var(--t-small) var(--font-mono); color: var(--text); font-weight: 600; }
+  .snap-one { color: var(--text-dim); margin: 0; }
+  .cue { display: none; }
+  .note { display: block; margin: 0; font-size: var(--t-small); line-height: 1.55; max-width: 28em; color: var(--text-dim); text-wrap: pretty; }
+  .pick-table { width: 100%; border-collapse: collapse; min-width: 42rem; }
+  .pick-table th { background: var(--surface); font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); text-align: left; padding: var(--s-3) var(--s-4); }
+  .pick-table td { padding: var(--s-3) var(--s-4); border-top: 1px solid var(--border); vertical-align: top; }
+  .pick-table td:nth-child(2) { font-weight: 600; white-space: nowrap; }
+  .mark { display: inline-block; font: 600 var(--t-label) var(--font-mono); padding: 0 var(--s-2); border-radius: var(--r-1); border: 1px solid currentColor; white-space: nowrap; }
+  .mark.same { color: var(--ok); }
+  .mark.solo { color: var(--accent); }
+  .phone { border: 1.5px solid var(--border-bright); border-radius: 18px; background: var(--surface); padding: 12px 10px; display: grid; gap: 8px; min-height: 132px; align-content: start; }
+  .bone { display: block; height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--text) 16%, transparent); }
+  .bone.s { width: 36%; height: 6px; }
+  .bone.m { width: 78%; }
+  .bone.acc { width: 52%; background: var(--accent); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .pill { height: 22px; border-radius: 6px; border: 1px solid var(--border-bright); }
+  .pill.on { background: var(--accent-dim); border-color: var(--accent); }
+  .vs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: center; font: 600 var(--t-label) var(--font-mono); }
+  .days, .gates { display: grid; gap: 4px; }
+  .days { grid-template-columns: repeat(5, 1fr); }
+  .day, .gate { height: 26px; border-radius: 6px; border: 1px solid var(--border-bright); }
+  .day.now, .gate.open { background: var(--accent); border-color: var(--accent); }
+  .gate { border-style: dashed; }
+  .gate.open { border-style: solid; }
+  .hearts { color: var(--accent); letter-spacing: .15em; font-size: 1.15rem; line-height: 1; }
+  .flow { display: flex; gap: 4px; }
+  .flow i { flex: 1; height: 26px; border-radius: 5px; border: 1px solid var(--border-bright); display: grid; place-items: center; font: 600 .7rem var(--font-mono); font-style: normal; }
+  .flow i.on { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .fields { display: grid; }
+  .field { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr) auto; gap: var(--s-2) var(--s-3); align-items: center; padding: var(--s-3) 0; border-bottom: 1px solid var(--border); width: 100%; text-align: left; background: transparent; border-left: 0; border-right: 0; border-top: 0; border-radius: 0; color: inherit; font: inherit; }
+  .field .bar { height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--text) 18%, transparent); }
+  .field .note { grid-column: 1 / -1; }
+  @media (max-width: 640px) { .field { grid-template-columns: 1fr auto; } .field .bar { grid-column: 1 / -1; } }
+  @media print {
+    .note { display: block !important; }
+    .cue { display: none; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="ve-ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>
+<linearGradient id="ve-node" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--node-top)"/><stop offset="1" style="stop-color:var(--surface)"/></linearGradient>
+</defs></svg>
+<header class="doc-header" aria-label="产品介绍">
+  <a class="doc-brand" href="../">时代光华 · 产品介绍</a>
+  <nav class="navset" aria-label="五份介绍">
+    <a href="../guangpu/">光谱</a>
+    <a href="../race/" aria-current="page">竞赛</a>
+    <a href="../survey/">调查</a>
+    <a href="../evaluation/">评估</a>
+    <a href="../ops/">运营工具</a>
+  </nav>
+</header>
+<div class="tt-defs" hidden>
+  <span id="tt-type">五种里选一种。选定后不能改。</span>
+  <span id="tt-pk">双人 PK 的真人匹配只在微信小程序。H5 和 APP 暂不支持真人 PK。</span>
+  <span id="tt-bank">题从资源库的题库来。改题库会影响所有引用它的竞赛。</span>
+</div>
+<div class="shell">
+<nav class="toc" aria-label="目录">
+  <span class="toc-t">竞赛</span>
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>总览</a></li>
+    <li><a href="#sa"><span class="n">1</span>整体结构</a></li>
+    <li><a href="#s1"><span class="n">2</span>按场景选</a></li>
+    <li><a href="#s2"><span class="n">3</span>怎么建</a></li>
+    <li><a href="#sf"><span class="n">4</span>基本信息</a></li>
+    <li><a href="#sd"><span class="n">5</span>设置</a></li>
+    <li><a href="#s3"><span class="n">6</span>学员端</a></li>
+    <li><a href="#sx"><span class="n">7</span>中途退出</a></li>
+    <li><a href="#sm"><span class="n">8</span>看数据</a></li>
+    <li><a href="#s4"><span class="n">9</span>使用须知</a></li>
+    <li><a href="#s5"><span class="n">10</span>落地建议</a></li>
+  </ol>
+</nav>
+<main>
+  <section id="s0" aria-label="总览">
+    <header>
+      <p class="eyebrow">互动答题 · 产品介绍</p>
+      <h1>竞赛：<br>把刷题做成<span class="hl">能打的活动</span></h1>
+      <p class="lead">竞赛不是闭卷考试。管理员配一种活动，学员在<span class="term" tabindex="0" data-tip="type">「我司答人」</span>里练习、PK、打卡或闯关，成绩进排行和奖牌。</p>
+    </header>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 1</span><span class="fig-t">一场竞赛怎么转起来</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 220" style="min-width:820px" role="img" aria-label="管理员从题库选题，选定活动类型后发布。学员在我司答人答题，成绩进入排行和奖牌。">
+        <path class="ve-e" d="M150 110H230"/><text class="ve-el" x="190" y="100">选题</text>
+        <path class="ve-e is-hot" d="M400 110H490"/><text class="ve-el" x="445" y="100">发布</text>
+        <path class="ve-e is-hot" d="M650 110H740"/><text class="ve-el" x="695" y="100">出成绩</text>
+        <path data-flow="hit" data-every="1600" d="M150 110H830"/>
+        <g class="ve-dots" aria-hidden="true"></g>
+        <g class="ve-n" transform="translate(16 70)"><rect class="sh" width="134" height="80" rx="6"/><text x="67" y="32">题库</text><text class="sub" x="67" y="56">资源库</text></g>
+        <g class="ve-n is-key" transform="translate(230 70)" data-ref="type"><rect class="sh" width="170" height="80" rx="6"/><text x="85" y="32">一种活动</text><text class="sub" x="85" y="56">选定后不能改</text></g>
+        <g class="ve-n" transform="translate(490 70)"><rect class="sh" width="160" height="80" rx="6"/><text x="80" y="32">学员答题</text><text class="sub" x="80" y="56">我司答人</text></g>
+        <g class="ve-n" transform="translate(740 70)"><rect class="sh" width="200" height="80" rx="6"/><text x="100" y="32">排行 · 奖牌</text><text class="sub" x="100" y="56">数据中心可导出</text></g>
+      </svg></div>
+      <figcaption>先有题，再定活动类型。发布后学员才能答。排行和奖牌按这场活动自己的规则算。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 2</span><span class="fig-t">数量</span></p>
+      <div class="kpis">
+        <div class="kpi"><span class="ve-label">活动类型</span><span class="big">5<span class="unit">种</span></span></div>
+        <div class="kpi"><span class="ve-label">创建向导</span><span class="big">5<span class="unit">步</span></span></div>
+        <div class="kpi"><span class="ve-label">学员入口</span><span class="big">4<span class="unit">个</span></span></div>
+        <div class="kpi stu"><span class="ve-label">类型选定后</span><span class="big">不能改</span></div>
+      </div>
+      <figcaption>五种里只能先选一种。向导是基本信息、竞赛设计、成就、参与人员、通知。入口是小程序、H5、APP，以及部分企业的 PC。</figcaption>
+    </figure>
+  </section>
+
+  <section id="sa" aria-label="整体结构">
+    <div class="kicker"><p class="eyebrow">整体结构</p><h2>谁出题、谁答题、谁看榜</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 3</span><span class="fig-t">三层</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 1000 430" style="min-width:860px" role="img" aria-label="管理端维护题库并发布竞赛。学员在我司答人答题，错题进错题本。成绩进入数据中心，管理员导出。">
+        <rect class="lane" x="0" y="8" width="1000" height="120" rx="10"/>
+        <rect class="lane" x="0" y="148" width="1000" height="120" rx="10"/>
+        <rect class="lane" x="0" y="288" width="1000" height="120" rx="10"/>
+        <text class="lane-t" x="16" y="58">管理端</text><text class="lane-s" x="16" y="82">配活动</text>
+        <text class="lane-t" x="16" y="198">学员端</text><text class="lane-s" x="16" y="222">我司答人</text>
+        <text class="lane-t" x="16" y="338">数据</text><text class="lane-s" x="16" y="362">看结果</text>
+        <g class="ve-n" transform="translate(150 36)" data-tip="bank" tabindex="0"><rect class="sh" width="140" height="64" rx="6"/><text x="70" y="32">题库</text></g>
+        <g class="ve-n is-key" transform="translate(360 36)"><rect class="sh" width="180" height="64" rx="6"/><text x="90" y="26">竞赛设计</text><text class="sub" x="90" y="46">规则因类型而异</text></g>
+        <g class="ve-n" transform="translate(610 36)"><rect class="sh" width="150" height="64" rx="6"/><text x="75" y="32">成就</text></g>
+        <g class="ve-n" transform="translate(820 36)"><rect class="sh" width="150" height="64" rx="6"/><text x="75" y="32">发布</text></g>
+        <path class="ve-e" d="M290 68H360"/><path class="ve-e" d="M540 68H610"/><path class="ve-e" d="M760 68H820"/>
+        <g class="ve-n" transform="translate(150 176)"><rect class="sh" width="160" height="64" rx="6"/><text x="80" y="32">进入活动</text></g>
+        <g class="ve-n" transform="translate(390 176)"><rect class="sh" width="160" height="64" rx="6"/><text x="80" y="32">答题</text></g>
+        <g class="ve-n" transform="translate(630 176)"><rect class="sh" width="160" height="64" rx="6"/><text x="80" y="26">错题本</text><text class="sub" x="80" y="46">可按项目关闭</text></g>
+        <g class="ve-n" transform="translate(820 176)"><rect class="sh" width="150" height="64" rx="6"/><text x="75" y="32">排行奖牌</text></g>
+        <path class="ve-e" d="M310 208H390"/><path class="ve-e" d="M550 208H630"/><path class="ve-e" d="M790 208H820"/>
+        <g class="ve-n is-key" transform="translate(360 316)"><rect class="sh" width="280" height="64" rx="6"/><text x="140" y="26">数据中心</text><text class="sub" x="140" y="46">整体统计 + 人员分析，可导出</text></g>
+        <path class="ve-e is-hot" d="M470 240V316"/>
+        <text class="ve-el" x="490" y="280">成绩流入</text>
+      </svg></div>
+      <figcaption>管理员在 Web 后台建活动。学员不进后台。看数在数据中心，指标随活动类型变化。</figcaption>
+    </figure>
+  </section>
+
+  <div class="insight"><p class="ve-label">要点</p><p>先对上你的场景。前三种可以开在同一场，后四种必须单独开，选定后不能换。</p></div>
+
+  <section id="s1" aria-label="按场景选">
+    <div class="kicker"><p class="eyebrow">按场景选</p><h2>对上场合，就能定类型</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">对照</span><span class="fig-t">七种场合，各选一种</span></p>
+      <div class="table-scroll">
+        <table class="pick-table">
+          <thead><tr><th>你的场景</th><th>选</th><th>开法</th><th>学员会停在哪</th></tr></thead>
+          <tbody>
+            <tr><td>先把题练熟，不跟人比</td><td>个人练习</td><td><span class="mark same">可同场</span></td><td>次数不限，刷完还能再刷</td></tr>
+            <tr><td>两个人同时答，分出胜负</td><td>双人 PK</td><td><span class="mark same">可同场</span></td><td>真人只在微信小程序。匹配不到就用人机</td></tr>
+            <tr><td>分轮正式赛，可能要晋级</td><td>计时竞赛</td><td><span class="mark same">可同场</span></td><td>必须按轮打。开了晋级，前一轮错过或失败就进不了后面。榜只显示当前轮</td></tr>
+            <tr><td>每天来一下，用天数养成习惯</td><td>每日答题</td><td><span class="mark solo">单独开</span></td><td>按日期解锁，不过关。用来打卡、发金银铜</td></tr>
+            <tr><td>内容有先后，过了才能下一关</td><td>闯关</td><td><span class="mark solo">单独开</span></td><td>没过关就停在这一关。进度留着，最多 999 关</td></tr>
+            <tr><td>一口气连答，错了掉生命</td><td>一战到底</td><td><span class="mark solo">单独开</span></td><td>整场一个倒计时。生命或时间没了，这一次就停</td></tr>
+            <tr><td>错题不想人工排，让系统换题</td><td>智能练习</td><td><span class="mark solo">单独开</span></td><td>在新题、错题、复习、已学会之间转。不是同一套反复刷</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>「可同场」的三种，新建时选「练习 · PK · 计时」，可以只开一种，也可以一起开。「单独开」的四种，选错了只能另开一场。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 4</span><span class="fig-t">同一场，可开 1–3 种</span></p>
+      <p class="cue">鼠标停上，或用键盘对上，才展开说明</p>
+      <div class="snaps">
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><span class="bone s"></span><span class="bone m"></span><span class="row2"><span class="pill on"></span><span class="pill"></span></span><span class="bone acc"></span></div>
+          <h3>个人练习</h3>
+          <p class="snap-one">自己刷，还能再刷</p>
+          <p class="note">没有对手，也没有通关。次数不限。适合先熟悉题。</p>
+        </article>
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><div class="vs"><span class="pill on"></span><span>对</span><span class="pill"></span></div><span class="bone acc"></span><span class="bone m"></span></div>
+          <h3>双人 PK</h3>
+          <p class="snap-one">两人同题，分胜负</p>
+          <p class="note">有对手。真人匹配只在微信小程序。H5 和 APP 匹配不到真人。</p>
+        </article>
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><div class="flow"><i class="on">1</i><i>2</i><i>3</i></div><span class="bone s"></span><span class="bone acc"></span></div>
+          <h3>计时竞赛</h3>
+          <p class="snap-one">一轮一卷，按顺序</p>
+          <p class="note">开了晋级，前面一轮错过或失败，就进不了后面。榜只显示当前这一轮。</p>
+        </article>
+      </div>
+      <figcaption>新建时选「练习 · PK · 计时」。这三种可以只开一种，也可以开在同一场。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 5</span><span class="fig-t">四种只能单选，选定不能换</span></p>
+      <div class="snaps">
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><div class="days"><span class="day"></span><span class="day now"></span><span class="day"></span><span class="day"></span><span class="day"></span></div><span class="bone s"></span></div>
+          <h3>每日答题</h3>
+          <p class="snap-one">按天打卡</p>
+          <p class="note">解锁靠日期，不靠过关。没有晋级。用来养成每天来一下的习惯，再发金银铜。</p>
+        </article>
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><div class="gates"><span class="gate open"></span><span class="gate"></span><span class="gate"></span></div></div>
+          <h3>闯关</h3>
+          <p class="snap-one">过关才开下一关</p>
+          <p class="note">不是每日打卡。进度按关留着，下次从当前关继续。最多 999 关。</p>
+        </article>
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><span class="hearts">♥ ♥ ♥</span><span class="bone acc"></span><span class="bone s"></span></div>
+          <h3>一战到底</h3>
+          <p class="snap-one">连答，命没了就停</p>
+          <p class="note">不是闯关。整场一个倒计时，过关也不重新计时。生命或时间没了，这一次就结束。</p>
+        </article>
+        <article class="snap">
+          <div class="phone" aria-hidden="true"><div class="flow"><i class="on">新</i><i>错</i><i>复习</i><i>会</i></div><span class="bone m"></span></div>
+          <h3>智能练习</h3>
+          <p class="snap-one">系统按会不会换题</p>
+          <p class="note">个人练习是你定好的一套反复做。智能练习会在新题、错题、复习、已学会之间转。</p>
+        </article>
+      </div>
+    </figure>
+  </section>
+
+  <section id="s2" aria-label="怎么建">
+    <div class="kicker"><p class="eyebrow">怎么建</p><h2>先定类型，再走 <span class="num">5</span> 步向导</h2></div>
+    <figure class="fig ve-steps">
+      <p class="fig-h"><span class="fig-n">图 6</span><span class="fig-t">创建顺序</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 180" style="min-width:820px" role="img" aria-label="选类型之后，依次完成基本信息、竞赛设计、成就设置、参与人员、通知设置。">
+        <path class="ve-e" data-s="2" pathLength="1" d="M168 78H196"/>
+        <path class="ve-e" data-s="3" pathLength="1" d="M332 78H360"/>
+        <path class="ve-e" data-s="4" pathLength="1" d="M496 78H524"/>
+        <path class="ve-e" data-s="5" pathLength="1" d="M660 78H688"/>
+        <g class="ve-n" transform="translate(16 40)" data-s="1" data-jump="1" tabindex="0" role="button"><rect class="sh" width="152" height="76" rx="6"/><text x="76" y="32">基本信息</text><text class="sub" x="76" y="54">各类型相同</text></g>
+        <g class="ve-n is-key" transform="translate(196 40)" data-s="2" data-jump="2" tabindex="0" role="button"><rect class="sh" width="136" height="76" rx="6"/><text x="68" y="32">竞赛设计</text><text class="sub" x="68" y="54">按类型不同</text></g>
+        <g class="ve-n" transform="translate(360 40)" data-s="3" data-jump="3" tabindex="0" role="button"><rect class="sh" width="136" height="76" rx="6"/><text x="68" y="32">成就设置</text><text class="sub" x="68" y="54">奖牌 · 排行</text></g>
+        <g class="ve-n" transform="translate(524 40)" data-s="4" data-jump="4" tabindex="0" role="button"><rect class="sh" width="136" height="76" rx="6"/><text x="68" y="46">参与人员</text></g>
+        <g class="ve-n" transform="translate(688 40)" data-s="5" data-jump="5" tabindex="0" role="button"><rect class="sh" width="136" height="76" rx="6"/><text x="68" y="46">通知设置</text></g>
+        <g class="ve-co" data-s="1" transform="translate(92 28)"><circle r="11"/><text>1</text></g>
+        <g class="ve-co" data-s="2" transform="translate(264 28)"><circle r="11"/><text>2</text></g>
+        <g class="ve-co" data-s="3" transform="translate(428 28)"><circle r="11"/><text>3</text></g>
+        <g class="ve-co" data-s="4" transform="translate(592 28)"><circle r="11"/><text>4</text></g>
+        <g class="ve-co" data-s="5" transform="translate(756 28)"><circle r="11"/><text>5</text></g>
+      </svg></div>
+      <div class="ve-player js-only">
+        <ol class="ve-cap">
+          <li data-n="1/5">基本信息：名称（≤100 字）、时间、封面、允许终端（H5 / APP / 小程序，至少 1 个）、错题是否进错题本、是否打乱选项、简介。</li>
+          <li data-n="2/5">竞赛设计：这一步随类型变化。练习·PK·计时在这里决定开哪几种子模式，并<span class="term" data-tip="bank" tabindex="0">从题库抽题</span>。</li>
+          <li data-n="3/5">成就：奖牌规则和排行榜。排行最多三档排序字段。建议发布前定稿。</li>
+          <li data-n="4/5">参与人员：定谁能参加。发布后，在开放时间和范围内的学员才能看到。</li>
+          <li data-n="5/5">通知：按页面上的渠道勾选。保存草稿或直接发布。</li>
+        </ol>
+        <button type="button" data-go="-1" aria-label="上一步">上一步</button>
+        <button type="button" data-play>播放</button>
+        <input type="range" min="0" value="4" aria-label="步骤">
+        <button type="button" data-go="1" aria-label="下一步">下一步</button>
+      </div>
+      <figcaption>向导之前还有一步：在列表点新建，先选类型。这一步不能反悔。</figcaption>
+    </figure>
+  </section>
+
+<section id="sf" aria-label="基本信息">
+    <div class="kicker"><p class="eyebrow">基本信息</p><h2>同一套字段，能不能改要看状态</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 9</span><span class="fig-t">基本信息各状态</span></p>
+      <p class="cue">停在一行上，看这一项能不能改</p>
+      <div class="fields">
+        <div class="field"><span>名称</span><span class="bar"></span><b>都能改</b><p class="note">必填，最多 100 字。草稿、已发布、已关闭都能改。</p></div>
+        <div class="field"><span>时间</span><span class="bar"></span><b>发布后收紧</b><p class="note">可到秒。同一天可以，但起止不能是同一秒。草稿：起止都能改。已发布：通常只能改结束。已关闭：都不能改。</p></div>
+        <div class="field"><span>封面</span><span class="bar"></span><b>都能改</b><p class="note">可不传。建议 540×300，jpg 或 png，不超过 3MB。可以文生图，不支持图生图。</p></div>
+        <div class="field"><span>终端</span><span class="bar"></span><b>发布后锁定</b><p class="note">H5、APP、小程序，至少 1 个、最多 3 个。关掉 H5，PC 也不能参加。已发布和已关闭不能改。</p></div>
+        <div class="field"><span>错题本</span><span class="bar"></span><b>都能改</b><p class="note">只决定展不展示，不影响错题有没有存下来。</p></div>
+        <div class="field"><span>选项</span><span class="bar"></span><b>都能改</b><p class="note">开：打乱。关：按题库录入顺序。</p></div>
+        <div class="field"><span>简介</span><span class="bar"></span><b>都能改</b><p class="note">至少 1 个字，没有上限。可排版，也可写 HTML。</p></div>
+      </div>
+      <figcaption>发布前确认题库不是空的。</figcaption>
+    </figure>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 10</span><span class="fig-t">列表上还能点什么</span></p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>状态</th><th>可以做</th></tr></thead>
+          <tbody>
+            <tr><td>草稿</td><td>编辑、复制、删除、发布。新建默认是草稿</td></tr>
+            <tr><td>已发布</td><td>编辑（部分字段锁住）、复制、看数据、下载二维码、关闭</td></tr>
+            <tr><td>已关闭</td><td>编辑、复制、看数据、删除、再次发布。关闭后学员不能再答，历史成绩还在</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>删除不可恢复。复制会生成一份草稿，出现在列表顶部，类型跟着原场走，不能在副本里换成另一种类型。</figcaption>
+    </figure>
+  </section>
+
+  <section id="sd" aria-label="设置">
+    <div class="kicker"><p class="eyebrow">设置</p><h2>点一行，在右侧看这项要填什么</h2></div>
+    <p class="lead">前三行属于同一种竞赛，可以在一场里一起开。后四行各自要单独新建。</p>
+    <ol class="pick">
+      <li><button type="button" data-panel="p-practice" data-title="个人练习"><span class="who">个人练习</span><span class="when">自己反复刷，没有对手</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-pk" data-title="双人 PK"><span class="who">双人 PK</span><span class="when">两人对打，真人只在微信小程序</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-timed" data-title="计时竞赛"><span class="who">计时竞赛</span><span class="when">按轮次交卷，可以要求晋级</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-daily" data-title="每日答题"><span class="who">每日答题</span><span class="when">每天一小套，按天打卡</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-stage" data-title="闯关"><span class="who">闯关</span><span class="when">过关才解锁下一关</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-last" data-title="一战到底"><span class="who">一战到底</span><span class="when">连答，生命或时间没了就停</span><span class="go">设置</span></button></li>
+      <li><button type="button" data-panel="p-smart" data-title="智能练习"><span class="who">智能练习</span><span class="when">系统按会不会换题</span><span class="go">设置</span></button></li>
+    </ol>
+  </section>
+
+  <section id="s3" aria-label="学员端">
+    <div class="kicker"><p class="eyebrow">学员端</p><h2>学员从「我司答人」进来，四个入口同一套数据</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 7</span><span class="fig-t">四个入口</span></p>
+      <div class="cases">
+        <div class="case" data-st="info"><h3>微信小程序</h3><p class="case-d">搜索「我司答人」，用企业 ID、用户名、密码登录。真人 PK 只走这里。</p></div>
+        <div class="case"><h3>H5 微平台</h3><p class="case-d">公众号「企业学习门户」→ 我的 → 微平台。白屏可先退出再登。</p></div>
+        <div class="case"><h3>云端学习 APP</h3><p class="case-d">登录后搜索「我司答人」。白屏可在系统设置里切换企业 ID 后重登。</p></div>
+        <div class="case"><h3>部分企业的 PC</h3><p class="case-d">独立 H5 链接，或易培 PC 客户端里的竞赛图标。打开后仍是手机页的样子。</p></div>
+      </div>
+      <figcaption>禁止 H5，就是禁止从 H5 和 PC 参加这场竞赛。关闭或已发布后，允许的终端不能再改。</figcaption>
+    </figure>
+  </section>
+
+<section id="sx" aria-label="中途退出">
+    <div class="kicker"><p class="eyebrow">学员中途退出</p><h2>退出算不算数，五种不一样</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 14</span><span class="fig-t">退出之后还剩什么</span></p>
+      <p class="cue">停在一块上</p>
+      <div class="snaps">
+        <article class="snap"><h3>个人练习</h3><p class="snap-one">做完还能再做</p><p class="note">不限次数。做完可看正确题数、用时、击败比例。</p></article>
+        <article class="snap"><h3>双人 PK</h3><p class="snap-one">退出扣次数</p><p class="note">扣掉当日次数，并另开一局。进行中可答、可看榜。往期一般只能看榜。</p></article>
+        <article class="snap"><h3>计时竞赛</h3><p class="snap-one">到时自动交</p><p class="note">常见每天一次。到时没交，按已答自动交卷。</p></article>
+        <article class="snap"><h3>每日答题</h3><p class="snap-one">这次不算完成</p><p class="note">可能扣掉今天的次数，再进要重开。同一天一般不换卷。</p></article>
+        <article class="snap"><h3>闯关</h3><p class="snap-one">进度留着</p><p class="note">下次从当前没过的关继续。通关证明可以转发。</p></article>
+        <article class="snap"><h3>一战到底</h3><p class="snap-one">答题中退出算交卷</p><p class="note">过关后可以暂时退出并保存。正在答题时确认退出，这一次结束。</p></article>
+        <article class="snap"><h3>智能练习</h3><p class="snap-one">可以接着练</p><p class="note">退出保留没做完的记录。</p></article>
+      </div>
+      <figcaption>看不到活动：没发布、没到时间、已结束，或不在参与范围。次数为 0，或没过关，也不能继续。</figcaption>
+    </figure>
+  </section>
+
+  <section id="sm" aria-label="看数据">
+    <div class="kicker"><p class="eyebrow">数据中心</p><h2>每种活动导出的列不一样</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 15</span><span class="fig-t">整体统计和人员分析</span></p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>类型</th><th>整体</th><th>按人</th></tr></thead>
+          <tbody>
+            <tr><td>个人练习</td><td>参与人数、人次、人均、完整参与</td><td>练习次数、单场最高分、耗时、平均正确率</td></tr>
+            <tr><td>双人 PK</td><td>参与、总 PK、主动 PK</td><td>PK 次数、胜场、胜率、最高分</td></tr>
+            <tr><td>计时竞赛</td><td>每一轮的参与人数</td><td>名次、答对 / 总题、提交时间、用时、答卷</td></tr>
+            <tr><td>每日答题</td><td>参与人数、参与天数、金银铜人数</td><td>参与天数、答对合计、耗时、积分、奖牌</td></tr>
+            <tr><td>闯关</td><td>参与、人均通关、奖牌人数</td><td>通关数、用时、挑战次数、积分、奖牌</td></tr>
+            <tr><td>一战到底</td><td>参与、人均成绩、奖牌人数</td><td>参与次数、最佳成绩、跳题、奖牌</td></tr>
+            <tr><td>智能练习</td><td>参与、完成轮数、正确率</td><td>轮数、次数、正确率、效率、积分</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>可按工号、姓名、部门筛选后导出。二维码有云端、微平台和小程序三种，可下载转发。排行、积分、奖牌可能有延迟，以系统最终统计为准。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s4" aria-label="使用须知">
+    <div class="kicker"><p class="eyebrow">使用须知</p><h2>上线前先对上这 <span class="num">6</span> 条</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 16</span><span class="fig-t">容易配错的地方</span></p>
+      <div class="cases">
+        <div class="case" data-st="warn"><span class="chip warn">锁定</span><h3>类型选定不能改</h3><p class="case-d">选错了只能删掉重开，或复制后另开一场。</p></div>
+        <div class="case" data-st="warn"><span class="chip warn">终端</span><h3>真人 PK 不在 H5</h3><p class="case-d">匹配顺序是在线真人，超时用历史真人记录，再没有才用人机。企业微信若能打开小程序，可走小程序免密匹配。</p></div>
+        <div class="case" data-st="info"><span class="chip info">题量</span><h3>每日答题要先算题够不够</h3><p class="case-d">可用题量须大于「项目天数 × 每天题数」。不够就发不完整。</p></div>
+        <div class="case" data-st="warn"><span class="chip warn">移题</span><h3>组卷和非组卷不一样</h3><p class="case-d">练习·PK·计时、每日答题、闯关是组卷，题目已固化，移走题不影响这场。一战到底和智能练习实时拉题库，移题后学员端会丢题。非组卷建议先暂停再移。</p></div>
+        <div class="case"><span class="chip">轮次</span><h3>计时竞赛的榜是当前轮的榜</h3><p class="case-d">要按顺序参加。设了晋级，前置轮错过或失败就不能进后面。不设晋级，时间范围内仍要答完一轮再进下一轮。</p></div>
+        <div class="case"><span class="chip">诚信</span><h3>每日答题和个人练习不计切屏</h3><p class="case-d">其他类型累计切屏。不默认自动取消成绩，异常靠人工看。H5 不能承诺禁止截屏。</p></div>
+      </div>
+      <figcaption>改题库内容会影响所有引用这个库的竞赛。发布前确认题库不是空的，抽题数量合法。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s5" aria-label="落地建议">
+    <div class="kicker"><p class="eyebrow">落地建议</p><h2>先开 1 种类型、1 个题库、1 场活动</h2></div>
+    <figure class="fig">
+      <p class="fig-h"><span class="fig-n">图 8</span><span class="fig-t">试点</span></p>
+      <div class="frame"><svg class="ve-svg" viewBox="0 0 960 160" style="min-width:760px" role="img" aria-label="先准备一个题库，选一种类型发布一场，用学员账号在小程序走通，再复制扩展。">
+        <g class="ve-n" transform="translate(20 40)"><rect class="sh" width="180" height="72" rx="6"/><text x="90" y="30">1 个题库</text><text class="sub" x="90" y="52">题量先算够</text></g>
+        <g class="ve-n is-key" transform="translate(260 40)"><rect class="sh" width="180" height="72" rx="6"/><text x="90" y="30">1 种类型</text><text class="sub" x="90" y="52">选定不再改</text></g>
+        <g class="ve-n" transform="translate(500 40)"><rect class="sh" width="180" height="72" rx="6"/><text x="90" y="30">1 场发布</text><text class="sub" x="90" y="52">学员走一遍</text></g>
+        <g class="ve-n" transform="translate(740 40)"><rect class="sh is-off" width="190" height="72" rx="6"/><text x="95" y="30">再复制扩展</text><text class="sub" x="95" y="52">换类型另开一场</text></g>
+        <path class="ve-e" d="M200 76H260"/><path class="ve-e" d="M440 76H500"/><path class="ve-e is-async" d="M680 76H740"/>
+      </svg></div>
+      <figcaption>要 PK，就用微信小程序验收。要打卡，先用每日答题，并把天数和题量乘一遍。</figcaption>
+    </figure>
+    <ol class="steps">
+      <li>在资源库准备题库。需要打卡的，先用天数乘每天题数，确认题够。</li>
+      <li>新建时只选一种类型，走完 5 步，发布前看排行字段和参与终端。</li>
+      <li>用学员账号在对应入口答完一场，再到数据中心对人数和导出。</li>
+      <li>要换玩法，另开一场。不要在已发布的场次里改类型。</li>
+    </ol>
+  </section>
+</main>
+</div>
+<footer>时代光华 · 竞赛管理</footer>
+<div id="tt-pop" class="tt-pop" role="tooltip" hidden></div>
+<div class="drawer-back" id="drawer-back" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="drawer-h">
+    <h2 id="drawer-title">设置</h2>
+    <button type="button" data-close>关闭</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+<div hidden>
+  <template id="p-practice">
+    <div class="phone" aria-hidden="true"><span class="bone s"></span><span class="bone m"></span><span class="bone acc"></span></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>时长</span><span class="bar"></span><b>1–999 分</b><p class="note">次数不限。做完可看正确题数、用时、击败比例，然后继续练。</p></div>
+      <div class="field"><span>多选</span><span class="bar"></span><b>可过滤</b><p class="note">从题库抽题。开场后题目固化，之后移走题库里的题，不影响这场。</p></div>
+      <div class="field"><span>排行</span><span class="bar"></span><b>最多 3 档</b><p class="note">练习次数、单场最高分、平均正确率、最高分耗时。</p></div>
+      <div class="field"><span>切屏</span><span class="bar"></span><b>不计</b><p class="note">个人练习不累计切屏。</p></div>
+    </div>
+  </template>
+  <template id="p-pk">
+    <div class="phone" aria-hidden="true"><div class="vs"><span class="pill on"></span><span>对</span><span class="pill"></span></div><span class="bone acc"></span></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>题量</span><span class="bar"></span><b>7–50</b><p class="note">可过滤多选，从题库抽题。</p></div>
+      <div class="field"><span>每日</span><span class="bar"></span><b>1–999</b><p class="note">留空表示不限。中途退出扣掉当日次数，并另开一局。</p></div>
+      <div class="field"><span>匹配</span><span class="bar"></span><b>真人优先</b><p class="note">在线真人，超时用这条卷的历史真人，再没有才用人机。</p></div>
+      <div class="field"><span>终端</span><span class="bar"></span><b>仅小程序</b><p class="note">真人 PK 只在微信小程序。H5、APP 匹配不到真人。企业微信能打开小程序时，可走小程序。</p></div>
+      <div class="field"><span>排行</span><span class="bar"></span><b>最多 3 档</b><p class="note">PK 次数、主动 PK、胜场、胜率、单场最高分。</p></div>
+    </div>
+  </template>
+  <template id="p-timed">
+    <div class="phone" aria-hidden="true"><div class="flow"><i class="on">1</i><i>2</i><i>3</i></div><span class="bone acc"></span></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>时长</span><span class="bar"></span><b>1–1999 分</b><p class="note">到时没交，按已答自动交卷。很多场每天只能参加一次。</p></div>
+      <div class="field"><span>试卷</span><span class="bar"></span><b>固定 / 随机</b><p class="note">可过滤多选。开场后题目固化，移走题库里的题不影响这场。</p></div>
+      <div class="field"><span>答案</span><span class="bar"></span><b>4 种时机</b><p class="note">交题后立刻看、交卷后看、整场结束后看、不允许看。</p></div>
+      <div class="field"><span>轮次</span><span class="bar"></span><b>必须按序</b><p class="note">开了晋级：前一轮错过或失败，进不了后面。没开晋级：仍要答完一轮再进下一轮。榜只显示当前这一轮。</p></div>
+      <div class="field"><span>排行</span><span class="bar"></span><b>最多 3 档</b><p class="note">最高答对数、最佳成绩提交时间、最高分耗时。</p></div>
+    </div>
+  </template>
+  <template id="p-daily">
+    <div class="phone" aria-hidden="true"><div class="days"><span class="day"></span><span class="day now"></span><span class="day"></span><span class="day"></span><span class="day"></span></div></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>每天</span><span class="bar"></span><b>题数自定</b><p class="note">天数由起止时间自动算。可用题必须多于「天数 × 每天题数」。21 天 × 10 题，要多于 210。</p></div>
+      <div class="field"><span>次数</span><span class="bar"></span><b>1–99</b><p class="note">留空不限。每天 0 点刷新。中途退出不算完成，可能扣掉今天的次数，再进要重开。同一天一般不换卷。</p></div>
+      <div class="field"><span>试卷</span><span class="bar"></span><b>同日同卷</b><p class="note">固定卷：同一天同一套。随机卷：每天重抽。题目固化后，移题不影响这场。</p></div>
+      <div class="field"><span>提示</span><span class="bar"></span><b>两种</b><p class="note">提交后才显示，或没提交也能看。</p></div>
+      <div class="field"><span>奖牌</span><span class="bar"></span><b>金 · 银 · 铜</b><p class="note">按参与天数，或按正确题数。后一档必须更难。已发不回收。不计切屏。没有晋级。</p></div>
+    </div>
+  </template>
+  <template id="p-stage">
+    <div class="phone" aria-hidden="true"><div class="gates"><span class="gate open"></span><span class="gate"></span><span class="gate"></span></div></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>关数</span><span class="bar"></span><b>最多 999</b><p class="note">过了才开下一关。已过的关留着，下次从当前关继续。不是按日历打卡。</p></div>
+      <div class="field"><span>每关</span><span class="bar"></span><b>题量自定</b><p class="note">允许答错 0–50，且不能超过这一关的题量。每日时长 1–1999 分钟，留空不限。</p></div>
+      <div class="field"><span>试卷</span><span class="bar"></span><b>固定 / 随机</b><p class="note">固定：重复闯这一关还是同一套。题目固化后移题不影响这场。会计切屏。</p></div>
+      <div class="field"><span>用时</span><span class="bar"></span><b>通关那一次</b><p class="note">单关取通关那次的耗时。总榜是各关通关用时相加。通关证明可以转发。</p></div>
+    </div>
+  </template>
+  <template id="p-last">
+    <div class="phone" aria-hidden="true"><span class="hearts">♥ ♥ ♥</span><span class="bone acc"></span><span class="bone s"></span></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>资源</span><span class="bar"></span><b>命 · 时 · 跳</b><p class="note">挑战次数、题量、时间、生命、跳题。跳题 0–999，其余多数 1–999。</p></div>
+      <div class="field"><span>难度</span><span class="bar"></span><b>Lv1–Lv3</b><p class="note">决定显不显示剩余生命和时间。过关后可让题变多、时间变短、生命变少、跳题变少。</p></div>
+      <div class="field"><span>奖励</span><span class="bar"></span><b>可加资源</b><p class="note">按过关数、连续答对或周期，加跳题、时间、生命或挑战次数。</p></div>
+      <div class="field"><span>次数</span><span class="bar"></span><b>每天 1 次</b><p class="note">一进来就扣今天这一次。没用掉会累加：今天剩 1，明天变 2。没打完的进度留着。</p></div>
+      <div class="field"><span>计时</span><span class="bar"></span><b>整场不停</b><p class="note">过关也不重新计时。过关后可暂退。正在答题时退出，算交卷。</p></div>
+      <div class="field"><span>题库</span><span class="bar"></span><b>发布后锁定</b><p class="note">试题不能改。其他配置只对之后的挑战生效。题目实时拉取，删题学员马上看不到。切屏在重开或进下一关时清零。</p></div>
+    </div>
+  </template>
+  <template id="p-smart">
+    <div class="phone" aria-hidden="true"><div class="flow"><i class="on">新</i><i>错</i><i>复习</i><i>会</i></div></div>
+    <p class="cue">停在一行上</p>
+    <div class="fields">
+      <div class="field"><span>出题</span><span class="bar"></span><b>四类流转</b><p class="note">新题、错题、复习、已学会。比例在页面上设。和个人练习不同：不是同一套反复做。</p></div>
+      <div class="field"><span>一轮结束</span><span class="bar"></span><b>可看分析</b><p class="note">一轮结束可看正确率、新增错题、学会了哪些。中途退出留下记录，可以接着练。</p></div>
+      <div class="field"><span>排行</span><span class="bar"></span><b>有推荐序</b><p class="note">奖牌可按学习效率或练习轮数。最多三档，一部分排序不能改。</p></div>
+      <div class="field"><span>题库</span><span class="bar"></span><b>实时拉取</b><p class="note">删题后学员端会丢。会计切屏。</p></div>
+    </div>
+  </template>
+</div>
+<script src="../assets/frame.js"></script>
+<script>
+(function () {
+  const drawer = document.getElementById('drawer');
+  if (!drawer || drawer.dataset.bound) return;
+  const back = document.getElementById('drawer-back');
+  const body = document.getElementById('drawer-body');
+  const title = document.getElementById('drawer-title');
+  let last = null;
+  const close = () => {
+    drawer.hidden = true;
+    back.hidden = true;
+    document.body.classList.remove('drawer-open');
+    if (last) last.focus();
+  };
+  const open = (btn) => {
+    const tpl = document.getElementById(btn.dataset.panel);
+    if (!tpl) return;
+    last = btn;
+    title.textContent = btn.dataset.title || '设置';
+    body.replaceChildren(tpl.content.cloneNode(true));
+    back.hidden = false;
+    drawer.hidden = false;
+    document.body.classList.add('drawer-open');
+    drawer.querySelector('[data-close]').focus();
+  };
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-panel]');
+    if (btn) { open(btn); return; }
+    if (e.target.closest('[data-close]') || e.target === back) close();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !drawer.hidden) close();
+  });
+})();
+</script>
+</body>
+</html>
