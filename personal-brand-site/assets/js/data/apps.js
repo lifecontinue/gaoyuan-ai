@@ -226,6 +226,29 @@ export const apps = [
     }]
   },
   {
+    id: "interview-coach",
+    name: "Brief · 面场",
+    en: "Brief · Interview Arena",
+    desc: "基于 LangGraph 的 AI/产品面试陪练：真实场景模拟、面试官追问打断、分维度复盘。覆盖产品判断、指标权衡、利益相关方冲突、AI 功能定界与执行复盘。",
+    tagline: "真实场景 · LangGraph 面试 Agent",
+    icon: null,
+    screenshot: null,
+    url: "https://interview-coach.gaoyuan-ai.xyz",
+    tags: ["AI Agent", "面试陪练", "LangGraph"],
+    status: "live",
+    placements: [{
+      room: "study",
+      x: 68, y: 38,
+      lx: 68, ly: 38,
+      label: "面场",
+      anchor: "top",
+      shape: [
+        { x: 62, y: 32 }, { x: 74, y: 32 },
+        { x: 74, y: 44 }, { x: 62, y: 44 }
+      ]
+    }]
+  },
+  {
     id: "collab-whiteboard",
     name: "素白板",
     en: "CollabBoard",
