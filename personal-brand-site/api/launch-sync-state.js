@@ -8,7 +8,7 @@
  * Weak write guard: if env LAUNCH_SYNC_WRITE_KEY is set, require header x-launch-sync-key
  * on PUT/POST. If unset, writes are allowed (page is noindex under /work/).
  */
-const { put, list, head, get } = require("@vercel/blob");
+const { put, list, head } = require("@vercel/blob");
 
 const BLOB_PATH = "launch-sync/state.json";
 
@@ -17,7 +17,9 @@ function setCors(_req, res, methods) {
   res.setHeader("Access-Control-Allow-Methods", methods);
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-launch-sync-key");
   res.setHeader("Access-Control-Max-Age", "86400");
-  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
 }
 
 function emptyState() {
@@ -63,25 +65,11 @@ async function resolveBlobUrl() {
   return (exact || blobs[0] || {}).url || null;
 }
 
-async function streamToJson(stream) {
-  const text = await new Response(stream).text();
-  if (!text) return emptyState();
-  return normalize(JSON.parse(text));
-}
-
 async function readState() {
-  try {
-    const result = await get(BLOB_PATH, { access: "public", useCache: false });
-    if (result && result.statusCode === 200 && result.stream) {
-      return await streamToJson(result.stream);
-    }
-  } catch (_) {
-    /* fall through */
-  }
-
   const url = await resolveBlobUrl();
   if (!url) return emptyState();
-  const res = await fetch(url, { cache: "no-store" });
+  const sep = url.includes("?") ? "&" : "?";
+  const res = await fetch(url + sep + "cb=" + Date.now(), { cache: "no-store" });
   if (res.status === 404) return emptyState();
   if (!res.ok) {
     const err = new Error("blob fetch " + res.status);
