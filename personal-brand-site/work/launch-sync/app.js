@@ -27,22 +27,10 @@
     };
   }
 
-  function cloneSeedFeature(seed) {
-    return JSON.parse(JSON.stringify(seed));
-  }
-
   function mergeMissingSeedFeatures(features) {
+    // Cloud/local list is source of truth. Do not inject missing seed rows
+    // (old 10/30 Done items would otherwise come back on refresh and get pushed).
     const list = Array.isArray(features) ? features.filter((f) => f && typeof f === "object") : [];
-    const have = new Set();
-    list.forEach((f) => {
-      if (f.id) have.add(String(f.id));
-    });
-    (SEED.features || []).forEach((seed) => {
-      if (!seed || !seed.id) return;
-      if (have.has(String(seed.id))) return;
-      list.push(cloneSeedFeature(seed));
-      have.add(String(seed.id));
-    });
     applySeedStatusFixes(list);
     applySeedDetailFields(list);
     return list;
@@ -63,6 +51,7 @@
       if (!seed) return;
       const cur = String(f.status || "").trim();
       if (seed.status === "Done（已上线）" && /^(待关单|已完成|已关闭|In Review)?$/.test(cur)) {
+        if (String(seed.ddl || "") === "2026-10-30") return;
         f.status = seed.status;
       }
     });
@@ -476,8 +465,9 @@
     const rows = list
       .map((f, idx) => {
         const pri = state.features.findIndex((x) => x.id === f.id) + 1;
+        const hasDates = parseYMD(f.start) || parseYMD(f.end) || parseYMD(f.ddl);
         const s = parseYMD(f.start) || start;
-        const e = parseYMD(f.end) || parseYMD(f.ddl) || addDays(s, 3);
+        const e = parseYMD(f.end) || parseYMD(f.ddl) || (hasDates ? addDays(s, 3) : s);
         let left = dayDiff(start, s);
         let width = Math.max(1, dayDiff(s, e) + 1);
         if (left < 0) {
@@ -495,8 +485,8 @@
           (todayLeft >= 0 && todayLeft < days
             ? `<div class="today-line" style="left:${todayLeft * dayWidth + dayWidth / 2}px"></div>`
             : "") +
-          `<div class="bar bucket-${escapeAttr(bucket)}" data-id="${escapeAttr(f.id)}" style="left:${left * dayWidth}px;width:${Math.max(width, 1) * dayWidth - 4}px" title="${escapeAttr(
-            (f.start || "") + " → " + (f.end || "") + " DDL " + (f.ddl || "")
+          `<div class="bar bucket-${escapeAttr(bucket)}${hasDates ? "" : " undated"}" data-id="${escapeAttr(f.id)}" style="left:${left * dayWidth}px;width:${Math.max(width, 1) * dayWidth - 4}px;${hasDates ? "" : "opacity:.35"}" title="${escapeAttr(
+            hasDates ? (f.start || "") + " → " + (f.end || "") + " DDL " + (f.ddl || "") : "无日期（不参与排期）"
           )}"><span class="handle l" data-edge="start"></span>${escapeHtml(f.jiraId || f.app)}<span class="handle r" data-edge="end"></span></div>` +
           `</div></div></div>`
         );
@@ -566,8 +556,12 @@
         }
         const feat = state.features.find((x) => x.id === id);
         originX = e.clientX;
-        originStart = parseYMD(feat.start);
-        originEnd = parseYMD(feat.end) || originStart;
+        originStart = parseYMD(feat.start) || parseYMD(feat.ddl) || parseYMD(feat.end);
+        originEnd = parseYMD(feat.end) || parseYMD(feat.ddl) || originStart;
+        if (!originStart || !originEnd) {
+          mode = null;
+          return;
+        }
         e.preventDefault();
         bar.setPointerCapture(e.pointerId);
         window.addEventListener("pointermove", onMove);
@@ -635,7 +629,7 @@
 
   async function hydrateFromRemote() {
     try {
-      const res = await fetch(STATE_API, { cache: "no-store" });
+      const res = await fetch(STATE_API + "?t=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error("GET " + res.status);
       const raw = await res.json();
       const rawList = Array.isArray(raw && raw.features) ? raw.features : [];
