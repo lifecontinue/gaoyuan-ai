@@ -130,18 +130,43 @@
     }, 500);
   }
 
-  function pushRemote(override) {
+  function unionFeatures(primary, secondary) {
+    const list = Array.isArray(primary) ? primary.filter((f) => f && f.id) : [];
+    const have = new Set(list.map((f) => String(f.id)));
+    (Array.isArray(secondary) ? secondary : []).forEach((f) => {
+      if (!f || !f.id) return;
+      const id = String(f.id);
+      if (have.has(id)) return;
+      list.push(JSON.parse(JSON.stringify(f)));
+      have.add(id);
+    });
+    return list;
+  }
+
+  function pushRemote(override, opts) {
     clearTimeout(remotePushTimer);
     const toSend = override || state;
-    remotePushInFlight = fetch(STATE_API, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(toSend),
-      cache: "no-store",
-    })
+    const replace = opts && opts.replace;
+    remotePushInFlight = fetch(STATE_API + "?t=" + Date.now(), { cache: "no-store" })
       .then(async (res) => {
-        if (!res.ok) throw new Error("PUT " + res.status);
-        const data = await res.json();
+        if (res.ok && !replace) {
+          const raw = await res.json();
+          const remoteList = Array.isArray(raw && raw.features) ? raw.features : [];
+          toSend.features = unionFeatures(toSend.features, remoteList);
+          if (toSend === state) {
+            try {
+              persistLocal();
+            } catch (_) {}
+          }
+        }
+        const putRes = await fetch(STATE_API, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(toSend),
+          cache: "no-store",
+        });
+        if (!putRes.ok) throw new Error("PUT " + putRes.status);
+        const data = await putRes.json();
         if (data && data.updatedAt && toSend === state) {
           state.meta = state.meta || {};
           state.meta.updatedAt = data.updatedAt;
@@ -644,6 +669,7 @@
       if (!remoteEmpty && (localEmpty || remoteAt > localAt)) {
         state = remote;
       } else {
+        state.features = unionFeatures(state.features, remote.features);
         state.features = mergeMissingSeedFeatures(state.features);
       }
 
@@ -772,7 +798,7 @@
       state = emptyState();
       state.meta.updatedAt = new Date().toISOString();
       persistLocal();
-      pushRemote().then((data) => {
+      pushRemote(state, { replace: true }).then((data) => {
         toast(data ? "已恢复并同步" : "已恢复本机 · 云端失败");
         renderAll();
       });

@@ -71,6 +71,12 @@ const touched = new Set([
 const diffs = untouchedSnapshot(before, after, touched);
 assert.deepStrictEqual(diffs, [], "untouched fields must stay equal: " + JSON.stringify(diffs));
 
+const combined = JSON.parse(JSON.stringify(before));
+combined.features.find((f) => f.id === "f-spectrum-import").ddl = "2026-11-30";
+const split = applyLaunchSyncPatches(combined);
+assert.strictEqual(split.features.find((f) => f.id === "f-spectrum-import").ddl, "2026-11-13");
+assert.strictEqual(split.features.find((f) => f.id === "f-competency-import").ddl, "");
+
 const empty = ganttSafeRange({ start: "", end: "", ddl: "" }, "2026-11-02", "2026-12-15");
 assert.strictEqual(empty.undated, true);
 assert.ok(empty.start);
